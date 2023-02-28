@@ -1,0 +1,6 @@
+server:
+  port: 7070
+
+spring:
+  banner:
+    location: banner/banner-dev.txt
