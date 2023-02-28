@@ -1,10 +1,10 @@
-package ru.pavbatol.marketplace;
+package ru.pavbatol.myplace;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MarketplaceApplicationTests {
+class MainServiceTests {
 
     @Test
     void contextLoads() {

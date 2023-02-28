@@ -1,12 +1,12 @@
-package ru.pavbatol.marketplace;
+package ru.pavbatol.myplace;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MarketplaceMainService {
+public class GatewayService {
     public static void main(String[] args) {
-        SpringApplication.run(MarketplaceMainService.class, args);
+        SpringApplication.run(GatewayService.class, args);
     }
 
 }
