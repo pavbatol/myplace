@@ -19,14 +19,16 @@ services:
       - stats-db
 
   stats-db:
-    image: postgres:15.1-alpine
+    image: mongo:6.0.4
     container_name: mp-stats-db-cont
     ports:
-      - "5777:5432"
+      - "27070:27017"
     environment:
-      - POSTGRES_DB=mp-stats
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+      MONGO_INITDB_DATABASE: mp-stats
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ./mp-stats/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
   main-service:
     build: ./mp-main
