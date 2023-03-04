@@ -1,22 +1,22 @@
 version: '3.7'
 services:
-  gateway-service:
-    build: ./mp-gateway
-    image: mp-gateway
-    container_name: mp-gateway-cont
-    ports:
-      - "8080:8080"
-      - "8081:8081"
+#  gateway-service:
+#    build: ./mp-gateway
+#    image: mp-gateway
+#    container_name: mp-gateway-cont
+#    ports:
+#      - "8080:8080"
+#      - "8081:8081"
 
-  stats-service:
-    build: ./mp-stats
-    image: mp-stats
-    container_name: mp-stats-cont
-    ports:
-      - "9090:9090"
-      - "9091:9091"
-    depends_on:
-      - stats-db
+#  stats-service:
+#    build: ./mp-stats/server
+#    image: mp-stats
+#    container_name: mp-stats-cont
+#    ports:
+#      - "9090:9090"
+#      - "9091:9091"
+#    depends_on:
+#      - stats-db
 
   stats-db:
     image: mongo:6.0.4
@@ -28,24 +28,24 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
-      - ./mp-stats/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
-  main-service:
-    build: ./mp-main
-    image: mp-main
-    container_name: mp-main-cont
-    ports:
-      - "7070:7070"
-      - "7071:7071"
-    depends_on:
-      - main-db
+#  main-service:
+#    build: ./mp-main
+#    image: mp-main
+#    container_name: mp-main-cont
+#    ports:
+#      - "7070:7070"
+#      - "7071:7071"
+#    depends_on:
+#      - main-db
 
-  main-db:
-    image: postgres:15.1-alpine
-    container_name: mp-main-db-cont
-    ports:
-      - "5888:5432"
-    environment:
-      - POSTGRES_DB=mp-main
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+#  main-db:
+#    image: postgres:15.1-alpine
+#    container_name: mp-main-db-cont
+#    ports:
+#      - "5888:5432"
+#    environment:
+#      - POSTGRES_DB=mp-main
+#      - POSTGRES_USER=root
+#      - POSTGRES_PASSWORD=root

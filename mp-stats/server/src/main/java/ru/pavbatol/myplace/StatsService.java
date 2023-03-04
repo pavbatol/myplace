@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class StatsService {
     public static void main(String[] args) {
         SpringApplication.run(StatsService.class, args);
+
+//        TestingMongo testingMongo = new TestingMongo();
+//        testingMongo.setBase();
     }
 
 }
