@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <conversionRule conversionWord="clr" converterClass="ru.pavbatol.myplace.stats.config.LogbackColorful"/>
+
+    <appender name="sout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                  %(%d{HH:mm:ss.SSS}) %(-) %clr(%5p) %([%15.15t]) %cyan(%-40.40logger{39}) : %m%n
+            </pattern>
+        </encoder>
+    </appender>
+
+<!--    <root level="trace">-->
+<!--    <root level="debug">-->
+    <root level="info">
+        <appender-ref ref="sout"/>
+    </root>
+
+    <logger name="ru.pavbatol" level="debug" additivity="false">
+        <appender-ref ref="sout"/>
+    </logger>
+
+<!--    <logger name="org.mongodb" level="debug" additivity="false">-->
+<!--        <appender-ref ref="sout"/>-->
+<!--    </logger>-->
+
+
+</configuration>
+
