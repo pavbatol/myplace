@@ -1,19 +1,19 @@
 package ru.pavbatol.myplace.stats;
 
-//import org.springframework.boot.SpringApplication;
-//import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Slf4j
-//@SpringBootApplication
+@SpringBootApplication
 public class StatsService {
     public static void main(String[] args) {
-//        SpringApplication.run(StatsService.class, args);
+        SpringApplication.run(StatsService.class, args);
 
         TestingMongo testingMongo = new TestingMongo();
+        TestingReactMongo testingReactMongo = new TestingReactMongo();
 //        testingMongo.setBase();
-        testingMongo.setReactiveBase();
+        testingReactMongo.setReactiveBase();
         System.out.println("!!!app started");
 //        log.info("!!!app started - -1");
 //        log.warn("!!!app started - 0");

@@ -4,3 +4,8 @@ server:
 spring:
   banner:
     location: banner/banner-test.txt
+
+logging:
+  level:
+    ru.pavbatol: DEBUG
+    org.springframework.web: DEBUG
