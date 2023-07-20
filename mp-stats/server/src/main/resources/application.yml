@@ -1,11 +1,16 @@
-server:
-  port: 9090
-
 spring:
-  banner:
-    location: banner/banner.txt
-
-logging:
-  level:
-    ru.pavbatol: DEBUG
-    org.springframework.web: DEBUG
+  profiles:
+    group:
+      develop:
+        - dev
+        - common
+        - swagger
+      production:
+        - prod
+        - common
+        - swagger
+      test:
+        - prod
+        - common
+        - swagger
+      default: production

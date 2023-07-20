@@ -1,6 +1,6 @@
 spring:
   banner:
-    location: banner/banner-dev.txt
+    location: banner/banner.txt
 
 logging:
   level:

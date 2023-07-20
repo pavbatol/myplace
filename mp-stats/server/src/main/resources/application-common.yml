@@ -1,0 +1,14 @@
+server:
+  port: 9090
+
+springdoc:
+  swagger-ui:
+    path: /docs/swagger-ui.html
+  api-docs:
+    path: /docs
+    enabled: true
+
+app:
+  format:
+    date: yyyy-MM-dd
+    date-time: yyyy-MM-dd HH:mm:ss
