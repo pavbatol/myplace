@@ -1,17 +1,18 @@
 var td = new Date();
-var dbName = "mp-stats";
-db.log.insertOne([
-    {"time": td.toDateString() + " " + td.toTimeString()},
-    {"message": "Database created with name: " + dbName}
-]);
-db.createUser(
+var statsDbName = "mp-stats";
+var statsDB = db.getSiblingDB(statsDbName);
+statsDB.log.insertOne({
+    "time": td.toDateString() + ", " + td.toTimeString(),
+    "message": "Database created with name: " + statsDbName
+});
+statsDB.createUser(
     {
         user: "root",
         pwd: "root",
         roles: [
             {
                 role: "readWrite",
-                db: dbName
+                db: statsDbName
             }
         ]
     }

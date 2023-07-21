@@ -8,10 +8,9 @@ spring:
       database: ${app.db.name}
       username: ${app.db.username}
       password: ${app.db.password}
-      authentication-database: admin
+      authentication-database: ${app.db.name}
 
 logging:
   level:
     ru.pavbatol: DEBUG
     org.springframework.web: DEBUG
-
