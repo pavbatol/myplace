@@ -1,6 +1,11 @@
 spring:
   banner:
     location: banner/banner-test.txt
+  data:
+    mongodb:
+      host: ${app.db.host}
+      port: ${app.db.port}
+      database: ${app.db.name}
 
 logging:
   level:

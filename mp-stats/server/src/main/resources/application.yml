@@ -10,7 +10,7 @@ spring:
         - common
         - swagger
       test:
-        - prod
+        - test
         - common
         - swagger
       default: production

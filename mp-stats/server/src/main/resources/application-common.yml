@@ -9,6 +9,12 @@ springdoc:
     enabled: true
 
 app:
+  db:
+    host: localhost
+    port: 27017
+    name: mp-stats
+    username: root
+    password: root
   format:
     date: yyyy-MM-dd
     date-time: yyyy-MM-dd HH:mm:ss

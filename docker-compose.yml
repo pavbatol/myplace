@@ -29,6 +29,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
       - ./mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./db-saved-from-docker-container/mp-stats:/db/data/mp-stats
 
 #  main-service:
 #    build: ./mp-main
@@ -49,3 +50,5 @@ services:
 #      - POSTGRES_DB=mp-main
 #      - POSTGRES_USER=root
 #      - POSTGRES_PASSWORD=root
+#    volumes:
+#      - /db/data/mp-main
