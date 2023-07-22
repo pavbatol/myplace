@@ -8,7 +8,7 @@ spring:
       database: ${app.db.name}
       username: ${app.db.username}
       password: ${app.db.password}
-      authentication-database: ${app.db.name}
+      authentication-database: admin
 
 logging:
   level:

@@ -5,15 +5,4 @@ statsDB.log.insertOne({
     "time": td.toDateString() + ", " + td.toTimeString(),
     "message": "Database created with name: " + statsDbName
 });
-statsDB.createUser(
-    {
-        user: "root",
-        pwd: "root",
-        roles: [
-            {
-                role: "readWrite",
-                db: statsDbName
-            }
-        ]
-    }
-);
+
