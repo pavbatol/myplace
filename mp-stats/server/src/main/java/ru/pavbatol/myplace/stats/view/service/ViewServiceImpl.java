@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.stats.view.service;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -29,7 +30,7 @@ public class ViewServiceImpl implements ViewService {
                 ? LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
                 : document.getTimestamp().truncatedTo(ChronoUnit.SECONDS);
         document.setTimestamp(dateTime);
-        return repository.save(document).map(mapper::toDtoResponse);
+        return repository.save(document).map(mapper::toDtoAddResponse);
     }
 
     @Override
@@ -38,9 +39,8 @@ public class ViewServiceImpl implements ViewService {
     }
 
     @Override
-    public Flux<ViewDtoResponse> find(ViewSearchFilter filter) {
-        ViewDtoResponse dtoResponse = new ViewDtoResponse("app", "uri", 5L);
-        ViewDtoResponse dtoResponse2 = new ViewDtoResponse("app2", "uri2", 8L);
-        return Flux.just(dtoResponse, dtoResponse2);
+    public Flux<ViewDtoResponse> find(@NonNull ViewSearchFilter filter) {
+        Flux<View> viewFlux = repository.find(filter);
+        return viewFlux.map(mapper::toDtoResponse);
     }
 }

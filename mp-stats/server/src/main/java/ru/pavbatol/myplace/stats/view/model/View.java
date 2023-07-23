@@ -2,6 +2,7 @@ package ru.pavbatol.myplace.stats.view.model;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Accessors(chain = true)
 @Document(collection = "views")
 public class View {
     @Id
