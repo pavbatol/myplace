@@ -30,6 +30,12 @@ public class ViewController {
         return "This is a test";
     }
 
+//    @PostMapping("/view")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Mono<ViewDtoAddResponse> add(@Valid @RequestBody ViewDtoAddRequest dto) {
+//        return Mono.empty();
+//    }
+
     @PostMapping("/view")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<ViewDtoAddResponse> add(@Valid @RequestBody ViewDtoAddRequest dto) {

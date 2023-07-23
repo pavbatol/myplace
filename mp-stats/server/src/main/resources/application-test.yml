@@ -4,11 +4,11 @@ spring:
   data:
     mongodb:
       host: ${app.db.host}
-#      port: ${app.db.port}
-      port: 27070
+      port: ${app.db.port}
+#      port: 27070
       database: ${app.db.name}
-      username: ${app.db.username}
-      password: ${app.db.password}
+#      username: ${app.db.username}
+#      password: ${app.db.password}
       authentication-database: admin
 
 logging:

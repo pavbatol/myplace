@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 import java.time.format.DateTimeFormatter;
 
 @Configuration
-public class DateTimeConfig {
+public class DateTimeConfig implements WebFluxConfigurer {
     @Value("${app.format.date}")
     private String dateFormat;
 
@@ -26,5 +29,13 @@ public class DateTimeConfig {
                 .serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimeFormat)))
                 .deserializers(new LocalDateDeserializer(DateTimeFormatter.ofPattern(dateFormat)))
                 .deserializers(new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimeFormat)));
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
+        registrar.setDateFormatter(DateTimeFormatter.ofPattern(dateFormat));
+        registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(dateTimeFormat));
+        registrar.registerFormatters(registry);
     }
 }
