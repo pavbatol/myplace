@@ -6,6 +6,7 @@ import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
+import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
 import ru.pavbatol.myplace.stats.view.mapper.ViewMapper;
 import ru.pavbatol.myplace.stats.view.model.View;
 import ru.pavbatol.myplace.stats.view.repository.ViewMongoRepository;
@@ -32,6 +33,11 @@ public class ViewServiceImpl implements ViewService {
 
     @Override
     public List<ViewDtoResponse> find(String start, String end, List<String> uris, Boolean unique) {
+        return null;
+    }
+
+    @Override
+    public List<ViewDtoResponse> find(ViewSearchFilter filter) {
         return null;
     }
 }

@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
+import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
 import ru.pavbatol.myplace.stats.view.service.ViewService;
 
 import javax.validation.Valid;
@@ -22,9 +23,6 @@ public class ViewController {
 
     private final ViewService viewService;
 
-//    @Value("${app.format.date-time}")
-//    private String format;
-
     @RequestMapping("/test")
     public String test() {
         return "This is a test";
@@ -36,29 +34,27 @@ public class ViewController {
 //        return Mono.empty();
 //    }
 
-    @PostMapping("/view")
+    @PostMapping("/views")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<ViewDtoAddResponse> add(@Valid @RequestBody ViewDtoAddRequest dto) {
         log.debug("POST (add) with dto={},", dto);
         return viewService.add(dto);
     }
 
-    @GetMapping("/stats")
+    @GetMapping("/views")
     public List<ViewDtoResponse> getViews(@RequestParam("start") String start,
                                           @RequestParam("end") String end,
                                           @RequestParam(value = "uris", required = false) List<String> uris,
                                           @RequestParam(value = "unique", defaultValue = "false") Boolean unique) {
         log.debug("GET (get) with start={}, end={}, uris={}, unique={},", start, end, uris, unique);
-//        return statsService.find(toLocalDateTime(start), toLocalDateTime(end), uris, unique);
         return viewService.find(start, end, uris, unique);
     }
 
-//    private LocalDateTime toLocalDateTime(String value) {
-//        return LocalDateTime.parse(value, DateTimeFormatter.ofPattern(format));
-//    }
-
-
-
+    @GetMapping("/views-test")
+    public List<ViewDtoResponse> getViews_test(ViewSearchFilter filter) {
+        log.debug("GET (get) with filter={}", filter);
+        return viewService.find(filter);
+    }
 
 
     /*
