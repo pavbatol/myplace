@@ -11,9 +11,12 @@ import java.util.List;
 
 @Slf4j
 public class StatsClient {
-    protected final WebClient webClient;
+    public static final String STATS = "stats";
+    String serverUrl;
+    private final WebClient webClient;
 
     public StatsClient(String serverUrl) {
+        this.serverUrl = serverUrl;
         this.webClient = WebClient.builder()
                 .baseUrl(serverUrl)
                 .build();
@@ -23,13 +26,15 @@ public class StatsClient {
         String path = "views-test";
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
-                .path(path)
-                .queryParam("start", filter.getStart())
-                .queryParam("end", filter.getEnd())
-                .queryParam("uris", String.join(",", filter.getUris()))
-                .queryParam("unique", filter.getUnique());
+                .pathSegment(STATS)
+                .pathSegment(path)
+                .queryParam("start", filter.getStart() == null ? "" : filter.getStart())
+                .queryParam("end", filter.getEnd() == null ? "" : filter.getEnd())
+                .queryParam("uris", filter.getUris() == null ? "" :  String.join(",", filter.getUris()))
+                .queryParam("unique", filter.getUnique() == null ? "" : filter.getUnique());
 
         String uriStr = uriBuilder.toUriString();
+        log.debug("Sending a request to base url: {}, to path: {}", serverUrl, uriStr);
 
 //        WebClient.ResponseSpec responseSpec = webClient.get()
 //                .uri(uriStr)

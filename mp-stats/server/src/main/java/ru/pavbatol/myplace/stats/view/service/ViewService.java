@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.stats.view.service;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
@@ -13,5 +14,5 @@ public interface ViewService {
 
     List<ViewDtoResponse> find(String start, String end, List<String> uris, Boolean unique);
 
-    List<ViewDtoResponse> find(ViewSearchFilter filter);
+    Flux<ViewDtoResponse> find(ViewSearchFilter filter);
 }

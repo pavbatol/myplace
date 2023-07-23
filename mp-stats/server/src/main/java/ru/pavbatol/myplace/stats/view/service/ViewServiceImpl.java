@@ -2,6 +2,7 @@ package ru.pavbatol.myplace.stats.view.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
@@ -37,7 +38,9 @@ public class ViewServiceImpl implements ViewService {
     }
 
     @Override
-    public List<ViewDtoResponse> find(ViewSearchFilter filter) {
-        return null;
+    public Flux<ViewDtoResponse> find(ViewSearchFilter filter) {
+        ViewDtoResponse dtoResponse = new ViewDtoResponse("app", "uri", 5L);
+        ViewDtoResponse dtoResponse2 = new ViewDtoResponse("app2", "uri2", 8L);
+        return Flux.just(dtoResponse, dtoResponse2);
     }
 }

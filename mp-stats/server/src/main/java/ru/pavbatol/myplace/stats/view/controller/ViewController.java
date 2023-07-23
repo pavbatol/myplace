@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
@@ -51,7 +52,7 @@ public class ViewController {
     }
 
     @GetMapping("/views-test")
-    public List<ViewDtoResponse> getViews_test(ViewSearchFilter filter) {
+    public Flux<ViewDtoResponse> getViews_test(ViewSearchFilter filter) {
         log.debug("GET (get) with filter={}", filter);
         return viewService.find(filter);
     }
