@@ -25,12 +25,12 @@ public class ViewServiceImpl implements ViewService {
 
     @Override
     public Mono<ViewDtoAddResponse> add(ViewDtoAddRequest dto) {
-        View document = mapper.toDocument(dto);
-        LocalDateTime dateTime = document.getTimestamp() == null
+        View entity = mapper.toEntity(dto);
+        LocalDateTime dateTime = entity.getTimestamp() == null
                 ? LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
-                : document.getTimestamp().truncatedTo(ChronoUnit.SECONDS);
-        document.setTimestamp(dateTime);
-        return repository.save(document).map(mapper::toDtoAddResponse);
+                : entity.getTimestamp().truncatedTo(ChronoUnit.SECONDS);
+        entity.setTimestamp(dateTime);
+        return repository.save(entity).map(mapper::toDtoAddResponse);
     }
 
     @Override

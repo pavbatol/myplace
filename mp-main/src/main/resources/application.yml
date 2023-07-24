@@ -9,3 +9,8 @@ logging:
   level:
     ru.pavbatol: DEBUG
     org.springframework.web: DEBUG
+
+app:
+  format:
+    date: yyyy-MM-dd
+    date-time: yyyy-MM-dd HH:mm:ss

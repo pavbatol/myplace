@@ -7,6 +7,7 @@ import ru.pavbatol.myplace.client.StatsClient;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
 import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,10 +25,10 @@ public class MainService {
         List<ViewDtoResponse> viewsAsList = null;
         try {
             viewsAsList = webClient.getViewsAsList(new ViewSearchFilter(
-                    null,
-                    null,
-                    null,
-                    null
+                    LocalDateTime.now().minusYears(1),
+                    LocalDateTime.now(),
+                    List.of("/test_1/0", "/test_2/5"),
+                    true
             ));
             viewsAsList.forEach(System.out::println);
             log.debug("! End testing stats module");

@@ -9,7 +9,7 @@ import ru.pavbatol.myplace.stats.view.model.View;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface ViewMapper {
-    View toDocument(ViewDtoAddRequest dtoRequest);
+    View toEntity(ViewDtoAddRequest dtoRequest);
 
     ViewDtoAddResponse toDtoAddResponse(View view);
 
