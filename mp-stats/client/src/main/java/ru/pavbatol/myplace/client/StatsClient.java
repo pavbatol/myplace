@@ -1,9 +1,11 @@
 package ru.pavbatol.myplace.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
 import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
 
@@ -40,23 +42,30 @@ public class StatsClient {
         String uriStr = uriBuilder.toUriString();
         log.debug("Sending a request to base url: {}, to path: {}", serverUrl, uriStr);
 
-//        WebClient.ResponseSpec responseSpec = webClient.get()
-//                .uri(uriStr)
-//                .retrieve();
-//        return responseSpec.bodyToFlux(ViewDtoResponse.class);
-
-        Flux<ViewDtoResponse> responseFlux = webClient.get()
+        WebClient.ResponseSpec responseSpec = webClient.get()
                 .uri(uriStr)
-                .exchangeToFlux(response -> {
-                    if (response.statusCode().is2xxSuccessful()) {
-                        return response.bodyToFlux(ViewDtoResponse.class);
-                    } else {
-                        String errStr = "Request execution error: " + response.statusCode();
-                        log.warn(errStr);
-                        throw new RuntimeException(errStr);
-                    }
-                });
-        return responseFlux;
+                .retrieve();
+
+        return responseSpec
+                .onStatus(HttpStatus::isError, response -> {
+                    String errStr = "Request execution error: " + response.statusCode();
+                    log.warn(errStr);
+                    return response.bodyToMono(String.class)
+                            .flatMap(body -> Mono.error(new RuntimeException(errStr, new Throwable(body))));
+                })
+                .bodyToFlux(ViewDtoResponse.class);
+
+//        return webClient.get()
+//                .uri(uriStr)
+//                .exchangeToFlux(response -> {
+//                    if (response.statusCode().is2xxSuccessful()) {
+//                        return response.bodyToFlux(ViewDtoResponse.class);
+//                    } else {
+//                        String errStr = "Request execution error: " + response.statusCode();
+//                        log.warn(errStr);
+//                        throw new RuntimeException(errStr + ":" + response.bodyToMono(String.class).block());
+//                    }
+//                });
     }
 
     public List<ViewDtoResponse> getViewsAsList(ViewSearchFilter filter) {

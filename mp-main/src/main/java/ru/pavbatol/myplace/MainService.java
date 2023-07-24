@@ -33,7 +33,7 @@ public class MainService {
             viewsAsList.forEach(System.out::println);
             log.debug("! End testing stats module");
         } catch (Exception e) {
-            log.warn("! Failed to getViewsAsList from stats module:\n{}", e.getMessage());
+            log.warn("! Failed to getViewsAsList from stats module:", e);
         }
     }
 }
