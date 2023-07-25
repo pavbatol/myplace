@@ -14,7 +14,6 @@ import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
 import ru.pavbatol.myplace.stats.view.service.ViewService;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -24,15 +23,9 @@ public class ViewController {
 
     private final ViewService viewService;
 
-    @RequestMapping("/test")
-    public String test() {
-        return "This is a test";
-    }
-
-//    @PostMapping("/view")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public Mono<ViewDtoAddResponse> add(@Valid @RequestBody ViewDtoAddRequest dto) {
-//        return Mono.empty();
+//    @RequestMapping("/test")
+//    public String test() {
+//        return "This is a test";
 //    }
 
     @PostMapping("/views")
@@ -43,15 +36,6 @@ public class ViewController {
     }
 
     @GetMapping("/views")
-    public List<ViewDtoResponse> getViews(@RequestParam("start") String start,
-                                          @RequestParam("end") String end,
-                                          @RequestParam(value = "uris", required = false) List<String> uris,
-                                          @RequestParam(value = "unique", defaultValue = "false") Boolean unique) {
-        log.debug("GET (get) with start={}, end={}, uris={}, unique={},", start, end, uris, unique);
-        return viewService.find(start, end, uris, unique);
-    }
-
-    @GetMapping("/views-test")
     public Flux<ViewDtoResponse> getViews_test(ViewSearchFilter filter) {
         log.debug("GET (get) with filter={}", filter);
         System.out.println("filter.getStart() = " + filter.getStart());

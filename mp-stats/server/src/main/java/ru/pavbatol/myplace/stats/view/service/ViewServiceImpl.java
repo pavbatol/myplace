@@ -15,7 +15,6 @@ import ru.pavbatol.myplace.stats.view.repository.ViewMongoRepository;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +30,6 @@ public class ViewServiceImpl implements ViewService {
                 : entity.getTimestamp().truncatedTo(ChronoUnit.SECONDS);
         entity.setTimestamp(dateTime);
         return repository.save(entity).map(mapper::toDtoAddResponse);
-    }
-
-    @Override
-    public List<ViewDtoResponse> find(String start, String end, List<String> uris, Boolean unique) {
-        return null;
     }
 
     @Override
