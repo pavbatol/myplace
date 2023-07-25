@@ -1,9 +1,12 @@
 package ru.pavbatol.myplace.dto.view;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
+import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,10 +17,10 @@ import java.util.List;
 @Accessors(chain = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ViewSearchFilter {
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @CustomDateTimeFormat
     LocalDateTime start;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @CustomDateTimeFormat
     LocalDateTime end;
 
     List<String> uris;

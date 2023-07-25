@@ -1,10 +1,10 @@
 package ru.pavbatol.myplace.dto.view;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Value;
+import ru.pavbatol.myplace.dto.annotation.CustomJsonDateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +17,6 @@ public class ViewDtoAddResponse {
     String app;
     String uri;
     String ip;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @CustomJsonDateTimeFormat
     LocalDateTime timestamp;
 }
