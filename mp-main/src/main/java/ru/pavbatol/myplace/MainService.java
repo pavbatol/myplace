@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import reactor.core.publisher.Flux;
-import ru.pavbatol.myplace.client.StatsClient;
+import ru.pavbatol.myplace.client.ViewStatsClient;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
@@ -23,11 +23,11 @@ public class MainService {
          * Temporary code for testing the stats module
          */
         log.debug("! Start testing stats module");
-        StatsClient webClient = new StatsClient("http://localhost:9090");
+        ViewStatsClient webClient = new ViewStatsClient("http://localhost:9090");
 
         List<ViewDtoResponse> viewsAsList;
         try {
-            viewsAsList = webClient.getViewsByBlocking(new ViewSearchFilter(
+            viewsAsList = webClient.findByBlocking(new ViewSearchFilter(
                     LocalDateTime.now().minusYears(1),
                     LocalDateTime.now(),
                     List.of("/test_1/0", "/test_2/5"),
@@ -38,7 +38,7 @@ public class MainService {
             log.warn("! Failed to getViewsAsList from stats module:", e);
         }
 
-        Flux<ViewDtoResponse> viewsFlax = webClient.getViews(new ViewSearchFilter(
+        Flux<ViewDtoResponse> viewsFlax = webClient.find(new ViewSearchFilter(
                 LocalDateTime.now().minusYears(1),
                 LocalDateTime.now(),
                 List.of("/test_1", "/test_2"),
