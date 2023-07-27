@@ -1,6 +1,7 @@
 package ru.pavbatol.myplace.stats.view.controller;
 
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,83 +20,23 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/stats")
+@Tag(name = "Space User:Views", description = "API for working with 'View' entity")
 public class ViewController {
 
     private final ViewService viewService;
 
-//    @RequestMapping("/test")
-//    public String test() {
-//        return "This is a test";
-//    }
-
     @PostMapping("/views")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "add", description = "adding a View")
     public Mono<ViewDtoAddResponse> add(@Valid @RequestBody ViewDtoAddRequest dto) {
         log.debug("POST (add) with dto={},", dto);
         return viewService.add(dto);
     }
 
     @GetMapping("/views")
+    @Operation(summary = "find", description = "finding Views by filter")
     public Flux<ViewDtoResponse> find(ViewSearchFilter filter) {
         log.debug("GET (get) with filter={}", filter);
-//        System.out.println("filter.getStart() = " + filter.getStart());
-//        System.out.println("filter.getEnd() = " + filter.getEnd());
-//        System.out.println("filter.getUris() = " + filter.getUris());
-//        System.out.println("filter.getUnique() = " + filter.getUnique());
-//        System.out.println("filter.getSortDirection() = " + filter.getSortDirection());
         return viewService.find(filter);
     }
-
-
-    /*
-    @RequestMapping("/test")
-    public String test() {
-        return "This is a test";
-    }
-
-    @RequestMapping("/hello")
-    public Mono<String> hello(@RequestParam String name) {
-        return Mono.just("Hello, " + name + "!");
-    }
-
-    @RequestMapping("/exchange")
-    public Mono<Void> exchange(ServerWebExchange exchange) {
-        DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.OK);
-        response.getHeaders().setContentType(MediaType.TEXT_PLAIN);
-        DataBuffer buf = dataBufferFactory.wrap("Hello from exchange".getBytes(StandardCharsets.UTF_8));
-        return response.writeWith(Flux.just(buf));
-    }
-
-    @RequestMapping("/error")
-    public Mono<?> error() {
-        return Mono.error(new IllegalArgumentException("My custom error message"))
-                .onErrorResume(
-                        WebClientResponseException.class,
-                        ex -> Mono.just(ResponseEntity
-                                .status(ex.getStatusCode())
-                                .body(ex.getResponseBodyAsString())
-                ));
-    }
-
-    @RequestMapping("/{id}")
-    public Mono<ResponseEntity<Long>> getId(@PathVariable long id) {
-        return Mono.just(id)
-                .map(aLong -> ResponseEntity.status(HttpStatus.CREATED).body(aLong))
-                .defaultIfEmpty(ResponseEntity.notFound().build());
-    }
-
-    @RequestMapping("str/{str}")
-    public Mono<ResponseEntity<String>> getStr(@PathVariable String str) {
-        return Mono.just(str)
-                .flatMap(s ->
-                        Mono.just(ResponseEntity.status(HttpStatus.OK).body("bbb"))
-                                .then(Mono.just(new ResponseEntity<String>("ccc", HttpStatus.OK)))
-                )
-                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-*/
-
 }

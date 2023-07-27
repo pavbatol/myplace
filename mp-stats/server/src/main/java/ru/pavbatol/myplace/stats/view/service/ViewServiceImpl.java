@@ -34,22 +34,6 @@ public class ViewServiceImpl implements ViewService {
         return repository.save(entity).map(mapper::toDtoAddResponse);
     }
 
-//    @Override
-//    public Flux<ViewDtoResponse> find(@NonNull ViewSearchFilter filter) {
-////        if (CollectionUtils.isEmpty(filter.getUris())) {
-////            return Flux.empty();
-////        }
-//        ViewSearchFilter checkedFilter = new ViewSearchFilter()
-//                .setStart(filter.getStart() != null ? filter.getStart() : LocalDateTime.of(1970, 1, 1, 0, 0, 0))
-//                .setEnd(filter.getEnd() != null ? filter.getEnd() : LocalDateTime.now())
-////                .setUris(filter.getUris())
-//                .setUris(filter.getUris() != null ? filter.getUris() : List.of())
-//                .setUnique(filter.getUnique() != null ? filter.getUnique() : false)
-//                .setSortDirection(filter.getSortDirection() != null ? filter.getSortDirection() : SortDirection.DESC);
-//        Flux<View> viewFlux = repository.find(checkedFilter);
-//        return viewFlux.map(mapper::toDtoResponse);
-//    }
-
     @Override
     public Flux<ViewDtoResponse> find(@NonNull ViewSearchFilter filter) {
         ViewSearchFilter checkedFilter = new ViewSearchFilter()
