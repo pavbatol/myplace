@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -26,4 +27,6 @@ public class ViewSearchFilter {
     List<String> uris;
 
     Boolean unique;
+
+    SortDirection sortDirection;
 }

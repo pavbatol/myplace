@@ -50,7 +50,8 @@ public class ViewStatsClient
                 .queryParam("start", filter.getStart() == null ? "" : filter.getStart().format(formatter))
                 .queryParam("end", filter.getEnd() == null ? "" : filter.getEnd().format(formatter))
                 .queryParam("uris", filter.getUris() == null ? "" : String.join(",", filter.getUris()))
-                .queryParam("unique", filter.getUnique() == null ? "" : filter.getUnique());
+                .queryParam("unique", filter.getUnique() == null ? "" : filter.getUnique())
+                .queryParam("sortDirection", filter.getSortDirection() == null ? "" : filter.getSortDirection());
 
         String uriStr = uriBuilder.toUriString();
         log.debug("Sending a request to base url: {}, to path: {}", serverUrl, uriStr);

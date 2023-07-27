@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
@@ -15,6 +16,7 @@ import ru.pavbatol.myplace.stats.view.repository.ViewMongoRepository;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +34,30 @@ public class ViewServiceImpl implements ViewService {
         return repository.save(entity).map(mapper::toDtoAddResponse);
     }
 
+//    @Override
+//    public Flux<ViewDtoResponse> find(@NonNull ViewSearchFilter filter) {
+////        if (CollectionUtils.isEmpty(filter.getUris())) {
+////            return Flux.empty();
+////        }
+//        ViewSearchFilter checkedFilter = new ViewSearchFilter()
+//                .setStart(filter.getStart() != null ? filter.getStart() : LocalDateTime.of(1970, 1, 1, 0, 0, 0))
+//                .setEnd(filter.getEnd() != null ? filter.getEnd() : LocalDateTime.now())
+////                .setUris(filter.getUris())
+//                .setUris(filter.getUris() != null ? filter.getUris() : List.of())
+//                .setUnique(filter.getUnique() != null ? filter.getUnique() : false)
+//                .setSortDirection(filter.getSortDirection() != null ? filter.getSortDirection() : SortDirection.DESC);
+//        Flux<View> viewFlux = repository.find(checkedFilter);
+//        return viewFlux.map(mapper::toDtoResponse);
+//    }
+
     @Override
     public Flux<ViewDtoResponse> find(@NonNull ViewSearchFilter filter) {
-        Flux<View> viewFlux = repository.find(filter);
-        return viewFlux.map(mapper::toDtoResponse);
+        ViewSearchFilter checkedFilter = new ViewSearchFilter()
+                .setStart(filter.getStart() != null ? filter.getStart() : LocalDateTime.of(1970, 1, 1, 0, 0, 0))
+                .setEnd(filter.getEnd() != null ? filter.getEnd() : LocalDateTime.now())
+                .setUris(filter.getUris() != null ? filter.getUris() : List.of())
+                .setUnique(filter.getUnique() != null ? filter.getUnique() : false)
+                .setSortDirection(filter.getSortDirection() != null ? filter.getSortDirection() : SortDirection.DESC);
+        return repository.find(checkedFilter);
     }
 }

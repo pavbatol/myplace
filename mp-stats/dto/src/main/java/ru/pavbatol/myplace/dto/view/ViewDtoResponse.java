@@ -1,16 +1,16 @@
 package ru.pavbatol.myplace.dto.view;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Value;
+import lombok.*;
 
 @Value
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class ViewDtoResponse {
+    @With
     String app;
+    @With
     String uri;
+    @With
     Long views;
 }

@@ -36,12 +36,13 @@ public class ViewController {
     }
 
     @GetMapping("/views")
-    public Flux<ViewDtoResponse> getViews_test(ViewSearchFilter filter) {
+    public Flux<ViewDtoResponse> find(ViewSearchFilter filter) {
         log.debug("GET (get) with filter={}", filter);
-        System.out.println("filter.getStart() = " + filter.getStart());
-        System.out.println("filter.getEnd() = " + filter.getEnd());
-        System.out.println("filter.getUris() = " + filter.getUris());
-        System.out.println("filter.getUnique() = " + filter.getUnique());
+//        System.out.println("filter.getStart() = " + filter.getStart());
+//        System.out.println("filter.getEnd() = " + filter.getEnd());
+//        System.out.println("filter.getUris() = " + filter.getUris());
+//        System.out.println("filter.getUnique() = " + filter.getUnique());
+//        System.out.println("filter.getSortDirection() = " + filter.getSortDirection());
         return viewService.find(filter);
     }
 
