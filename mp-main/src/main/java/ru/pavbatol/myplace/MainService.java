@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import reactor.core.publisher.Flux;
 import ru.pavbatol.myplace.client.ViewStatsClient;
 import ru.pavbatol.myplace.dto.SortDirection;
+import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
+import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
 import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
 
