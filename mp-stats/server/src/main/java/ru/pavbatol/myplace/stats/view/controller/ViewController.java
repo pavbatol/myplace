@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/stats")
-@Tag(name = "Space User:Views", description = "API for working with 'View' entity")
+@Tag(name = "Views", description = "API for working with 'View' entity")
 public class ViewController {
 
     private final ViewService viewService;
@@ -34,6 +34,7 @@ public class ViewController {
     }
 
     @GetMapping("/views")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "find", description = "finding Views by filter")
     public Flux<ViewDtoResponse> find(ViewSearchFilter filter) {
         log.debug("GET (get) with filter={}", filter);

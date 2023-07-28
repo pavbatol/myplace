@@ -1,15 +1,11 @@
 package ru.pavbatol.myplace.dto.cart;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
 
-import java.rmi.server.UID;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,4 +26,13 @@ public class CartItemSearchFilter {
     Boolean unique;
 
     SortDirection sortDirection;
+
+    public CartItemSearchFilter setSortDirection(String name) {
+        if (name != null) {
+            this.sortDirection = SortDirection.valueOf(name.toUpperCase());
+        } else {
+            this.sortDirection = null;
+        }
+        return this;
+    }
 }

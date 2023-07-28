@@ -39,7 +39,7 @@ public class CartItemServiceImpl implements CartItemService {
                 .setEnd(filter.getEnd() != null ? filter.getEnd() : LocalDateTime.now())
                 .setItemIds(filter.getItemIds() != null ? filter.getItemIds() : List.of())
                 .setUnique(filter.getUnique() != null ? filter.getUnique() : false)
-                .setSortDirection(filter.getSortDirection() != null ? filter.getSortDirection() : SortDirection.DESC);
+                .setSortDirection(filter.getSortDirection() != null ? filter.getSortDirection().name() : SortDirection.DESC.name());
         return repository.find(filter);
     }
 }

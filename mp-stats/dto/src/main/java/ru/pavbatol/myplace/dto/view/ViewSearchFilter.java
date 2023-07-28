@@ -29,4 +29,13 @@ public class ViewSearchFilter {
     Boolean unique;
 
     SortDirection sortDirection;
+
+    public ViewSearchFilter setSortDirection(String name) {
+        if (name != null) {
+            this.sortDirection = SortDirection.valueOf(name.toUpperCase());
+        } else {
+            this.sortDirection = null;
+        }
+        return this;
+    }
 }
