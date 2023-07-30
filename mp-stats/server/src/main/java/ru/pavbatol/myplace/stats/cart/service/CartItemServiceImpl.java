@@ -26,8 +26,8 @@ public class CartItemServiceImpl implements CartItemService {
     public Mono<CartItemDtoAddResponse> add(CartItemDtoAddRequest dto) {
         CartItem entity = mapper.toEntity(dto);
         LocalDateTime dateTime = entity.getTimestamp() == null
-                ? LocalDateTime.now() //.truncatedTo(ChronoUnit.SECONDS)
-                : entity.getTimestamp(); //.truncatedTo(ChronoUnit.SECONDS);
+                ? LocalDateTime.now()
+                : entity.getTimestamp();
         entity.setTimestamp(dateTime);
         return repository.save(entity).map(mapper::toAddResponse);
     }
