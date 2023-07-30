@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class AbstractStatsClient<T, R, F, R2> implements StatsClient<T, R, F, R2> {
     public static final String STATS = "stats";
     public static final String DATE_TIME_T_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
-    String serverUrl;
+    protected final String serverUrl;
     protected final WebClient webClient;
     protected final DateTimeFormatter formatter;
 
