@@ -13,7 +13,12 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public abstract class AbstractSearchFilter {
+public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
+    private static final LocalDateTime START = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
+    private static final LocalDateTime END = LocalDateTime.now();
+    private static final boolean UNIQUE = false;
+    private static final String DIRECTION = SortDirection.DESC.name();
+
     @CustomDateTimeFormat
     LocalDateTime start;
 
@@ -23,6 +28,15 @@ public abstract class AbstractSearchFilter {
     Boolean unique;
 
     SortDirection sortDirection;
+
+    public abstract T populateNullFields();
+
+    protected void ensureNonNullFields() {
+        setStart(getStart() != null ? getStart() : START);
+        setEnd(getEnd() != null ? getEnd() : END);
+        setUnique(getUnique() != null ? getUnique() : UNIQUE);
+        setSortDirection(getSortDirection() != null ? getSortDirection().name() : DIRECTION);
+    }
 
     public void setSortDirection(String name) {
         if (name != null) {

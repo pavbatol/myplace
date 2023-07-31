@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.pavbatol.myplace.dto.cart.CartItemDtoAddRequest;
-import ru.pavbatol.myplace.dto.cart.CartItemDtoAddResponse;
-import ru.pavbatol.myplace.dto.cart.CartItemDtoResponse;
-import ru.pavbatol.myplace.dto.cart.CartItemSearchFilter;
+import ru.pavbatol.myplace.dto.cart.*;
 import ru.pavbatol.myplace.stats.cart.service.CartItemService;
 
 import javax.validation.Valid;
@@ -41,11 +38,11 @@ public class CartItemController {
         return service.find(filter);
     }
 
-//    @GetMapping("/user/cartitems")
-//    @ResponseStatus(HttpStatus.OK)
-//    @Operation(summary = "findUserCartItemIds", description = "finding item IDs in the shopping cart by users using a filter")
-//    public Flux<CartItemDtoResponse> findUserCartItemIds(CartItemSearchFilter filter) {
-//        log.debug("GET (findUserCartItemIds) with filter={}", filter);
-//        return service.find(filter);
-//    }
+    @GetMapping("/user/cartitems")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "findUserCartItems", description = "finding item IDs in the cart by users")
+    public Flux<UserCartItemDtoResponse> findUserCartItems(UserCartItemSearchFilter filter) {
+        log.debug("GET (findUserCartItems) with filter={}", filter);
+        return service.findUserCartItems(filter);
+    }
 }

@@ -14,13 +14,13 @@ import java.util.List;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CartItemSearchFilter extends AbstractSearchFilter<CartItemSearchFilter> {
-    List<Long> itemIds;
+public class UserCartItemSearchFilter extends AbstractSearchFilter<UserCartItemSearchFilter> {
+    List<Long> userIds;
 
     @Override
-    public CartItemSearchFilter populateNullFields() {
+    public UserCartItemSearchFilter populateNullFields() {
         ensureNonNullFields();
-        setItemIds(getItemIds() != null ? getItemIds() : List.of());
+        setUserIds(getUserIds() != null ? getUserIds() : List.of());
         return this;
     }
 }
