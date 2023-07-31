@@ -37,7 +37,15 @@ public class CartItemController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "find", description = "finding CartItems by filter")
     public Flux<CartItemDtoResponse> find(CartItemSearchFilter filter) {
-        log.debug("GET (get) with filter={}", filter);
+        log.debug("GET (find) with filter={}", filter);
         return service.find(filter);
     }
+
+//    @GetMapping("/user/cartitems")
+//    @ResponseStatus(HttpStatus.OK)
+//    @Operation(summary = "findUserCartItemIds", description = "finding item IDs in the shopping cart by users using a filter")
+//    public Flux<CartItemDtoResponse> findUserCartItemIds(CartItemSearchFilter filter) {
+//        log.debug("GET (findUserCartItemIds) with filter={}", filter);
+//        return service.find(filter);
+//    }
 }

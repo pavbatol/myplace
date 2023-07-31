@@ -1,38 +1,19 @@
 package ru.pavbatol.myplace.dto.cart;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import ru.pavbatol.myplace.dto.SortDirection;
-import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
+import lombok.experimental.SuperBuilder;
+import ru.pavbatol.myplace.dto.AbstractSearchFilter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CartItemSearchFilter {
-    @CustomDateTimeFormat
-    LocalDateTime start;
-
-    @CustomDateTimeFormat
-    LocalDateTime end;
-
+public class CartItemSearchFilter extends AbstractSearchFilter {
     List<Long> itemIds;
-
-    Boolean unique;
-
-    SortDirection sortDirection;
-
-    public CartItemSearchFilter setSortDirection(String name) {
-        if (name != null) {
-            this.sortDirection = SortDirection.valueOf(name.toUpperCase());
-        } else {
-            this.sortDirection = null;
-        }
-        return this;
-    }
 }

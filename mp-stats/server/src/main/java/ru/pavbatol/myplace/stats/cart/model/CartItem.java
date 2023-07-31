@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class CartItem {
     @Id
     String id;
-    String userId;
+    Long userId;
     Long itemId;
     LocalDateTime timestamp;
 }

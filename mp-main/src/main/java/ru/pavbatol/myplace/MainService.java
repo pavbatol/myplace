@@ -34,45 +34,45 @@ public class MainService {
         //-- get
         ViewStatsClient webClient = new ViewStatsClient("http://localhost:9090");
 
-        List<ViewDtoResponse> viewsAsList;
-        try {
-            viewsAsList = webClient.findByBlocking(new ViewSearchFilter(
-                    LocalDateTime.now().minusYears(5),
-                    LocalDateTime.now().plusYears(5),
-                    List.of("uriMono", "uri"),
-                    false,
-                    SortDirection.DESC
-            ));
-            viewsAsList.forEach(System.out::println);
-        } catch (Exception e) {
-            log.warn("! Failed to getViewsAsList from stats module:", e);
-        }
+//        List<ViewDtoResponse> viewsAsList;
+//        try {
+//            viewsAsList = webClient.findByBlocking(new ViewSearchFilter(
+//                    LocalDateTime.now().minusYears(5),
+//                    LocalDateTime.now().plusYears(5),
+//                    List.of("uriMono", "uri"),
+//                    false,
+//                    SortDirection.DESC
+//            ));
+//            viewsAsList.forEach(System.out::println);
+//        } catch (Exception e) {
+//            log.warn("! Failed to getViewsAsList from stats module:", e);
+//        }
 
-        Flux<ViewDtoResponse> viewsFlax = webClient.find(new ViewSearchFilter(
-                LocalDateTime.now().minusYears(5),
-                LocalDateTime.now().plusYears(5),
-                List.of("uri-test"),
-                true,
-                SortDirection.DESC
-        ));
+//        Flux<ViewDtoResponse> viewsFlax = webClient.find(new ViewSearchFilter(
+//                LocalDateTime.now().minusYears(5),
+//                LocalDateTime.now().plusYears(5),
+//                List.of("uri-test"),
+//                true,
+//                SortDirection.DESC
+//        ));
+//
+//        viewsFlax.subscribe(
+//                System.out::println,
+//                error -> System.err.println("An error occurred: " + error.getMessage())
+//        );
 
-        viewsFlax.subscribe(
-                System.out::println,
-                error -> System.err.println("An error occurred: " + error.getMessage())
-        );
-
-        viewsFlax = webClient.find(new ViewSearchFilter(
-                LocalDateTime.now().minusYears(5),
-                LocalDateTime.now().plusYears(5),
-                List.of("uri-block"),
-                true,
-                SortDirection.DESC
-        ));
-
-        viewsFlax.subscribe(
-                System.out::println,
-                error -> System.err.println("An error occurred: " + error.getMessage())
-        );
+//        viewsFlax = webClient.find(new ViewSearchFilter(
+//                LocalDateTime.now().minusYears(5),
+//                LocalDateTime.now().plusYears(5),
+//                List.of("uri-block"),
+//                true,
+//                SortDirection.DESC
+//        ));
+//
+//        viewsFlax.subscribe(
+//                System.out::println,
+//                error -> System.err.println("An error occurred: " + error.getMessage())
+//        );
 
         //-- add
 //        ViewDtoAddResponse viewDtoAddResponse = webClient.addByBlocking(new ViewDtoAddRequest(
@@ -97,37 +97,40 @@ public class MainService {
 
         List<CartItemDtoResponse> cartItemAsList;
         try {
-            cartItemAsList = webClientCart.findByBlocking(new CartItemSearchFilter(
-                    LocalDateTime.now().minusYears(5),
-                    LocalDateTime.now().plusYears(5),
-                    List.of(1L, 5L),
-                    false,
-                    SortDirection.DESC
-            ));
+            cartItemAsList = webClientCart.findByBlocking(CartItemSearchFilter.builder()
+                    .start(LocalDateTime.now().minusYears(5))
+                    .end(LocalDateTime.now().plusYears(5))
+                    .itemIds(List.of(1L, 5L))
+                    .unique(false)
+                    .sortDirection(SortDirection.DESC)
+                    .build());
             cartItemAsList.forEach(System.out::println);
         } catch (Exception e) {
             log.warn("! Failed to findByBlocking cartItems from stats module:", e);
         }
 
-        webClientCart.find(new CartItemSearchFilter(
-                LocalDateTime.now().minusYears(5),
-                LocalDateTime.now().plusYears(5),
-                List.of(1L, 5L),
-                true,
-                SortDirection.DESC
-        )).subscribe(
-                System.out::println,
-                error -> System.err.println("An error occurred: " + error.getMessage()));
+        webClientCart.find(CartItemSearchFilter.builder()
+                        .start(LocalDateTime.now().minusYears(5))
+                        .end(LocalDateTime.now().plusYears(5))
+                        .itemIds(List.of(1L, 5L))
+                        .unique(true)
+                        .sortDirection(SortDirection.DESC)
+                        .build()
+                )
+                .subscribe(
+                        System.out::println,
+                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
-        webClientCart.find(new CartItemSearchFilter(
-                LocalDateTime.now().minusYears(5),
-                LocalDateTime.now().plusYears(5),
-                null,
-                false,
-                SortDirection.DESC
-        )).subscribe(
-                System.out::println,
-                error -> System.err.println("An error occurred: " + error.getMessage()));
+        webClientCart.find(CartItemSearchFilter.builder()
+                        .start(LocalDateTime.now().minusYears(5))
+                        .end(LocalDateTime.now().plusYears(5))
+                        .itemIds(null)
+                        .unique(false)
+                        .sortDirection(SortDirection.DESC)
+                        .build())
+                .subscribe(
+                        System.out::println,
+                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
         //-- add
 //        CartItemDtoAddResponse cartItemDtoAddResponse = webClientCart.addByBlocking(new CartItemDtoAddRequest(

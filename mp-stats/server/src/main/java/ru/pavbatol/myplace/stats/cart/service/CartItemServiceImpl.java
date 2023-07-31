@@ -34,12 +34,14 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public Flux<CartItemDtoResponse> find(CartItemSearchFilter filter) {
-        filter
-                .setStart(filter.getStart() != null ? filter.getStart() : LocalDateTime.of(1970, 1, 1, 0, 0, 0))
-                .setEnd(filter.getEnd() != null ? filter.getEnd() : LocalDateTime.now())
-                .setItemIds(filter.getItemIds() != null ? filter.getItemIds() : List.of())
-                .setUnique(filter.getUnique() != null ? filter.getUnique() : false)
-                .setSortDirection(filter.getSortDirection() != null ? filter.getSortDirection().name() : SortDirection.DESC.name());
-        return repository.find(filter);
+        CartItemSearchFilter checkedFilter = CartItemSearchFilter.builder()
+                .start(filter.getStart() != null ? filter.getStart() : LocalDateTime.of(1970, 1, 1, 0, 0, 0))
+                .end(filter.getEnd() != null ? filter.getEnd() : LocalDateTime.now())
+                .itemIds(filter.getItemIds() != null ? filter.getItemIds() : List.of())
+                .unique(filter.getUnique() != null ? filter.getUnique() : false)
+                .sortDirection(filter.getSortDirection() != null ? filter.getSortDirection() : SortDirection.DESC)
+                .build();
+
+        return repository.find(checkedFilter);
     }
 }
