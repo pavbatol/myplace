@@ -34,7 +34,6 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public Flux<UserCartItemDtoResponse> findUserCartItems(UserCartItemSearchFilter filter) {
-//        return repository.findUserCartItems(filter.populateNullFields());
-        return null;
+        return repository.findUserCartItems(filter.populateNullFields());
     }
 }

@@ -10,6 +10,8 @@ import reactor.core.publisher.Flux;
 import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.cart.CartItemDtoResponse;
 import ru.pavbatol.myplace.dto.cart.CartItemSearchFilter;
+import ru.pavbatol.myplace.dto.cart.UserCartItemDtoResponse;
+import ru.pavbatol.myplace.dto.cart.UserCartItemSearchFilter;
 
 @RequiredArgsConstructor
 public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRepository {
@@ -19,6 +21,8 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
     public static final String USER_ID = "userId";
     public static final String CART_ITEMS = "cartItems";
     public static final String TEMP = "temp";
+    public static final String CART_ITEM_IDS = "cartItemIds";
+    public static final String ITEM_COUNT = "itemCount";
     private final ReactiveMongoTemplate reactiveMongoTemplate;
 
     @Override
@@ -39,5 +43,49 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
                 : Aggregation.newAggregation(betweenDates, inItemIds, groupAndCount, sort, projection);
 
         return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, CartItemDtoResponse.class);
+    }
+
+    @Override
+    public Flux<UserCartItemDtoResponse> findUserCartItems(UserCartItemSearchFilter filter) {
+        Sort.Direction direction = filter.getSortDirection() != null && filter.getSortDirection() == SortDirection.ASC
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        MatchOperation betweenDates = Aggregation.match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd()));
+
+        MatchOperation inUserIds = Aggregation.match(CollectionUtils.isEmpty(filter.getUserIds())
+                ? new Criteria() : new Criteria(USER_ID).in(filter.getUserIds()));
+
+        GroupOperation group = filter.getUnique()
+                ? Aggregation.group(USER_ID).addToSet(ITEM_ID).as(CART_ITEM_IDS)
+                : Aggregation.group(USER_ID).push(ITEM_ID).as(CART_ITEM_IDS);
+
+        ProjectionOperation projection = Aggregation.project(CART_ITEM_IDS)
+                .and(CART_ITEM_IDS).size().as(ITEM_COUNT)
+                .and(USER_ID).previousOperation();
+
+        SortOperation sort = Aggregation.sort(direction, ITEM_COUNT);
+
+        Aggregation aggregation = CollectionUtils.isEmpty(filter.getUserIds())
+                ? Aggregation.newAggregation(betweenDates, inUserIds, group, projection, sort)
+                : Aggregation.newAggregation(betweenDates, group, projection, sort);
+
+//        Aggregation aggregation = Aggregation.newAggregation(
+//                match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd())),
+//
+//                match(CollectionUtils.isEmpty(filter.getUserIds())
+//                        ? new Criteria() : new Criteria(USER_ID).in(filter.getUserIds())),
+//
+//                filter.getUnique()
+//                        ? group(USER_ID).addToSet(ITEM_ID).as("cartItemIds")
+//                        : group(USER_ID).push(ITEM_ID).as("cartItemIds"),
+//
+//                project("cartItemIds")
+//                        .and("cartItemIds").size().as("itemCount")
+//                        .and(USER_ID).previousOperation(),
+//
+//                Aggregation.sort(direction, "itemCount")
+//        );
+
+        return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, UserCartItemDtoResponse.class);
     }
 }

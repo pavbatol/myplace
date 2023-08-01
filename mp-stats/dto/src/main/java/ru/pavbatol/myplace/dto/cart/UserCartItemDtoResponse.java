@@ -12,4 +12,5 @@ import java.util.List;
 public class UserCartItemDtoResponse {
     Long userId;
     List<Long> cartItemIds;
+    Long itemCount;
 }
