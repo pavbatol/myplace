@@ -8,6 +8,9 @@ import lombok.experimental.SuperBuilder;
 import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Data
 @SuperBuilder
@@ -31,18 +34,29 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
 
     public abstract T populateNullFields();
 
-    protected void ensureNonNullFields() {
-        setStart(getStart() != null ? getStart() : START);
-        setEnd(getEnd() != null ? getEnd() : END);
-        setUnique(getUnique() != null ? getUnique() : UNIQUE);
-        setSortDirection(getSortDirection() != null ? getSortDirection().name() : DIRECTION);
-    }
-
     public void setSortDirection(String name) {
         if (name != null) {
             this.sortDirection = SortDirection.valueOf(name.toUpperCase());
         } else {
             this.sortDirection = null;
         }
+    }
+
+    public String toQuery(DateTimeFormatter formatter) {
+        String startParam = getStart() == null ? "" : "start=" + getStart().format(formatter);
+        String endParam = getEnd() == null ? "" : "end=" + getEnd().format(formatter);
+        String uniqueParam = getUnique() == null ? "" : "unique=" + getUnique();
+        String sortDirectionParam = getSortDirection() == null ? "" : "sortDirection=" + getSortDirection();
+
+        return Stream.of(startParam, endParam, uniqueParam, sortDirectionParam)
+                .filter(param -> !param.isEmpty())
+                .collect(Collectors.joining("&"));
+    }
+
+    protected void ensureNonNullFields() {
+        setStart(getStart() != null ? getStart() : START);
+        setEnd(getEnd() != null ? getEnd() : END);
+        setUnique(getUnique() != null ? getUnique() : UNIQUE);
+        setSortDirection(getSortDirection() != null ? getSortDirection().name() : DIRECTION);
     }
 }

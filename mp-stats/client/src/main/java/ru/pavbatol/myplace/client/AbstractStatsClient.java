@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
-public abstract class AbstractStatsClient<T, R, F, R2> implements StatsClient<T, R, F, R2> {
+public abstract class AbstractStatsClient<T, R, F, R1> implements StatsClient<T, R, F, R1> {
     public static final String STATS = "stats";
     public static final String DATE_TIME_T_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
     protected final String serverUrl;
@@ -34,8 +34,8 @@ public abstract class AbstractStatsClient<T, R, F, R2> implements StatsClient<T,
     }
 
     @Override
-    public List<R2> findByBlocking(@NonNull F f) {
-        Flux<R2> asFlux = find(f);
+    public List<R1> findByBlocking(@NonNull F f) {
+        Flux<R1> asFlux = find(f);
         return asFlux.collectList().block();
     }
 
