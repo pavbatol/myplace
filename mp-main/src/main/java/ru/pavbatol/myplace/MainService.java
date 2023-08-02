@@ -31,45 +31,72 @@ public class MainService {
         //-- get
         ViewStatsClient webClient = new ViewStatsClient("http://localhost:9090");
 
-//        List<ViewDtoResponse> viewsAsList;
+        List<ViewDtoResponse> viewsAsList;
 //        try {
-//            viewsAsList = webClient.findByBlocking(new ViewSearchFilter(
-//                    LocalDateTime.now().minusYears(5),
-//                    LocalDateTime.now().plusYears(5),
-//                    List.of("uriMono", "uri"),
-//                    false,
-//                    SortDirection.DESC
-//            ));
+//            viewsAsList = webClient.findByBlocking(ViewSearchFilter.builder()
+//                    .start(LocalDateTime.now().minusYears(5))
+//                    .end(LocalDateTime.now().plusYears(5))
+//                    .uris(List.of("uriMono", "uri"))
+//                    .unique(false)
+//                    .sortDirection(SortDirection.DESC)
+//                    .build()
+//            );
 //            viewsAsList.forEach(System.out::println);
 //        } catch (Exception e) {
 //            log.warn("! Failed to getViewsAsList from stats module:", e);
 //        }
-
-//        Flux<ViewDtoResponse> viewsFlax = webClient.find(new ViewSearchFilter(
-//                LocalDateTime.now().minusYears(5),
-//                LocalDateTime.now().plusYears(5),
-//                List.of("uri-test"),
-//                true,
-//                SortDirection.DESC
-//        ));
 //
-//        viewsFlax.subscribe(
-//                System.out::println,
-//                error -> System.err.println("An error occurred: " + error.getMessage())
-//        );
-
-//        viewsFlax = webClient.find(new ViewSearchFilter(
-//                LocalDateTime.now().minusYears(5),
-//                LocalDateTime.now().plusYears(5),
-//                List.of("uri-block"),
-//                true,
-//                SortDirection.DESC
-//        ));
+//        webClient.find(ViewSearchFilter.builder()
+//                        .start(LocalDateTime.now().minusYears(5))
+//                        .end(LocalDateTime.now().plusYears(5))
+//                        .uris(List.of("uri-test"))
+//                        .unique(true)
+//                        .sortDirection(SortDirection.DESC)
+//                        .build()
+//                )
+//                .subscribe(
+//                        System.out::println,
+//                        error -> System.err.println("An error occurred: " + error.getMessage())
+//                );
 //
-//        viewsFlax.subscribe(
-//                System.out::println,
-//                error -> System.err.println("An error occurred: " + error.getMessage())
-//        );
+//        webClient.find(ViewSearchFilter.builder()
+//                        .start(LocalDateTime.now().minusYears(5))
+//                        .end(LocalDateTime.now().plusYears(5))
+//                        .uris(List.of("uri-block"))
+//                        .unique(true)
+//                        .sortDirection(SortDirection.DESC)
+//                        .build()
+//                )
+//                .subscribe(
+//                        System.out::println,
+//                        error -> System.err.println("An error occurred: " + error.getMessage())
+//                );
+
+        webClient.find(ViewSearchFilter.builder()
+                        .start(LocalDateTime.now().minusYears(5))
+                        .end(LocalDateTime.now().plusYears(5))
+                        .uris(null)
+                        .unique(true)
+                        .sortDirection(SortDirection.DESC)
+                        .build()
+                )
+                .subscribe(
+                        System.out::println,
+                        error -> System.err.println("An error occurred: " + error.getMessage())
+                );
+
+        webClient.find(ViewSearchFilter.builder()
+                        .start(LocalDateTime.now().minusYears(5))
+                        .end(LocalDateTime.now().plusYears(5))
+                        .uris(null)
+                        .unique(false)
+                        .sortDirection(SortDirection.DESC)
+                        .build()
+                )
+                .subscribe(
+                        System.out::println,
+                        error -> System.err.println("An error occurred: " + error.getMessage())
+                );
 
         //-- add
 //        ViewDtoAddResponse viewDtoAddResponse = webClient.addByBlocking(new ViewDtoAddRequest(
@@ -141,16 +168,16 @@ public class MainService {
 //                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
         //--
-        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
-                        .start(LocalDateTime.now().minusYears(5))
-                        .end(LocalDateTime.now().plusYears(5))
-                        .userIds(List.of(10L, 2L))
-                        .unique(false)
-                        .sortDirection(SortDirection.DESC)
-                        .build())
-                .subscribe(
-                        System.out::println,
-                        error -> System.err.println("An error occurred: " + error.getMessage()));
+//        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
+//                        .start(LocalDateTime.now().minusYears(5))
+//                        .end(LocalDateTime.now().plusYears(5))
+//                        .userIds(List.of(10L, 2L))
+//                        .unique(false)
+//                        .sortDirection(SortDirection.DESC)
+//                        .build())
+//                .subscribe(
+//                        System.out::println,
+//                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
 //        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))

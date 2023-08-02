@@ -36,11 +36,7 @@ public class ViewStatsClient
         String path = UriComponentsBuilder.newInstance()
                 .pathSegment(STATS)
                 .pathSegment(VIEWS)
-                .queryParam("start", filter.getStart() == null ? "" : filter.getStart().format(formatter))
-                .queryParam("end", filter.getEnd() == null ? "" : filter.getEnd().format(formatter))
-                .queryParam("uris", filter.getUris() == null ? "" : String.join(",", filter.getUris()))
-                .queryParam("unique", filter.getUnique() == null ? "" : filter.getUnique())
-                .queryParam("sortDirection", filter.getSortDirection() == null ? "" : filter.getSortDirection())
+                .query(filter.toQuery(formatter))
                 .build().toUriString();
 
         return get(path, ViewDtoResponse.class);

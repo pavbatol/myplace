@@ -1,41 +1,42 @@
 package ru.pavbatol.myplace.dto.view;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.pavbatol.myplace.dto.SortDirection;
+import lombok.experimental.SuperBuilder;
+import ru.pavbatol.myplace.dto.AbstractSearchFilter;
 import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-@Data
+@Getter
+@Setter
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-@Accessors(chain = true)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ViewSearchFilter {
-    @CustomDateTimeFormat
-    LocalDateTime start;
-
-    @CustomDateTimeFormat
-    LocalDateTime end;
-
+public class ViewSearchFilter extends AbstractSearchFilter<ViewSearchFilter> {
     List<String> uris;
 
-    Boolean unique;
-
-    SortDirection sortDirection;
-
-    public ViewSearchFilter setSortDirection(String name) {
-        if (name != null) {
-            this.sortDirection = SortDirection.valueOf(name.toUpperCase());
-        } else {
-            this.sortDirection = null;
-        }
+    @Override
+    public ViewSearchFilter populateNullFields() {
+        ensureNonNullFields();
+        setUris(getUris() != null ? getUris() : List.of());
         return this;
+    }
+
+    @Override
+    public String toQuery(DateTimeFormatter formatter) {
+        String query = super.toQuery(formatter);
+        String addedQuery = getUris() == null ? "" : "uris=" + getUris().stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+
+        return Stream.of(query, addedQuery)
+                .filter(str -> !str.isEmpty())
+                .collect(Collectors.joining("&"));
     }
 }
