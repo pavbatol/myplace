@@ -66,25 +66,8 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
         SortOperation sort = Aggregation.sort(direction, ITEM_COUNT);
 
         Aggregation aggregation = CollectionUtils.isEmpty(filter.getUserIds())
-                ? Aggregation.newAggregation(betweenDates, inUserIds, group, projection, sort)
-                : Aggregation.newAggregation(betweenDates, group, projection, sort);
-
-//        Aggregation aggregation = Aggregation.newAggregation(
-//                match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd())),
-//
-//                match(CollectionUtils.isEmpty(filter.getUserIds())
-//                        ? new Criteria() : new Criteria(USER_ID).in(filter.getUserIds())),
-//
-//                filter.getUnique()
-//                        ? group(USER_ID).addToSet(ITEM_ID).as("cartItemIds")
-//                        : group(USER_ID).push(ITEM_ID).as("cartItemIds"),
-//
-//                project("cartItemIds")
-//                        .and("cartItemIds").size().as("itemCount")
-//                        .and(USER_ID).previousOperation(),
-//
-//                Aggregation.sort(direction, "itemCount")
-//        );
+                ? Aggregation.newAggregation(betweenDates, group, projection, sort)
+                : Aggregation.newAggregation(betweenDates, inUserIds, group, projection, sort);
 
         return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, UserCartItemDtoResponse.class);
     }
