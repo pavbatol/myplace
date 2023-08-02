@@ -7,8 +7,6 @@ import ru.pavbatol.myplace.dto.AbstractSearchFilter;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -22,20 +20,15 @@ public class UserCartItemSearchFilter extends AbstractSearchFilter<UserCartItemS
 
     @Override
     public UserCartItemSearchFilter populateNullFields() {
-        ensureNonNullFields();
+        ensureNonNullBaseFields();
         setUserIds(getUserIds() != null ? getUserIds() : List.of());
         return this;
     }
 
     @Override
     public String toQuery(DateTimeFormatter formatter) {
-        String query = super.toQuery(formatter);
-        String addedQuery = getUserIds() == null ? "" : "userIds=" + getUserIds().stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-
-        return Stream.of(query, addedQuery)
-                .filter(str -> !str.isEmpty())
-                .collect(Collectors.joining("&"));
+        String baseQuery = baseFilterToQuery(formatter);
+        String addedQuery = toParamFromLongs("userIds", getUserIds());
+        return joinQueryParams(baseQuery, addedQuery);
     }
 }

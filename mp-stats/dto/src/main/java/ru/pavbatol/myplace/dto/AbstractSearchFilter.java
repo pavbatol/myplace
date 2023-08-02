@@ -9,8 +9,10 @@ import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Data
 @SuperBuilder
@@ -34,6 +36,8 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
 
     public abstract T populateNullFields();
 
+    public abstract String toQuery(DateTimeFormatter formatter);
+
     public void setSortDirection(String name) {
         if (name != null) {
             this.sortDirection = SortDirection.valueOf(name.toUpperCase());
@@ -42,18 +46,39 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
         }
     }
 
-    public String toQuery(DateTimeFormatter formatter) {
+    protected final String baseFilterToQuery(DateTimeFormatter formatter) {
         String startParam = getStart() == null ? "" : "start=" + getStart().format(formatter);
         String endParam = getEnd() == null ? "" : "end=" + getEnd().format(formatter);
         String uniqueParam = getUnique() == null ? "" : "unique=" + getUnique();
         String sortDirectionParam = getSortDirection() == null ? "" : "sortDirection=" + getSortDirection();
 
-        return Stream.of(startParam, endParam, uniqueParam, sortDirectionParam)
-                .filter(param -> !param.isEmpty())
+        return joinQueryParams(startParam, endParam, uniqueParam, sortDirectionParam);
+    }
+
+    protected final String joinQueryParams(String... queryParam) {
+        return Arrays.stream(queryParam)
+                .filter(params -> !params.isEmpty())
                 .collect(Collectors.joining("&"));
     }
 
-    protected void ensureNonNullFields() {
+    protected final String toParam(String paramName, String value) {
+        return value == null ? "" : String.format("%s=%s", paramName, value);
+    }
+
+    protected final String toParamFromStrings(String paramName, List<String> values) {
+        return values == null ? "" : String.format("%s=%s", paramName, values.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(",")));
+    }
+
+    protected final String toParamFromLongs(String paramName, List<Long> values) {
+        return values == null ? "" : String.format("%s=%s", paramName, values.stream()
+                .filter(Objects::nonNull)
+                .map(String::valueOf)
+                .collect(Collectors.joining(",")));
+    }
+
+    protected final void ensureNonNullBaseFields() {
         setStart(getStart() != null ? getStart() : START);
         setEnd(getEnd() != null ? getEnd() : END);
         setUnique(getUnique() != null ? getUnique() : UNIQUE);

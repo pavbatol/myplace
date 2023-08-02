@@ -4,12 +4,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import ru.pavbatol.myplace.dto.AbstractSearchFilter;
-import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -23,20 +20,15 @@ public class ViewSearchFilter extends AbstractSearchFilter<ViewSearchFilter> {
 
     @Override
     public ViewSearchFilter populateNullFields() {
-        ensureNonNullFields();
+        ensureNonNullBaseFields();
         setUris(getUris() != null ? getUris() : List.of());
         return this;
     }
 
     @Override
     public String toQuery(DateTimeFormatter formatter) {
-        String query = super.toQuery(formatter);
-        String addedQuery = getUris() == null ? "" : "uris=" + getUris().stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-
-        return Stream.of(query, addedQuery)
-                .filter(str -> !str.isEmpty())
-                .collect(Collectors.joining("&"));
+        String baseQuery = baseFilterToQuery(formatter);
+        String addedQuery = toParamFromStrings("uris", getUris());
+        return joinQueryParams(baseQuery, addedQuery);
     }
 }

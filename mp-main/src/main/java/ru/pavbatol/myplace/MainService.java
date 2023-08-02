@@ -45,7 +45,7 @@ public class MainService {
 //        } catch (Exception e) {
 //            log.warn("! Failed to getViewsAsList from stats module:", e);
 //        }
-//
+
 //        webClient.find(ViewSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))
 //                        .end(LocalDateTime.now().plusYears(5))
@@ -58,7 +58,7 @@ public class MainService {
 //                        System.out::println,
 //                        error -> System.err.println("An error occurred: " + error.getMessage())
 //                );
-//
+
 //        webClient.find(ViewSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))
 //                        .end(LocalDateTime.now().plusYears(5))
@@ -72,31 +72,31 @@ public class MainService {
 //                        error -> System.err.println("An error occurred: " + error.getMessage())
 //                );
 
-        webClient.find(ViewSearchFilter.builder()
-                        .start(LocalDateTime.now().minusYears(5))
-                        .end(LocalDateTime.now().plusYears(5))
-                        .uris(null)
-                        .unique(true)
-                        .sortDirection(SortDirection.DESC)
-                        .build()
-                )
-                .subscribe(
-                        System.out::println,
-                        error -> System.err.println("An error occurred: " + error.getMessage())
-                );
+//        webClient.find(ViewSearchFilter.builder()
+//                        .start(LocalDateTime.now().minusYears(5))
+//                        .end(LocalDateTime.now().plusYears(5))
+//                        .uris(null)
+//                        .unique(true)
+//                        .sortDirection(SortDirection.DESC)
+//                        .build()
+//                )
+//                .subscribe(
+//                        System.out::println,
+//                        error -> System.err.println("An error occurred: " + error.getMessage())
+//                );
 
-        webClient.find(ViewSearchFilter.builder()
-                        .start(LocalDateTime.now().minusYears(5))
-                        .end(LocalDateTime.now().plusYears(5))
-                        .uris(null)
-                        .unique(false)
-                        .sortDirection(SortDirection.DESC)
-                        .build()
-                )
-                .subscribe(
-                        System.out::println,
-                        error -> System.err.println("An error occurred: " + error.getMessage())
-                );
+//        webClient.find(ViewSearchFilter.builder()
+//                        .start(LocalDateTime.now().minusYears(5))
+//                        .end(LocalDateTime.now().plusYears(5))
+//                        .uris(null)
+//                        .unique(false)
+//                        .sortDirection(SortDirection.DESC)
+//                        .build()
+//                )
+//                .subscribe(
+//                        System.out::println,
+//                        error -> System.err.println("An error occurred: " + error.getMessage())
+//                );
 
         //-- add
 //        ViewDtoAddResponse viewDtoAddResponse = webClient.addByBlocking(new ViewDtoAddRequest(
@@ -132,7 +132,7 @@ public class MainService {
 //        } catch (Exception e) {
 //            log.warn("! Failed to findByBlocking cartItems from stats module:", e);
 //        }
-//
+
 //        webClientCart.find(CartItemSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))
 //                        .end(LocalDateTime.now().plusYears(5))
@@ -144,7 +144,7 @@ public class MainService {
 //                .subscribe(
 //                        System.out::println,
 //                        error -> System.err.println("An error occurred: " + error.getMessage()));
-//
+
 //        webClientCart.find(CartItemSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))
 //                        .end(LocalDateTime.now().plusYears(5))
@@ -155,7 +155,7 @@ public class MainService {
 //                .subscribe(
 //                        System.out::println,
 //                        error -> System.err.println("An error occurred: " + error.getMessage()));
-//
+
 //        webClientCart.find(CartItemSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))
 //                        .end(LocalDateTime.now().plusYears(5))
@@ -168,16 +168,16 @@ public class MainService {
 //                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
         //--
-//        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
-//                        .start(LocalDateTime.now().minusYears(5))
-//                        .end(LocalDateTime.now().plusYears(5))
-//                        .userIds(List.of(10L, 2L))
-//                        .unique(false)
-//                        .sortDirection(SortDirection.DESC)
-//                        .build())
-//                .subscribe(
-//                        System.out::println,
-//                        error -> System.err.println("An error occurred: " + error.getMessage()));
+        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
+                        .start(LocalDateTime.now().minusYears(5))
+                        .end(LocalDateTime.now().plusYears(5))
+                        .userIds(List.of(10L, 2L))
+                        .unique(false)
+                        .sortDirection(SortDirection.DESC)
+                        .build())
+                .subscribe(
+                        System.out::println,
+                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
 //        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))
@@ -190,17 +190,17 @@ public class MainService {
 //                        System.out::println,
 //                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
-//        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
-//                        .start(LocalDateTime.now().minusYears(5))
-//                        .end(LocalDateTime.now().plusYears(5))
-//                        .userIds(null)
-//                        .unique(false)
-//                        .sortDirection(SortDirection.DESC)
-//                        .build())
-//                .subscribe(
-//                        System.out::println,
-//                        error -> System.err.println("An error occurred: " + error.getMessage()));
-//
+        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
+                        .start(LocalDateTime.now().minusYears(5))
+                        .end(LocalDateTime.now().plusYears(5))
+                        .userIds(null)
+                        .unique(false)
+                        .sortDirection(SortDirection.DESC)
+                        .build())
+                .subscribe(
+                        System.out::println,
+                        error -> System.err.println("An error occurred: " + error.getMessage()));
+
 //        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))
 //                        .end(LocalDateTime.now().plusYears(5))
