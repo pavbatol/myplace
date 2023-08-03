@@ -2,22 +2,27 @@ package ru.pavbatol.myplace.stats.shipping.repository;
 
 import com.mongodb.BasicDBObject;
 import lombok.RequiredArgsConstructor;
+import org.bson.Document;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 //import org.springframework.data.mongodb.repository.Aggregation;
 //import org.springframework.data.mongodb.repository.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
-import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
+import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.shipping.ShippingGeoDtoResponse;
 import ru.pavbatol.myplace.dto.shipping.ShippingGeoSearchFilter;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.AggregationFunctionExpressions.*;
 
 @RequiredArgsConstructor
 public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMongoRepository {
@@ -25,68 +30,115 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
 
     @Override
     public Flux<ShippingGeoDtoResponse> findShippingCountryCities(ShippingGeoSearchFilter filter) {
+        Sort.Direction direction = filter.getSortDirection() != null && filter.getSortDirection() == SortDirection.ASC
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        MatchOperation betweenDates = match(new Criteria("timestamp").gte(filter.getStart()).lte(filter.getEnd()));
+        MatchOperation inItemIds = match(CollectionUtils.isEmpty(filter.getItemIds())
+                ? new Criteria() : new Criteria("itemId").in(filter.getItemIds()));
+        MatchOperation inCountries = match(CollectionUtils.isEmpty(filter.getCountries())
+                ? new Criteria() : new Criteria("country").in(filter.getCountries()));
+
+        GroupOperation groupByCountry = filter.getUnique()
+                ? group("itemId", "country").addToSet("city").as("cities")
+                : group("itemId", "country").push("city").as("cities");
+        GroupOperation groupByItemId = group("itemId").push(
+                new BasicDBObject("country", "$_id.country")
+                        .append("cities", "$cities")
+                        .append("cCount", new BasicDBObject("$size", "$cities"))).as("countries");
+
+        SortOperation sort = Aggregation.sort(direction, "cityCount");
+
+        ProjectionOperation projection = project()
+                .andExclude("_id")
+                .and("_id").as("itemId")
+                .and("countries").size().as("countryCount")
+                .andExpression("sum(countries.cCount)").as("cityCount")
+                .andExpression(" " +
+                        "{ " +
+                        "  $arrayToObject: { " +
+                        "    $map: { " +
+                        "      input: '$countries', " +
+                        "      as: 'country', " +
+                        "      in: { " +
+                        "        k: '$$country.country', " +
+                        "        v: '$$country.cities' " +
+                        "      } " +
+                        "    } " +
+                        "  } " +
+                        "} "
+                ).as("countryCities");
+
         Aggregation aggregation = Aggregation.newAggregation(
-                // Match stage to filter documents based on criteria
-                Aggregation.match(Criteria.where("timestamp").gte(LocalDateTime.now().minusDays(7))),
+                betweenDates,
+                inItemIds,
+                inCountries,
+                groupByCountry,
+                groupByItemId,
+                projection,
+                sort);
 
-                // Group stage to group by country and accumulate cities
-                group("country")
-                        .addToSet("city").as("cities")
-                        .count().as("count"),
+        return reactiveMongoTemplate.aggregate(aggregation, "shippingGeos", ShippingGeoDtoResponse.class);
+    }
 
-                // Project stage to reshape the output
+    @Override
+    public Flux<ShippingGeoDtoResponse> getShippingGeoData(ShippingGeoSearchFilter filter) {
+
+        MatchOperation matchDate = match(new Criteria("timestamp").gte(filter.getStart()).lte(filter.getEnd()));
+        MatchOperation matchItemId = match(CollectionUtils.isEmpty(filter.getItemIds())
+                ? new Criteria() : new Criteria("itemId").in(filter.getItemIds()));
+        MatchOperation matchCountry = match(CollectionUtils.isEmpty(filter.getCountries())
+                ? new Criteria() : new Criteria("country").in(filter.getCountries()));
+
+        GroupOperation groupByItemId = filter.getUnique()
+                ? group("itemId")
+                .addToSet("country").as("countries")
+                .addToSet("city").as("cities")
+                : group("itemId")
+                .addToSet("country").as("countries")
+                .push("city").as("cities");
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchDate, matchItemId, matchCountry, groupByItemId,
                 project()
-                        .and("_id").as("country")
-                        .and("cities").as("cityList")
                         .andExclude("_id")
-                        .andInclude("count")
-        );
+                        .and("itemId").previousOperation()
+                        .and("countries").as("countries")
+                        .and("cities").as("cities")
+                        .andExpression("size(countries)").as("countryCount")
+                        .andExpression("size(cities)").as("cityCount"),
+                sort(Sort.Direction.DESC, "cityCount")
 
-        return reactiveMongoTemplate.aggregate(aggregation, "shippingGeos", ShippingGeoDtoResponse.class);
-    }
+//                group().push(new Document("k", "$country").append("v", "$cities")).as("countryCities")
 
-//    public Flux<ShippingGeoDtoResponse> getShippingGeoDtoResponse() {
-//        Aggregation aggregation = Aggregation.newAggregation(
-//                group("country")
-//                        .addToSet("city").as("cities")
-//                        .count().as("count"),
-//                group().push(new BasicDBObject("k", "$_id").append("v", "$cities")).as("countryCities")
-//                        .sum("$count").as("countryCount")
-//                        .sum("cities").as("cityCount"),
-//                project()
-//                        .andExclude("_id")
-//                        .and("countryCount").as("countryCount")
-//                        .and("cityCount").as("cityCount")
-//                        .and(ArrayOperators.ObjectToArray.itemsOf("countryCities")).as("countryCities"),
-//                project()
-//                        .and("k").as("country")
-//                        .and(ArrayOperators.Map.valuesOf("v")).as("cities"),
-//                project()
-//                        .andInclude("country")
-//                        .and(ArrayOperators.Filter.filter("cities").as("city")
-//                                .by(ComparisonOperators.Eq.valueOf("$city.v").equalToValue(true)))
-//                        .as("cities")
-//        );
+//                        .and(zip("countries", "cities")).as("countryCities")
+//                        .and(mapBuilder()
+//                                .sourceAsMap(VariableOperators.Variable.valueOf("countryCities"))
+//                                .as("kvp")
+//                                .instantiateClass(KeyValue.class)
+//                        ).as("countryCities");
+
+//                        .and("countryCities").push(
+//                                new BasicDBObject("$arrayToObject",
+//                                        new BasicDBObject("$zip", Arrays.asList(
+//                                                "$countries", "$cities"
+//                                        ))
+//                                )
+//                        );
+
+//                .and(AccumulatorOperators.AddToSet.addToSet("countryCities").expression(
+//                        new BasicDBObject("$arrayToObject",
+//                                new BasicDBObject("$zip", Arrays.asList(
+//                                        "$countries", "$cities"
+//                                ))
+//                        )
+//                ));
+
 //
-//        return reactiveMongoTemplate.aggregate(aggregation, "shippingGeos", ShippingGeoDtoResponse.class);
-//    }
-
-    public Flux<ShippingGeoDtoResponse> getShippingGeoData() {
-        Aggregation aggregation = Aggregation.newAggregation(
-                group("country").addToSet("city").as("cities"),
-                project().and("_id").as("country").andExclude("_id"),
-                group().count().as("countryCount").sum("cities").as("cityCount"),
-                project()
-                        .and("_id").as("itemId")
-                        .and("countryCount").as("countryCount")
-                        .and("cityCount").as("cityCount")
-                        .and("cities").as("countryCities"),
-                project()
-                        .andExclude("itemId")
-                        .and("countryCities.country").as("itemId")
-                        .and("countryCities.cities").as("countryCities")
         );
 
         return reactiveMongoTemplate.aggregate(aggregation, "shippingGeos", ShippingGeoDtoResponse.class);
     }
+
+
 }

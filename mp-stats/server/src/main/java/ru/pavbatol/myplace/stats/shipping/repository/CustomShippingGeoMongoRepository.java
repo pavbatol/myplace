@@ -6,4 +6,6 @@ import ru.pavbatol.myplace.dto.shipping.ShippingGeoSearchFilter;
 
 public interface CustomShippingGeoMongoRepository {
     Flux<ShippingGeoDtoResponse> findShippingCountryCities(ShippingGeoSearchFilter filter);
+
+    Flux<ShippingGeoDtoResponse> getShippingGeoData(ShippingGeoSearchFilter filter);
 }
