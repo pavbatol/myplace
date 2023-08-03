@@ -9,5 +9,5 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class CartItemDtoResponse {
     Long itemId;
-    int cartItemCount;
+    Integer cartItemCount;
 }

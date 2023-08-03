@@ -11,5 +11,5 @@ public interface CartItemMapper {
 
     CartItem toEntity(CartItemDtoAddRequest dto);
 
-    CartItemDtoAddResponse toAddResponse(CartItem cartItem);
+    CartItemDtoAddResponse toDtoAddResponse(CartItem cartItem);
 }

@@ -24,7 +24,7 @@ public class CartItemServiceImpl implements CartItemService {
                 ? LocalDateTime.now()
                 : entity.getTimestamp();
         entity.setTimestamp(dateTime);
-        return repository.save(entity).map(mapper::toAddResponse);
+        return repository.save(entity).map(mapper::toDtoAddResponse);
     }
 
     @Override
