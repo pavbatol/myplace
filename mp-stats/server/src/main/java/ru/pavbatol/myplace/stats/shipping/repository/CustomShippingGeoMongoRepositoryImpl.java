@@ -16,6 +16,17 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @RequiredArgsConstructor
 public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMongoRepository {
+    public static final String TIMESTAMP = "timestamp";
+    public static final String ITEM_ID = "itemId";
+    public static final String COUNTRY = "country";
+    public static final String CITY = "city";
+    public static final String CITIES = "cities";
+    public static final String COUNTRIES = "countries";
+    public static final String C_COUNT = "cCount";
+    public static final String CITY_COUNT = "cityCount";
+    public static final String COUNTRY_COUNT = "countryCount";
+    public static final String COUNTRY_CITIES = "countryCities";
+    public static final String SHIPPING_GEOS = "shippingGeos";
     private final ReactiveMongoTemplate reactiveMongoTemplate;
 
     @Override
@@ -23,41 +34,41 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
         Sort.Direction direction = filter.getSortDirection() != null && filter.getSortDirection() == SortDirection.ASC
                 ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        MatchOperation betweenDates = match(new Criteria("timestamp").gte(filter.getStart()).lte(filter.getEnd()));
+        MatchOperation betweenDates = match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd()));
         MatchOperation inItemIds = match(CollectionUtils.isEmpty(filter.getItemIds())
-                ? new Criteria() : new Criteria("itemId").in(filter.getItemIds()));
+                ? new Criteria() : new Criteria(ITEM_ID).in(filter.getItemIds()));
         MatchOperation inCountries = match(CollectionUtils.isEmpty(filter.getCountries())
-                ? new Criteria() : new Criteria("country").in(filter.getCountries()));
+                ? new Criteria() : new Criteria(COUNTRY).in(filter.getCountries()));
 
         GroupOperation groupByCountry = filter.getUnique()
-                ? group("itemId", "country").addToSet("city").as("cities")
-                : group("itemId", "country").push("city").as("cities");
-        GroupOperation groupByItemId = group("itemId").push(
-                new BasicDBObject("country", "$_id.country")
-                        .append("cities", "$cities")
-                        .append("cCount", new BasicDBObject("$size", "$cities"))).as("countries");
+                ? group(ITEM_ID, COUNTRY).addToSet(CITY).as(CITIES)
+                : group(ITEM_ID, COUNTRY).push(CITY).as(CITIES);
+        GroupOperation groupByItemId = group(ITEM_ID).push(
+                new BasicDBObject(COUNTRY, "$_id." + COUNTRY)
+                        .append(CITIES, "$" + CITIES)
+                        .append(C_COUNT, new BasicDBObject("$size", "$" + CITIES))).as(COUNTRIES);
 
-        SortOperation sort = Aggregation.sort(direction, "cityCount", "countryCount");
+        SortOperation sort = Aggregation.sort(direction, CITY_COUNT, COUNTRY_COUNT);
 
         ProjectionOperation projection = project()
                 .andExclude("_id")
-                .and("_id").as("itemId")
-                .and("countries").size().as("countryCount")
-                .andExpression("sum(countries.cCount)").as("cityCount")
+                .and("_id").as(ITEM_ID)
+                .and(COUNTRIES).size().as(COUNTRY_COUNT)
+                .andExpression("sum(" + COUNTRIES + "." + C_COUNT + ")").as(CITY_COUNT)
                 .andExpression(" " +
                         "{ " +
                         "  $arrayToObject: { " +
                         "    $map: { " +
-                        "      input: '$countries', " +
-                        "      as: 'country', " +
+                        "      input: '$" + COUNTRIES + "', " +
+                        "      as: '" + COUNTRY + "', " +
                         "      in: { " +
-                        "        k: '$$country.country', " +
-                        "        v: '$$country.cities' " +
+                        "        k: '$$" + COUNTRY + "." + COUNTRY + "', " +
+                        "        v: '$$" + COUNTRY + "." + CITIES + "' " +
                         "      } " +
                         "    } " +
                         "  } " +
                         "} "
-                ).as("countryCities");
+                ).as(COUNTRY_CITIES);
 
         Aggregation aggregation = Aggregation.newAggregation(
                 betweenDates,
@@ -68,6 +79,6 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
                 projection,
                 sort);
 
-        return reactiveMongoTemplate.aggregate(aggregation, "shippingGeos", ShippingGeoDtoResponse.class);
+        return reactiveMongoTemplate.aggregate(aggregation, SHIPPING_GEOS, ShippingGeoDtoResponse.class);
     }
 }
