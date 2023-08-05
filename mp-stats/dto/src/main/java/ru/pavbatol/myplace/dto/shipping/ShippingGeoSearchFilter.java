@@ -30,8 +30,8 @@ public class ShippingGeoSearchFilter extends AbstractSearchFilter<ShippingGeoSea
     @Override
     public String toQuery(DateTimeFormatter formatter) {
         String baseQuery = baseFilterToQuery(formatter);
-        String countriesQuery = toParamFromLongs("countries", getItemIds());
         String itemIdsQuery = toParamFromLongs("itemIds", getItemIds());
+        String countriesQuery = toParamFromStrings("countries", getCountries());
         return joinQueryParams(baseQuery, countriesQuery, itemIdsQuery);
     }
 }

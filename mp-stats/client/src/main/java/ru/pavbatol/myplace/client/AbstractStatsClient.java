@@ -40,7 +40,7 @@ public abstract class AbstractStatsClient<T, R, F, R1> implements StatsClient<T,
     }
 
     protected <B, V> Mono<V> post(String path, B body, Class<V> responseClass) {
-        log.debug("Sending request to base url: {}, to path: {}", serverUrl, path);
+        log.debug("Sending request to base url: {}, to path: {}, with body: {}", serverUrl, path, body);
         return webClient
                 .post()
                 .uri(path)
