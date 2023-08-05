@@ -33,7 +33,7 @@ public class CartItemController {
     @GetMapping("/cartitems")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "find", description = "finding CartItems by filter")
-    public Flux<CartItemDtoResponse> find(CartItemSearchFilter filter) {
+    public Flux<CartItemDtoResponse> find(@Valid CartItemSearchFilter filter) {
         log.debug("GET (find) with filter={}", filter);
         return service.find(filter);
     }
@@ -41,7 +41,7 @@ public class CartItemController {
     @GetMapping("/user/cartitems")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "findUserCartItems", description = "finding item IDs in the cart by users")
-    public Flux<UserCartItemDtoResponse> findUserCartItems(UserCartItemSearchFilter filter) {
+    public Flux<UserCartItemDtoResponse> findUserCartItems(@Valid UserCartItemSearchFilter filter) {
         log.debug("GET (findUserCartItems) with filter={}", filter);
         return service.findUserCartItems(filter);
     }

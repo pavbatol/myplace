@@ -33,4 +33,14 @@ public class ShippingGeoServiceImpl implements ShippingGeoService {
     public Flux<ShippingGeoDtoResponse> findShippingCountryCities(ShippingGeoSearchFilter filter) {
         return repository.findShippingCountryCities(filter.populateNullFields());
     }
+
+//    public Flux<ShippingGeoDtoResponse> findShippingCountryCitiesByDateAndUnique(ShippingGeoSearchFilter filter) {
+//        filter.populateNullFields();
+//        return repository.findShippingCountryCitiesByDateAndUnique(filter.getStart(),
+//                filter.getEnd(),
+//                filter.getSortDirection() == SortDirection.ASC ? 1 : -1,
+//                (filter.getPageNumber() - 1) * (long) filter.getPageSize(),
+//                filter.getPageSize());
+//
+//    }
 }

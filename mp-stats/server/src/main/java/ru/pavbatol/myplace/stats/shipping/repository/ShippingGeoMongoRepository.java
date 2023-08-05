@@ -43,7 +43,13 @@ public interface ShippingGeoMongoRepository extends ReactiveMongoRepository<Ship
                     "      } " +
                     "    } " +
                     "  }",
-            "  {$sort: { cityCount: ?2, itemId: 1 }}"
+            "  {$sort: { cityCount: ?2, countryCount: ?2 }}",
+            "  {$skip: ?3}",
+            "  {$limit: ?4}"
     })
-    Flux<ShippingGeoDtoResponse> findShippingCountryCitiesByDateAndUnique(LocalDateTime start, LocalDateTime end, int sort);
+    Flux<ShippingGeoDtoResponse> findShippingCountryCitiesByDateAndUnique(LocalDateTime start,
+                                                                          LocalDateTime end,
+                                                                          int sort,
+                                                                          long skip,
+                                                                          long limit);
 }

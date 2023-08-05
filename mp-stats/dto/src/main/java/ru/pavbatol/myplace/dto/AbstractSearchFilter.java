@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import ru.pavbatol.myplace.dto.annotation.CustomDateTimeFormat;
 
+import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -23,6 +24,8 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
     private static final LocalDateTime END = LocalDateTime.now();
     private static final boolean UNIQUE = false;
     private static final String DIRECTION = SortDirection.DESC.name();
+    public static final int PAGE_SIZE = 10;
+    public static final int PAGE_NUMBER = 1;
 
     @CustomDateTimeFormat
     LocalDateTime start;
@@ -33,6 +36,12 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
     Boolean unique;
 
     SortDirection sortDirection;
+
+    @Min(1)
+    Integer pageSize;
+
+    @Min(1)
+    Integer pageNumber;
 
     public abstract T populateNullFields();
 
@@ -83,5 +92,7 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
         setEnd(getEnd() != null ? getEnd() : END);
         setUnique(getUnique() != null ? getUnique() : UNIQUE);
         setSortDirection(getSortDirection() != null ? getSortDirection().name() : DIRECTION);
+        setPageSize(getPageSize() != null ? getPageSize() : PAGE_SIZE);
+        setPageNumber(getPageNumber() != null ? getPageNumber() : PAGE_NUMBER);
     }
 }

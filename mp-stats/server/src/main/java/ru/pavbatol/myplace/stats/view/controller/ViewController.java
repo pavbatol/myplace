@@ -36,7 +36,7 @@ public class ViewController {
     @GetMapping("/views")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "find", description = "finding Views by filter")
-    public Flux<ViewDtoResponse> find(ViewSearchFilter filter) {
+    public Flux<ViewDtoResponse> find(@Valid ViewSearchFilter filter) {
         log.debug("GET (find) with filter={}", filter);
         return viewService.find(filter);
     }

@@ -50,6 +50,9 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
 
         SortOperation sort = Aggregation.sort(direction, CITY_COUNT, COUNTRY_COUNT);
 
+        SkipOperation skip = new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize());
+        LimitOperation limit = new LimitOperation(filter.getPageSize());
+
         ProjectionOperation projection = project()
                 .andExclude("_id")
                 .and("_id").as(ITEM_ID)
@@ -77,7 +80,9 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
                 groupByCountry,
                 groupByItemId,
                 projection,
-                sort);
+                sort,
+                skip,
+                limit);
 
         return reactiveMongoTemplate.aggregate(aggregation, SHIPPING_GEOS, ShippingGeoDtoResponse.class);
     }

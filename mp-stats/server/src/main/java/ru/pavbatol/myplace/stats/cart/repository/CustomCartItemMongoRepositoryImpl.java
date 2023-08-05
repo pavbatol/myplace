@@ -38,9 +38,12 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
         SortOperation sort = Aggregation.sort(direction, CART_ITEM_COUNT);
         ProjectionOperation projection = Aggregation.project(ITEM_ID, CART_ITEM_COUNT);
 
+        SkipOperation skip = new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize());
+        LimitOperation limit = new LimitOperation(filter.getPageSize());
+
         Aggregation aggregation = filter.getUnique()
-                ? Aggregation.newAggregation(betweenDates, inItemIds, group, groupAndCount, sort, projection)
-                : Aggregation.newAggregation(betweenDates, inItemIds, groupAndCount, sort, projection);
+                ? Aggregation.newAggregation(betweenDates, inItemIds, group, groupAndCount, sort, projection, skip, limit)
+                : Aggregation.newAggregation(betweenDates, inItemIds, groupAndCount, sort, projection, skip, limit);
 
         return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, CartItemDtoResponse.class);
     }
@@ -65,9 +68,12 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
 
         SortOperation sort = Aggregation.sort(direction, ITEM_COUNT);
 
+        SkipOperation skip = new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize());
+        LimitOperation limit = new LimitOperation(filter.getPageSize());
+
         Aggregation aggregation = CollectionUtils.isEmpty(filter.getUserIds())
-                ? Aggregation.newAggregation(betweenDates, group, projection, sort)
-                : Aggregation.newAggregation(betweenDates, inUserIds, group, projection, sort);
+                ? Aggregation.newAggregation(betweenDates, group, projection, sort, skip, limit)
+                : Aggregation.newAggregation(betweenDates, inUserIds, group, projection, sort, skip, limit);
 
         return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, UserCartItemDtoResponse.class);
     }

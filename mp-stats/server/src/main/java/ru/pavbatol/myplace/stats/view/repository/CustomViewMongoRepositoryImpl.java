@@ -41,6 +41,8 @@ public class CustomViewMongoRepositoryImpl implements CustomViewMongoRepository 
         operations.add(Aggregation.group(APP, URI).count().as(VIEWS));
         operations.add(Aggregation.sort(direction, VIEWS));
         operations.add(Aggregation.project(APP, URI, VIEWS));
+        operations.add(new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize()));
+        operations.add(new LimitOperation(filter.getPageSize()));
 
         Aggregation aggregation = Aggregation.newAggregation(operations);
 
