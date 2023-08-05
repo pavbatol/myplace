@@ -14,10 +14,5 @@ public class ShippingGeoDtoResponse {
     Long itemId;
     Integer countryCount;
     Integer cityCount;
-
-    String country;
-
-    List<String> countries;
-    List<String> cities;
     Map<String, List<String>> countryCities;
 }

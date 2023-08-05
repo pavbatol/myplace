@@ -37,7 +37,7 @@ public class ShippingGeoController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "findShippingCountryCities", description = "finding ShippingGeo by filter")
     public Flux<ShippingGeoDtoResponse> findShippingCountryCities(ShippingGeoSearchFilter filter) {
-        log.debug("GET (find) with filter={}", filter);
+        log.debug("GET (findShippingCountryCities) with filter={}", filter);
         return service.findShippingCountryCities(filter);
     }
 }
