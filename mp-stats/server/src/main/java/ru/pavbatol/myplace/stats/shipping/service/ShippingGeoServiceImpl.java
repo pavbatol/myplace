@@ -31,7 +31,7 @@ public class ShippingGeoServiceImpl implements ShippingGeoService {
 
     @Override
     public Flux<ShippingGeoDtoResponse> findShippingCountryCities(ShippingGeoSearchFilter filter) {
-        return repository.findShippingCountryCities(filter.populateNullFields());
+        return repository.findShippingCountryCities(filter.setNullFieldsToDefault());
     }
 
 //    public Flux<ShippingGeoDtoResponse> findShippingCountryCitiesByDateAndUnique(ShippingGeoSearchFilter filter) {

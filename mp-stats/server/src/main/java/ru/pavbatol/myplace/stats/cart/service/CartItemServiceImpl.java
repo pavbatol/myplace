@@ -29,11 +29,11 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public Flux<CartItemDtoResponse> find(CartItemSearchFilter filter) {
-        return repository.find(filter.populateNullFields());
+        return repository.find(filter.setNullFieldsToDefault());
     }
 
     @Override
     public Flux<UserCartItemDtoResponse> findUserCartItems(UserCartItemSearchFilter filter) {
-        return repository.findUserCartItems(filter.populateNullFields());
+        return repository.findUserCartItems(filter.setNullFieldsToDefault());
     }
 }

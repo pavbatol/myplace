@@ -19,8 +19,8 @@ public class ViewSearchFilter extends AbstractSearchFilter<ViewSearchFilter> {
     List<String> uris;
 
     @Override
-    public ViewSearchFilter populateNullFields() {
-        ensureNonNullBaseFields();
+    public ViewSearchFilter setNullFieldsToDefault() {
+        setBaseNullFieldsToDefault();
         setUris(getUris() != null ? getUris() : List.of());
         return this;
     }

@@ -20,8 +20,8 @@ public class ShippingGeoSearchFilter extends AbstractSearchFilter<ShippingGeoSea
     List<String> countries;
 
     @Override
-    public ShippingGeoSearchFilter populateNullFields() {
-        ensureNonNullBaseFields();
+    public ShippingGeoSearchFilter setNullFieldsToDefault() {
+        setBaseNullFieldsToDefault();
         setItemIds(getItemIds() != null ? getItemIds() : List.of());
         setCountries(getItemIds() != null ? getCountries() : List.of());
         return this;

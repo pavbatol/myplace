@@ -43,7 +43,7 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
     @Min(1)
     Integer pageNumber;
 
-    public abstract T populateNullFields();
+    public abstract T setNullFieldsToDefault();
 
     public abstract String toQuery(DateTimeFormatter formatter);
 
@@ -87,7 +87,7 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
                 .collect(Collectors.joining(",")));
     }
 
-    protected final void ensureNonNullBaseFields() {
+    protected final void setBaseNullFieldsToDefault() {
         setStart(getStart() != null ? getStart() : START);
         setEnd(getEnd() != null ? getEnd() : END);
         setUnique(getUnique() != null ? getUnique() : UNIQUE);

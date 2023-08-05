@@ -19,8 +19,8 @@ public class CartItemSearchFilter extends AbstractSearchFilter<CartItemSearchFil
     List<Long> itemIds;
 
     @Override
-    public CartItemSearchFilter populateNullFields() {
-        ensureNonNullBaseFields();
+    public CartItemSearchFilter setNullFieldsToDefault() {
+        setBaseNullFieldsToDefault();
         setItemIds(getItemIds() != null ? getItemIds() : List.of());
         return this;
     }

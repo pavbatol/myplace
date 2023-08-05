@@ -19,8 +19,8 @@ public class UserCartItemSearchFilter extends AbstractSearchFilter<UserCartItemS
     List<Long> userIds;
 
     @Override
-    public UserCartItemSearchFilter populateNullFields() {
-        ensureNonNullBaseFields();
+    public UserCartItemSearchFilter setNullFieldsToDefault() {
+        setBaseNullFieldsToDefault();
         setUserIds(getUserIds() != null ? getUserIds() : List.of());
         return this;
     }

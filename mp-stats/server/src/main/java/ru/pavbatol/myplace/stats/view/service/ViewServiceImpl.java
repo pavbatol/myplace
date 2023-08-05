@@ -34,6 +34,6 @@ public class ViewServiceImpl implements ViewService {
 
     @Override
     public Flux<ViewDtoResponse> find(@NonNull ViewSearchFilter filter) {
-        return repository.find(filter.populateNullFields());
+        return repository.find(filter.setNullFieldsToDefault());
     }
 }
