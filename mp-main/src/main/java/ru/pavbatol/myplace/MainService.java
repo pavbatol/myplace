@@ -168,6 +168,19 @@ public class MainService {
 //                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
         //--
+        try {
+            webClientCart.findUserCartItemsByBlocking(UserCartItemSearchFilter.builder()
+                            .start(LocalDateTime.now().minusYears(5))
+                            .end(LocalDateTime.now().plusYears(5))
+                            .userIds(List.of(10L, 2L))
+                            .unique(false)
+                            .sortDirection(SortDirection.DESC)
+                            .build())
+                    .forEach(System.out::println);
+        } catch (Exception e) {
+            log.warn("! Failed findUserCartItemsByBlocking from stats module:", e);
+        }
+
         webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
                         .start(LocalDateTime.now().minusYears(5))
                         .end(LocalDateTime.now().plusYears(5))
@@ -190,16 +203,16 @@ public class MainService {
 //                        System.out::println,
 //                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
-        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
-                        .start(LocalDateTime.now().minusYears(5))
-                        .end(LocalDateTime.now().plusYears(5))
-                        .userIds(null)
-                        .unique(false)
-                        .sortDirection(SortDirection.DESC)
-                        .build())
-                .subscribe(
-                        System.out::println,
-                        error -> System.err.println("An error occurred: " + error.getMessage()));
+//        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
+//                        .start(LocalDateTime.now().minusYears(5))
+//                        .end(LocalDateTime.now().plusYears(5))
+//                        .userIds(null)
+//                        .unique(false)
+//                        .sortDirection(SortDirection.DESC)
+//                        .build())
+//                .subscribe(
+//                        System.out::println,
+//                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
 //        webClientCart.findUserCartItems(UserCartItemSearchFilter.builder()
 //                        .start(LocalDateTime.now().minusYears(5))

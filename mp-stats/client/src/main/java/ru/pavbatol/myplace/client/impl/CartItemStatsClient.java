@@ -8,6 +8,8 @@ import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.client.AbstractStatsClient;
 import ru.pavbatol.myplace.dto.cart.*;
 
+import java.util.List;
+
 @Slf4j
 public class CartItemStatsClient
         extends AbstractStatsClient<CartItemDtoAddRequest, CartItemDtoAddResponse, CartItemSearchFilter, CartItemDtoResponse> {
@@ -50,5 +52,10 @@ public class CartItemStatsClient
                 .toUriString();
 
         return get(path, UserCartItemDtoResponse.class);
+    }
+
+    public List<UserCartItemDtoResponse> findUserCartItemsByBlocking(@NonNull UserCartItemSearchFilter filter) {
+        Flux<UserCartItemDtoResponse> asFlux = findUserCartItems(filter);
+        return asFlux.collectList().block();
     }
 }
