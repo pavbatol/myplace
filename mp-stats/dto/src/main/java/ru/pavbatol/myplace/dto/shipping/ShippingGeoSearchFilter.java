@@ -37,11 +37,11 @@ public class ShippingGeoSearchFilter extends AbstractSearchFilter<ShippingGeoSea
     public String toQuery(DateTimeFormatter formatter) {
         return joinQueryParams(
                 baseFilterToQuery(formatter),
-                toParamFromLongs("itemIds", getItemIds()),
-                toParamFromStrings("countries", getCountries()),
-                toParam("lastCityCount", String.valueOf(getLastCityCount())),
-                toParam("lastCountryCount", String.valueOf(getLastCountryCount())),
-                toParam("lastItemId", String.valueOf(getLastItemId()))
+                toParam("itemIds", getItemIds()),
+                toParam("countries", getCountries()),
+                toParam("lastCityCount", getLastCityCount()),
+                toParam("lastCountryCount", getLastCountryCount()),
+                toParam("lastItemId", getLastItemId())
         );
     }
 }

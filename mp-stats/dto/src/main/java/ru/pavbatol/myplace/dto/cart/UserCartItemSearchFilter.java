@@ -33,9 +33,9 @@ public class UserCartItemSearchFilter extends AbstractSearchFilter<UserCartItemS
     public String toQuery(DateTimeFormatter formatter) {
         return joinQueryParams(
                 baseFilterToQuery(formatter),
-                toParamFromLongs("userIds", getUserIds()),
-                toParam("lastUserId", String.valueOf(getLastUserId())),
-                toParam("lastItemCount", String.valueOf(getLastItemCount()))
+                toParam("userIds", getUserIds()),
+                toParam("lastUserId", getLastUserId()),
+                toParam("lastItemCount", getLastItemCount())
         );
     }
 }

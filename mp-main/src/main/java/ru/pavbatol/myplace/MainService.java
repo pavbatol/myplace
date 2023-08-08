@@ -300,13 +300,28 @@ public class MainService {
 //                        System.out::println,
 //                        error -> System.err.println("An error occurred: " + error.getMessage()));
 
+//        webClientShippingGeo.find(ShippingGeoSearchFilter.builder()
+//                        .start(LocalDateTime.now().minusYears(5))
+//                        .end(LocalDateTime.now().plusYears(5))
+//                        .itemIds(List.of(5L, 2L))
+//                        .countries(List.of("Российская Федерация", "Беларусь"))
+//                        .unique(true)
+//                        .sortDirection(SortDirection.DESC)
+//                        .build())
+//                .subscribe(
+//                        System.out::println,
+//                        error -> System.err.println("An error occurred: " + error.getMessage()));
+
         webClientShippingGeo.find(ShippingGeoSearchFilter.builder()
                         .start(LocalDateTime.now().minusYears(5))
                         .end(LocalDateTime.now().plusYears(5))
-                        .itemIds(List.of(5L, 2L))
-                        .countries(List.of("Российская Федерация", "Беларусь"))
+                        .itemIds(List.of())
+                        .countries(List.of())
                         .unique(true)
                         .sortDirection(SortDirection.DESC)
+                        .lastCityCount(1)
+                        .lastCountryCount(1)
+                        .lastItemId(5L)
                         .build())
                 .subscribe(
                         System.out::println,

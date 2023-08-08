@@ -36,8 +36,8 @@ public class ViewSearchFilter extends AbstractSearchFilter<ViewSearchFilter> {
     public String toQuery(DateTimeFormatter formatter) {
         return joinQueryParams(
                 baseFilterToQuery(formatter),
-                toParamFromStrings("uris", getUris()),
-                toParam("pageNumber", String.valueOf(getPageNumber()))
+                toParam("uris", getUris()),
+                toParam("pageNumber", getPageNumber())
         );
     }
 }

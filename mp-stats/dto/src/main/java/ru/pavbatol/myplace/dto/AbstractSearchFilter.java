@@ -52,36 +52,38 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
     }
 
     protected final String baseFilterToQuery(DateTimeFormatter formatter) {
-        String startParam = getStart() == null ? "" : "start=" + getStart().format(formatter);
-        String endParam = getEnd() == null ? "" : "end=" + getEnd().format(formatter);
-        String uniqueParam = getUnique() == null ? "" : "unique=" + getUnique();
-        String sortDirectionParam = getSortDirection() == null ? "" : "sortDirection=" + getSortDirection();
-
-        return joinQueryParams(startParam, endParam, uniqueParam, sortDirectionParam);
+        return joinQueryParams(
+                toParam("start", getStart() != null ? getStart().format(formatter) : null),
+                toParam("end", getEnd() != null ? getEnd().format(formatter) : null),
+                toParam("unique", getUnique()),
+                toParam("sortDirection", getSortDirection().name())
+        );
     }
 
     protected final String joinQueryParams(String... queryParam) {
         return Arrays.stream(queryParam)
+                .filter(Objects::nonNull)
                 .filter(params -> !params.isEmpty())
                 .collect(Collectors.joining("&"));
     }
 
-    protected final String toParam(String paramName, String value) {
-        return value == null ? "" : String.format("%s=%s", paramName, value);
-    }
-
-    protected final String toParamFromStrings(String paramName, List<String> values) {
-        return values == null ? "" : String.format("%s=%s", paramName, values.stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining(",")));
-    }
-
-    // TODO: 08.08.2023 Rename to toQueryParamFromLongs, consider other similar methods too
-    protected final String toParamFromLongs(String paramName, List<Long> values) {
-        return values == null ? "" : String.format("%s=%s", paramName, values.stream()
-                .filter(Objects::nonNull)
-                .map(String::valueOf)
-                .collect(Collectors.joining(",")));
+    protected final String toParam(String paramName, Object value) {
+        if (value == null) {
+            return "";
+        }
+        String format = "%s=%s";
+        if (value instanceof List) {
+            return String.format(format,
+                    paramName,
+                    ((List<?>) value).stream()
+                            .filter(Objects::nonNull)
+                            .map(Object::toString)
+                            .collect(Collectors.joining(",")));
+        } else if (value instanceof String || value instanceof Integer || value instanceof Long || value instanceof Boolean) {
+            return String.format(format, paramName, value);
+        } else {
+            throw new IllegalArgumentException("Unsupported value type: " + value.getClass());
+        }
     }
 
     protected final void setBaseNullFieldsToDefault() {

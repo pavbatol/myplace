@@ -12,6 +12,9 @@ import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.shipping.ShippingGeoDtoResponse;
 import ru.pavbatol.myplace.dto.shipping.ShippingGeoSearchFilter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @RequiredArgsConstructor
@@ -34,47 +37,28 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
         Sort.Direction direction = filter.getSortDirection() != null && filter.getSortDirection() == SortDirection.ASC
                 ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        MatchOperation betweenDates = match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd()));
-        MatchOperation inItemIds = match(CollectionUtils.isEmpty(filter.getItemIds())
-                ? new Criteria() : new Criteria(ITEM_ID).in(filter.getItemIds()));
-        MatchOperation inCountries = match(CollectionUtils.isEmpty(filter.getCountries())
-                ? new Criteria() : new Criteria(COUNTRY).in(filter.getCountries()));
+        List<AggregationOperation> aggregations = new ArrayList<>();
 
-        GroupOperation groupByCountry = filter.getUnique()
+        aggregations.add(match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd())));
+
+        if (!CollectionUtils.isEmpty(filter.getItemIds())) {
+            aggregations.add(match(new Criteria(ITEM_ID).in(filter.getItemIds())));
+        }
+
+        if (!CollectionUtils.isEmpty(filter.getCountries())) {
+            aggregations.add(match(new Criteria(COUNTRY).in(filter.getCountries())));
+        }
+
+        aggregations.add(filter.getUnique()
                 ? group(ITEM_ID, COUNTRY).addToSet(CITY).as(CITIES)
-                : group(ITEM_ID, COUNTRY).push(CITY).as(CITIES);
-        GroupOperation groupByItemId = group(ITEM_ID).push(
+                : group(ITEM_ID, COUNTRY).push(CITY).as(CITIES));
+
+        aggregations.add(group(ITEM_ID).push(
                 new BasicDBObject(COUNTRY, "$_id." + COUNTRY)
                         .append(CITIES, "$" + CITIES)
-                        .append(C_COUNT, new BasicDBObject("$size", "$" + CITIES))).as(COUNTRIES);
+                        .append(C_COUNT, new BasicDBObject("$size", "$" + CITIES))).as(COUNTRIES));
 
-        // KeySet pagination
-        Integer LastCityCount = filter.getLastCityCount();
-        Integer LastCountryCount = filter.getLastCountryCount();
-        Long LastItemId = filter.getLastItemId();
-        Criteria criteria = new Criteria();
-        if (LastCityCount != null && LastCountryCount != null && LastItemId != null) {
-            if (direction == Sort.Direction.DESC) {
-                criteria.orOperator(
-                        new Criteria(CITY_COUNT).lt(LastCityCount),
-                        new Criteria(CITY_COUNT).lte(LastCityCount).and(COUNTRY_COUNT).lt(LastCountryCount),
-                        new Criteria(CITY_COUNT).lte(LastCityCount).and(COUNTRY_COUNT).lte(LastCountryCount)
-                                .and(ITEM_ID).lt(LastItemId));
-            } else {
-                criteria.orOperator(
-                        new Criteria(CITY_COUNT).gt(LastCityCount),
-                        new Criteria(CITY_COUNT).gte(LastCityCount).and(COUNTRY_COUNT).gt(LastCountryCount),
-                        new Criteria(CITY_COUNT).gte(LastCityCount).and(COUNTRY_COUNT).gte(LastCountryCount)
-                                .and(ITEM_ID).gt(LastItemId));
-            }
-        }
-        MatchOperation matchLastPaginationData = match(criteria);
-
-        SortOperation sort = Aggregation.sort(direction, CITY_COUNT, COUNTRY_COUNT, ITEM_ID);
-
-        LimitOperation limit = new LimitOperation(filter.getPageSize());
-
-        ProjectionOperation projection = project()
+        aggregations.add(project()
                 .andExclude("_id")
                 .and("_id").as(ITEM_ID)
                 .and(COUNTRIES).size().as(COUNTRY_COUNT)
@@ -92,18 +76,33 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
                         "    } " +
                         "  } " +
                         "} "
-                ).as(COUNTRY_CITIES);
+                ).as(COUNTRY_CITIES));
 
-        Aggregation aggregation = Aggregation.newAggregation(
-                betweenDates,
-                inItemIds,
-                inCountries,
-                groupByCountry,
-                groupByItemId,
-                projection,
-                matchLastPaginationData,
-                sort,
-                limit);
+        // KeySet pagination
+        Integer LastCityCount = filter.getLastCityCount();
+        Integer LastCountryCount = filter.getLastCountryCount();
+        Long LastItemId = filter.getLastItemId();
+        if (LastCityCount != null && LastCountryCount != null && LastItemId != null) {
+            if (direction == Sort.Direction.DESC) {
+                aggregations.add(match(new Criteria().orOperator(
+                        new Criteria(CITY_COUNT).lt(LastCityCount),
+                        new Criteria(CITY_COUNT).lte(LastCityCount).and(COUNTRY_COUNT).lt(LastCountryCount),
+                        new Criteria(CITY_COUNT).lte(LastCityCount).and(COUNTRY_COUNT).lte(LastCountryCount)
+                                .and(ITEM_ID).lt(LastItemId))));
+            } else {
+                aggregations.add(match(new Criteria().orOperator(
+                        new Criteria(CITY_COUNT).gt(LastCityCount),
+                        new Criteria(CITY_COUNT).gte(LastCityCount).and(COUNTRY_COUNT).gt(LastCountryCount),
+                        new Criteria(CITY_COUNT).gte(LastCityCount).and(COUNTRY_COUNT).gte(LastCountryCount)
+                                .and(ITEM_ID).gt(LastItemId))));
+            }
+        }
+
+        aggregations.add(sort(direction, CITY_COUNT, COUNTRY_COUNT, ITEM_ID));
+
+        aggregations.add(new LimitOperation(filter.getPageSize()));
+
+        Aggregation aggregation = Aggregation.newAggregation(aggregations);
 
         return reactiveMongoTemplate.aggregate(aggregation, SHIPPING_GEOS, ShippingGeoDtoResponse.class);
     }

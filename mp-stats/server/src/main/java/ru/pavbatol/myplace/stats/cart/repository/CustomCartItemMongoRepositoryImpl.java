@@ -13,7 +13,10 @@ import ru.pavbatol.myplace.dto.cart.CartItemSearchFilter;
 import ru.pavbatol.myplace.dto.cart.UserCartItemDtoResponse;
 import ru.pavbatol.myplace.dto.cart.UserCartItemSearchFilter;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @RequiredArgsConstructor
 public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRepository {
@@ -32,36 +35,42 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
         Sort.Direction direction = filter.getSortDirection() != null && filter.getSortDirection() == SortDirection.ASC
                 ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        MatchOperation betweenDates = Aggregation.match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd()));
-        MatchOperation inItemIds = Aggregation.match(CollectionUtils.isEmpty(filter.getItemIds())
-                ? new Criteria() : new Criteria(ITEM_ID).in(filter.getItemIds()));
-        GroupOperation group = Aggregation.group(ITEM_ID, USER_ID, "-");
-        GroupOperation groupAndCount = Aggregation.group(ITEM_ID, "-").addToSet(USER_ID).as(TEMP).count().as(CART_ITEM_COUNT);
-        ProjectionOperation projection = Aggregation.project(ITEM_ID, CART_ITEM_COUNT);
+        List<AggregationOperation> aggregations = new ArrayList<>();
+
+        aggregations.add(match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd())));
+
+        if (!CollectionUtils.isEmpty(filter.getItemIds())) {
+            aggregations.add(match(new Criteria(ITEM_ID).in(filter.getItemIds())));
+        }
+
+        if (filter.getUnique()) {
+            aggregations.add(group(ITEM_ID, USER_ID, "-"));
+        }
+
+        aggregations.add(group(ITEM_ID, "-").addToSet(USER_ID).as(TEMP).count().as(CART_ITEM_COUNT));
+
+        aggregations.add(project(ITEM_ID, CART_ITEM_COUNT));
 
         // KeySet pagination
         Long lastItemId = filter.getLastItemId();
         Integer lastCartItemCount = filter.getLastCartItemCount();
-        Criteria criteria = new Criteria();
         if (lastItemId != null && lastCartItemCount != null) {
             if (direction == Sort.Direction.DESC) {
-                criteria.orOperator(
+                aggregations.add(match(new Criteria().orOperator(
                         new Criteria(CART_ITEM_COUNT).lt(lastCartItemCount),
-                        new Criteria(CART_ITEM_COUNT).lte(lastCartItemCount).and(ITEM_ID).lt(lastItemId));
+                        new Criteria(CART_ITEM_COUNT).lte(lastCartItemCount).and(ITEM_ID).lt(lastItemId))));
             } else {
-                criteria.orOperator(
+                aggregations.add(match(new Criteria().orOperator(
                         new Criteria(CART_ITEM_COUNT).gt(lastCartItemCount),
-                        new Criteria(CART_ITEM_COUNT).gte(lastCartItemCount).and(ITEM_ID).gt(lastItemId));
+                        new Criteria(CART_ITEM_COUNT).gte(lastCartItemCount).and(ITEM_ID).gt(lastItemId))));
             }
         }
-        MatchOperation matchLastPaginationData = match(criteria);
 
-        SortOperation sort = Aggregation.sort(direction, CART_ITEM_COUNT, ITEM_ID);
-        LimitOperation limit = new LimitOperation(filter.getPageSize());
+        aggregations.add(sort(direction, CART_ITEM_COUNT, ITEM_ID));
 
-        Aggregation aggregation = filter.getUnique()
-                ? Aggregation.newAggregation(betweenDates, inItemIds, group, groupAndCount, projection, matchLastPaginationData, sort, limit)
-                : Aggregation.newAggregation(betweenDates, inItemIds, groupAndCount, projection, matchLastPaginationData, sort, limit);
+        aggregations.add(new LimitOperation(filter.getPageSize()));
+
+        Aggregation aggregation = Aggregation.newAggregation(aggregations);
 
         return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, CartItemDtoResponse.class);
     }
@@ -71,42 +80,42 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
         Sort.Direction direction = filter.getSortDirection() != null && filter.getSortDirection() == SortDirection.ASC
                 ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        MatchOperation betweenDates = Aggregation.match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd()));
+        List<AggregationOperation> aggregations = new ArrayList<>();
 
-        MatchOperation inUserIds = Aggregation.match(CollectionUtils.isEmpty(filter.getUserIds())
-                ? new Criteria() : new Criteria(USER_ID).in(filter.getUserIds()));
+        aggregations.add(match(new Criteria(TIMESTAMP).gte(filter.getStart()).lte(filter.getEnd())));
 
-        GroupOperation group = filter.getUnique()
-                ? Aggregation.group(USER_ID).addToSet(ITEM_ID).as(CART_ITEM_IDS)
-                : Aggregation.group(USER_ID).push(ITEM_ID).as(CART_ITEM_IDS);
+        if (!CollectionUtils.isEmpty(filter.getUserIds())) {
+            aggregations.add(match(new Criteria(USER_ID).in(filter.getUserIds())));
+        }
 
-        ProjectionOperation projection = Aggregation.project(CART_ITEM_IDS)
+        aggregations.add(filter.getUnique()
+                ? group(USER_ID).addToSet(ITEM_ID).as(CART_ITEM_IDS)
+                : group(USER_ID).push(ITEM_ID).as(CART_ITEM_IDS));
+
+        aggregations.add(project(CART_ITEM_IDS)
                 .and(CART_ITEM_IDS).size().as(ITEM_COUNT)
-                .and(USER_ID).previousOperation();
+                .and(USER_ID).previousOperation());
 
         // KeySet pagination
         Long lastUserId = filter.getLastUserId();
         Long lastItemCount = filter.getLastItemCount();
-        Criteria criteria = new Criteria();
         if (lastUserId != null && lastItemCount != null) {
             if (direction == Sort.Direction.DESC) {
-                criteria.orOperator(
+                aggregations.add(match(new Criteria().orOperator(
                         new Criteria(ITEM_COUNT).lt(lastItemCount),
-                        new Criteria(ITEM_COUNT).lte(lastItemCount).and(USER_ID).lt(lastUserId));
+                        new Criteria(ITEM_COUNT).lte(lastItemCount).and(USER_ID).lt(lastUserId))));
             } else {
-                criteria.orOperator(
+                aggregations.add(match(new Criteria().orOperator(
                         new Criteria(ITEM_COUNT).gt(lastItemCount),
-                        new Criteria(ITEM_COUNT).gte(lastItemCount).and(USER_ID).gt(lastUserId));
+                        new Criteria(ITEM_COUNT).gte(lastItemCount).and(USER_ID).gt(lastUserId))));
             }
         }
-        MatchOperation matchLastPaginationData = match(criteria);
 
-        SortOperation sort = Aggregation.sort(direction, ITEM_COUNT, USER_ID);
-        LimitOperation limit = new LimitOperation(filter.getPageSize());
+        aggregations.add(sort(direction, ITEM_COUNT, USER_ID));
 
-        Aggregation aggregation = CollectionUtils.isEmpty(filter.getUserIds())
-                ? Aggregation.newAggregation(betweenDates, group, projection, matchLastPaginationData, sort, limit)
-                : Aggregation.newAggregation(betweenDates, inUserIds, group, projection, matchLastPaginationData, sort, limit);
+        aggregations.add(new LimitOperation(filter.getPageSize()));
+
+        Aggregation aggregation = Aggregation.newAggregation(aggregations);
 
         return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, UserCartItemDtoResponse.class);
     }
