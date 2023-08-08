@@ -48,9 +48,30 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
                         .append(CITIES, "$" + CITIES)
                         .append(C_COUNT, new BasicDBObject("$size", "$" + CITIES))).as(COUNTRIES);
 
-        SortOperation sort = Aggregation.sort(direction, CITY_COUNT, COUNTRY_COUNT);
+        // KeySet pagination
+        Integer LastCityCount = filter.getLastCityCount();
+        Integer LastCountryCount = filter.getLastCountryCount();
+        Long LastItemId = filter.getLastItemId();
+        Criteria criteria = new Criteria();
+        if (LastCityCount != null && LastCountryCount != null && LastItemId != null) {
+            if (direction == Sort.Direction.DESC) {
+                criteria.orOperator(
+                        new Criteria(CITY_COUNT).lt(LastCityCount),
+                        new Criteria(CITY_COUNT).lte(LastCityCount).and(COUNTRY_COUNT).lt(LastCountryCount),
+                        new Criteria(CITY_COUNT).lte(LastCityCount).and(COUNTRY_COUNT).lte(LastCountryCount)
+                                .and(ITEM_ID).lt(LastItemId));
+            } else {
+                criteria.orOperator(
+                        new Criteria(CITY_COUNT).gt(LastCityCount),
+                        new Criteria(CITY_COUNT).gte(LastCityCount).and(COUNTRY_COUNT).gt(LastCountryCount),
+                        new Criteria(CITY_COUNT).gte(LastCityCount).and(COUNTRY_COUNT).gte(LastCountryCount)
+                                .and(ITEM_ID).gt(LastItemId));
+            }
+        }
+        MatchOperation matchLastPaginationData = match(criteria);
 
-        SkipOperation skip = new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize());
+        SortOperation sort = Aggregation.sort(direction, CITY_COUNT, COUNTRY_COUNT, ITEM_ID);
+
         LimitOperation limit = new LimitOperation(filter.getPageSize());
 
         ProjectionOperation projection = project()
@@ -80,8 +101,8 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
                 groupByCountry,
                 groupByItemId,
                 projection,
+                matchLastPaginationData,
                 sort,
-                skip,
                 limit);
 
         return reactiveMongoTemplate.aggregate(aggregation, SHIPPING_GEOS, ShippingGeoDtoResponse.class);

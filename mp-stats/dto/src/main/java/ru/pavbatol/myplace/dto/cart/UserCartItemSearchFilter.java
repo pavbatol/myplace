@@ -17,18 +17,25 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCartItemSearchFilter extends AbstractSearchFilter<UserCartItemSearchFilter> {
     List<Long> userIds;
+    Long lastUserId;
+    Long lastItemCount;
 
     @Override
     public UserCartItemSearchFilter setNullFieldsToDefault() {
         setBaseNullFieldsToDefault();
         setUserIds(getUserIds() != null ? getUserIds() : List.of());
+        setLastUserId(getLastUserId() != null ? getLastUserId() : null);
+        setLastItemCount(getLastItemCount() != null ? getLastItemCount() : null);
         return this;
     }
 
     @Override
     public String toQuery(DateTimeFormatter formatter) {
-        String baseQuery = baseFilterToQuery(formatter);
-        String addedQuery = toParamFromLongs("userIds", getUserIds());
-        return joinQueryParams(baseQuery, addedQuery);
+        return joinQueryParams(
+                baseFilterToQuery(formatter),
+                toParamFromLongs("userIds", getUserIds()),
+                toParam("lastUserId", String.valueOf(getLastUserId())),
+                toParam("lastItemCount", String.valueOf(getLastItemCount()))
+        );
     }
 }

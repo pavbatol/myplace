@@ -13,6 +13,8 @@ import ru.pavbatol.myplace.dto.cart.CartItemSearchFilter;
 import ru.pavbatol.myplace.dto.cart.UserCartItemDtoResponse;
 import ru.pavbatol.myplace.dto.cart.UserCartItemSearchFilter;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+
 @RequiredArgsConstructor
 public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRepository {
     public static final String ITEM_ID = "itemId";
@@ -35,15 +37,31 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
                 ? new Criteria() : new Criteria(ITEM_ID).in(filter.getItemIds()));
         GroupOperation group = Aggregation.group(ITEM_ID, USER_ID, "-");
         GroupOperation groupAndCount = Aggregation.group(ITEM_ID, "-").addToSet(USER_ID).as(TEMP).count().as(CART_ITEM_COUNT);
-        SortOperation sort = Aggregation.sort(direction, CART_ITEM_COUNT);
         ProjectionOperation projection = Aggregation.project(ITEM_ID, CART_ITEM_COUNT);
 
-        SkipOperation skip = new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize());
+        // KeySet pagination
+        Long lastItemId = filter.getLastItemId();
+        Integer lastCartItemCount = filter.getLastCartItemCount();
+        Criteria criteria = new Criteria();
+        if (lastItemId != null && lastCartItemCount != null) {
+            if (direction == Sort.Direction.DESC) {
+                criteria.orOperator(
+                        new Criteria(CART_ITEM_COUNT).lt(lastCartItemCount),
+                        new Criteria(CART_ITEM_COUNT).lte(lastCartItemCount).and(ITEM_ID).lt(lastItemId));
+            } else {
+                criteria.orOperator(
+                        new Criteria(CART_ITEM_COUNT).gt(lastCartItemCount),
+                        new Criteria(CART_ITEM_COUNT).gte(lastCartItemCount).and(ITEM_ID).gt(lastItemId));
+            }
+        }
+        MatchOperation matchLastPaginationData = match(criteria);
+
+        SortOperation sort = Aggregation.sort(direction, CART_ITEM_COUNT, ITEM_ID);
         LimitOperation limit = new LimitOperation(filter.getPageSize());
 
         Aggregation aggregation = filter.getUnique()
-                ? Aggregation.newAggregation(betweenDates, inItemIds, group, groupAndCount, sort, projection, skip, limit)
-                : Aggregation.newAggregation(betweenDates, inItemIds, groupAndCount, sort, projection, skip, limit);
+                ? Aggregation.newAggregation(betweenDates, inItemIds, group, groupAndCount, projection, matchLastPaginationData, sort, limit)
+                : Aggregation.newAggregation(betweenDates, inItemIds, groupAndCount, projection, matchLastPaginationData, sort, limit);
 
         return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, CartItemDtoResponse.class);
     }
@@ -66,14 +84,29 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
                 .and(CART_ITEM_IDS).size().as(ITEM_COUNT)
                 .and(USER_ID).previousOperation();
 
-        SortOperation sort = Aggregation.sort(direction, ITEM_COUNT);
+        // KeySet pagination
+        Long lastUserId = filter.getLastUserId();
+        Long lastItemCount = filter.getLastItemCount();
+        Criteria criteria = new Criteria();
+        if (lastUserId != null && lastItemCount != null) {
+            if (direction == Sort.Direction.DESC) {
+                criteria.orOperator(
+                        new Criteria(ITEM_COUNT).lt(lastItemCount),
+                        new Criteria(ITEM_COUNT).lte(lastItemCount).and(USER_ID).lt(lastUserId));
+            } else {
+                criteria.orOperator(
+                        new Criteria(ITEM_COUNT).gt(lastItemCount),
+                        new Criteria(ITEM_COUNT).gte(lastItemCount).and(USER_ID).gt(lastUserId));
+            }
+        }
+        MatchOperation matchLastPaginationData = match(criteria);
 
-        SkipOperation skip = new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize());
+        SortOperation sort = Aggregation.sort(direction, ITEM_COUNT, USER_ID);
         LimitOperation limit = new LimitOperation(filter.getPageSize());
 
         Aggregation aggregation = CollectionUtils.isEmpty(filter.getUserIds())
-                ? Aggregation.newAggregation(betweenDates, group, projection, sort, skip, limit)
-                : Aggregation.newAggregation(betweenDates, inUserIds, group, projection, sort, skip, limit);
+                ? Aggregation.newAggregation(betweenDates, group, projection, matchLastPaginationData, sort, limit)
+                : Aggregation.newAggregation(betweenDates, inUserIds, group, projection, matchLastPaginationData, sort, limit);
 
         return reactiveMongoTemplate.aggregate(aggregation, CART_ITEMS, UserCartItemDtoResponse.class);
     }

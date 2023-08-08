@@ -25,7 +25,6 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
     private static final boolean UNIQUE = false;
     private static final String DIRECTION = SortDirection.DESC.name();
     public static final int PAGE_SIZE = 10;
-    public static final int PAGE_NUMBER = 1;
 
     @CustomDateTimeFormat
     LocalDateTime start;
@@ -39,9 +38,6 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
 
     @Min(1)
     Integer pageSize;
-
-    @Min(1)
-    Integer pageNumber;
 
     public abstract T setNullFieldsToDefault();
 
@@ -80,6 +76,7 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
                 .collect(Collectors.joining(",")));
     }
 
+    // TODO: 08.08.2023 Rename to toQueryParamFromLongs, consider other similar methods too
     protected final String toParamFromLongs(String paramName, List<Long> values) {
         return values == null ? "" : String.format("%s=%s", paramName, values.stream()
                 .filter(Objects::nonNull)
@@ -93,6 +90,5 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
         setUnique(getUnique() != null ? getUnique() : UNIQUE);
         setSortDirection(getSortDirection() != null ? getSortDirection().name() : DIRECTION);
         setPageSize(getPageSize() != null ? getPageSize() : PAGE_SIZE);
-        setPageNumber(getPageNumber() != null ? getPageNumber() : PAGE_NUMBER);
     }
 }
