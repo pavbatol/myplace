@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>ru.pavbatol.myplace.stats</groupId>
+    <groupId>ru.pavbatol.myplace.mp-stats</groupId>
     <artifactId>mp-stats</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>

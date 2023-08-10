@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>ru.pavbatol.myplace.stats</groupId>
+        <groupId>ru.pavbatol.myplace.mp-stats</groupId>
         <artifactId>mp-stats</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
@@ -22,7 +22,7 @@
         <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 
-        <ru.pavbatol.myplace.stats.dto.version>0.0.1-SNAPSHOT</ru.pavbatol.myplace.stats.dto.version>
+        <ru.pavbatol.myplace.mp-stats.dto.version>0.0.1-SNAPSHOT</ru.pavbatol.myplace.mp-stats.dto.version>
     </properties>
 
     <dependencies>
@@ -47,6 +47,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -78,9 +83,9 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.pavbatol.myplace.stats</groupId>
+            <groupId>ru.pavbatol.myplace.mp-stats</groupId>
             <artifactId>dto</artifactId>
-            <version>${ru.pavbatol.myplace.stats.dto.version}</version>
+            <version>${ru.pavbatol.myplace.mp-stats.dto.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
