@@ -65,7 +65,7 @@ public abstract class AbstractStatsClient<T, R, F, R1> implements StatsClient<T,
                 .bodyToFlux(responseClass);
     }
 
-    protected Throwable createRequestException(HttpStatus status, String message) {
+    private Throwable createRequestException(HttpStatus status, String message) {
         return new RuntimeException("Request execution error: " + status, new Throwable(message));
     }
 

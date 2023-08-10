@@ -4,13 +4,10 @@ spring:
       develop:
         - dev
         - common
-        - swagger
       production:
         - prod
         - common
-        - swagger
       test:
         - test
         - common
-        - swagger
       default: production

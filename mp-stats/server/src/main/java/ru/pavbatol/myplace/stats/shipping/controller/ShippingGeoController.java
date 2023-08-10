@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/stats")
-@Tag(name = "ShippingGeo's", description = "API for working with 'ShippingGeo' entity")
+@Tag(name = "ShippingGeos", description = "API for working with 'ShippingGeo' entity")
 public class ShippingGeoController {
 
     private final ShippingGeoService service;
