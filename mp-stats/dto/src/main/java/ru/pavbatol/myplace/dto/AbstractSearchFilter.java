@@ -56,7 +56,8 @@ public abstract class AbstractSearchFilter<T extends AbstractSearchFilter<T>> {
                 toParam("start", getStart() != null ? getStart().format(formatter) : null),
                 toParam("end", getEnd() != null ? getEnd().format(formatter) : null),
                 toParam("unique", getUnique()),
-                toParam("sortDirection", getSortDirection().name())
+                toParam("sortDirection", getSortDirection().name()),
+                toParam("pageSize", getPageSize())
         );
     }
 
