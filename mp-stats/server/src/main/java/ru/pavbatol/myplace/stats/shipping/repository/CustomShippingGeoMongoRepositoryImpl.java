@@ -79,22 +79,22 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
                 ).as(COUNTRY_CITIES));
 
         // KeySet pagination
-        Integer LastCityCount = filter.getLastCityCount();
-        Integer LastCountryCount = filter.getLastCountryCount();
-        Long LastItemId = filter.getLastItemId();
-        if (LastCityCount != null && LastCountryCount != null && LastItemId != null) {
+        Integer lastCityCount = filter.getLastCityCount();
+        Integer lastCountryCount = filter.getLastCountryCount();
+        Long lastItemId = filter.getLastItemId();
+        if (lastCityCount != null && lastCountryCount != null && lastItemId != null) {
             if (direction == Sort.Direction.DESC) {
                 aggregations.add(match(new Criteria().orOperator(
-                        new Criteria(CITY_COUNT).lt(LastCityCount),
-                        new Criteria(CITY_COUNT).lte(LastCityCount).and(COUNTRY_COUNT).lt(LastCountryCount),
-                        new Criteria(CITY_COUNT).lte(LastCityCount).and(COUNTRY_COUNT).lte(LastCountryCount)
-                                .and(ITEM_ID).lt(LastItemId))));
+                        new Criteria(CITY_COUNT).lt(lastCityCount),
+                        new Criteria(CITY_COUNT).lte(lastCityCount).and(COUNTRY_COUNT).lt(lastCountryCount),
+                        new Criteria(CITY_COUNT).lte(lastCityCount).and(COUNTRY_COUNT).lte(lastCountryCount)
+                                .and(ITEM_ID).lt(lastItemId))));
             } else {
                 aggregations.add(match(new Criteria().orOperator(
-                        new Criteria(CITY_COUNT).gt(LastCityCount),
-                        new Criteria(CITY_COUNT).gte(LastCityCount).and(COUNTRY_COUNT).gt(LastCountryCount),
-                        new Criteria(CITY_COUNT).gte(LastCityCount).and(COUNTRY_COUNT).gte(LastCountryCount)
-                                .and(ITEM_ID).gt(LastItemId))));
+                        new Criteria(CITY_COUNT).gt(lastCityCount),
+                        new Criteria(CITY_COUNT).gte(lastCityCount).and(COUNTRY_COUNT).gt(lastCountryCount),
+                        new Criteria(CITY_COUNT).gte(lastCityCount).and(COUNTRY_COUNT).gte(lastCountryCount)
+                                .and(ITEM_ID).gt(lastItemId))));
             }
         }
 
