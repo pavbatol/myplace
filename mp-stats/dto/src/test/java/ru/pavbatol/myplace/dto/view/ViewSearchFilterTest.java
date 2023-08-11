@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.dto.view;
 
+import org.powermock.api.mockito.PowerMockito;
 import ru.pavbatol.myplace.dto.SortDirection;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//@ExtendWith(MockitoExtension.class)
+//@PrepareForTest(ViewSearchFilter.class)
 class ViewSearchFilterTest {
 
     @org.junit.jupiter.api.Test
@@ -35,16 +38,27 @@ class ViewSearchFilterTest {
         filter.setNullFieldsToDefault();
 
         assertAll("Checking fields",
-                () -> assertTrue(filter.getStart().isBefore(dateTimePast), "The 'start' field is not before the control date"),
-                () -> assertTrue(filter.getEnd().isAfter(dateTimePast), "The 'end' field is not after the control date"),
-                () -> assertFalse(filter.getUnique(), "The 'unique' field is not false"),
-                () -> assertSame(direction, filter.getSortDirection(), "The 'SortDirection' field is not " + direction),
-                () -> assertEquals(pageSize, filter.getPageSize(), "The 'pageSize' field is not equal to " + pageSize),
+//                () -> assertTrue(filter.getStart().isBefore(dateTimePast), "The 'start' field is not before the control date"),
+//                () -> assertTrue(filter.getEnd().isAfter(dateTimePast), "The 'end' field is not after the control date"),
+//                () -> assertFalse(filter.getUnique(), "The 'unique' field is not false"),
+//                () -> assertSame(direction, filter.getSortDirection(), "The 'SortDirection' field is not " + direction),
+//                () -> assertEquals(pageSize, filter.getPageSize(), "The 'pageSize' field is not equal to " + pageSize),
                 () -> assertEquals(pageNumber, filter.getPageNumber(), "The 'pageNumber' field is not equal to " + pageNumber),
                 () -> assertEquals(List.of(), filter.getUris(), "Field 'uris' is not an empty list")
         );
 
         assertEquals(expectedFieldsCount, actualFieldsCount, "The number of fields does not match");
+
+        //-- Checking the parent protected method call
+        ViewSearchFilter powerMockitoFilter = PowerMockito.spy(ViewSearchFilter.builder().build());
+
+        powerMockitoFilter.setNullFieldsToDefault();
+
+        try {
+            PowerMockito.verifyPrivate(powerMockitoFilter).invoke("setBaseNullFieldsToDefault");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @org.junit.jupiter.api.Test
@@ -73,13 +87,24 @@ class ViewSearchFilterTest {
         Map<String, String> actualQueryParams = parseQueryParams(actualQuery);
 
         assertEquals(7, actualQueryParams.size(), "The number of parameters don't match");
-        assertEquals(dateTimeStr, actualQueryParams.get("start"), "The 'start' parameter doesn't match");
-        assertEquals(dateTimeStr, actualQueryParams.get("end"), "The 'end' parameter doesn't match");
-        assertEquals("" + unique, actualQueryParams.get("unique"), "The 'unique' parameter doesn't match");
-        assertEquals(direction.name(), actualQueryParams.get("sortDirection"), "The 'sortDirection' parameter doesn't match");
-        assertEquals(String.join(",", uris), actualQueryParams.get("uris"), "The 'uris' parameter doesn't match");
-        assertEquals(String.valueOf(pageSize), actualQueryParams.get("pageSize"), "The 'pageSize' parameter doesn't match");
+//        assertEquals(dateTimeStr, actualQueryParams.get("start"), "The 'start' parameter doesn't match");
+//        assertEquals(dateTimeStr, actualQueryParams.get("end"), "The 'end' parameter doesn't match");
+//        assertEquals("" + unique, actualQueryParams.get("unique"), "The 'unique' parameter doesn't match");
+//        assertEquals(direction.name(), actualQueryParams.get("sortDirection"), "The 'sortDirection' parameter doesn't match");
+//        assertEquals(String.valueOf(pageSize), actualQueryParams.get("pageSize"), "The 'pageSize' parameter doesn't match");
         assertEquals(String.valueOf(pageNumber), actualQueryParams.get("pageNumber"), "The 'pageNumber' parameter doesn't match");
+        assertEquals(String.join(",", uris), actualQueryParams.get("uris"), "The 'uris' parameter doesn't match");
+
+        //-- Checking the parent protected method call
+        ViewSearchFilter powerMockitoFilter = PowerMockito.spy(ViewSearchFilter.builder().build());
+
+        powerMockitoFilter.toQuery(formatter);
+
+        try {
+            PowerMockito.verifyPrivate(powerMockitoFilter).invoke("baseFilterToQuery", formatter);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Map<String, String> parseQueryParams(String query) {
