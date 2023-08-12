@@ -1,24 +1,22 @@
 package ru.pavbatol.myplace.dto;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.pavbatol.myplace.dto.TestHelper.parseQueryParams;
 
 class AbstractSearchFilterTest {
 
-    @Test
-    void setBaseNullFieldsToDefault() {
-        LocalDateTime dateTimePast = LocalDateTime.now().minusSeconds(1);
-        SortDirection direction = SortDirection.DESC;
-        int pageSize = 10;
-
-        AbstractSearchFilter filter = new AbstractSearchFilter() {
+    private AbstractSearchFilter filter;
+    @BeforeEach
+    void setUp() {
+        filter = new AbstractSearchFilter() {
             @Override
             public AbstractSearchFilter setNullFieldsToDefault() {
                 return null;
@@ -29,6 +27,22 @@ class AbstractSearchFilterTest {
                 return null;
             }
         };
+    }
+
+    @Test
+    void setSortDirection_ShouldSortSetFromString() {
+        String name = SortDirection.ASC.name();
+
+        filter.setSortDirection(name);
+
+        assertEquals(name, filter.getSortDirection().name(), "Not correct setting 'sortDirection");
+    }
+
+    @Test
+    void setBaseNullFieldsToDefault_ShouldSettingNullFieldsToDefault() {
+        LocalDateTime dateTimePast = LocalDateTime.now().minusSeconds(1);
+        SortDirection direction = SortDirection.DESC;
+        int pageSize = 10;
 
         filter.setBaseNullFieldsToDefault();
 
@@ -42,7 +56,7 @@ class AbstractSearchFilterTest {
     }
 
     @Test
-    void baseFilterToQuery_ShouldAllNonNullParametersAreAdded() {
+    void baseFilterToQuery_ShouldAllNonNullParametersAreAddedToQuery() {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
         String dateTimeStr = "2023-08-10T19:11:00";
 
@@ -51,18 +65,6 @@ class AbstractSearchFilterTest {
         boolean unique = true;
         int pageSize = 10;
         List<String> uris = List.of("/1", "/2");
-
-        AbstractSearchFilter filter = new AbstractSearchFilter() {
-            @Override
-            public AbstractSearchFilter setNullFieldsToDefault() {
-                return null;
-            }
-
-            @Override
-            public String toQuery(DateTimeFormatter formatter) {
-                return null;
-            }
-        };
 
         filter.setStart(dateTime);
         filter.setEnd(dateTime);
@@ -73,24 +75,11 @@ class AbstractSearchFilterTest {
         String actualQuery = filter.baseFilterToQuery(formatter);
         Map<String, String> actualQueryParams = parseQueryParams(actualQuery);
 
+        assertEquals(5, actualQueryParams.size(), "The number of parameters don't match");
         assertEquals(dateTimeStr, actualQueryParams.get("start"), "The 'start' parameter doesn't match");
         assertEquals(dateTimeStr, actualQueryParams.get("end"), "The 'end' parameter doesn't match");
         assertEquals("" + unique, actualQueryParams.get("unique"), "The 'unique' parameter doesn't match");
         assertEquals(direction.name(), actualQueryParams.get("sortDirection"), "The 'sortDirection' parameter doesn't match");
         assertEquals(String.valueOf(pageSize), actualQueryParams.get("pageSize"), "The 'pageSize' parameter doesn't match");
-    }
-
-    private Map<String, String> parseQueryParams(String query) {
-        Map<String, String> queryParams = new HashMap<>();
-
-        String[] pairs = query.split("&");
-        for (String pair : pairs) {
-            int idx = pair.indexOf("=");
-            String key = idx > 0 ? pair.substring(0, idx) : pair;
-            String value = idx > 0 && pair.length() > idx + 1 ? pair.substring(idx + 1) : null;
-            queryParams.put(key, value);
-        }
-
-        return queryParams;
     }
 }
