@@ -81,7 +81,7 @@ class ViewServiceImplTest {
     }
 
     @Test
-    void add_ShouldDateTimeNotNullWenItReceivedAsNull() {
+    void add_shouldDateTimeNotNullWenItReceivedAsNull() {
 
         ViewDtoAddRequest addRequest = new ViewDtoAddRequest();
 
@@ -96,7 +96,7 @@ class ViewServiceImplTest {
     }
 
     @Test
-    void find_ShouldFilterFieldsIsCheckedBeforeSendingRequestToDB() {
+    void find_shouldFilterFieldsIsCheckedBeforeSendingRequestToDB() {
         LocalDateTime dateTimePast = LocalDateTime.now().minusSeconds(1);
 
         ViewSearchFilter filter = ViewSearchFilter.builder()

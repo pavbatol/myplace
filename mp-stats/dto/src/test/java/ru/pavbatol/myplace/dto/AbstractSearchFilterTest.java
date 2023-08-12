@@ -30,7 +30,7 @@ class AbstractSearchFilterTest {
     }
 
     @Test
-    void setSortDirection_ShouldSortSetFromString() {
+    void setSortDirection_shouldSortSetFromString() {
         String name = SortDirection.ASC.name();
 
         filter.setSortDirection(name);
@@ -39,7 +39,7 @@ class AbstractSearchFilterTest {
     }
 
     @Test
-    void setBaseNullFieldsToDefault_ShouldSettingNullFieldsToDefault() {
+    void setBaseNullFieldsToDefault_shouldSettingNullFieldsToDefault() {
         LocalDateTime dateTimePast = LocalDateTime.now().minusSeconds(1);
         SortDirection direction = SortDirection.DESC;
         int pageSize = 10;
@@ -56,7 +56,7 @@ class AbstractSearchFilterTest {
     }
 
     @Test
-    void baseFilterToQuery_ShouldAllNonNullParametersAreAddedToQuery() {
+    void baseFilterToQuery_shouldAllNonNullParametersAreAddedToQuery() {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
         String dateTimeStr = "2023-08-10T19:11:00";
 

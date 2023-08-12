@@ -13,7 +13,7 @@ import static ru.pavbatol.myplace.dto.TestHelper.parseQueryParams;
 class ViewSearchFilterTest {
 
     @org.junit.jupiter.api.Test
-    void setNullFieldsToDefault_ShouldSettingNullFieldsToDefault() {
+    void setNullFieldsToDefault_shouldSettingNullFieldsToDefault() {
         int pageNumber = 1;
         int expectedFieldsCount = 3;
 

@@ -26,7 +26,7 @@ public class ShippingGeoSearchFilter extends AbstractSearchFilter<ShippingGeoSea
     public ShippingGeoSearchFilter setNullFieldsToDefault() {
         setBaseNullFieldsToDefault();
         setItemIds(getItemIds() != null ? getItemIds() : List.of());
-        setCountries(getItemIds() != null ? getCountries() : List.of());
+        setCountries(getCountries() != null ? getCountries() : List.of());
         setLastCityCount(getLastCityCount() != null ? getLastCityCount() : null);
         setLastCountryCount(getLastCountryCount() != null ? getLastCountryCount() : null);
         setLastItemId(getLastItemId() != null ? getLastItemId() : null);
