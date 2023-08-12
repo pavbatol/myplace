@@ -51,7 +51,7 @@ class ViewSearchFilterTest {
     }
 
     @org.junit.jupiter.api.Test
-    void toQuery_ShouldAllNonNullParametersAreAddedToQuery() {
+    void toQuery_shouldAllNonNullParametersAreAddedToQuery() {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
         int pageNumber = 1;
         List<String> uris = List.of("/1", "/2");
