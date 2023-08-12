@@ -39,7 +39,7 @@ class ViewServiceImplTest {
     }
 
     @Test
-    void add_shouldInvokeRepoAndAdded() {
+    void add_shouldCorrectMappingAndPresetFieldValuesAndInvokeRepoAndAdded() {
         String app = "test-app";
         String uri = "test-uri";
         String ip = "test-ip";
