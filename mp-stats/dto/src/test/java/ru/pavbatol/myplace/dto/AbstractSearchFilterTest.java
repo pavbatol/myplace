@@ -14,6 +14,7 @@ import static ru.pavbatol.myplace.dto.TestHelper.parseQueryParams;
 class AbstractSearchFilterTest {
 
     private AbstractSearchFilter filter;
+
     @BeforeEach
     void setUp() {
         filter = new AbstractSearchFilter() {
@@ -39,8 +40,17 @@ class AbstractSearchFilterTest {
     }
 
     @Test
+    void setSortDirection_shouldSortSetFromNull() {
+        String name = null;
+
+        filter.setSortDirection(name);
+
+        assertNull(filter.getSortDirection(), "Not correct setting 'sortDirection");
+    }
+
+    @Test
     void setBaseNullFieldsToDefault_shouldSettingNullFieldsToDefault() {
-        LocalDateTime dateTimePast = LocalDateTime.now().minusSeconds(1);
+        LocalDateTime dateTimePast = LocalDateTime.now().minusMinutes(1);
         SortDirection direction = SortDirection.DESC;
         int pageSize = 10;
 
@@ -48,7 +58,7 @@ class AbstractSearchFilterTest {
 
         assertAll("Checking fields",
                 () -> assertTrue(filter.getStart().isBefore(dateTimePast), "The 'start' field is not before the control date"),
-                () -> assertTrue(filter.getEnd().isAfter(dateTimePast), "The 'end' field is not after the control date"),
+                () -> assertTrue(filter.getEnd().isAfter(dateTimePast), "The 'end' field is not after the control date: filter.getEnd() = " + filter.getEnd() + ", dateTimePast = " + dateTimePast),
                 () -> assertFalse(filter.getUnique(), "The 'unique' field is not false"),
                 () -> assertSame(direction, filter.getSortDirection(), "The 'SortDirection' field is not " + direction),
                 () -> assertEquals(pageSize, filter.getPageSize(), "The 'pageSize' field is not equal to " + pageSize)
@@ -74,6 +84,8 @@ class AbstractSearchFilterTest {
 
         String actualQuery = filter.baseFilterToQuery(formatter);
         Map<String, String> actualQueryParams = parseQueryParams(actualQuery);
+
+        assertNotNull(actualQuery);
 
         assertEquals(5, actualQueryParams.size(), "The number of parameters don't match");
         assertEquals(dateTimeStr, actualQueryParams.get("start"), "The 'start' parameter doesn't match");
