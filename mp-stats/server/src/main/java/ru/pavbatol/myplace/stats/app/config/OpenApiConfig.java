@@ -9,11 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.pavbatol.myplace.dto.annotation.ExcludeJacocoGenerated;
 
 import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
+@ExcludeJacocoGenerated
 public class OpenApiConfig {
 
     private final String serverDev = "localhost";

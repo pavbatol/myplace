@@ -1,9 +1,12 @@
 package ru.pavbatol.myplace.dto;
 
+import ru.pavbatol.myplace.dto.annotation.ExcludeJacocoGenerated;
+
 public enum SortDirection {
     ASC,
     DESC;
 
+    @ExcludeJacocoGenerated
     public static SortDirection from(String value) {
         try {
             return SortDirection.valueOf(value.toUpperCase());
