@@ -12,7 +12,7 @@ This project uses the following dependencies:
 - **spring-boot-configuration-processor** (org.springframework.boot:spring-boot-configuration-processor): A helpful plugin for generating configuration metadata to be used by the Spring Boot Devtools.
 - **mapstruct** (org.mapstruct:mapstruct:1.5.3.Final): A code generator that simplifies the implementation of mappings between Java bean types.
 - **lombok-mapstruct-binding** (org.projectlombok:lombok-mapstruct-binding:0.2.0): An integration library that combines the features of Lombok and MapStruct.
-- **dto** (ru.pavbatol.myplace.stats:dto:0.0.1-SNAPSHOT): A custom dependency for DTO classes.
+- **dto** (ru.pavbatol.myplace.server:dto:0.0.1-SNAPSHOT): A custom dependency for DTO classes.
 - **tomcat-embed-core** (org.apache.tomcat.embed:tomcat-embed-core): The Tomcat Embed Core module.
 
 Please note that this list may not be exhaustive. Other third-party services or libraries may also be used in this project
