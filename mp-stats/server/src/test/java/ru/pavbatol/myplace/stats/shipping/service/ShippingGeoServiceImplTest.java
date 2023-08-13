@@ -87,7 +87,6 @@ class ShippingGeoServiceImplTest {
 
     @Test
     void findShippingCountryCities_shouldFilterInvokeSetNullFieldsToDefault_andRepoInvoked() {
-
         ShippingGeoSearchFilter filter = Mockito.mock(ShippingGeoSearchFilter.class);
 
         when(filter.setNullFieldsToDefault()).thenReturn(filter);
