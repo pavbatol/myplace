@@ -35,14 +35,17 @@ public class CustomViewMongoRepositoryImpl implements CustomViewMongoRepository 
         if (!CollectionUtils.isEmpty(filter.getUris())) {
             operations.add(Aggregation.match(new Criteria(URI).in(filter.getUris())));
         }
-        if (filter.getUnique()) {
+        if (filter.getUnique() != null && filter.getUnique()) {
             operations.add(Aggregation.group(APP, URI, IP));
         }
         operations.add(Aggregation.group(APP, URI).count().as(VIEWS));
         operations.add(Aggregation.sort(direction, VIEWS));
         operations.add(Aggregation.project(APP, URI, VIEWS));
-        operations.add(new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize()));
-        operations.add(new LimitOperation(filter.getPageSize()));
+
+        if (filter.getPageNumber() != null && filter.getPageSize() != null) {
+            operations.add(new SkipOperation((long) (filter.getPageNumber() - 1) * filter.getPageSize()));
+            operations.add(new LimitOperation(filter.getPageSize()));
+        }
 
         Aggregation aggregation = Aggregation.newAggregation(operations);
 
