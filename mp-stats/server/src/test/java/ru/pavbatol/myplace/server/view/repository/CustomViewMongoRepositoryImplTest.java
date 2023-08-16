@@ -8,7 +8,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ActiveProfiles;
-import reactor.core.publisher.Flux;
 import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
 import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
@@ -31,6 +30,12 @@ public class CustomViewMongoRepositoryImplTest {
 
     private static ViewMongoRepository viewMongoRepository;
 
+    private static String app = "test-app";
+    private static String uri = "test-uri";
+    private static String ip = "test-ip";
+    private static LocalDateTime dateTime = LocalDateTime.now().minusMinutes(1);
+    private static int years = 5;
+
     @BeforeAll
     static void beforeAll(@Autowired ApplicationContextProvider contextProvider) {
         ApplicationContext context = ApplicationContextProvider.getContext();
@@ -38,21 +43,16 @@ public class CustomViewMongoRepositoryImplTest {
 
         viewMongoRepository = context.getBean(ViewMongoRepository.class);
 
-        String app = "test-app";
-        String uri = "test-uri";
-        String ip = "test-ip";
-        LocalDateTime dateTime = LocalDateTime.now().minusMinutes(1);
-
-        View View = new View().setApp(app).setUri(uri).setIp(ip).setTimestamp(dateTime);
-        View View0 = new View().setApp(app + "2").setUri(uri).setIp(ip).setTimestamp(dateTime);
+        View View = new View().setApp(app).setUri(uri).setIp(ip).setTimestamp(dateTime.minusYears(years));
+        View View0 = new View().setApp(app + "2").setUri(uri).setIp(ip).setTimestamp(dateTime.minusYears(years));
         View View1 = new View().setApp(app + "2").setUri(uri).setIp(ip + "2").setTimestamp(dateTime);
         View View2 = new View().setApp(app).setUri(uri).setIp(ip + "2").setTimestamp(dateTime);
         View View3 = new View().setApp(app).setUri(uri + "2").setIp(ip + "2").setTimestamp(dateTime);
         View View4 = new View().setApp(app + "2").setUri(uri + "2").setIp(ip + "2").setTimestamp(dateTime);
 
         viewMongoRepository.saveAll(List.of(
-                View0, View0, View0,
                 View, View, View, View, View, View, View,
+                View0, View0, View0,
                 View1, View1,
                 View2, View2, View2,
                 View3, View3, View3, View3,
@@ -66,7 +66,7 @@ public class CustomViewMongoRepositoryImplTest {
     }
 
     @Test
-    public void find_shouldReturnWithCorrectViewsFields_whenAddedWithUniqueIsTrueAmdSortIsDescAndIstAsc() {
+    public void find_shouldReturnWithCorrectViewsFields_whenFilterWithUniqueIsTrueAmdSortIsDescAndIstAsc() {
         ViewSearchFilter filter = ViewSearchFilter.builder().build().setNullFieldsToDefault();
         filter.setUnique(true);
         filter.setSortDirection(SortDirection.DESC.name());
@@ -94,7 +94,7 @@ public class CustomViewMongoRepositoryImplTest {
         responses = viewMongoRepository.find(filter).collectList().block();
 
         assertNotNull(responses);
-        assertEquals(4, responses.size());
+        assertEquals(4, responses.size(), "Error: The size of 'responses' is not equal to 4.");
         assertEquals(1, responses.get(0).getViews(), "Error: get(0).getViews() not equal to 1 if ASC sort.");
         assertEquals(1, responses.get(1).getViews(), "Error: get(1).getViews() not equal to 1 if ASC sort.");
         assertEquals(2, responses.get(2).getViews(), "Error: get(2).getViews() not equal to 2 if ASC sort.");
@@ -102,7 +102,7 @@ public class CustomViewMongoRepositoryImplTest {
     }
 
     @Test
-    public void find_shouldReturnWithCorrectViewsFields_whenAddedWithUniqueAsFalseOrNull() {
+    public void find_shouldReturnWithCorrectViewsFields_whenFilterWithUniqueAsFalseOrNull() {
         ViewSearchFilter filterUniqueNull = ViewSearchFilter.builder().build().setNullFieldsToDefault();
         filterUniqueNull.setUnique(null);
         filterUniqueNull.setSortDirection(SortDirection.DESC.name());
@@ -128,7 +128,7 @@ public class CustomViewMongoRepositoryImplTest {
         assertNull(filterUniqueNull.getUnique(), "Error: filterUniqueNull.getUnique() is not null.");
         assertFalse(filterUniqueFalse.getUnique(), "Error: filterUniqueFalse.getUnique() is true.");
         assertEquals(responsesByUniqueNull, responsesByUniqueFalse, "Error: responsesByUniqueNull and responsesByUniqueFalse are not equal.");
-        assertEquals(4, responsesByUniqueNull.size(), "Error: The size of responsesByUniqueNull is not equal to 2.");
+        assertEquals(4, responsesByUniqueNull.size(), "Error: The size of 'responsesByUniqueNull' is not equal to 4.");
         assertEquals(10, responsesByUniqueNull.get(0).getViews(), "Error: get(0).getViews() not equal to 10 if DESC sort.");
         assertEquals(5, responsesByUniqueNull.get(1).getViews(), "Error: get(1).getViews() not equal to 5 if DESC sort.");
         assertEquals(4, responsesByUniqueNull.get(2).getViews(), "Error: get(2).getViews() not equal to 4 if DESC sort.");
@@ -136,51 +136,88 @@ public class CustomViewMongoRepositoryImplTest {
     }
 
     @Test
-    public void find_shouldReturnWithCorrectViewsFields_whenAddedWithUniqueAsFalseOrNull_2() {
-        String app = "test-app";
-        String uri = "test-uri";
-        String ip = "test-ip";
-        LocalDateTime dateTime = LocalDateTime.now().minusMinutes(1);
+    public void find_shouldReturnWithCorrectViewsFields_whenFilterWithDateRange() {
+        ViewSearchFilter filter = ViewSearchFilter.builder().build().setNullFieldsToDefault();
+        filter.setStart(dateTime.minusYears(years));
+        filter.setEnd(dateTime.minusYears(years));
+        filter.setSortDirection(SortDirection.DESC.name());
 
-        ViewSearchFilter filterUniqueNull = ViewSearchFilter.builder().build().setNullFieldsToDefault();
-        filterUniqueNull.setUnique(null);
-        assert filterUniqueNull.getUnique() == null;
+        List<ViewDtoResponse> responses = viewMongoRepository.find(filter).collectList().block();
 
-        ViewSearchFilter filterUniqueFalse = ViewSearchFilter.builder()
-                .start(null)
-                .end(null)
-                .unique(null)
-                .sortDirection(null)
-                .pageSize(null)
-                .pageNumber(null)
-                .uris(null)
-                .build().setNullFieldsToDefault();
+        assertNotNull(responses, "Error:  List<ViewDtoResponse> responses is null.");
 
-        View View1 = new View()
-                .setId(null)
-                .setApp(app)
-                .setUri(uri)
-                .setIp(ip)
-                .setTimestamp(dateTime);
+        /////////////////////////////////////////////////
+//        ViewDtoResponse(app=test-app, uri=test-uri, views=7)
+//        ViewDtoResponse(app=test-app2, uri=test-uri, views=3)
+        System.out.println(filter);
+        responses.forEach(System.out::println);
 
-        View View2 = new View()
-                .setId(null)
-                .setApp(app + "_2")
-                .setUri(uri + "_2")
-                .setIp(ip + "_2")
-                .setTimestamp(dateTime.minusDays(1));
+        assertEquals(2, responses.size(), "Error: The size of 'responses' is not equal to 2.");
+        assertEquals(7, responses.get(0).getViews(), "Error: get(0).getViews() not equal to 7 if DESC sort.");
+        assertEquals(3, responses.get(1).getViews(), "Error: get(1).getViews() not equal to 3 if DESC sort.");
+    }
 
-        viewMongoRepository.save(View1).block();
-        viewMongoRepository.save(View2).block();
+    @Test
+    public void find_shouldReturnWithCorrectViewsFields_whenFilterSpecifiedUris() {
+        ViewSearchFilter filter = ViewSearchFilter.builder().build().setNullFieldsToDefault();
+        filter.setUris(List.of(uri, uri + "2"));
+        filter.setSortDirection(SortDirection.DESC.name());
 
-        Flux<ViewDtoResponse> actualResponses = viewMongoRepository.find(filterUniqueNull);
-        List<ViewDtoResponse> responses = actualResponses.collectList().block();
+        List<ViewDtoResponse> responses = viewMongoRepository.find(filter).collectList().block();
 
+        assertNotNull(responses, "Error:  List<ViewDtoResponse> responses is null.");
 
-        assertNotNull(responses);
+        /////////////////////////////////////////////////
+//        ViewDtoResponse(app=test-app, uri=test-uri, views=10)
+//        ViewDtoResponse(app=test-app2, uri=test-uri, views=5)
+//        ViewDtoResponse(app=test-app, uri=test-uri2, views=4)
+//        ViewDtoResponse(app=test-app2, uri=test-uri2, views=3)
+        System.out.println(filter);
+        responses.forEach(System.out::println);
 
-//        responses.forEach(System.out::println);
+        assertEquals(4, responses.size(), "Error: The size of 'responses' is not equal to 4.");
+        assertEquals(10, responses.get(0).getViews(), "Error: get(0).getViews() not equal to 10 if DESC sort.");
+        assertEquals(5, responses.get(1).getViews(), "Error: get(1).getViews() not equal to 5 if DESC sort.");
+        assertEquals(4, responses.get(2).getViews(), "Error: get(2).getViews() not equal to 4 if DESC sort.");
+        assertEquals(3, responses.get(3).getViews(), "Error: get(3).getViews() not equal to 3 if DESC sort.");
 
-        assertEquals(2, responses.size());
+        //--
+        filter.setUris(List.of(uri + "2"));
+
+        List<ViewDtoResponse> responses2 = viewMongoRepository.find(filter).collectList().block();
+
+        assertNotNull(responses2, "Error:  List<ViewDtoResponse> responses2 is null.");
+
+        /////////////////////////////////////////////////
+//        ViewDtoResponse(app=test-app, uri=test-uri2, views=4)
+//        ViewDtoResponse(app=test-app2, uri=test-uri2, views=3)
+        System.out.println(filter);
+        responses2.forEach(System.out::println);
+
+        assertEquals(2, responses2.size(), "Error: The size of 'responses2' is not equal to 2.");
+        assertEquals(4, responses2.get(0).getViews(), "Error: get(0).getViews() not equal to 4 if DESC sort.");
+        assertEquals(3, responses2.get(1).getViews(), "Error: get(1).getViews() not equal to 3 if DESC sort.");
+    }
+
+    @Test
+    public void find_shouldReturnRightPaginated_whenFilterWithSpecifiedPagination() {
+        ViewSearchFilter filter = ViewSearchFilter.builder().build().setNullFieldsToDefault();
+        filter.setPageNumber(2);
+        filter.setPageSize(2);
+        filter.setSortDirection(SortDirection.DESC.name());
+
+        List<ViewDtoResponse> responses = viewMongoRepository.find(filter).collectList().block();
+
+        assertNotNull(responses, "Error:  List<ViewDtoResponse> responses is null.");
+
+        /////////////////////////////////////////////////
+//        ViewDtoResponse(app=test-app, uri=test-uri2, views=4)
+//        ViewDtoResponse(app=test-app2, uri=test-uri2, views=3)
+        System.out.println(filter);
+        responses.forEach(System.out::println);
+
+        assertEquals(2, responses.size(), "Error: The size of 'responses' is not equal to 2.");
+        assertEquals(4, responses.get(0).getViews(), "Error: get(0).getViews() not equal to 4 if DESC sort.");
+        assertEquals(3, responses.get(1).getViews(), "Error: get(1).getViews() not equal to 3 if DESC sort.");
     }
 }
