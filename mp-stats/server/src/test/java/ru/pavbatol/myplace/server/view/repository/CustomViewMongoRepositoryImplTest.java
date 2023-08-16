@@ -73,14 +73,6 @@ public class CustomViewMongoRepositoryImplTest {
 
         List<ViewDtoResponse> responses = viewMongoRepository.find(filter).collectList().block();
 
-        /////////////////////////////////////////////////
-//        ViewDtoResponse(app=test-app, uri=test-uri, views=2)
-//        ViewDtoResponse(app=test-app2, uri=test-uri, views=2)
-//        ViewDtoResponse(app=test-app2, uri=test-uri2, views=1)
-//        ViewDtoResponse(app=test-app, uri=test-uri2, views=1)
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertNotNull(responses);
         assertEquals(4, responses.size());
         assertEquals(2, responses.get(0).getViews(), "Error: get(0).getViews() not equal to 2 if DESC sort.");
@@ -117,14 +109,6 @@ public class CustomViewMongoRepositoryImplTest {
         assertNotNull(responsesByUniqueNull, "Error: responsesByUniqueNull is null.");
         assertNotNull(responsesByUniqueFalse, "Error: responsesByUniqueFalse is null.");
 
-/////////////////////////////////////////////////
-//        ViewDtoResponse(app=test-app, uri=test-uri, views=10)
-//        ViewDtoResponse(app=test-app2, uri=test-uri, views=5)
-//        ViewDtoResponse(app=test-app, uri=test-uri2, views=4)
-//        ViewDtoResponse(app=test-app2, uri=test-uri2, views=3)
-        System.out.println(filterUniqueNull);
-        responsesByUniqueNull.forEach(System.out::println);
-
         assertNull(filterUniqueNull.getUnique(), "Error: filterUniqueNull.getUnique() is not null.");
         assertFalse(filterUniqueFalse.getUnique(), "Error: filterUniqueFalse.getUnique() is true.");
         assertEquals(responsesByUniqueNull, responsesByUniqueFalse, "Error: responsesByUniqueNull and responsesByUniqueFalse are not equal.");
@@ -146,12 +130,6 @@ public class CustomViewMongoRepositoryImplTest {
 
         assertNotNull(responses, "Error:  List<ViewDtoResponse> responses is null.");
 
-        /////////////////////////////////////////////////
-//        ViewDtoResponse(app=test-app, uri=test-uri, views=7)
-//        ViewDtoResponse(app=test-app2, uri=test-uri, views=3)
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertEquals(2, responses.size(), "Error: The size of 'responses' is not equal to 2.");
         assertEquals(7, responses.get(0).getViews(), "Error: get(0).getViews() not equal to 7 if DESC sort.");
         assertEquals(3, responses.get(1).getViews(), "Error: get(1).getViews() not equal to 3 if DESC sort.");
@@ -167,14 +145,6 @@ public class CustomViewMongoRepositoryImplTest {
 
         assertNotNull(responses, "Error:  List<ViewDtoResponse> responses is null.");
 
-        /////////////////////////////////////////////////
-//        ViewDtoResponse(app=test-app, uri=test-uri, views=10)
-//        ViewDtoResponse(app=test-app2, uri=test-uri, views=5)
-//        ViewDtoResponse(app=test-app, uri=test-uri2, views=4)
-//        ViewDtoResponse(app=test-app2, uri=test-uri2, views=3)
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertEquals(4, responses.size(), "Error: The size of 'responses' is not equal to 4.");
         assertEquals(10, responses.get(0).getViews(), "Error: get(0).getViews() not equal to 10 if DESC sort.");
         assertEquals(5, responses.get(1).getViews(), "Error: get(1).getViews() not equal to 5 if DESC sort.");
@@ -188,11 +158,6 @@ public class CustomViewMongoRepositoryImplTest {
 
         assertNotNull(responses2, "Error:  List<ViewDtoResponse> responses2 is null.");
 
-        /////////////////////////////////////////////////
-//        ViewDtoResponse(app=test-app, uri=test-uri2, views=4)
-//        ViewDtoResponse(app=test-app2, uri=test-uri2, views=3)
-        System.out.println(filter);
-        responses2.forEach(System.out::println);
 
         assertEquals(2, responses2.size(), "Error: The size of 'responses2' is not equal to 2.");
         assertEquals(4, responses2.get(0).getViews(), "Error: get(0).getViews() not equal to 4 if DESC sort.");
@@ -209,12 +174,6 @@ public class CustomViewMongoRepositoryImplTest {
         List<ViewDtoResponse> responses = viewMongoRepository.find(filter).collectList().block();
 
         assertNotNull(responses, "Error:  List<ViewDtoResponse> responses is null.");
-
-        /////////////////////////////////////////////////
-//        ViewDtoResponse(app=test-app, uri=test-uri2, views=4)
-//        ViewDtoResponse(app=test-app2, uri=test-uri2, views=3)
-        System.out.println(filter);
-        responses.forEach(System.out::println);
 
         assertEquals(2, responses.size(), "Error: The size of 'responses' is not equal to 2.");
         assertEquals(4, responses.get(0).getViews(), "Error: get(0).getViews() not equal to 4 if DESC sort.");

@@ -97,7 +97,7 @@ class ViewServiceImplTest {
 
     @Test
     void find_shouldFilterFieldsIsCheckedBeforeSendingRequestToDB() {
-        LocalDateTime dateTimePast = LocalDateTime.now().minusSeconds(1);
+        LocalDateTime dateTimePast = LocalDateTime.now().minusMinutes(1);
 
         ViewSearchFilter filter = ViewSearchFilter.builder()
                 .start(null)

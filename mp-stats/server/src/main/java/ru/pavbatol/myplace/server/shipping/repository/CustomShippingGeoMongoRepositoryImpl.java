@@ -49,7 +49,7 @@ public class CustomShippingGeoMongoRepositoryImpl implements CustomShippingGeoMo
             aggregations.add(match(new Criteria(COUNTRY).in(filter.getCountries())));
         }
 
-        aggregations.add(filter.getUnique()
+        aggregations.add(filter.getUnique() != null && filter.getUnique()
                 ? group(ITEM_ID, COUNTRY).addToSet(CITY).as(CITIES)
                 : group(ITEM_ID, COUNTRY).push(CITY).as(CITIES));
 
