@@ -1,30 +1,24 @@
 package ru.pavbatol.myplace.server.view.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.test.context.ActiveProfiles;
 import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
 import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
+import ru.pavbatol.myplace.server.CustomDataMongoTest;
 import ru.pavbatol.myplace.server.app.context.ApplicationContextProvider;
 import ru.pavbatol.myplace.server.view.model.View;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
-@DataMongoTest(includeFilters = @ComponentScan.Filter(
-        type = FilterType.ASSIGNABLE_TYPE,
-        classes = {ApplicationContextProvider.class}))
-@ActiveProfiles("test")
+@CustomDataMongoTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class CustomViewMongoRepositoryImplTest {
 

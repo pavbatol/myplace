@@ -3,21 +3,17 @@ package ru.pavbatol.myplace.server.cart.repository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.test.context.ActiveProfiles;
 import ru.pavbatol.myplace.dto.SortDirection;
 import ru.pavbatol.myplace.dto.cart.CartItemDtoResponse;
 import ru.pavbatol.myplace.dto.cart.CartItemSearchFilter;
 import ru.pavbatol.myplace.dto.cart.UserCartItemDtoResponse;
 import ru.pavbatol.myplace.dto.cart.UserCartItemSearchFilter;
+import ru.pavbatol.myplace.server.CustomDataMongoTest;
 import ru.pavbatol.myplace.server.app.context.ApplicationContextProvider;
 import ru.pavbatol.myplace.server.cart.model.CartItem;
 
@@ -27,11 +23,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// TODO: 10.09.2023 Put the code in a separate annotation
-@DataMongoTest(includeFilters = @ComponentScan.Filter(
-        type = FilterType.ASSIGNABLE_TYPE,
-        classes = {ApplicationContextProvider.class}))
-@ActiveProfiles("test")
+@CustomDataMongoTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class CustomCartItemMongoRepositoryImplTest {
 
