@@ -43,7 +43,7 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
             aggregations.add(match(new Criteria(ITEM_ID).in(filter.getItemIds())));
         }
 
-        if (filter.getUnique()) {
+        if (filter.getUnique() != null && filter.getUnique()) {
             aggregations.add(group(ITEM_ID, USER_ID, "-"));
         }
 
@@ -88,7 +88,7 @@ public class CustomCartItemMongoRepositoryImpl implements CustomCartItemMongoRep
             aggregations.add(match(new Criteria(USER_ID).in(filter.getUserIds())));
         }
 
-        aggregations.add(filter.getUnique()
+        aggregations.add(filter.getUnique() != null && filter.getUnique()
                 ? group(USER_ID).addToSet(ITEM_ID).as(CART_ITEM_IDS)
                 : group(USER_ID).push(ITEM_ID).as(CART_ITEM_IDS));
 

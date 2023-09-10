@@ -111,14 +111,6 @@ class CustomShippingGeoMongoRepositoryImplTest {
         List<ShippingGeoDtoResponse> responses = repository.findShippingCountryCities(filter).collectList().block();
 
         assertThat(responses).isNotNull();
-
-        ///////////////////////////////
-//        ShippingGeoDtoResponse(itemId=3, countryCount=2, cityCount=3, countryCities={BR=[Minsk], RF=[Saratov, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=2, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=1, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Moscow]})
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertThat(responses).hasSize(3);
 
         ShippingGeoDtoResponse response0 = responses.get(0);
@@ -151,14 +143,6 @@ class CustomShippingGeoMongoRepositoryImplTest {
         List<ShippingGeoDtoResponse> responses = repository.findShippingCountryCities(filter).collectList().block();
 
         assertThat(responses).isNotNull();
-
-        ///////////////////////////////
-//        ShippingGeoDtoResponse(itemId=3, countryCount=2, cityCount=3, countryCities={BR=[Minsk], RF=[Saratov, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=2, countryCount=1, cityCount=2, countryCities={RF=[Balakovo, Moscow]})
-//        ShippingGeoDtoResponse(itemId=1, countryCount=1, cityCount=1, countryCities={RF=[Moscow]})
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertThat(responses).hasSize(3);
 
         ShippingGeoDtoResponse response0 = responses.get(0);
@@ -192,13 +176,6 @@ class CustomShippingGeoMongoRepositoryImplTest {
         List<ShippingGeoDtoResponse> responses = repository.findShippingCountryCities(filter).collectList().block();
 
         assertThat(responses).isNotNull();
-
-        ///////////////////////////////
-//        ShippingGeoDtoResponse(itemId=2, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=1, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Moscow]})
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertThat(responses).hasSize(2);
 
         ShippingGeoDtoResponse response0 = responses.get(0);
@@ -224,13 +201,6 @@ class CustomShippingGeoMongoRepositoryImplTest {
         List<ShippingGeoDtoResponse> responses = repository.findShippingCountryCities(filter).collectList().block();
 
         assertThat(responses).isNotNull();
-
-        ///////////////////////////////
-//        ShippingGeoDtoResponse(itemId=3, countryCount=2, cityCount=3, countryCities={BR=[Minsk], RF=[Saratov, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=1, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Moscow]})
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertThat(responses).hasSize(2);
 
         ShippingGeoDtoResponse response0 = responses.get(0);
@@ -257,14 +227,6 @@ class CustomShippingGeoMongoRepositoryImplTest {
         List<ShippingGeoDtoResponse> responses = repository.findShippingCountryCities(filter).collectList().block();
 
         assertThat(responses).isNotNull();
-
-        ///////////////////////////////
-//        ShippingGeoDtoResponse(itemId=3, countryCount=1, cityCount=2, countryCities={RF=[Saratov, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=2, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=1, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Moscow]})
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertThat(responses).hasSize(3);
 
         ShippingGeoDtoResponse response0 = responses.get(0);
@@ -300,14 +262,6 @@ class CustomShippingGeoMongoRepositoryImplTest {
         List<ShippingGeoDtoResponse> responses = repository.findShippingCountryCities(filter).collectList().block();
 
         assertThat(responses).isNotNull();
-
-        /////////////////////////////////////
-//        ShippingGeoDtoResponse(itemId=3, countryCount=2, cityCount=3, countryCities={BR=[Minsk], RF=[Saratov, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=2, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Balakovo]})
-//        ShippingGeoDtoResponse(itemId=1, countryCount=1, cityCount=2, countryCities={RF=[Moscow, Moscow]})
-        System.out.println(filter);
-        responses.forEach(System.out::println);
-
         assertThat(responses).hasSize(1);
 
         ShippingGeoDtoResponse response0 = responses.get(0);
