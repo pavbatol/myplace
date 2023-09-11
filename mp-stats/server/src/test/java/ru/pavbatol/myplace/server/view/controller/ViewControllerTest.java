@@ -36,7 +36,7 @@ class ViewControllerTest {
     }
 
     @Test
-    void find_shouldReturnOkStatus_when() {
+    void find_shouldReturnOkStatus_whenOnlySpecifiedPageNumber() {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
 
         multiValueMap.add("pageNumber", "1");
