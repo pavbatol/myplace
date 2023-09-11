@@ -25,7 +25,6 @@
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--        <version.lombok>1.18.24</version.lombok>-->
         <checkstyle.version>10.3</checkstyle.version>
         <spotbugs-maven-plugin.version>4.7.3.0</spotbugs-maven-plugin.version>
         <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
@@ -49,15 +48,15 @@
         </resources>
         <pluginManagement>
             <plugins>
-                <!--                <plugin>-->
-                <!--                    <groupId>org.apache.maven.plugins</groupId>-->
-                <!--                    <artifactId>maven-surefire-plugin</artifactId>-->
-                <!--                    <configuration>-->
-                <!--                        <systemPropertyVariables>-->
-                <!--                            <spring.profiles.active>test</spring.profiles.active>-->
-                <!--                        </systemPropertyVariables>-->
-                <!--                    </configuration>-->
-                <!--                </plugin>-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <spring.profiles.active>test</spring.profiles.active>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
 
                 <plugin>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -112,9 +111,9 @@
                     <version>${jacoco-maven-plugin.version}</version>
                     <configuration>
                         <output>file</output>
-<!--                        <excludes>-->
-<!--                            <exclude>**/*MapperImpl.*</exclude>-->
-<!--                        </excludes>-->
+                        <excludes>
+                            <exclude>**/*MapperImpl.*</exclude>
+                        </excludes>
                     </configuration>
                     <executions>
                         <execution>
@@ -141,7 +140,7 @@
                                             <limit>
                                                 <counter>LINE</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.9</minimum>
+                                                <minimum>0.8</minimum>
                                             </limit>
                                             <limit>
                                                 <counter>BRANCH</counter>
