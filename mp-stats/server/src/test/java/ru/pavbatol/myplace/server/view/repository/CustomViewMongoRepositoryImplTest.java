@@ -24,11 +24,11 @@ public class CustomViewMongoRepositoryImplTest {
 
     private static ViewMongoRepository viewMongoRepository;
 
-    private static String app = "test-app";
-    private static String uri = "test-uri";
-    private static String ip = "test-ip";
-    private static LocalDateTime dateTime = LocalDateTime.now().minusMinutes(1);
-    private static int years = 5;
+    private static final String APP = "test-app";
+    private static final String URI = "test-uri";
+    private static final String IP = "test-ip";
+    private static final LocalDateTime DATE_TIME = LocalDateTime.now().minusMinutes(1);
+    private static final int YEARS = 5;
 
     @BeforeAll
     static void beforeAll(@Autowired ApplicationContextProvider contextProvider) {
@@ -37,12 +37,12 @@ public class CustomViewMongoRepositoryImplTest {
 
         viewMongoRepository = context.getBean(ViewMongoRepository.class);
 
-        View View = new View().setApp(app).setUri(uri).setIp(ip).setTimestamp(dateTime.minusYears(years));
-        View View0 = new View().setApp(app + "2").setUri(uri).setIp(ip).setTimestamp(dateTime.minusYears(years));
-        View View1 = new View().setApp(app + "2").setUri(uri).setIp(ip + "2").setTimestamp(dateTime);
-        View View2 = new View().setApp(app).setUri(uri).setIp(ip + "2").setTimestamp(dateTime);
-        View View3 = new View().setApp(app).setUri(uri + "2").setIp(ip + "2").setTimestamp(dateTime);
-        View View4 = new View().setApp(app + "2").setUri(uri + "2").setIp(ip + "2").setTimestamp(dateTime);
+        View View = new View().setApp(APP).setUri(URI).setIp(IP).setTimestamp(DATE_TIME.minusYears(YEARS));
+        View View0 = new View().setApp(APP + "2").setUri(URI).setIp(IP).setTimestamp(DATE_TIME.minusYears(YEARS));
+        View View1 = new View().setApp(APP + "2").setUri(URI).setIp(IP + "2").setTimestamp(DATE_TIME);
+        View View2 = new View().setApp(APP).setUri(URI).setIp(IP + "2").setTimestamp(DATE_TIME);
+        View View3 = new View().setApp(APP).setUri(URI + "2").setIp(IP + "2").setTimestamp(DATE_TIME);
+        View View4 = new View().setApp(APP + "2").setUri(URI + "2").setIp(IP + "2").setTimestamp(DATE_TIME);
 
         viewMongoRepository.saveAll(List.of(
                 View, View, View, View, View, View, View,
@@ -116,8 +116,8 @@ public class CustomViewMongoRepositoryImplTest {
     @Test
     public void find_shouldReturnWithCorrectViewsFields_whenFilterWithDateRange() {
         ViewSearchFilter filter = ViewSearchFilter.builder().build().setNullFieldsToDefault();
-        filter.setStart(dateTime.minusYears(years));
-        filter.setEnd(dateTime.minusYears(years));
+        filter.setStart(DATE_TIME.minusYears(YEARS));
+        filter.setEnd(DATE_TIME.minusYears(YEARS));
         filter.setSortDirection(SortDirection.DESC.name());
 
         List<ViewDtoResponse> responses = viewMongoRepository.find(filter).collectList().block();
@@ -132,7 +132,7 @@ public class CustomViewMongoRepositoryImplTest {
     @Test
     public void find_shouldReturnWithCorrectViewsFields_whenFilterSpecifiedUris() {
         ViewSearchFilter filter = ViewSearchFilter.builder().build().setNullFieldsToDefault();
-        filter.setUris(List.of(uri, uri + "2"));
+        filter.setUris(List.of(URI, URI + "2"));
         filter.setSortDirection(SortDirection.DESC.name());
 
         List<ViewDtoResponse> responses = viewMongoRepository.find(filter).collectList().block();
@@ -146,7 +146,7 @@ public class CustomViewMongoRepositoryImplTest {
         assertEquals(3, responses.get(3).getViews(), "Error: get(3).getViews() not equal to 3 if DESC sort.");
 
         //--
-        filter.setUris(List.of(uri + "2"));
+        filter.setUris(List.of(URI + "2"));
 
         List<ViewDtoResponse> responses2 = viewMongoRepository.find(filter).collectList().block();
 
