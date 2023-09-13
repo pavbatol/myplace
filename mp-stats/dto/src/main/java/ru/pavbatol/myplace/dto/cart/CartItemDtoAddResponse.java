@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class CartItemDtoAddResponse {
+    String id;
     Long userId;
     Long itemId;
     @CustomJsonDateTimeFormat

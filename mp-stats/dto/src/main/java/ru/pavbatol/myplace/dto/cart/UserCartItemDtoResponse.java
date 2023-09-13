@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 @Jacksonized
 public class UserCartItemDtoResponse {
+    String id;
     Long userId;
     List<Long> cartItemIds;
     Long itemCount;

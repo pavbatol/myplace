@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class ShippingGeoDtoAddResponse {
+    String id;
     Long itemId;
     String country;
     String city;
