@@ -6,12 +6,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.client.AbstractStatsClient;
+import ru.pavbatol.myplace.dto.annotation.ExcludeJacocoGenerated;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddRequest;
 import ru.pavbatol.myplace.dto.view.ViewDtoAddResponse;
 import ru.pavbatol.myplace.dto.view.ViewDtoResponse;
 import ru.pavbatol.myplace.dto.view.ViewSearchFilter;
 
 @Slf4j
+@ExcludeJacocoGenerated
 public class ViewStatsClient
         extends AbstractStatsClient<ViewDtoAddRequest, ViewDtoAddResponse, ViewSearchFilter, ViewDtoResponse> {
 

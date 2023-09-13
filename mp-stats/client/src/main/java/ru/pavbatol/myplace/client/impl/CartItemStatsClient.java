@@ -6,11 +6,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.client.AbstractStatsClient;
+import ru.pavbatol.myplace.dto.annotation.ExcludeJacocoGenerated;
 import ru.pavbatol.myplace.dto.cart.*;
 
 import java.util.List;
 
 @Slf4j
+@ExcludeJacocoGenerated
 public class CartItemStatsClient
         extends AbstractStatsClient<CartItemDtoAddRequest, CartItemDtoAddResponse, CartItemSearchFilter, CartItemDtoResponse> {
 

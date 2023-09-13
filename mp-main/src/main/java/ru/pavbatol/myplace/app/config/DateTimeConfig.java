@@ -11,10 +11,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
+import ru.pavbatol.myplace.app.annotation.ExcludeJacocoGenerated;
 
 import java.time.format.DateTimeFormatter;
 
+// TODO: 13.09.2023 Remove 'ExcludeJacocoGenerated' annotation when developing this service
+
 @Configuration
+@ExcludeJacocoGenerated
 public class DateTimeConfig implements WebFluxConfigurer {
     @Value("${app.format.date}")
     private String dateFormat;

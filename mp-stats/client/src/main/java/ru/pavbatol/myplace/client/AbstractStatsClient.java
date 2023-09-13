@@ -8,11 +8,13 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.pavbatol.myplace.dto.annotation.ExcludeJacocoGenerated;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
+@ExcludeJacocoGenerated
 public abstract class AbstractStatsClient<T, R, F, R1> implements StatsClient<T, R, F, R1> {
     public static final String STATS = "stats";
     public static final String DATE_TIME_T_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
