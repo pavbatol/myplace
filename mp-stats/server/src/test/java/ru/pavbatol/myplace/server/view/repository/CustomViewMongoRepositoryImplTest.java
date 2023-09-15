@@ -37,6 +37,8 @@ public class CustomViewMongoRepositoryImplTest {
 
         viewMongoRepository = context.getBean(ViewMongoRepository.class);
 
+        viewMongoRepository.deleteAll().block();
+
         View View = new View().setApp(APP).setUri(URI).setIp(IP).setTimestamp(DATE_TIME.minusYears(YEARS));
         View View0 = new View().setApp(APP + "2").setUri(URI).setIp(IP).setTimestamp(DATE_TIME.minusYears(YEARS));
         View View1 = new View().setApp(APP + "2").setUri(URI).setIp(IP + "2").setTimestamp(DATE_TIME);

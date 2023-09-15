@@ -41,6 +41,8 @@ class CustomCartItemMongoRepositoryImplTest {
 
         repository = context.getBean(CartItemMongoRepository.class);
 
+        repository.deleteAll().block();
+
         CartItem cartItem = new CartItem()
                 .setUserId(ID_1)
                 .setItemId(ID_1)

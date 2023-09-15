@@ -47,6 +47,8 @@ class CustomShippingGeoMongoRepositoryImplTest {
 
         repository = context.getBean(ShippingGeoMongoRepository.class);
 
+        repository.deleteAll().block();
+
         ShippingGeo geo = new ShippingGeo()
                 .setItemId(ID_1)
                 .setCountry(RF)
