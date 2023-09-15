@@ -1,0 +1,1500 @@
+{
+	"info": {
+		"_postman_id": "90c936b7-f20f-4388-9881-c7101fb220c4",
+		"name": "MyPlace-mp-stats",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23050345"
+	},
+	"item": [
+		{
+			"name": "Views",
+			"item": [
+				{
+					"name": "Failed",
+					"item": [
+						{
+							"name": "View create failed no \"app\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"app\":null,\n    \"uri\":\"/users\",\n    \"ip\":\"123\",\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/stats/views",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stats",
+										"views"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "View create failed no \"ip\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"app\":\"profile\",\n    \"uri\":\"/users\",\n    \"ip\":null,\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/stats/views",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stats",
+										"views"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "View create failed no \"uri\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"app\":\"profile\",\n    \"uri\":null,\n    \"ip\":\"123\",\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/stats/views",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stats",
+										"views"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "View create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create View\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.app).to.eql('profile');",
+									"    pm.expect(jsonData.uri).to.eql('/users');",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.at.most(new Date());",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"app\":\"profile\",\n    \"uri\":\"/users\",\n    \"ip\":\"123\",\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/views",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"views"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View create  successful no  \"timestamp\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create View\", function () {",
+									"    var source = JSON.parse(pm.request.body.raw);",
+									"    var target = pm.response.json();",
+									"    pm.expect(target.id).to.not.be.null;",
+									"    pm.expect(target.app).equal(source.app, '\"app\" field must match field from the request');",
+									"    pm.expect(target.uri).equal(source.uri, '\"uri\" field must match field from the request');",
+									"    pm.expect(new Date(target.timestamp), '\"timestamp\" field must be before now').to.be.at.most(new Date());",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"app\":\"profile\",\n    \"uri\":\"/users\",\n    \"ip\":\"123\",\n    \"timestamp\":null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/views",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"views"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View create second \"uri\"",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create View\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.app).to.eql('profile');",
+									"    pm.expect(jsonData.uri).to.eql('/users/1');",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.at.most(new Date());",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"app\":\"profile\",\n    \"uri\":\"/users/1\",\n    \"ip\":\"123\",\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/views",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"views"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Views get all with unique false",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with unique false\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].views, 'result[0]: \"views\" field').to.eql(2);",
+									"    pm.expect(jsonData[1].views, 'result[1]: \"views\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/views",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"views"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Views get all with unique true",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with unique true\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].views, 'result[0]: \"views\" field').to.eql(1);",
+									"    pm.expect(jsonData[1].views, 'result[1]: \"views\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/views?unique=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"views"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Views get all with date range",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with date range\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].views, 'result[0]: \"views\" field').to.eql(1);",
+									"    pm.expect(jsonData[1].views, 'result[1]: \"views\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/views?start=2023-07-22T21:28:20&end=2023-07-22T21:28:25",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"views"
+							],
+							"query": [
+								{
+									"key": "start",
+									"value": "2023-07-22T21:28:20"
+								},
+								{
+									"key": "end",
+									"value": "2023-07-22T21:28:25"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ShippingGeos",
+			"item": [
+				{
+					"name": "Failed",
+					"item": [
+						{
+							"name": "ShippingGeo create failed no \"itemId\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"itemId\":null,\n    \"country\":\"Беларусь\",\n    \"city\":\"Минск\",\n    \"timestamp\":\"2023-08-02T20:58:56\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/stats/shippinggeos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stats",
+										"shippinggeos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ShippingGeo create failed no \"country\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"itemId\":1,\n    \"country\":null,\n    \"city\":\"Минск\",\n    \"timestamp\":\"2023-08-02T20:58:56\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/stats/shippinggeos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stats",
+										"shippinggeos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ShippingGeo create failed no \"city\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"itemId\":1,\n    \"country\":\"Беларусь\",\n    \"city\":null,\n    \"timestamp\":\"2023-08-02T20:58:56\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/stats/shippinggeos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stats",
+										"shippinggeos"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ShippingGeo create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create Shippinggeo\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.itemId).to.eql(1);",
+									"    pm.expect(jsonData.country).to.eql('Беларусь');",
+									"    pm.expect(jsonData.city).to.eql('Минск');",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.eql(new Date(\"2023-08-02T20:58:56\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"itemId\":1,\n    \"country\":\"Беларусь\",\n    \"city\":\"Минск\",\n    \"timestamp\":\"2023-08-02T20:58:56\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/shippinggeos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"shippinggeos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShippingGeo create successful no timestamp",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create Shippinggeo\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.itemId).to.eql(1);",
+									"    pm.expect(jsonData.country).to.eql('Беларусь');",
+									"    pm.expect(jsonData.city).to.eql('Минск');",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.at.most(new Date());",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"itemId\":1,\n    \"country\":\"Беларусь\",\n    \"city\":\"Минск\",\n    \"timestamp\":null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/shippinggeos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"shippinggeos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShippingGeo create other country",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create Shippinggeo\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.itemId).to.eql(1);",
+									"    pm.expect(jsonData.country).to.eql('Россия');",
+									"    pm.expect(jsonData.city).to.eql('Москва');",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.at.most(new Date());",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"itemId\":1,\n    \"country\":\"Россия\",\n    \"city\":\"Москва\",\n    \"timestamp\":null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/shippinggeos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"shippinggeos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShippingGeo create 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create Shippinggeo\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.itemId).to.eql(2);",
+									"    pm.expect(jsonData.country).to.eql('Россия');",
+									"    pm.expect(jsonData.city).to.eql('Москва');",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.at.most(new Date());",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"itemId\":2,\n    \"country\":\"Россия\",\n    \"city\":\"Москва\",\n    \"timestamp\":null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/shippinggeos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"shippinggeos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShippingGeo get all with unique false",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with unique false\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].countryCities.Беларусь.length, 'result[0]: \"countryCities.Беларусь\" field').to.eql(2);",
+									"    pm.expect(jsonData[0].countryCities.Россия.length, 'result[0]: \"countryCities.Россия\" field').to.eql(1);",
+									"    pm.expect(jsonData[1].countryCities.Россия.length, 'result[1]: \"countryCities.Россия\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/shippinggeos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"shippinggeos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShippingGeo get all with unique true",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with unique true\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].countryCities.Беларусь.length, 'result[0]: \"countryCities.Беларусь\" field').to.eql(1);",
+									"    pm.expect(jsonData[0].countryCities.Россия.length, 'result[0]: \"countryCities.Россия\" field').to.eql(1);",
+									"    pm.expect(jsonData[1].countryCities.Россия.length, 'result[1]: \"countryCities.Россия\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/shippinggeos?unique=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"shippinggeos"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShippingGeo get all with unique date range",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with date range\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(1);",
+									"    pm.expect(jsonData[0].countryCities.Беларусь.length, 'result[0]: \"countryCities.Беларусь\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/shippinggeos?start=2023-08-02T20:58:55&end=2023-08-02T20:58:57",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"shippinggeos"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "start",
+									"value": "2023-08-02T20:58:55"
+								},
+								{
+									"key": "end",
+									"value": "2023-08-02T20:58:57"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CartItems",
+			"item": [
+				{
+					"name": "Failed",
+					"item": [
+						{
+							"name": "CartItem create failed no \"userId\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"userId\":null,\n    \"itemId\":1,\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/stats/shippinggeos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stats",
+										"shippinggeos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CartItem create failed no \"itemId\"",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{  \n    \"userId\":1,\n    \"itemId\":null,\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/stats/shippinggeos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"stats",
+										"shippinggeos"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CartItem create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create CartItem\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.userId).to.eql(1);",
+									"    pm.expect(jsonData.itemId).to.eql(1);",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.eql(new Date(\"2023-07-22T21:28:22\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"userId\":1,\n    \"itemId\":1,\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem create user 1 item 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create CartItem\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.userId).to.eql(1);",
+									"    pm.expect(jsonData.itemId).to.eql(2);",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.eql(new Date(\"2023-07-22T21:28:22\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"userId\":1,\n    \"itemId\":2,\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem create user 1 item 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create CartItem\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.userId).to.eql(1);",
+									"    pm.expect(jsonData.itemId).to.eql(2);",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.eql(new Date(\"2023-07-22T21:28:22\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"userId\":1,\n    \"itemId\":2,\n    \"timestamp\":\"2023-07-22T21:28:22\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem create user 2 item 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 and data in json format\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"pm.test(\"Test create CartItem\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.not.be.null;",
+									"    pm.expect(jsonData.userId).to.eql(2);",
+									"    pm.expect(jsonData.itemId).to.eql(2);",
+									"    pm.expect(new Date(jsonData.timestamp), '\"timestamp\" field').to.be.at.most(new Date());",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"userId\":2,\n    \"itemId\":2,\n    \"timestamp\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem get all with unique false",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with unique false\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].cartItemCount, 'result[0]: \"cartItemCount\" field').to.eql(3);",
+									"     pm.expect(jsonData[1].cartItemCount, 'result[1]: \"cartItemCount\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem get all with unique true",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with unique true\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].cartItemCount, 'result[0]: \"cartItemCount\" field').to.eql(2);",
+									"     pm.expect(jsonData[1].cartItemCount, 'result[1]: \"cartItemCount\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems?unique=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem get all with date range",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all with date range\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].cartItemCount, 'result[0]: \"cartItemCount\" field').to.eql(2);",
+									"     pm.expect(jsonData[1].cartItemCount, 'result[1]: \"cartItemCount\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems?unique=false&start=2023-07-22T21:28:21&end=2023-07-22T21:28:23",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "false"
+								},
+								{
+									"key": "start",
+									"value": "2023-07-22T21:28:21"
+								},
+								{
+									"key": "end",
+									"value": "2023-07-22T21:28:23"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem get all by itemIds 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all by itemIds 1\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(1);",
+									"    pm.expect(jsonData[0].cartItemCount, 'result[0]: \"cartItemCount\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems?unique=false&itemIds=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "false"
+								},
+								{
+									"key": "itemIds",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem get all by itemIds 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all by itemIds 2\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(1);",
+									"    pm.expect(jsonData[0].cartItemCount, 'result[0]: \"cartItemCount\" field').to.eql(3);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems?unique=false&itemIds=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "false"
+								},
+								{
+									"key": "itemIds",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem get all by itemIds 1, 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all by itemIds 1,2\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(2);",
+									"    pm.expect(jsonData[0].cartItemCount, 'result[0]: \"cartItemCount\" field').to.eql(3);",
+									"    pm.expect(jsonData[1].cartItemCount, 'result[0]: \"cartItemCount\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems?unique=false&itemIds=1, 2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "false"
+								},
+								{
+									"key": "itemIds",
+									"value": "1, 2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CartItem get all by pagination",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200]);",
+									"});",
+									"pm.test(\"Test get all by pagination\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length, 'elemets count in total').to.eql(1);",
+									"    pm.expect(jsonData[0].cartItemCount, 'result[0]: \"cartItemCount\" field').to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/stats/cartitems?unique=false&lastCartItemCount=3&lastItemId=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"stats",
+								"cartitems"
+							],
+							"query": [
+								{
+									"key": "unique",
+									"value": "false"
+								},
+								{
+									"key": "lastCartItemCount",
+									"value": "3"
+								},
+								{
+									"key": "lastItemId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
