@@ -44,7 +44,7 @@ class CartItemControllerTest {
     @Test
     void add_shouldStatusIsCreatedAndResponseObjectFieldsAreEqualToFieldsOfRequest() {
         LocalDateTime dateTime = LocalDateTime.now();
-        CartItemDtoAddRequest requestDto = new CartItemDtoAddRequest(2l, 5l, dateTime);
+        CartItemDtoAddRequest requestDto = new CartItemDtoAddRequest(2L, 5L, dateTime);
 
         String pathSegment = "/cartitems";
         webTestClient.post().uri(URL_TEMPLATE + pathSegment)

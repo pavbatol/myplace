@@ -15,6 +15,8 @@ public final class ApplicationContextProvider implements ApplicationContextAware
 
     @Override
     public void setApplicationContext(@NonNull ApplicationContext ctx) throws BeansException {
-        context = ctx;
+        if (context == null) {
+            context = ctx;
+        }
     }
 }

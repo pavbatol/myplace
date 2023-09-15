@@ -12,9 +12,6 @@ import ru.pavbatol.myplace.dto.cart.UserCartItemDtoResponse;
 import ru.pavbatol.myplace.server.cart.service.CartItemService;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @WebFluxTest(controllers = CartItemController.class)
 class CartItemControllerTest {

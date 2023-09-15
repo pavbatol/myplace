@@ -39,20 +39,20 @@ public class CustomViewMongoRepositoryImplTest {
 
         viewMongoRepository.deleteAll().block();
 
-        View View = new View().setApp(APP).setUri(URI).setIp(IP).setTimestamp(DATE_TIME.minusYears(YEARS));
-        View View0 = new View().setApp(APP + "2").setUri(URI).setIp(IP).setTimestamp(DATE_TIME.minusYears(YEARS));
-        View View1 = new View().setApp(APP + "2").setUri(URI).setIp(IP + "2").setTimestamp(DATE_TIME);
-        View View2 = new View().setApp(APP).setUri(URI).setIp(IP + "2").setTimestamp(DATE_TIME);
-        View View3 = new View().setApp(APP).setUri(URI + "2").setIp(IP + "2").setTimestamp(DATE_TIME);
-        View View4 = new View().setApp(APP + "2").setUri(URI + "2").setIp(IP + "2").setTimestamp(DATE_TIME);
+        View view = new View().setApp(APP).setUri(URI).setIp(IP).setTimestamp(DATE_TIME.minusYears(YEARS));
+        View view0 = new View().setApp(APP + "2").setUri(URI).setIp(IP).setTimestamp(DATE_TIME.minusYears(YEARS));
+        View view1 = new View().setApp(APP + "2").setUri(URI).setIp(IP + "2").setTimestamp(DATE_TIME);
+        View view2 = new View().setApp(APP).setUri(URI).setIp(IP + "2").setTimestamp(DATE_TIME);
+        View view3 = new View().setApp(APP).setUri(URI + "2").setIp(IP + "2").setTimestamp(DATE_TIME);
+        View view4 = new View().setApp(APP + "2").setUri(URI + "2").setIp(IP + "2").setTimestamp(DATE_TIME);
 
         viewMongoRepository.saveAll(List.of(
-                View, View, View, View, View, View, View,
-                View0, View0, View0,
-                View1, View1,
-                View2, View2, View2,
-                View3, View3, View3, View3,
-                View4, View4, View4
+                view, view, view, view, view, view, view,
+                view0, view0, view0,
+                view1, view1,
+                view2, view2, view2,
+                view3, view3, view3, view3,
+                view4, view4, view4
         )).collectList().block();
     }
 
