@@ -1,0 +1,16 @@
+spring:
+  banner:
+    location: banner/banner.txt
+  data:
+    mongodb:
+      host: ${app.db.host}
+      port: ${app.db.port}
+      database: ${app.db.name}
+      username: ${app.db.username}
+      password: ${app.db.password}
+      authentication-database: admin
+
+logging:
+  level:
+    ru.pavbatol: DEBUG
+    org.springframework.web: DEBUG

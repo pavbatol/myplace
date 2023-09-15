@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    group:
+      develop:
+        - dev
+        - common
+      production:
+        - prod
+        - common
+      test:
+        - test
+        - common
+      default: production
