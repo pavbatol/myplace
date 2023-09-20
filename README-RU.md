@@ -1,4 +1,4 @@
-![myplace.png](assets%2Fmyplace.png)
+![myplace.png](logo.png)
 
 [EN](README.md)
 
@@ -7,7 +7,13 @@
 Вы можете организовать свою собственную торговую площадку.  
 Приглашайте продавцов, привлекайте покупателей и зарабатывайте.
 
-### Технологии:
+<u>_Проект в разработке_</u>
+
+### Готовые сервисы:
+- Статистика
+-
+
+### Планируемый стек:
 - Microservice architecture
 - Maven
 - Spring Boot
@@ -21,3 +27,4 @@
 - Postgresql, H2, MongoDB (reactive), Redis
 - Junit, Mockito
 - Docker-compose
+- Kubernetes

@@ -5,10 +5,7 @@ spring:
     mongodb:
       host: ${app.db.host}
       port: ${app.db.port}
-#      port: 27070
-      database: mp-stats-test # database: ${app.db.name}
-#      username: ${app.db.username}
-#      password: ${app.db.password}
+      database: mp-stats-test
       authentication-database: admin
 
 logging:

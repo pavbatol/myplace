@@ -1,4 +1,4 @@
-![myplace.png](assets%2Fmyplace.png)
+![myplace.png](logo.png)
 
 [RU](README-RU.md)
 
@@ -6,7 +6,13 @@
 The server part for the marketplace.  
 You can organize your own platform, invite sellers, attract buyers and earn money.
 
-### Technologies Used:
+<u>_Project in development_</u>
+
+### Ready-made services:
+- Statistics
+-
+
+### Intended technologies:
 - Microservice architecture
 - Maven
 - Spring Boot
@@ -20,3 +26,4 @@ You can organize your own platform, invite sellers, attract buyers and earn mone
 - Postgresql, H2, MongoDB (reactive), Redis
 - Junit, Mockito
 - Docker-compose
+- Kubernetes

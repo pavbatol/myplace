@@ -1,0 +1,658 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Stats service Api",
+    "description": "MyPlace >> mp-stats service",
+    "contact": {
+      "name": "Sergey Pavlik",
+      "email": "pavbatol@yandex.ru"
+    },
+    "license": {
+      "name": "License MIT",
+      "url": "https://mit-license.org/"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "localhost:9090",
+      "description": "develop"
+    }
+  ],
+  "tags": [
+    {
+      "name": "CartItems",
+      "description": "API for working with 'CartItem' entity"
+    },
+    {
+      "name": "ShippingGeos",
+      "description": "API for working with 'ShippingGeo' entity"
+    },
+    {
+      "name": "Views",
+      "description": "API for working with 'View' entity"
+    }
+  ],
+  "paths": {
+    "/stats/views": {
+      "get": {
+        "tags": [
+          "Views"
+        ],
+        "summary": "find",
+        "description": "finding Views by filter",
+        "operationId": "find",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ViewSearchFilter"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ViewDtoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Views"
+        ],
+        "summary": "add",
+        "description": "adding a View",
+        "operationId": "add",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ViewDtoAddRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewDtoAddResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/shippinggeos": {
+      "get": {
+        "tags": [
+          "ShippingGeos"
+        ],
+        "summary": "findShippingCountryCities",
+        "description": "finding ShippingGeo by filter",
+        "operationId": "findShippingCountryCities",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ShippingGeoSearchFilter"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShippingGeoDtoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ShippingGeos"
+        ],
+        "summary": "add",
+        "description": "adding a ShippingGeo",
+        "operationId": "add_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShippingGeoDtoAddRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShippingGeoDtoAddResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/cartitems": {
+      "get": {
+        "tags": [
+          "CartItems"
+        ],
+        "summary": "find",
+        "description": "finding CartItems by filter",
+        "operationId": "find_1",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/CartItemSearchFilter"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CartItemDtoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CartItems"
+        ],
+        "summary": "add",
+        "description": "adding a CartItem",
+        "operationId": "add_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CartItemDtoAddRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartItemDtoAddResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats/user/cartitems": {
+      "get": {
+        "tags": [
+          "CartItems"
+        ],
+        "summary": "findUserCartItems",
+        "description": "finding item IDs in the cart by users",
+        "operationId": "findUserCartItems",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UserCartItemSearchFilter"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserCartItemDtoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ViewDtoAddRequest": {
+        "required": [
+          "app",
+          "ip",
+          "uri"
+        ],
+        "type": "object",
+        "properties": {
+          "app": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ViewDtoAddResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "app": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ShippingGeoDtoAddRequest": {
+        "required": [
+          "city",
+          "country",
+          "itemId"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "country": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ShippingGeoDtoAddResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "country": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CartItemDtoAddRequest": {
+        "required": [
+          "itemId",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "itemId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CartItemDtoAddResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "itemId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ViewSearchFilter": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unique": {
+            "type": "boolean"
+          },
+          "sortDirection": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "pageSize": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "uris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pageNumber": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ViewDtoResponse": {
+        "type": "object",
+        "properties": {
+          "app": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          },
+          "views": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "UserCartItemSearchFilter": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unique": {
+            "type": "boolean"
+          },
+          "sortDirection": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "pageSize": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "lastUserId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastItemCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "UserCartItemDtoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cartItemIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "itemCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ShippingGeoSearchFilter": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unique": {
+            "type": "boolean"
+          },
+          "sortDirection": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "pageSize": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "itemIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lastCityCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastCountryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastItemId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ShippingGeoDtoResponse": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "countryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cityCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "countryCities": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CartItemSearchFilter": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unique": {
+            "type": "boolean"
+          },
+          "sortDirection": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "pageSize": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "itemIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "lastItemId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastCartItemCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CartItemDtoResponse": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cartItemCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    }
+  }
+}
