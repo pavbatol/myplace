@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    group:
+      develop:
+        - dev
+        - swagger
+        - redis
+        - jwt
+        - mail
+      production:
+        - prod
+        - swagger
+        - redis
+        - jwt
+        - mail
+      test:
+        - test
+        - swagger
+        - redis
+        - jwt
+        - mail
+      default: production

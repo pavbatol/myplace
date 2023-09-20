@@ -20,6 +20,7 @@
         <module>mp-gateway</module>
         <module>mp-main</module>
         <module>mp-stats</module>
+        <module>mp-security</module>
     </modules>
 
     <properties>
