@@ -2,6 +2,8 @@ server:
   port: 8078
 
 spring:
+  application:
+    name: mp-security
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${app.db.host}:${app.db.port}/${app.db.name}
