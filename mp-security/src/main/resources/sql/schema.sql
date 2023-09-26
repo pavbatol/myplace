@@ -12,17 +12,12 @@ create table if not exists users
 (
     user_id     bigint default nextval('seq_users')     not null,
     user_uuid   uuid                                    not null,
-    email       varchar(255)                            not null,
     login       varchar(255)                            not null,
     password    varchar(255)                            not null,
-    blocked     boolean                                 not null,
     deleted     boolean                                 not null,
-    first_name  varchar(255)                            not null,
-    registered_on timestamp without time zone           not null,
     constraint pk_users primary key (user_id),
     constraint uq_users_uuid unique (user_uuid),
     constraint uq_users_login unique (login),
-    constraint uq_users_email unique (email)
 );
 
 create table if not exists users_roles

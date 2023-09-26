@@ -1,6 +1,10 @@
 app:
   mail:
     sender: test@gmail.com
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
 
 #spring:
 #  mail:

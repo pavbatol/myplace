@@ -3,9 +3,11 @@ package ru.pavbatol.myplace.user.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import ru.pavbatol.myplace.role.model.Role;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Setter
@@ -26,24 +28,20 @@ public class User {
     @Column(name = "user_uuid", nullable = false, unique = true)
     UUID uuid;
 
-    @Column(name = "email", nullable = false, unique = true)
-    String email;
-
     @Column(name = "login", nullable = false, unique = true)
     String login;
 
     @Column(name = "password", nullable = false)
     String password;
 
-    @Column(name = "blocked", nullable = false)
-    Boolean blocked;
-
     @Column(name = "deleted", nullable = false)
     Boolean deleted;
 
-    @Column(name = "first_name", nullable = false)
-    String firstName;
-
-    @Column(name = "registered_on", nullable = false)
-    LocalDateTime registeredOn;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id")
+    )
+    Set<Role> roles = new HashSet<>();
 }
