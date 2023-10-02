@@ -31,8 +31,8 @@ public class RedisConfig {
     @Value("${redis.username:}")
     private String redisUsername;
 
-    @Value("${redis.storageseconds:600}")
-    private Long refreshTokenTtl;
+    @Value("${redis.ttl-sec:600}")
+    private Long ttl;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -55,7 +55,7 @@ public class RedisConfig {
     @Bean
     public CacheManager cacheManager() {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofSeconds(refreshTokenTtl))
+                .entryTtl(Duration.ofSeconds(ttl))
                 .disableCachingNullValues();
         return RedisCacheManager.builder(redisConnectionFactory())
                 .cacheDefaults(redisCacheConfiguration)

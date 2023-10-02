@@ -1,33 +1,46 @@
 package ru.pavbatol.myplace.user.repository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import ru.pavbatol.myplace.app.config.RedisKeys;
 import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserRedisRepositoryImpl implements UserRedisRepository<UserDtoRegistry> {
-    private static final String KEY = RedisKeys.USERS_UNVERIFIED.getKey();
+    private static final String KEY_PREFIX = RedisKeys.USERS_UNVERIFIED.getKey() + ":";
     private final RedisTemplate<String, Object> redisTemplate;
+    @Value("${redis.ttl-sec-unverified:180}")
+    private Long ttl;
 
     @Override
-    public boolean save(UserDtoRegistry dtoRegistry) {
-        return redisTemplate.opsForHash().putIfAbsent(KEY, dtoRegistry.getEmail(), dtoRegistry);
+    public boolean save(String hashKey, UserDtoRegistry dtoRegistry) {
+        final String key = KEY_PREFIX + hashKey;
+        Boolean isSet = redisTemplate.opsForValue().setIfAbsent(key, dtoRegistry, ttl, TimeUnit.SECONDS);
+        if (isSet != null) {
+            return isSet;
+        } else {
+            throw new RuntimeException("Unknown result: DB returned null");
+        }
     }
 
     @Override
     public boolean remove(String hashKey) {
-        return redisTemplate.opsForHash().delete(KEY, hashKey) == 1;
+        Boolean isDel = redisTemplate.delete(KEY_PREFIX + hashKey);
+        if (isDel != null) {
+            return isDel;
+        } else {
+            throw new RuntimeException("Unknown result: DB returned null");
+        }
     }
 
     @Override
     public Optional<UserDtoRegistry> findByHashKey(String hashKey) {
-        return Optional.ofNullable((UserDtoRegistry) redisTemplate.opsForHash().get(KEY, hashKey));
+        return Optional.ofNullable((UserDtoRegistry) redisTemplate.opsForValue().get(hashKey));
     }
 }

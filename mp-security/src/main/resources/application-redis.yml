@@ -4,4 +4,5 @@ redis:
   database: 0
   password:
   username:
-  storageseconds: 300
+  ttl-sec: 300
+  ttl-sec-unverified: 180
