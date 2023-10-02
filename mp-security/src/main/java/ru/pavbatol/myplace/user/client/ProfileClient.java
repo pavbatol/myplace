@@ -29,24 +29,22 @@ public class ProfileClient {
         log.debug("Trying to send request for creating profile");
         ProfileDtoCreate profileDto = new ProfileDtoCreate(userId, email);
         HttpEntity<ProfileDtoCreate> httpEntity = new HttpEntity<>(profileDto, defaultHeaders());
-        String path = PROFILE_PATH + "/emails?email={email}";
-
 
         ResponseEntity<Object> response = restTemplate.exchange(
-                path,
+                PROFILE_PATH,
                 HttpMethod.POST,
                 httpEntity,
                 Object.class);
 
         if (response.getStatusCode() != HttpStatus.CREATED) {
-            throw new RuntimeException("Failed to create Profile"); // Add original exception
+            throw new RuntimeException("Failed to create Profile, HttpStatus: " + response.getStatusCodeValue());
         }
     }
 
     public boolean existsByEmail(String email) {
         log.debug("Trying to send request for checking email for existing");
         HttpEntity<Object> httpEntity = new HttpEntity<>(defaultHeaders());
-        String path = PROFILE_PATH + "/emails?email={email}";
+        String path = PROFILE_PATH + "/check-email?email={email}";
 
         ResponseEntity<Boolean> response = restTemplate.exchange(
                 path,
