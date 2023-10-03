@@ -5,42 +5,41 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import ru.pavbatol.myplace.app.config.RedisKeys;
-import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
+import ru.pavbatol.myplace.app.exception.RedisException;
+import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
-public class UserRedisRepositoryImpl implements UserRedisRepository<UserDtoRegistry> {
+public class UserRedisRepositoryImpl implements UserRedisRepository<UserDtoUnverified> {
     private static final String KEY_PREFIX = RedisKeys.USERS_UNVERIFIED.getKey() + ":";
     private final RedisTemplate<String, Object> redisTemplate;
     @Value("${redis.ttl-sec-unverified:180}")
-    private Long ttl;
+    private long ttl;
 
     @Override
-    public boolean save(String hashKey, UserDtoRegistry dtoRegistry) {
-        final String key = KEY_PREFIX + hashKey;
-        Boolean isSet = redisTemplate.opsForValue().setIfAbsent(key, dtoRegistry, ttl, TimeUnit.SECONDS);
+    public boolean save(String hashKey, UserDtoUnverified obj) throws RedisException {
+        Boolean isSet = redisTemplate.opsForValue().setIfAbsent(composeKey(hashKey), obj, ttl, TimeUnit.SECONDS);
         if (isSet != null) {
             return isSet;
         } else {
-            throw new RuntimeException("Unknown result: DB returned null");
+            throw new RedisException("Unknown result: DB returned null");
         }
     }
 
     @Override
-    public boolean remove(String hashKey) {
-        Boolean isDel = redisTemplate.delete(KEY_PREFIX + hashKey);
-        if (isDel != null) {
-            return isDel;
-        } else {
-            throw new RuntimeException("Unknown result: DB returned null");
-        }
+    public Optional<Boolean> remove(String hashKey) {
+        return Optional.ofNullable(redisTemplate.delete(composeKey(hashKey)));
     }
 
     @Override
-    public Optional<UserDtoRegistry> findByHashKey(String hashKey) {
-        return Optional.ofNullable((UserDtoRegistry) redisTemplate.opsForValue().get(hashKey));
+    public Optional<UserDtoUnverified> findByHashKey(String hashKey) {
+        return Optional.ofNullable((UserDtoUnverified) redisTemplate.opsForValue().get(composeKey(hashKey)));
+    }
+
+    private static String composeKey(String hashKey) {
+        return KEY_PREFIX + hashKey;
     }
 }
