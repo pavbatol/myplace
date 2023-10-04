@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/users/auth")
 @RequiredArgsConstructor
 @Tag(name = "Public: User", description = "API for working with User registration")
 public class PublicUserController {
@@ -30,10 +30,10 @@ public class PublicUserController {
         return ResponseEntity.ok(body);
     }
 
-    @GetMapping("/confirmation")
+    @PostMapping("/confirmation")
     @Operation(summary = "confirmRegistration", description = "confirming registration")
     public ResponseEntity<String> confirmRegistration(@RequestBody UserDtoConfirm dto) {
-        log.debug("GET confirmRegistration() with dto: {}", dto);
+        log.debug("POST confirmRegistration() with dto: {}", dto);
         userService.confirmRegistration(dto);
         String body = "Registration is confirmed";
         return ResponseEntity.ok(body);

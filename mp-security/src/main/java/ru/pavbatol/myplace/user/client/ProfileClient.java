@@ -3,9 +3,11 @@ package ru.pavbatol.myplace.user.client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
@@ -18,14 +20,15 @@ public class ProfileClient {
     private final RestTemplate restTemplate;
 
     @Autowired
-    public ProfileClient(RestTemplate restTemplate, @Value("${app.profile-server-url}") String profileServerUrl) {
+    public ProfileClient(RestTemplateBuilder builder, @Value("${app.profile-server-url}") String profileServerUrl) {
         assert profileServerUrl != null : "The 'profileServerUrl' variable is not set";
-        this.restTemplate = restTemplate;
-        this.restTemplate.setUriTemplateHandler(new DefaultUriBuilderFactory(profileServerUrl));
-        this.restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        this.restTemplate = builder
+                .uriTemplateHandler(new DefaultUriBuilderFactory(profileServerUrl))
+                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                .build();
     }
 
-    public void createProfile(Long userId, String email) {
+    public void createProfile(Long userId, String email) throws RestClientException {
         log.debug("Trying to send request for creating profile");
         ProfileDtoCreate profileDto = new ProfileDtoCreate(userId, email);
         HttpEntity<ProfileDtoCreate> httpEntity = new HttpEntity<>(profileDto, defaultHeaders());
@@ -41,7 +44,7 @@ public class ProfileClient {
         }
     }
 
-    public boolean existsByEmail(String email) {
+    public boolean existsByEmail(String email) throws RestClientException {
         log.debug("Trying to send request for checking email for existing");
         HttpEntity<Object> httpEntity = new HttpEntity<>(defaultHeaders());
         String path = PROFILE_PATH + "/check-email?email={email}";
