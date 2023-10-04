@@ -2,9 +2,13 @@ package ru.pavbatol.myplace.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.pavbatol.myplace.app.exception.NotFoundException;
+import ru.pavbatol.myplace.app.exception.RegistrationException;
 import ru.pavbatol.myplace.email.service.EmailService;
 import ru.pavbatol.myplace.user.client.ProfileClient;
+import ru.pavbatol.myplace.user.dto.UserDtoConfirm;
 import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
 import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
 import ru.pavbatol.myplace.user.mapper.UserMapper;
@@ -25,24 +29,24 @@ public class UserServiceImpl implements UserService {
     private final UserRedisRepository<UserDtoUnverified> redisRepository;
     private final EmailService emailService;
     private final ProfileClient profileClient;
+    private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
 
     @Override
     public void register(HttpServletRequest servletRequest, UserDtoRegistry dto) {
-        String key = dto.getEmail();
-        String code = generateCode();
-        UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, code);
+        final String key = dto.getEmail();
+        final String code = generateCode();
+        final String encodedCode = passwordEncoder.encode(code);
+        UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode);
 
         if (redisRepository.save(key, dtoUnverified)) {
+            log.debug("unverified {} saved to Redis: {}", ENTITY_SIMPLE_NAME, dtoUnverified);
             if (!profileClient.existsByEmail(dto.getEmail())) {
                 String text = String.format("You have received this email because your email-address was specified " +
                                 "during registration on '%s'\nYour confirmation code:\n%s",
                         servletRequest.getServerName(), code);
 
-                emailService.sendSimpleMessage(
-                        dto.getEmail(),
-                        "Confirmation code",
-                        text);
+                emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
                 /*
                  * The following code is intended for direct saving of the user, without confirmation by mail.
                  * This is for testing the application if you don't specify an email for sending.
@@ -63,8 +67,17 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void confirmRegistration(String code) {
+    public void confirmRegistration(UserDtoConfirm dtoConfirm) {
+        final String encodedCode = passwordEncoder.encode(dtoConfirm.getCode());
 
+        UserDtoUnverified dtoUnverified = redisRepository.findByHashKey(dtoConfirm.getEmail())
+                .orElseThrow(() -> new NotFoundException("Email not confirmed"));
+
+        if (!passwordEncoder.matches(dtoConfirm.getCode(), dtoUnverified.getCode())) {
+            throw new RegistrationException("Invalid confirmation code");
+        }
+
+        log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
     }
 
     private String generateCode() {
@@ -77,14 +90,4 @@ public class UserServiceImpl implements UserService {
         }
         return builder.toString();
     }
-
-//    public static String encode(String code) {
-//        private static final Charset CHARSET = StandardCharsets.UTF_8;
-//        return new String(Base64.getEncoder().encode(code.getBytes(CHARSET)));
-//    }
-
-//    public static String decode(String encodedCode) {
-//        return new String(Base64.getDecoder().decode(encodedCode), CHARSET);
-//    }
-
 }

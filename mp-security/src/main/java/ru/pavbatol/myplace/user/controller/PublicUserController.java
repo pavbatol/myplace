@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.pavbatol.myplace.user.dto.UserDtoConfirm;
 import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
 import ru.pavbatol.myplace.user.service.UserService;
 
@@ -18,12 +19,9 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Tag(name = "Public: User", description = "API for working with User registration")
 public class PublicUserController {
-    public static final String REGISTRY_PATH = "/registry";
-    public static final String CONFIRMATION_PATH = "/confirmation";
-    public static final String CODE = "code";
     private final UserService userService;
 
-    @PostMapping(REGISTRY_PATH)
+    @PostMapping("/registry")
     @Operation(summary = "register", description = "registering a new user")
     public ResponseEntity<String> register(HttpServletRequest servletRequest, @Valid @RequestBody UserDtoRegistry dtoRegister) {
         log.debug("POST register() with {}", dtoRegister);
@@ -32,11 +30,11 @@ public class PublicUserController {
         return ResponseEntity.ok(body);
     }
 
-    @GetMapping(CONFIRMATION_PATH)
-    @Operation(summary = "confirmRegistration", description = "endpoint to confirm registration")
-    public ResponseEntity<String> confirmRegistration(@RequestParam(CODE) String code) {
-        log.debug("GET confirmRegistration() with {}: {}", CODE, code);
-        userService.confirmRegistration(code);
+    @GetMapping("/confirmation")
+    @Operation(summary = "confirmRegistration", description = "confirming registration")
+    public ResponseEntity<String> confirmRegistration(@RequestBody UserDtoConfirm dto) {
+        log.debug("GET confirmRegistration() with dto: {}", dto);
+        userService.confirmRegistration(dto);
         String body = "Registration is confirmed";
         return ResponseEntity.ok(body);
     }
