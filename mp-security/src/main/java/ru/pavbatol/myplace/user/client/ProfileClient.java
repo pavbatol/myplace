@@ -7,9 +7,9 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import ru.pavbatol.myplace.app.exception.ExternalServerException;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class ProfileClient {
                 .build();
     }
 
-    public void createProfile(Long userId, String email) throws RestClientException {
+    public void createProfile(Long userId, String email) throws RuntimeException {
         log.debug("Trying to send request for creating profile");
         ProfileDtoCreate profileDto = new ProfileDtoCreate(userId, email);
         HttpEntity<ProfileDtoCreate> httpEntity = new HttpEntity<>(profileDto, defaultHeaders());
@@ -40,11 +40,11 @@ public class ProfileClient {
                 Object.class);
 
         if (response.getStatusCode() != HttpStatus.CREATED) {
-            throw new RuntimeException("Failed to create Profile, HttpStatus: " + response.getStatusCodeValue());
+            throw new ExternalServerException("Failed to create Profile, HttpStatus: " + response.getStatusCodeValue());
         }
     }
 
-    public boolean existsByEmail(String email) throws RestClientException {
+    public boolean existsByEmail(String email) throws RuntimeException {
         log.debug("Trying to send request for checking email for existing");
         HttpEntity<Object> httpEntity = new HttpEntity<>(defaultHeaders());
         String path = PROFILE_PATH + "/check-email?email={email}";
@@ -61,10 +61,10 @@ public class ProfileClient {
             if (exists != null) {
                 return exists;
             } else {
-                throw new RuntimeException("Server returned null value for email existence");
+                throw new ExternalServerException("Server returned null value for email existence");
             }
         } else {
-            throw new RuntimeException("Server returned non-OK status: " + response.getStatusCodeValue());
+            throw new ExternalServerException("Server returned non-OK status: " + response.getStatusCodeValue());
         }
     }
 
