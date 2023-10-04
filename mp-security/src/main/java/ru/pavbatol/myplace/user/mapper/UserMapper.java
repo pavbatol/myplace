@@ -9,5 +9,6 @@ import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
 @Mapper(componentModel = "spring", unmappedTargetPolicy =  ReportingPolicy.IGNORE)
 public interface UserMapper {
     @Mapping(target = "code", source = "code")
-    UserDtoUnverified toDtoUnverified(UserDtoRegistry dtoRegistry, String code);
+    @Mapping(target = "password", source = "password")
+    UserDtoUnverified toDtoUnverified(UserDtoRegistry dtoRegistry, String code, String password);
 }
