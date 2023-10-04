@@ -48,8 +48,18 @@ public class UserServiceImpl implements UserService {
         UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
 
         if (userRedisRepository.save(key, dtoUnverified)) {
-            log.debug("unverified {} saved to Redis: {}", ENTITY_SIMPLE_NAME, dtoUnverified);
-            if (!profileClient.existsByEmail(dto.getEmail())) {
+            log.debug("Unverified {} saved to Redis: {}", ENTITY_SIMPLE_NAME, dtoUnverified);
+
+            boolean emailExists;
+            try {
+                emailExists = profileClient.existsByEmail(dto.getEmail());
+            } catch (RuntimeException e) {
+                userRedisRepository.remove(key);
+                throw new RegistrationException("Failed interacting with the Profile service", e.getMessage());
+            }
+
+//            if (!profileClient.existsByEmail(dto.getEmail())) {
+            if (!emailExists) {
                 String text = String.format("You have received this email because your email-address was specified " +
                                 "during registration on '%s'\nYour confirmation code:\n%s",
                         servletRequest.getServerName(), code);
@@ -75,11 +85,10 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        throw new RuntimeException("A user with this email is already registered");
+        throw new RegistrationException("A user with this email is already registered");
     }
 
-
-    @Transactional
+    @Transactional(rollbackFor = {Exception.class})
     @Override
     public void confirmRegistration(UserDtoConfirm dtoConfirm) {
         UserDtoUnverified dtoUnverified = userRedisRepository.findByHashKey(dtoConfirm.getEmail())
@@ -100,7 +109,11 @@ public class UserServiceImpl implements UserService {
         User savedUser = userJpaRepository.save(user);
         profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
 
-        userRedisRepository.remove(dtoConfirm.getEmail());
+        try {
+            userRedisRepository.remove(dtoConfirm.getEmail());
+        } catch (Exception e) {
+            log.debug("Error deleting from Redis: {}", e.getMessage());
+        }
 
         log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
         log.debug("{} created: {}", ENTITY_SIMPLE_NAME, savedUser);
