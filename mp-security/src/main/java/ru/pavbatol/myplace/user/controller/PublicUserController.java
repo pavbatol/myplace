@@ -24,7 +24,7 @@ public class PublicUserController {
     @PostMapping("/registry")
     @Operation(summary = "register", description = "registering a new user")
     public ResponseEntity<String> register(HttpServletRequest servletRequest, @Valid @RequestBody UserDtoRegistry dtoRegister) {
-        log.debug("POST register() with {}", dtoRegister);
+        log.debug("POST register() with email:{}, login: {}, password: hidden for security", dtoRegister.getEmail(), dtoRegister.getLogin());
         userService.register(servletRequest, dtoRegister);
         String body = "An email with a confirmation code has been sent to your email address.\nConfirm your email address";
         return ResponseEntity.ok(body);

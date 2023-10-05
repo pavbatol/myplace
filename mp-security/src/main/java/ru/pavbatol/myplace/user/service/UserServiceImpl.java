@@ -10,6 +10,7 @@ import ru.pavbatol.myplace.app.exception.RegistrationException;
 import ru.pavbatol.myplace.email.service.EmailService;
 import ru.pavbatol.myplace.role.model.Role;
 import ru.pavbatol.myplace.role.model.RoleName;
+import ru.pavbatol.myplace.role.repository.RoleRepository;
 import ru.pavbatol.myplace.user.client.ProfileClient;
 import ru.pavbatol.myplace.user.dto.UserDtoConfirm;
 import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
@@ -34,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private static final String DIGITS = "0123456789";
     private final UserRedisRepository<UserDtoUnverified> userRedisRepository;
     private final UserJpaRepository userJpaRepository;
+    private final RoleRepository roleRepository;
     private final EmailService emailService;
     private final ProfileClient profileClient;
     private final PasswordEncoder passwordEncoder;
@@ -75,7 +77,7 @@ public class UserServiceImpl implements UserService {
                  * Temporary: The following code is intended for direct saving of the user, without confirmation by mail.
                  * This is for testing the application if you don't specify an email for sending.
                  */
-                log.debug("Data for confirmation: email: {}, cd: {}", dto.getEmail(), code);
+                log.debug("Data for confirmation: email: {}, code: {}", dto.getEmail(), code);
 //                ...
 //                ...
 
@@ -85,7 +87,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        throw new RegistrationException("A user with this email is already registered");
+        throw new RegistrationException("A user with this email is already registered: " + dto.getEmail());
     }
 
     @Transactional(rollbackFor = {Exception.class})
@@ -98,7 +100,7 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("Invalid confirmation code");
         }
 
-        Role role = new Role().setRoleName(RoleName.USER);
+        Role role = getRoleFromDB(RoleName.USER);
         User user = new User()
                 .setUuid(UUID.randomUUID())
                 .setPassword(dtoUnverified.getPassword())
@@ -129,5 +131,14 @@ public class UserServiceImpl implements UserService {
             builder.append(symbols.charAt(index));
         }
         return builder.toString();
+    }
+
+    private Role getRoleFromDB(RoleName roleName) {
+        return roleRepository.findByRoleName(roleName)
+                .orElseThrow(() -> {
+                    String errMessage = String.format("%s not found by %s ", Role.class.getSimpleName(), roleName);
+                    log.error(errMessage);
+                    return new NotFoundException(errMessage);
+                });
     }
 }

@@ -6,20 +6,20 @@ import org.springframework.security.core.GrantedAuthority;
 
 @RequiredArgsConstructor
 public enum RoleName implements GrantedAuthority {
-    //--GLOBAL
-    MP_ADMIN,
-    MP_EMPLOYEE_MODERATOR,
-    MP_EMPLOYEE_STOREKEEPER,
-    MP_EMPLOYEE_ISSUING_ORDERS_MAN,
+    //--Main
+    ADMIN,
+    USER,
 
-    //--VENDOR
-    VENDOR_ADMIN,
-    VENDOR_EMPLOYEE_MANAGER,
-    VENDOR_EMPLOYEE_MODERATOR,
-    VENDOR_EMPLOYEE_STOREKEEPER,
+    //--STAFF
+    MANAGER,
+    MODERATOR,
 
-    //--CONSUMER
-    USER;
+    //--SHOP
+    SHOP_ADMIN,
+    SHOP_MANAGER,
+    SHOP_MODERATOR,
+    SHOP_STOREKEEPER,
+    ;
 
     private static final String PREFIX = "ROLE_";
 

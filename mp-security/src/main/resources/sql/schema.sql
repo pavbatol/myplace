@@ -1,13 +1,11 @@
-create sequence if not exists seq_users minvalue 1 start with 1 increment 1;
 create sequence if not exists seq_roles minvalue 1 start with 1 increment 1;
-create sequence if not exists seq_verify_tokens minvalue 1 start with 1 increment 1;
-
 create table if not exists roles
 (
     role_id bigint default nextval('seq_roles')     primary key not null,
     role_name varchar(50) unique                                not null
 );
 
+create sequence if not exists seq_users minvalue 1 start with 1 increment 1;
 create table if not exists users
 (
     user_id     bigint default nextval('seq_users')     not null,
@@ -17,7 +15,7 @@ create table if not exists users
     deleted     boolean                                 not null,
     constraint pk_users primary key (user_id),
     constraint uq_users_uuid unique (user_uuid),
-    constraint uq_users_login unique (login),
+    constraint uq_users_login unique (login)
 );
 
 create table if not exists users_roles
@@ -27,14 +25,4 @@ create table if not exists users_roles
     constraint fk_users_roules_to_user foreign key (user_id) references users (user_id) on delete cascade,
     constraint fk_users_roules_to_role foreign key (role_id) references roles (role_id) on delete cascade,
     constraint pk_users_roles primary key (user_id, role_id)
-);
-
-create table if not exists verify_tokens
-(
-    token_id  bigint default nextval('seq_verify_tokens')   not null,
-    token      varchar(255)                                 not null,
-    expired_on timestamp without time zone                  not null,
-    user_id    bigint,
-    constraint pk_verify_tokens primary key (token_id),
-    constraint fk_verify_tokens_on_user foreign key (user_id) references users (user_id) on delete cascade
 );
