@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import ru.pavbatol.myplace.app.config.RedisKeys;
+import ru.pavbatol.myplace.app.config.RedisKey;
 import ru.pavbatol.myplace.app.exception.RedisException;
 import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
 
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class UserRedisRepositoryImpl implements UserRedisRepository<UserDtoUnverified> {
-    private static final String KEY_PREFIX = RedisKeys.USERS_UNVERIFIED.getKey() + ":";
+    private static final String KEY_PREFIX = RedisKey.USERS_UNVERIFIED.getKey() + ":";
     private final RedisTemplate<String, Object> redisTemplate;
     @Value("${redis.ttl-sec-unverified:180}")
     private long ttl;

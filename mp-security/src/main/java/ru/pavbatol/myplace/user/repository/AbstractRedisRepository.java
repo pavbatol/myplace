@@ -1,9 +1,8 @@
 package ru.pavbatol.myplace.user.repository;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import ru.pavbatol.myplace.app.config.RedisKeys;
+import ru.pavbatol.myplace.app.config.RedisKey;
 import ru.pavbatol.myplace.app.exception.RedisException;
 
 import javax.validation.constraints.NotNull;
@@ -11,12 +10,12 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractRedisRepository<T> implements RedisRepository<T> {
-    protected final RedisKeys redisKey;
+    protected final RedisKey redisKey;
     protected final long ttl;
     @Autowired
     protected RedisTemplate<String, Object> redisTemplate;
 
-    protected AbstractRedisRepository(RedisKeys redisKey, long ttl) {
+    protected AbstractRedisRepository(RedisKey redisKey, long ttl) {
         this.redisKey = redisKey;
         this.ttl = ttl;
     }

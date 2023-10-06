@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         final String encodedPassword = passwordEncoder.encode(dto.getPassword());
         UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
 
-        if (userRedisRepository.save(key, dtoUnverified)) {
+        if (userRedisRepository.create(key, dtoUnverified)) {
             log.debug("Unverified {} saved to Redis with email: {}, login: {}, password and code are hidden for security",
                     ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
 
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
             try {
                 emailExists = profileClient.existsByEmail(dto.getEmail());
             } catch (RuntimeException e) {
-                userRedisRepository.remove(key);
+                userRedisRepository.delete(key);
                 throw new RegistrationException("Failed interacting with the Profile service", e.getMessage());
             }
 
@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
                 return;
             } else {
-                userRedisRepository.remove(key);
+                userRedisRepository.delete(key);
             }
         }
 
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = {Exception.class})
     @Override
     public void confirmRegistration(UserDtoConfirm dtoConfirm) {
-        UserDtoUnverified dtoUnverified = userRedisRepository.findByHashKey(dtoConfirm.getEmail())
+        UserDtoUnverified dtoUnverified = userRedisRepository.find(dtoConfirm.getEmail())
                 .orElseThrow(() -> new NotFoundException("Email not confirmed", "Email not found"));
 
         if (!passwordEncoder.matches(dtoConfirm.getCode(), dtoUnverified.getCode())) {
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
         profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
 
         try {
-            userRedisRepository.remove(dtoConfirm.getEmail());
+            userRedisRepository.delete(dtoConfirm.getEmail());
         } catch (Exception e) {
             log.debug("Error deleting from Redis: {}", e.getMessage());
         }
