@@ -18,7 +18,7 @@ public class UnverifiedUserRedisRepository extends AbstractRedisRepository<UserD
     }
 
     @Override
-    public Class<UserDtoUnverified> getType() {
+    protected Class<UserDtoUnverified> getType() {
         return UserDtoUnverified.class;
     }
 }

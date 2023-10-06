@@ -20,7 +20,7 @@ public abstract class AbstractRedisRepository<T> implements RedisRepository<T> {
         this.ttl = ttl;
     }
 
-    abstract Class<T> getType();
+    protected abstract Class<T> getType();
 
     protected String composeKey(String key) {
         return redisKey.getKey() + ":" + key;
@@ -62,14 +62,15 @@ public abstract class AbstractRedisRepository<T> implements RedisRepository<T> {
 
     @Override
     public Optional<T> find(@NotNull String key) {
-        Object object = redisTemplate.opsForValue().get(composeKey(key));
+        String composedKey = composeKey(key);
+        Object object = redisTemplate.opsForValue().get(composedKey);
         Class<T> type = getType();
         if (object == null || type.isInstance(object)) {
             return Optional.ofNullable(type.cast(object));
         } else {
             throw new ClassCastException(
-                    String.format("Under the hashKey %s there is an object that does not match the type %s",
-                            composeKey(key), getType().getSimpleName()));
+                    String.format("Under the key %s there is an object that does not match the type %s",
+                            composedKey, getType().getSimpleName()));
         }
     }
 }

@@ -19,7 +19,6 @@ import ru.pavbatol.myplace.user.mapper.UserMapper;
 import ru.pavbatol.myplace.user.model.User;
 import ru.pavbatol.myplace.user.repository.UnverifiedUserRedisRepository;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
-import ru.pavbatol.myplace.user.repository.UserRedisRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Random;
@@ -34,7 +33,6 @@ public class UserServiceImpl implements UserService {
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
     private static final String DIGITS = "0123456789";
-//    private final UserRedisRepository<UserDtoUnverified> userRedisRepository;
     private final UnverifiedUserRedisRepository userRedisRepository;
     private final UserJpaRepository userJpaRepository;
     private final RoleRepository roleRepository;
