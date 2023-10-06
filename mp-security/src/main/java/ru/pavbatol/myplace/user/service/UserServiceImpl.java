@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("Invalid confirmation code");
         }
 
-        Role role = getRoleFromDB(RoleName.USER);
+        Role role = getNonNullRoleFromDB(RoleName.USER);
         User user = new User()
                 .setUuid(UUID.randomUUID())
                 .setPassword(dtoUnverified.getPassword())
@@ -123,22 +123,30 @@ public class UserServiceImpl implements UserService {
     }
 
     private String generateCode() {
-        final Random random = new Random();
-        final String symbols = UPPER + LOWER + DIGITS;
+        final int codeLength = 5;
+        final String[] source = {UPPER, LOWER, DIGITS};
+        final String alphabet = String.join("", source);
         final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 5; i++) {
-            int index = random.nextInt(symbols.length());
-            builder.append(symbols.charAt(index));
+        final Random random = new Random();
+
+        for (int i = 0; i < codeLength - source.length; i++) {
+            int index = random.nextInt(alphabet.length());
+            builder.append(alphabet.charAt(index));
         }
+
+        for (String str : source) {
+            int index = random.nextInt(str.length());
+            builder.insert(random.nextInt(builder.length() + 1), str.charAt(index));
+        }
+
         return builder.toString();
     }
 
-    private Role getRoleFromDB(RoleName roleName) {
+    private Role getNonNullRoleFromDB(RoleName roleName) {
         return roleRepository.findByRoleName(roleName)
                 .orElseThrow(() -> {
-                    String errMessage = String.format("%s not found by %s ", Role.class.getSimpleName(), roleName);
-                    log.error(errMessage);
-                    return new NotFoundException(errMessage);
+                    return new NotFoundException(String.format("%s not found by %s ",
+                            Role.class.getSimpleName(), roleName));
                 });
     }
 }
