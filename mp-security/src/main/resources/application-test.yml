@@ -6,8 +6,8 @@ spring:
     name: mp-security
   datasource:
     driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:test
-    url: jdbc:h2:file:./db/mp-security
+    url: jdbc:h2:mem:test
+#    url: jdbc:h2:file:./db/mp-security
     username: test
     password: test
   jpa:

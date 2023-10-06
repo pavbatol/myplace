@@ -118,8 +118,9 @@ public class UserServiceImpl implements UserService {
         }
 
         log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
-        log.debug("{} created: {}", ENTITY_SIMPLE_NAME, savedUser);
-        log.debug("Profile created in profile service with userId: {},email: {}", savedUser.getId(), dtoConfirm.getEmail());
+        log.debug("{} created with id: {}, uuid: {}, login: {}, deleted: {}, roles {}, password: hidden for security",
+                ENTITY_SIMPLE_NAME, savedUser.getId(), savedUser.getUuid(), savedUser.getLogin(), savedUser.getDeleted(), savedUser.getRoles());
+        log.debug("Profile created in profile service with userId: {}, email: {}", savedUser.getId(), dtoConfirm.getEmail());
     }
 
     private String generateCode() {
