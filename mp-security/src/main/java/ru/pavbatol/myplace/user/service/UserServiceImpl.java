@@ -17,6 +17,7 @@ import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
 import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
 import ru.pavbatol.myplace.user.mapper.UserMapper;
 import ru.pavbatol.myplace.user.model.User;
+import ru.pavbatol.myplace.user.repository.UnverifiedUserRedisRepository;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
 import ru.pavbatol.myplace.user.repository.UserRedisRepository;
 
@@ -33,7 +34,8 @@ public class UserServiceImpl implements UserService {
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
     private static final String DIGITS = "0123456789";
-    private final UserRedisRepository<UserDtoUnverified> userRedisRepository;
+//    private final UserRedisRepository<UserDtoUnverified> userRedisRepository;
+    private final UnverifiedUserRedisRepository userRedisRepository;
     private final UserJpaRepository userJpaRepository;
     private final RoleRepository roleRepository;
     private final EmailService emailService;
@@ -50,7 +52,10 @@ public class UserServiceImpl implements UserService {
         UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
 
         if (userRedisRepository.save(key, dtoUnverified)) {
-            log.debug("Unverified {} saved to Redis: {}", ENTITY_SIMPLE_NAME, dtoUnverified);
+            log.debug("Unverified {} saved to Redis with email: {}, login: {}, password and code are hidden for security",
+                    ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
+
+//            userJpaRepository.existsByLogin(dtoUnverified.getLogin())
 
             boolean emailExists;
             try {
@@ -150,4 +155,14 @@ public class UserServiceImpl implements UserService {
                             Role.class.getSimpleName(), roleName));
                 });
     }
+
+//    @Transactional
+//    private boolean reserveLoginAndEmailInRedis(String login, String email) {
+//        getLoginKey();
+//        return  userRedisRepository.save(login, null);
+//    }
+//
+//    private static void getLoginKey() {
+//        final String KEY_PREFIX = RedisKeys.USERS_UNVERIFIED.getKey() + ":";
+//    }
 }
