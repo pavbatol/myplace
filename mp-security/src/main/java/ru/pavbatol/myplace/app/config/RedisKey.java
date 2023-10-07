@@ -8,7 +8,9 @@ import java.util.Set;
 
 @Getter
 public enum RedisKey {
-    USERS_UNVERIFIED("users:unverified");
+    USERS_UNVERIFIED_EMAIL("users-unverified-email:"),
+    USERS_UNVERIFIED_LOGIN("users-unverified-login:"),
+    ;
 
     private final String key;
 

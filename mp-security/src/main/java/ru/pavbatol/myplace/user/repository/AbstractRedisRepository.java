@@ -23,7 +23,7 @@ public abstract class AbstractRedisRepository<T> implements RedisRepository<T> {
     protected abstract Class<T> getType();
 
     protected String composeKey(String key) {
-        return redisKey.getKey() + ":" + key;
+        return redisKey.getKey() + key;
     }
 
     @Override

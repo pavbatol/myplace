@@ -41,56 +41,67 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
 
+    @Transactional
     @Override
     public void register(HttpServletRequest servletRequest, UserDtoRegistry dto) {
-        final String key = dto.getEmail();
+        final String emailKey = dto.getEmail();
+        final String loginKey = dto.getLogin();
         final String code = generateCode();
         final String encodedCode = passwordEncoder.encode(code);
         final String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
+        final UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
 
-        if (userRedisRepository.create(key, dtoUnverified)) {
+        try {
+            if (!userRedisRepository.create(emailKey, dtoUnverified)) {
+                throw new RegistrationException("A user with this email is already registered in Redis: " + dto.getEmail());
+            }
             log.debug("Unverified {} saved to Redis with email: {}, login: {}, password and code are hidden for security",
                     ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
 
-//            userJpaRepository.existsByLogin(dtoUnverified.getLogin())
+            if (!userRedisRepository.createLogin(loginKey, dto.getEmail())) {
+                throw new RegistrationException("A user with this logging is already registered in Redis: " + dto.getLogin());
+            }
+            log.debug("Login of unverified {} saved to Redis, login: {},",
+                    ENTITY_SIMPLE_NAME, dtoUnverified.getLogin());
 
-            boolean emailExists;
-            try {
-                emailExists = profileClient.existsByEmail(dto.getEmail());
-            } catch (RuntimeException e) {
-                userRedisRepository.delete(key);
-                throw new RegistrationException("Failed interacting with the Profile service", e.getMessage());
+            if (userJpaRepository.existsByLogin(dtoUnverified.getLogin())) {
+                throw new RegistrationException("A user with this logging is already registered and verified: " + dto.getLogin());
             }
 
-//            if (!profileClient.existsByEmail(dto.getEmail())) {
-            if (!emailExists) {
-                String text = String.format("You have received this email because your email-address was specified " +
-                                "during registration on '%s'\nYour confirmation code:\n%s",
-                        servletRequest.getServerName(), code);
-
-                // TODO: 04.10.2023 Connect GreenMail or JavaMailMock for testing
-                /**
-                 * Temporary: The code below is commented out for testing without specifying email
-                 */
-//                emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
-//                --
-
-                /**
-                 * Temporary: The following code is intended for direct saving of the user, without confirmation by mail.
-                 * This is for testing the application if you don't specify an email for sending.
-                 */
-                log.debug("Data for confirmation: email: {}, code: {}", dto.getEmail(), code);
-//                ...
-//                ...
-
-                return;
-            } else {
-                userRedisRepository.delete(key);
+//            try {
+            boolean emailExists = profileClient.existsByEmail(dto.getEmail());
+            if (emailExists) {
+                throw new RegistrationException("A user with this email is already registered and verified: " + dto.getEmail());
             }
+//            } catch (RuntimeException e) {
+//                userRedisRepository.deleteWithoutException(emailKey);
+//                throw new RegistrationException("Failed interacting with the Profile service", e.getMessage());
+//            }
+        } catch (Exception e) {
+            userRedisRepository.deleteWithoutException(emailKey);
+            userRedisRepository.deleteLoginWithoutException(loginKey);
+            throw new RegistrationException("Failed registering: " + e.getMessage());
         }
 
-        throw new RegistrationException("A user with this email is already registered: " + dto.getEmail());
+        String text = String.format("You have received this email because your email-address was specified " +
+                        "during registration on '%s'\nYour confirmation code:\n%s",
+                servletRequest.getServerName(), code);
+
+        // TODO: 04.10.2023 Connect GreenMail or JavaMailMock for testing
+        /**
+         * Temporary: The code below is commented out for testing without specifying email
+         */
+//      emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
+//      --
+//      --
+
+        /**
+         * Temporary: The following code is intended for direct saving of the user, without confirmation by mail.
+         * This is for testing the application if you don't specify an email for sending.
+         */
+        log.debug("Data for confirmation: email: {}, code: {}", dto.getEmail(), code);
+//      ...
+//      ...
     }
 
     @Transactional(rollbackFor = {Exception.class})
@@ -114,11 +125,12 @@ public class UserServiceImpl implements UserService {
         User savedUser = userJpaRepository.save(user);
         profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
 
-        try {
-            userRedisRepository.delete(dtoConfirm.getEmail());
-        } catch (Exception e) {
-            log.debug("Error deleting from Redis: {}", e.getMessage());
-        }
+//        try {
+        userRedisRepository.deleteWithoutException(dtoConfirm.getEmail());
+        userRedisRepository.deleteLoginWithoutException(dtoUnverified.getLogin());
+//        } catch (Exception e) {
+//            log.debug("Error deleting from Redis: {}", e.getMessage());
+//        }
 
         log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
         log.debug("{} created with id: {}, uuid: {}, login: {}, deleted: {}, roles {}, password: hidden for security",

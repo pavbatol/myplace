@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class UserRedisRepositoryImpl implements UserRedisRepository<UserDtoUnverified> {
-    private static final String KEY_PREFIX = RedisKey.USERS_UNVERIFIED.getKey() + ":";
+    private static final String KEY_PREFIX = RedisKey.USERS_UNVERIFIED_EMAIL.getKey() + ":";
     private final RedisTemplate<String, Object> redisTemplate;
     @Value("${redis.ttl-sec-unverified:180}")
     private long ttl;
