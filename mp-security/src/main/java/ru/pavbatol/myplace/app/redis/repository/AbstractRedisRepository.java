@@ -1,8 +1,8 @@
-package ru.pavbatol.myplace.user.repository;
+package ru.pavbatol.myplace.app.redis.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import ru.pavbatol.myplace.app.config.RedisKey;
+import ru.pavbatol.myplace.app.redis.RedisKey;
 import ru.pavbatol.myplace.app.exception.RedisException;
 
 import javax.validation.constraints.NotNull;

@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.user.repository;
+package ru.pavbatol.myplace.app.redis.repository;
 
 import ru.pavbatol.myplace.app.exception.RedisException;
 

@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.app.config;
+package ru.pavbatol.myplace.app.redis;
 
 import lombok.Getter;
 import lombok.NonNull;

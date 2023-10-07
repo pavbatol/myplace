@@ -3,8 +3,9 @@ package ru.pavbatol.myplace.user.repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import ru.pavbatol.myplace.app.config.RedisKey;
+import ru.pavbatol.myplace.app.redis.RedisKey;
 import ru.pavbatol.myplace.app.exception.RedisException;
+import ru.pavbatol.myplace.app.redis.repository.AbstractRedisRepository;
 import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
 
 import javax.validation.constraints.NotNull;
