@@ -68,15 +68,10 @@ public class UserServiceImpl implements UserService {
                 throw new RegistrationException("A user with this logging is already registered and verified: " + dto.getLogin());
             }
 
-//            try {
             boolean emailExists = profileClient.existsByEmail(dto.getEmail());
             if (emailExists) {
                 throw new RegistrationException("A user with this email is already registered and verified: " + dto.getEmail());
             }
-//            } catch (RuntimeException e) {
-//                userRedisRepository.deleteWithoutException(emailKey);
-//                throw new RegistrationException("Failed interacting with the Profile service", e.getMessage());
-//            }
         } catch (Exception e) {
             userRedisRepository.deleteWithoutException(emailKey);
             userRedisRepository.deleteLoginWithoutException(loginKey);
@@ -93,14 +88,12 @@ public class UserServiceImpl implements UserService {
          */
 //      emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
 //      --
-//      --
 
         /**
          * Temporary: The following code is intended for direct saving of the user, without confirmation by mail.
          * This is for testing the application if you don't specify an email for sending.
          */
         log.debug("Data for confirmation: email: {}, code: {}", dto.getEmail(), code);
-//      ...
 //      ...
     }
 
@@ -125,12 +118,8 @@ public class UserServiceImpl implements UserService {
         User savedUser = userJpaRepository.save(user);
         profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
 
-//        try {
         userRedisRepository.deleteWithoutException(dtoConfirm.getEmail());
         userRedisRepository.deleteLoginWithoutException(dtoUnverified.getLogin());
-//        } catch (Exception e) {
-//            log.debug("Error deleting from Redis: {}", e.getMessage());
-//        }
 
         log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
         log.debug("{} created with id: {}, uuid: {}, login: {}, deleted: {}, roles {}, password: hidden for security",
@@ -165,14 +154,4 @@ public class UserServiceImpl implements UserService {
                             Role.class.getSimpleName(), roleName));
                 });
     }
-
-//    @Transactional
-//    private boolean reserveLoginAndEmailInRedis(String login, String email) {
-//        getLoginKey();
-//        return  userRedisRepository.save(login, null);
-//    }
-//
-//    private static void getLoginKey() {
-//        final String KEY_PREFIX = RedisKeys.USERS_UNVERIFIED.getKey() + ":";
-//    }
 }
