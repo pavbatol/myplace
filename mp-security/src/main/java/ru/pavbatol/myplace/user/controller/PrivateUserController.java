@@ -26,7 +26,7 @@ public class PrivateUserController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping("/{userUuid}/password")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "changePassword", description = "registering a new user")
+    @Operation(summary = "changePassword", description = "setting new password")
     public ResponseEntity<Void> changePassword(HttpServletRequest servletRequest,
                                                @PathVariable(value = "userUuid") UUID userUuid,
                                                @Valid @RequestBody UserDtoUpdatePassword dto) {

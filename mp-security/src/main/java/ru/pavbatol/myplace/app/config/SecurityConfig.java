@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-//@EnableMethodSecurity
+@EnableMethodSecurity
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     public static final String[] PUBLIC_PATHS = {
