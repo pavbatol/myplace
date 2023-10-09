@@ -60,13 +60,13 @@ public class UserServiceImpl implements UserService {
                     ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
 
             if (!userRedisRepository.createLogin(loginKey, dto.getEmail())) {
-                throw new RegistrationException("A user with this logging is already registered in Redis: " + dto.getLogin());
+                throw new RegistrationException("A user with this login is already registered in Redis: " + dto.getLogin());
             }
             log.debug("Login of unverified {} saved to Redis, login: {},",
                     ENTITY_SIMPLE_NAME, dtoUnverified.getLogin());
 
             if (userJpaRepository.existsByLogin(dtoUnverified.getLogin())) {
-                throw new RegistrationException("A user with this logging is already registered and verified: " + dto.getLogin());
+                throw new RegistrationException("A user with this login is already registered and verified: " + dto.getLogin());
             }
 
             boolean emailExists = profileClient.existsByEmail(dto.getEmail());
@@ -133,6 +133,7 @@ public class UserServiceImpl implements UserService {
         User origUser = userJpaRepository.findByUuid(userUuid).orElseThrow(() ->
                 new NotFoundException(String.format("%s with UUID: %s not found", ENTITY_SIMPLE_NAME, userUuid))
         );
+        // TODO: 09.10.2023 retrieve uuid from JWT and compare it
 //        if (userUuid != jwtProvider.geUserId(servletRequest)) {
 //            throw new BadRequestException("You can only edit your own data");
 //        }

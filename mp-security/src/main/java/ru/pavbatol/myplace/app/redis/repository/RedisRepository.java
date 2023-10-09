@@ -13,7 +13,5 @@ public interface RedisRepository<T> {
 
     boolean delete(@NotNull String key) throws RedisException;
 
-    Optional<Boolean> deleteWithoutException(@NotNull String key);
-
     Optional<T> find(@NotNull String key);
 }

@@ -52,15 +52,6 @@ public abstract class AbstractRedisRepository<T> implements RedisRepository<T> {
     }
 
     @Override
-    public Optional<Boolean> deleteWithoutException(@NotNull String key) {
-        try {
-            return Optional.ofNullable(redisTemplate.delete(composeKey(key)));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    @Override
     public Optional<T> find(@NotNull String key) {
         String composedKey = composeKey(key);
         Object object = redisTemplate.opsForValue().get(composedKey);
