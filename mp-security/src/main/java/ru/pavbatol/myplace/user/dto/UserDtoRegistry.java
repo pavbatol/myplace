@@ -6,7 +6,7 @@ import javax.validation.constraints.*;
 
 @Value
 public class UserDtoRegistry {
-    @NotNull
+    @NotBlank
     @Email
     String email;
 

@@ -1,6 +1,6 @@
 package ru.pavbatol.myplace.app.exception;
 
-public class RedisException extends AbstractBaseRuntimeException {
+public class RedisException extends AbstractRuntimeException {
 
     private static final String REASON = "Unexpected result.";
 

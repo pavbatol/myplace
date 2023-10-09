@@ -15,6 +15,7 @@ import ru.pavbatol.myplace.user.client.ProfileClient;
 import ru.pavbatol.myplace.user.dto.UserDtoConfirm;
 import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
 import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
+import ru.pavbatol.myplace.user.dto.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.user.mapper.UserMapper;
 import ru.pavbatol.myplace.user.model.User;
 import ru.pavbatol.myplace.user.repository.UnverifiedUserRedisRepository;
@@ -125,6 +126,19 @@ public class UserServiceImpl implements UserService {
         log.debug("{} created with id: {}, uuid: {}, login: {}, deleted: {}, roles {}, password: hidden for security",
                 ENTITY_SIMPLE_NAME, savedUser.getId(), savedUser.getUuid(), savedUser.getLogin(), savedUser.getDeleted(), savedUser.getRoles());
         log.debug("Profile created in profile service with userId: {}, email: {}", savedUser.getId(), dtoConfirm.getEmail());
+    }
+
+    @Override
+    public void changePassword(HttpServletRequest servletRequest, UUID userUuid, UserDtoUpdatePassword dto) {
+        User origUser = userJpaRepository.findByUuid(userUuid).orElseThrow(() ->
+                new NotFoundException(String.format("%s with UUID: %s not found", ENTITY_SIMPLE_NAME, userUuid))
+        );
+//        if (userUuid != jwtProvider.geUserId(servletRequest)) {
+//            throw new BadRequestException("You can only edit your own data");
+//        }
+        origUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+        User updated = userJpaRepository.save(origUser);
+        log.debug("{} with UUID: {} is updated", ENTITY_SIMPLE_NAME, userUuid);
     }
 
     private String generateCode() {

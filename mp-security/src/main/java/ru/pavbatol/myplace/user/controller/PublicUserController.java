@@ -32,7 +32,7 @@ public class PublicUserController {
 
     @PostMapping("/confirmation")
     @Operation(summary = "confirmRegistration", description = "confirming registration")
-    public ResponseEntity<String> confirmRegistration(@RequestBody UserDtoConfirm dto) {
+    public ResponseEntity<String> confirmRegistration(@Valid @RequestBody UserDtoConfirm dto) {
         log.debug("POST confirmRegistration() with dto: {}", dto);
         userService.confirmRegistration(dto);
         String body = "Registration is confirmed";

@@ -1,6 +1,6 @@
 package ru.pavbatol.myplace.app.exception;
 
-public class NotFoundException extends AbstractBaseRuntimeException {
+public class NotFoundException extends AbstractRuntimeException {
 
     private static final String REASON = "Data not found.";
 

@@ -1,6 +1,6 @@
 package ru.pavbatol.myplace.app.exception;
 
-public class ExternalServerException extends AbstractBaseRuntimeException {
+public class ExternalServerException extends AbstractRuntimeException {
 
     private static final String REASON = "Unexpected response.";
 

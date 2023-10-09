@@ -1,6 +1,6 @@
 package ru.pavbatol.myplace.app.exception;
 
-public class SendingMailException extends AbstractBaseRuntimeException {
+public class SendingMailException extends AbstractRuntimeException {
 
     private static final String REASON = "Mail error.";
 

@@ -1,6 +1,6 @@
 package ru.pavbatol.myplace.app.exception;
 
-public class RegistrationException extends AbstractBaseRuntimeException {
+public class RegistrationException extends AbstractRuntimeException {
 
     private static final String REASON = "Action failed.";
 
