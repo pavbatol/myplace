@@ -13,4 +13,6 @@ public interface UserService {
     void confirmRegistration(UserDtoConfirm dtoConfirm);
 
     void changePassword(HttpServletRequest servletRequest, UUID userUuid, UserDtoUpdatePassword dto);
+
+    Long getIdByUuid(HttpServletRequest servletRequest, UUID userUuid);
 }

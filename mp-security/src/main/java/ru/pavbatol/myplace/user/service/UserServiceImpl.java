@@ -134,12 +134,25 @@ public class UserServiceImpl implements UserService {
                 new NotFoundException(String.format("%s with UUID: %s not found", ENTITY_SIMPLE_NAME, userUuid))
         );
         // TODO: 09.10.2023 retrieve uuid from JWT and compare it
-//        if (userUuid != jwtProvider.geUserId(servletRequest)) {
+//        if (userUuid != jwtProvider.geUserUuid(servletRequest)) {
 //            throw new BadRequestException("You can only edit your own data");
 //        }
         origUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         User updated = userJpaRepository.save(origUser);
         log.debug("{} with UUID: {} is updated", ENTITY_SIMPLE_NAME, userUuid);
+    }
+
+    @Override
+    public Long getIdByUuid(HttpServletRequest servletRequest, UUID userUuid) {
+        // TODO: 10.10.2023 retrieve uuid from JWT and compare it
+//        if (userUuid != jwtProvider.geUserUuid(servletRequest)) {
+//            throw new BadRequestException("You can only edit your own data");
+//        }
+        Long userId = userJpaRepository.getIdByUuid(userUuid).orElseThrow(() ->
+                new NotFoundException(String.format("%s with UUID: %s not found", ENTITY_SIMPLE_NAME, userUuid))
+        );
+        log.debug("Obtained {} id: {} by UUID: {}", ENTITY_SIMPLE_NAME, userId, userUuid);
+        return userId;
     }
 
     private String generateCode() {

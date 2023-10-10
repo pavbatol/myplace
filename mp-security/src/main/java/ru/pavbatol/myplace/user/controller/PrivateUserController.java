@@ -23,7 +23,7 @@ import java.util.UUID;
 public class PrivateUserController {
     private final UserService userService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/{userUuid}/password")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "changePassword", description = "setting new password")
@@ -33,5 +33,16 @@ public class PrivateUserController {
         log.debug("POST changePassword() with userUuid: {}, dto: hidden for security", userUuid);
         userService.changePassword(servletRequest, userUuid, dto);
         return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{userUuid}/id")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "getIdByUuid", description = "obtaining User id by UUID")
+    public ResponseEntity<Long> getIdByUuid(HttpServletRequest servletRequest,
+                                            @PathVariable(value = "userUuid") UUID userUuid) {
+        log.debug("POST getIdByUuid() with userUuid: {}", userUuid);
+        Long userId = userService.getIdByUuid(servletRequest, userUuid);
+        return ResponseEntity.ok(userId);
     }
 }
