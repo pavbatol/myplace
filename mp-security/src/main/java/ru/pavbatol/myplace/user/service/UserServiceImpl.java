@@ -2,9 +2,11 @@ package ru.pavbatol.myplace.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pavbatol.myplace.app.exception.BadRequestException;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.app.exception.RegistrationException;
 import ru.pavbatol.myplace.email.service.EmailService;
@@ -18,6 +20,7 @@ import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
 import ru.pavbatol.myplace.user.dto.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.user.mapper.UserMapper;
 import ru.pavbatol.myplace.user.model.User;
+import ru.pavbatol.myplace.user.model.UserAuthenticatedPrincipal;
 import ru.pavbatol.myplace.user.repository.UnverifiedUserRedisRepository;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
 
@@ -129,25 +132,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(HttpServletRequest servletRequest, UUID userUuid, UserDtoUpdatePassword dto) {
+    public void changePassword(UUID userUuid, UserDtoUpdatePassword dto) {
         User origUser = userJpaRepository.findByUuid(userUuid).orElseThrow(() ->
                 new NotFoundException(String.format("%s with UUID: %s not found", ENTITY_SIMPLE_NAME, userUuid))
         );
-        // TODO: 09.10.2023 retrieve uuid from JWT and compare it
-//        if (userUuid != jwtProvider.geUserUuid(servletRequest)) {
-//            throw new BadRequestException("You can only edit your own data");
-//        }
+        checkUuidOwnership(userUuid, "You can only edit your own data");
         origUser.setPassword(passwordEncoder.encode(dto.getPassword()));
-        User updated = userJpaRepository.save(origUser);
+        userJpaRepository.save(origUser);
         log.debug("{} with UUID: {} is updated", ENTITY_SIMPLE_NAME, userUuid);
     }
 
     @Override
-    public Long getIdByUuid(HttpServletRequest servletRequest, UUID userUuid) {
-        // TODO: 10.10.2023 retrieve uuid from JWT and compare it
-//        if (userUuid != jwtProvider.geUserUuid(servletRequest)) {
-//            throw new BadRequestException("You can only edit your own data");
-//        }
+    public Long getIdByUuid(UUID userUuid) {
+        checkUuidOwnership(userUuid, "You do not have access to other user's data");
         Long userId = userJpaRepository.getIdByUuid(userUuid).orElseThrow(() ->
                 new NotFoundException(String.format("%s with UUID: %s not found", ENTITY_SIMPLE_NAME, userUuid))
         );
@@ -181,5 +178,24 @@ public class UserServiceImpl implements UserService {
                     return new NotFoundException(String.format("%s not found by %s ",
                             Role.class.getSimpleName(), roleName));
                 });
+    }
+
+    private void checkUuidOwnership(UUID userUuid, String message) {
+//        try {
+//            UserAuthenticatedPrincipal principal = (UserAuthenticatedPrincipal) SecurityContextHolder.getContext()
+//                    .getAuthentication().getPrincipal();
+//            if (Objects.equals(userUuid, principal.getUuid())) {
+//                throw new BadRequestException(message);
+//            }
+//        } catch (ClassCastException e) {
+//            throw new AssertionError("The 'principal' must be " + UserAuthenticatedPrincipal.class.getSimpleName(), e);
+//        }
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        assert principal instanceof UserAuthenticatedPrincipal
+                : "The 'principal' must be " + UserAuthenticatedPrincipal.class.getSimpleName();
+        if (userUuid != ((UserAuthenticatedPrincipal) principal).getUuid()) {
+            throw new BadRequestException(message);
+        }
     }
 }

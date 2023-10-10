@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.user.dto.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.user.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.UUID;
 
@@ -27,11 +26,10 @@ public class PrivateUserController {
     @PutMapping("/{userUuid}/password")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "changePassword", description = "setting new password")
-    public ResponseEntity<Void> changePassword(HttpServletRequest servletRequest,
-                                               @PathVariable(value = "userUuid") UUID userUuid,
+    public ResponseEntity<Void> changePassword(@PathVariable(value = "userUuid") UUID userUuid,
                                                @Valid @RequestBody UserDtoUpdatePassword dto) {
         log.debug("POST changePassword() with userUuid: {}, dto: hidden for security", userUuid);
-        userService.changePassword(servletRequest, userUuid, dto);
+        userService.changePassword(userUuid, dto);
         return ResponseEntity.ok().build();
     }
 
@@ -40,10 +38,9 @@ public class PrivateUserController {
     @GetMapping("/{userUuid}/id")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "getIdByUuid", description = "obtaining User id by UUID")
-    public ResponseEntity<Long> getIdByUuid(HttpServletRequest servletRequest,
-                                            @PathVariable(value = "userUuid") UUID userUuid) {
+    public ResponseEntity<Long> getIdByUuid(@PathVariable(value = "userUuid") UUID userUuid) {
         log.debug("POST getIdByUuid() with userUuid: {}", userUuid);
-        Long userId = userService.getIdByUuid(servletRequest, userUuid);
+        Long userId = userService.getIdByUuid(userUuid);
         return ResponseEntity.ok(userId);
     }
 }
