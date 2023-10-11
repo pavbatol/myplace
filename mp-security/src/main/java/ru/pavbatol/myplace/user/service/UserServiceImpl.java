@@ -187,16 +187,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkUuidOwnership(UUID userUuid, String message) {
-//        try {
-//            UserAuthenticatedPrincipal principal = (UserAuthenticatedPrincipal) SecurityContextHolder.getContext()
-//                    .getAuthentication().getPrincipal();
-//            if (Objects.equals(userUuid, principal.getUuid())) {
-//                throw new BadRequestException(message);
-//            }
-//        } catch (ClassCastException e) {
-//            throw new AssertionError("The 'principal' must be " + UserAuthenticatedPrincipal.class.getSimpleName(), e);
-//        }
-
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         assert principal instanceof UserAuthenticatedPrincipal
                 : "The 'principal' must be " + UserAuthenticatedPrincipal.class.getSimpleName();

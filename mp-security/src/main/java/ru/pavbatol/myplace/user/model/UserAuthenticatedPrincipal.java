@@ -1,15 +1,19 @@
 package ru.pavbatol.myplace.user.model;
 
-import lombok.Data;
+import lombok.Value;
 import org.springframework.security.core.AuthenticatedPrincipal;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Value
 public class UserAuthenticatedPrincipal implements AuthenticatedPrincipal {
-    private final Long id;
-    private final UUID uuid;
-    private final String login;
+    Long id;
+    UUID uuid;
+    String login;
+    Set<GrantedAuthority> authorities;
+    boolean enabled;
 
     @Override
     public String getName() {

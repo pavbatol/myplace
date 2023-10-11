@@ -20,16 +20,16 @@ public class JwtAuthentication implements Authentication {
     private Set<GrantedAuthority> authorities;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private Boolean authenticated;
+    private boolean authenticated = false;
 
     public static JwtAuthentication of(UserAuthenticatedPrincipal principal,
                                        Collection<? extends GrantedAuthority> authorities,
                                        boolean authenticated) {
-        JwtAuthentication jwtAuthentication = new JwtAuthentication();
-        jwtAuthentication.setAuthenticated(authenticated);
-        jwtAuthentication.setPrincipal(principal);
-        jwtAuthentication.setAuthorities(new HashSet<>(authorities));
-        return jwtAuthentication;
+        JwtAuthentication authentication = new JwtAuthentication();
+        authentication.setPrincipal(principal);
+        authentication.setAuthorities(new HashSet<>(authorities));
+        authentication.setAuthenticated(authenticated);
+        return authentication;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class JwtAuthentication implements Authentication {
 
     @Override
     public boolean isAuthenticated() {
-        return authenticated != null && authenticated;
+        return authenticated;
     }
 
     @Override
