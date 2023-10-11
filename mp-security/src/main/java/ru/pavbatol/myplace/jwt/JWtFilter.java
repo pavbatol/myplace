@@ -24,18 +24,18 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class JWtFilter extends OncePerRequestFilter {
-    private final JwtProvider tokenProvider;
+    private final JwtProvider jwtProvider;
     private final UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        log.debug("Trying {}.doFilterInternal()", getClass().getSimpleName());
-        tokenProvider.resolveToken(request)
-                .filter(tokenProvider::validateAccessToken)
+        log.debug("Trying to set authentication");
+        jwtProvider.resolveToken(request)
+                .filter(jwtProvider::validateAccessToken)
                 .map(accessToken -> {
-                    Claims accessClaims = tokenProvider.getAccessClaims(accessToken);
+                    Claims accessClaims = jwtProvider.getAccessClaims(accessToken);
                     String login = accessClaims.getSubject();
                     User user = userService.findByLogin(login);
                     UserAuthenticatedPrincipal principal = new UserAuthenticatedPrincipal(user.getId(), user.getUuid(), login);

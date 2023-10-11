@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 public interface UnverifiedUserRedisRepository extends RedisRepository<UserDtoUnverified> {
     boolean createLogin(@NotNull String login, @NotNull String email) throws RedisException;
 
-    void deleteLoginWithoutException(@NotNull String login);
+    void deleteLoginSilently(@NotNull String login);
 
-    void deleteWithoutException(@NotNull String key);
+    void deleteSilently(@NotNull String key);
 }

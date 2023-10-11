@@ -77,8 +77,8 @@ public class UserServiceImpl implements UserService {
                 throw new RegistrationException("A user with this email is already registered and verified: " + dto.getEmail());
             }
         } catch (Exception e) {
-            userRedisRepository.deleteWithoutException(emailKey);
-            userRedisRepository.deleteLoginWithoutException(loginKey);
+            userRedisRepository.deleteSilently(emailKey);
+            userRedisRepository.deleteLoginSilently(loginKey);
             throw new RegistrationException("Failed registering: " + e.getMessage());
         }
 
@@ -122,8 +122,8 @@ public class UserServiceImpl implements UserService {
         User savedUser = userJpaRepository.save(user);
         profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
 
-        userRedisRepository.deleteWithoutException(dtoConfirm.getEmail());
-        userRedisRepository.deleteLoginWithoutException(dtoUnverified.getLogin());
+        userRedisRepository.deleteSilently(dtoConfirm.getEmail());
+        userRedisRepository.deleteLoginSilently(dtoUnverified.getLogin());
 
         log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
         log.debug("{} created with id: {}, uuid: {}, login: {}, deleted: {}, roles {}, password: hidden for security",

@@ -35,7 +35,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public void deleteLoginWithoutException(@NotNull String login) {
+    public void deleteLoginSilently(@NotNull String login) {
         try {
             redisTemplate.delete(composeLoginKey(login));
         } catch (Exception ignored) {
@@ -43,7 +43,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public void deleteWithoutException(@NotNull String key) {
+    public void deleteSilently(@NotNull String key) {
         try {
             redisTemplate.delete(composeKey(key));
         } catch (Exception ignored) {
