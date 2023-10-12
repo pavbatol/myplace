@@ -103,6 +103,10 @@ public class JwtProvider {
         return getClaims(token, jwtRefreshKey);
     }
 
+    public String getRefreshTokenUsername(String token) {
+        return getRefreshClaims(token).getSubject();
+    }
+
     private Claims getClaims(@NonNull String token, @NonNull SecretKey secret) {
         return Jwts.parserBuilder()
                 .setSigningKey(secret)

@@ -27,15 +27,15 @@ public class RefreshTokenRedisRepositoryImpl extends AbstractRedisRepository<Str
     }
 
     @Override
-    public void deleteAllByKey(@NotNull String key) {
-        String pattern = composeKey(key);
+    public void deleteAllByKeyPattern(@NotNull String keyPattern) {
+        String pattern = composeKey(keyPattern);
         Set<String> keys = redisTemplate.keys(pattern);
         if (keys != null && !keys.isEmpty()) {
-            log.debug("Found {} keys to delete by key: {}", keys.size(), key);
+            log.debug("Found {} keys to delete by keyPattern: {}", keys.size(), keyPattern);
             redisTemplate.delete(keys);
-            log.debug("{}: Deleted all for key {}", getClass().getSimpleName(), key);
+            log.debug("Deleted all for keyPattern {}", keyPattern);
         } else {
-            log.debug("Not found keys to delete by key: {}", key);
+            log.debug("Not found keys to delete by keyPattern: {}", keyPattern);
         }
     }
 }

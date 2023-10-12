@@ -152,12 +152,6 @@ public class UserServiceImpl implements UserService {
         return userId;
     }
 
-    @Override
-    public User findByLogin(String login) {
-        return userJpaRepository.findByLogin(login).orElseThrow(() -> new NotFoundException(
-                String.format("%s with login: %s not found", ENTITY_SIMPLE_NAME, login)));
-    }
-
     private String generateCode() {
         final int codeLength = 5;
         final String[] source = {UPPER, LOWER, DIGITS};

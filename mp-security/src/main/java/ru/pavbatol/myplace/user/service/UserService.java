@@ -3,7 +3,6 @@ package ru.pavbatol.myplace.user.service;
 import ru.pavbatol.myplace.user.dto.UserDtoConfirm;
 import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
 import ru.pavbatol.myplace.user.dto.UserDtoUpdatePassword;
-import ru.pavbatol.myplace.user.model.User;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
@@ -16,6 +15,4 @@ public interface UserService {
     void changePassword(UUID userUuid, UserDtoUpdatePassword dto);
 
     Long getIdByUuid(UUID userUuid);
-
-    User findByLogin(String login);
 }
