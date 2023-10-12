@@ -10,6 +10,7 @@ import java.util.Set;
 public enum RedisKey {
     USERS_UNVERIFIED_EMAIL("users-unverified-email:"),
     USERS_UNVERIFIED_LOGIN("users-unverified-login:"),
+    REFRESH_TOKEN("refresh-token:"),
     ;
 
     private final String key;

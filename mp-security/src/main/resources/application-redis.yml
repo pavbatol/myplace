@@ -5,4 +5,4 @@ redis:
   password:
   username:
   ttl-sec: 300
-  ttl-sec-unverified: 180
+  ttl-sec-unverified-user: 180

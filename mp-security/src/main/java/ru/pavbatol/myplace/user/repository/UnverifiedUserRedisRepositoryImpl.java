@@ -20,7 +20,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     protected UnverifiedUserRedisRepositoryImpl(Environment environment) {
         super(
                 RedisKey.USERS_UNVERIFIED_EMAIL,
-                Long.parseLong(environment.getProperty("redis.ttl-sec-unverified", "180"))
+                Long.parseLong(environment.getProperty("redis.ttl-sec-unverified-user", "180"))
         );
     }
 
@@ -35,7 +35,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public void deleteLoginSilently(@NotNull String login) {
+    public void deleteLoginSilently(String login) {
         try {
             redisTemplate.delete(composeLoginKey(login));
         } catch (Exception ignored) {
@@ -43,7 +43,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public void deleteSilently(@NotNull String key) {
+    public void deleteSilently(String key) {
         try {
             redisTemplate.delete(composeKey(key));
         } catch (Exception ignored) {
@@ -55,7 +55,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
         return UserDtoUnverified.class;
     }
 
-    private String composeLoginKey(String key) {
+    private String composeLoginKey(@NotNull String key) {
         return loginRedisKey.getKey() + key;
     }
 }
