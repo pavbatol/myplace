@@ -24,7 +24,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    public static final String KEY_SEPARATOR = "_";
+    public static final String KEY_SEPARATOR = " "; //Since it is impossible to register a user with login containing a space
     private static final String USER_AGENT_HEADER = "User-Agent";
     private static final String DEFAULT_USER_AGENT = "no-user-agent";
     private static final String DEFAULT_AP = "no-ap";
@@ -92,12 +92,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void deleteRefreshTokensByUserUuid(UUID userUuid) {
-
-    }
-
-    @Override
-    public void deleteAllRefreshTokens() {
-
+        User user = getNonNullUserByUuid(userUuid);
+        String login = user.getLogin();
+        redisRepository.deleteAllByKeyPattern(login + KEY_SEPARATOR);
+        log.debug("All refresh tokens removed for user with uuid: {}", userUuid);
     }
 
     private boolean checkAuthConditions(String rawPassword, User origUser) {
@@ -143,5 +141,11 @@ public class AuthServiceImpl implements AuthService {
     private User getNonNullUserByLogin(String login) {
         return userJpaRepository.findByLogin(login).orElseThrow(() ->
                 new NotFoundException(String.format("%s not found by %s ", User.class.getSimpleName(), login)));
+    }
+
+    @NonNull
+    private User getNonNullUserByUuid(UUID uuid) {
+        return userJpaRepository.findByUuid(uuid).orElseThrow(() ->
+                new NotFoundException(String.format("%s not found by %s ", User.class.getSimpleName(), uuid)));
     }
 }

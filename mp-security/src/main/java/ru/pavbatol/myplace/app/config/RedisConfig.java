@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,10 +34,12 @@ public class RedisConfig {
     private Long ttl;
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
+    public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);
-        if (!"".equals(redisPassword) && !"".equals(redisUsername)) {
+        if (!"".equals(redisPassword)) {
             configuration.setPassword(redisPassword);
+        }
+        if (!"".equals(redisUsername)) {
             configuration.setUsername(redisUsername);
         }
         return new LettuceConnectionFactory(configuration);
