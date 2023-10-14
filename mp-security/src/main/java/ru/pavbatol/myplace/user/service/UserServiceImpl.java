@@ -55,25 +55,17 @@ public class UserServiceImpl implements UserService {
         final String encodedPassword = passwordEncoder.encode(dto.getPassword());
         final UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
 
+        userRedisRepository.createAtomicLoginAndEmailKeys(loginKey, emailKey, dtoUnverified);
+        log.debug("Unverified {} saved to Redis with email: {}, login: {}, password and code are hidden for security",
+                ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
+        log.debug("Login of unverified {} saved to Redis, login: {},", ENTITY_SIMPLE_NAME, dtoUnverified.getLogin());
+
         try {
-            if (!userRedisRepository.create(emailKey, dtoUnverified)) {
-                throw new RegistrationException("A user with this email is already registered in Redis: " + dto.getEmail());
-            }
-            log.debug("Unverified {} saved to Redis with email: {}, login: {}, password and code are hidden for security",
-                    ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
-
-            if (!userRedisRepository.createLogin(loginKey, dto.getEmail())) {
-                throw new RegistrationException("A user with this login is already registered in Redis: " + dto.getLogin());
-            }
-            log.debug("Login of unverified {} saved to Redis, login: {},",
-                    ENTITY_SIMPLE_NAME, dtoUnverified.getLogin());
-
             if (userJpaRepository.existsByLogin(dtoUnverified.getLogin())) {
                 throw new RegistrationException("A user with this login is already registered and verified: " + dto.getLogin());
             }
 
-            boolean emailExists = profileClient.existsByEmail(dto.getEmail());
-            if (emailExists) {
+            if (profileClient.existsByEmail(dto.getEmail())) {
                 throw new RegistrationException("A user with this email is already registered and verified: " + dto.getEmail());
             }
         } catch (Exception e) {

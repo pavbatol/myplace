@@ -50,6 +50,8 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
         template.setKeySerializer(new StringRedisSerializer());
+        template.setEnableTransactionSupport(true);
+        template.afterPropertiesSet();
         return template;
     }
 
