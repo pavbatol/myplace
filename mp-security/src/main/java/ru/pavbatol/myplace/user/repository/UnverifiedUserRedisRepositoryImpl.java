@@ -44,9 +44,6 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
         String emailKey = composeKey(email);
 
         try {
-            log.debug("Starting multi");
-            redisTemplate.multi();
-
             try {
                 if (Boolean.TRUE.equals(redisTemplate.hasKey(loginKey)) || Boolean.FALSE.equals(addLogin(login, email))) {
                     throw new IllegalArgumentException("An unverified user with such login already exists, login: " + login);
@@ -61,11 +58,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
             } catch (RedisException ignored) {
             }
 
-            log.debug("Starting exec");
-            redisTemplate.exec();
         } catch (Exception e) {
-            log.debug("Starting discard on Exception");
-            redisTemplate.discard();
             throw new RedisException("Failed to create login and email keys. Reason: "
                     + (e.getMessage() != null ? e.getMessage() : "no message"));
         }
