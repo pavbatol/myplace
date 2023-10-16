@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         final String encodedPassword = passwordEncoder.encode(dto.getPassword());
         final UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
 
-        userRedisRepository.createAtomicLoginAndEmailKeys(loginKey, emailKey, dtoUnverified);
+        userRedisRepository.addAtomicLoginAndEmailKeys(loginKey, emailKey, dtoUnverified);
         log.debug("Unverified {} saved to Redis with email: {}, login: {}, password and code are hidden for security",
                 ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
         log.debug("Login of unverified {} saved to Redis, login: {},", ENTITY_SIMPLE_NAME, dtoUnverified.getLogin());
@@ -69,8 +69,8 @@ public class UserServiceImpl implements UserService {
                 throw new RegistrationException("A user with this email is already registered and verified: " + dto.getEmail());
             }
         } catch (Exception e) {
-            userRedisRepository.deleteSilently(emailKey);
-            userRedisRepository.deleteLoginSilently(loginKey);
+            userRedisRepository.removeSilently(emailKey);
+            userRedisRepository.removeLoginSilently(loginKey);
             throw new RegistrationException("Failed registering: " + e.getMessage());
         }
 
@@ -114,8 +114,8 @@ public class UserServiceImpl implements UserService {
         User savedUser = userJpaRepository.save(user);
         profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
 
-        userRedisRepository.deleteSilently(dtoConfirm.getEmail());
-        userRedisRepository.deleteLoginSilently(dtoUnverified.getLogin());
+        userRedisRepository.removeSilently(dtoConfirm.getEmail());
+        userRedisRepository.removeLoginSilently(dtoUnverified.getLogin());
 
         log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
         log.debug("{} created with id: {}, uuid: {}, login: {}, deleted: {}, roles {}, password: hidden for security",

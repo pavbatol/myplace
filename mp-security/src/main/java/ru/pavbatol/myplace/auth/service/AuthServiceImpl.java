@@ -94,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
     public void deleteRefreshTokensByUserUuid(UUID userUuid) {
         User user = getNonNullUserByUuid(userUuid);
         String login = user.getLogin();
-        redisRepository.deleteAllByKeyStartsWith(login + KEY_SEPARATOR);
+        redisRepository.removeAllByKeyStartsWith(login + KEY_SEPARATOR);
         log.debug("All refresh tokens removed for user with uuid: {}", userUuid);
     }
 

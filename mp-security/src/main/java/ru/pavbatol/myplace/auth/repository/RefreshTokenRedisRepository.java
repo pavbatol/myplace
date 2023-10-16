@@ -4,5 +4,5 @@ import ru.pavbatol.myplace.app.redis.repository.RedisRepository;
 
 public interface RefreshTokenRedisRepository extends RedisRepository<String> {
 
-    void deleteAllByKeyStartsWith(String keyStartWith);
+    void removeAllByKeyStartsWith(String keyStartWith);
 }

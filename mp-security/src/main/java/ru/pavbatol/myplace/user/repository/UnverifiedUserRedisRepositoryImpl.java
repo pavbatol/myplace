@@ -28,7 +28,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public boolean createLogin(@NotNull String login, @NotNull String email) throws RedisException {
+    public boolean addLogin(@NotNull String login, @NotNull String email) throws RedisException {
         Boolean result = redisTemplate.opsForValue().setIfAbsent(composeLoginKey(login), email, ttl, TimeUnit.SECONDS);
         if (result != null) {
             return result;
@@ -39,7 +39,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
 
     @Override
     @Transactional
-    public void createAtomicLoginAndEmailKeys(String login, String email, UserDtoUnverified unverifiedUser) throws RedisException {
+    public void addAtomicLoginAndEmailKeys(String login, String email, UserDtoUnverified unverifiedUser) throws RedisException {
         String loginKey = composeLoginKey(login);
         String emailKey = composeKey(email);
 
@@ -48,7 +48,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
             redisTemplate.multi();
 
             try {
-                if (Boolean.TRUE.equals(redisTemplate.hasKey(loginKey)) || Boolean.FALSE.equals(createLogin(login, email))) {
+                if (Boolean.TRUE.equals(redisTemplate.hasKey(loginKey)) || Boolean.FALSE.equals(addLogin(login, email))) {
                     throw new IllegalArgumentException("An unverified user with such login already exists, login: " + login);
                 }
             } catch (RedisException ignored) {
@@ -72,7 +72,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public void deleteLoginSilently(String login) {
+    public void removeLoginSilently(String login) {
         try {
             redisTemplate.delete(composeLoginKey(login));
         } catch (Exception ignored) {
@@ -80,7 +80,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public void deleteSilently(String key) {
+    public void removeSilently(String key) {
         try {
             redisTemplate.delete(composeKey(key));
         } catch (Exception ignored) {

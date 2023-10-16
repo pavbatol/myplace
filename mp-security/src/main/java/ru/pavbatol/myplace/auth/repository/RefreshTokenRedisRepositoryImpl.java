@@ -31,7 +31,7 @@ public class RefreshTokenRedisRepositoryImpl extends AbstractRedisRepository<Str
     }
 
     @Override
-    public void deleteAllByKeyStartsWith(@NotNull String keyStartWith) {
+    public void removeAllByKeyStartsWith(@NotNull String keyStartWith) {
         String pattern = composeKey(keyStartWith) + "*";
         Set<String> keys = scanForKeys(pattern);
         if (!keys.isEmpty()) {
