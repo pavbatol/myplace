@@ -20,10 +20,15 @@ spring:
   sql:
     init:
       mode: always
-#      schema-locations: classpath:sql/schema.sql
-#      data-locations: classpath:sql/data.sql
+      schema-locations: classpath:sql/schema.sql
+      data-locations: classpath:sql/data.sql
   banner:
     location: banner/banner.txt
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 
 logging:
   level:
