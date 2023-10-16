@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
             ;
             String login = ((UserAuthenticatedPrincipal) principal).getLogin();
             String composedKey = composeKey(servletRequest, login);
-            redisRepository.delete(composedKey);
+            redisRepository.remove(composedKey);
             log.debug("Refresh token deleted by key: {}", composedKey);
         } else {
             log.debug("The de-login was not made because the user is anonymous");
@@ -114,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
                                   String login,
                                   String refreshToken) {
         String composedKey = composeKey(servletRequest, login);
-        redisRepository.create(composedKey, passwordEncoder.encode(refreshToken));
+        redisRepository.add(composedKey, passwordEncoder.encode(refreshToken));
     }
 
     private String composeKey(@NonNull HttpServletRequest servletRequest, @NonNull String key) {

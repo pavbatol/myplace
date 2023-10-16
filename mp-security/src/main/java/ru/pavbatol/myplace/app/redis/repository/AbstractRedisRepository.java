@@ -27,7 +27,7 @@ public abstract class AbstractRedisRepository<T> implements RedisRepository<T> {
     }
 
     @Override
-    public boolean create(@NotNull String key, @NotNull T obj) throws RedisException {
+    public boolean add(@NotNull String key, @NotNull T obj) throws RedisException {
         Boolean isSet = redisTemplate.opsForValue().setIfAbsent(composeKey(key), obj, ttl, TimeUnit.SECONDS);
         if (isSet != null) {
             return isSet;
@@ -37,12 +37,12 @@ public abstract class AbstractRedisRepository<T> implements RedisRepository<T> {
     }
 
     @Override
-    public void createOrUpdate(@NotNull String key, @NotNull T obj) {
+    public void set(@NotNull String key, @NotNull T obj) {
         redisTemplate.opsForValue().set(composeKey(key), obj, ttl, TimeUnit.SECONDS);
     }
 
     @Override
-    public boolean delete(@NotNull String key) throws RedisException {
+    public boolean remove(@NotNull String key) throws RedisException {
         Boolean isDeleted = redisTemplate.delete(composeKey(key));
         if (isDeleted != null) {
             return isDeleted;

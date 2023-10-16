@@ -6,11 +6,11 @@ import java.util.Optional;
 
 public interface RedisRepository<T> {
 
-    boolean create(String key, T obj) throws RedisException;
+    boolean add(String key, T obj) throws RedisException;
 
-    void createOrUpdate(String key, T obj);
+    void set(String key, T obj);
 
-    boolean delete(String key) throws RedisException;
+    boolean remove(String key) throws RedisException;
 
     Optional<T> find(String key);
 }

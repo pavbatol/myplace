@@ -55,7 +55,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
             }
 
             try {
-                if (Boolean.TRUE.equals(redisTemplate.hasKey(emailKey)) || Boolean.FALSE.equals(create(email, unverifiedUser))) {
+                if (Boolean.TRUE.equals(redisTemplate.hasKey(emailKey)) || Boolean.FALSE.equals(add(email, unverifiedUser))) {
                     throw new IllegalArgumentException("An unverified user with such email already exists, email: " + email);
                 }
             } catch (RedisException ignored) {

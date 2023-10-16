@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.app.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -14,6 +15,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
 
+@Slf4j
 @Configuration
 @EnableCaching
 public class RedisConfig {
@@ -35,6 +37,7 @@ public class RedisConfig {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
+        log.info("Redis config: host: {}, port: {}, ttl: {}", redisHost, redisPort, ttl);
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);
         if (!"".equals(redisPassword)) {
             configuration.setPassword(redisPassword);
