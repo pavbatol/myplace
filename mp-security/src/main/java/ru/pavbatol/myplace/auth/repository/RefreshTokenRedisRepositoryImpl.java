@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 import ru.pavbatol.myplace.app.exception.RedisException;
 import ru.pavbatol.myplace.app.redis.RedisKey;
@@ -32,7 +31,7 @@ public class RefreshTokenRedisRepositoryImpl extends AbstractRedisRepository<Str
     }
 
     @Override
-    public void deleteAllByKeyStartWith(@NotNull String keyStartWith) {
+    public void deleteAllByKeyStartsWith(@NotNull String keyStartWith) {
         String pattern = composeKey(keyStartWith) + "*";
         Set<String> keys = scanForKeys(pattern);
         if (!keys.isEmpty()) {
@@ -44,19 +43,22 @@ public class RefreshTokenRedisRepositoryImpl extends AbstractRedisRepository<Str
         }
     }
 
+    /**
+     * The method is intended for use in infrequent operations such as "Get all active sessions",
+     * "Log out the user on all devices", and similar tasks. For more frequent operations, it is recommended to make
+     * a choice in favor of storing additional copies of keys per user in a Set in the same Redis, so that the original
+     * keys remain with the TTL set.
+     * @param pattern  key pattern string
+     */
     @NotNull
     private Set<String> scanForKeys(String pattern) {
         int count = 1000;
         Set<String> keys = new HashSet<>();
-        RedisSerializer<?> serializer = redisTemplate.getKeySerializer();
         ScanOptions scanOptions = ScanOptions.scanOptions().match(pattern).count(count).build();
 
-        try (Cursor<byte[]> cursor = redisTemplate.execute(connection -> connection.scan(scanOptions), true);) {
-            if (cursor == null) {
-                throw new RedisException("Failed obtaining Cursor<byte[]>");
-            }
+        try (Cursor<String> cursor = redisTemplate.scan(scanOptions)) {
             while (cursor.hasNext()) {
-                keys.add(String.valueOf(serializer.deserialize(cursor.next())));
+                keys.add(cursor.next());
             }
         } catch (Exception e) {
             String message = e.getMessage() != null ? e.getMessage() : "no massage";
