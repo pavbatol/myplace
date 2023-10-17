@@ -123,6 +123,11 @@ public class AuthServiceImpl implements AuthService {
         log.debug("All access tokens removed for user with uuid: {}", userUuid);
     }
 
+    @Override
+    public boolean checkAccessTokenExists(HttpServletRequest servletRequest, String login) {
+        return accessTokenRedisRepository.exists(composeKey(servletRequest, login));
+    }
+
     private boolean checkAuthConditions(String rawPassword, User origUser) {
         if (!passwordEncoder.matches(rawPassword, origUser.getPassword())) {
             log.debug("{} with login: {} not passed password", User.class.getSimpleName(), origUser.getLogin());
@@ -159,7 +164,8 @@ public class AuthServiceImpl implements AuthService {
         String browserName = browser.getName();
         String deviceTypeName = deviceType.getName();
 
-        AccessTokenDetails accessTokenDetails = new AccessTokenDetails(accessToken, ip, osName, browserName, deviceTypeName);
+        AccessTokenDetails accessTokenDetails = new AccessTokenDetails(passwordEncoder.encode(accessToken), ip, osName,
+                browserName, deviceTypeName);
 
         accessTokenRedisRepository.set(composedKey, accessTokenDetails);
     }
