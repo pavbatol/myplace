@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.user.service.impl;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -176,12 +177,22 @@ public class UserServiceImpl implements UserService {
                 });
     }
 
-    private void checkUuidOwnership(UUID userUuid, String message) {
+    private void checkUuidOwnership(@NonNull UUID userUuid, String message) {
+        if (isAuthenticationInvalid()) {
+            throw new BadRequestException(message);
+        }
+
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         assert principal instanceof UserAuthenticatedPrincipal
                 : "The 'principal' must be " + UserAuthenticatedPrincipal.class.getSimpleName();
-        if (userUuid != ((UserAuthenticatedPrincipal) principal).getUuid()) {
+
+        if (!userUuid.equals(((UserAuthenticatedPrincipal) principal).getUuid())) {
             throw new BadRequestException(message);
         }
+    }
+
+    private boolean isAuthenticationInvalid() {
+        return SecurityContextHolder.getContext().getAuthentication() == null
+                || SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null;
     }
 }

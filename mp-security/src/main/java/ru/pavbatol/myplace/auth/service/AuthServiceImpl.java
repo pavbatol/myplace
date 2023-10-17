@@ -139,7 +139,7 @@ public class AuthServiceImpl implements AuthService {
                                   String login,
                                   String refreshToken) {
         String composedKey = composeKey(servletRequest, login);
-        refreshTokenRedisRepository.add(composedKey, passwordEncoder.encode(refreshToken));
+        refreshTokenRedisRepository.set(composedKey, passwordEncoder.encode(refreshToken));
     }
 
     private void saveAccessToken(HttpServletRequest servletRequest,
@@ -161,7 +161,7 @@ public class AuthServiceImpl implements AuthService {
 
         AccessTokenDetails accessTokenDetails = new AccessTokenDetails(accessToken, ip, osName, browserName, deviceTypeName);
 
-        accessTokenRedisRepository.add(composedKey, accessTokenDetails);
+        accessTokenRedisRepository.set(composedKey, accessTokenDetails);
     }
 
     private String composeKey(@NonNull HttpServletRequest servletRequest, @NonNull String key) {
