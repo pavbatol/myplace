@@ -124,8 +124,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public boolean checkAccessTokenExists(HttpServletRequest servletRequest, String login) {
-        return accessTokenRedisRepository.exists(composeKey(servletRequest, login));
+    public boolean checkAccessTokenExists(HttpServletRequest servletRequest, String accessToken) {
+        String login = jwtProvider.getAccessClaims(accessToken).getSubject();
+        String composedKey = composeKey(servletRequest, login);
+
+        Optional<AccessTokenDetails> accessTokenDetails = accessTokenRedisRepository.find(composedKey);
+
+        return accessTokenDetails.isPresent() && passwordEncoder.matches(accessToken, accessTokenDetails.get().getToken());
     }
 
     private boolean checkAuthConditions(String rawPassword, User origUser) {

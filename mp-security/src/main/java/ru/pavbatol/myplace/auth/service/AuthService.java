@@ -20,6 +20,6 @@ public interface AuthService {
 
     void deleteAccessTokensByUserUuid(UUID userUuid);
 
-    boolean checkAccessTokenExists(HttpServletRequest httpServletRequest, String login);
+    boolean checkAccessTokenExists(HttpServletRequest httpServletRequest, String accessToken);
 
 }
