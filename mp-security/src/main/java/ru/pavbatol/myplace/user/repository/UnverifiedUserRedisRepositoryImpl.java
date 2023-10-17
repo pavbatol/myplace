@@ -8,14 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.exception.RedisException;
 import ru.pavbatol.myplace.app.redis.RedisKey;
 import ru.pavbatol.myplace.app.redis.repository.AbstractRedisRepository;
-import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
+import ru.pavbatol.myplace.user.model.UserUnverified;
 
 import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
-public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<UserDtoUnverified> implements UnverifiedUserRedisRepository {
+public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<UserUnverified> implements UnverifiedUserRedisRepository {
 
     private final RedisKey loginRedisKey = RedisKey.USERS_UNVERIFIED_LOGIN;
 
@@ -28,7 +28,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public boolean addLogin(@NotNull String login, @NotNull String email) throws RedisException {
+    public boolean addByLoginKey(@NotNull String login, @NotNull String email) throws RedisException {
         Boolean result = redisTemplate.opsForValue().setIfAbsent(composeLoginKey(login), email, ttl, TimeUnit.SECONDS);
         if (result != null) {
             return result;
@@ -39,13 +39,15 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
 
     @Override
     @Transactional
-    public void addAtomicLoginAndEmailKeys(String login, String email, UserDtoUnverified unverifiedUser) throws RedisException {
-        String loginKey = composeLoginKey(login);
-        String emailKey = composeKey(email);
+    public void addByAtomicLoginAndEmailKeys(UserUnverified unverifiedUser) throws RedisException {
+        final String login = unverifiedUser.getLogin();
+        final String email = unverifiedUser.getEmail();
+        final String loginKey = composeLoginKey(login);
+        final String emailKey = composeKey(email);
 
         try {
             try {
-                if (Boolean.TRUE.equals(redisTemplate.hasKey(loginKey)) || Boolean.FALSE.equals(addLogin(login, email))) {
+                if (Boolean.TRUE.equals(redisTemplate.hasKey(loginKey)) || Boolean.FALSE.equals(addByLoginKey(login, email))) {
                     throw new IllegalArgumentException("An unverified user with such login already exists, login: " + login);
                 }
             } catch (RedisException ignored) {
@@ -65,7 +67,7 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    public void removeLoginSilently(String login) {
+    public void removeLoginKeySilently(String login) {
         try {
             redisTemplate.delete(composeLoginKey(login));
         } catch (Exception ignored) {
@@ -81,8 +83,8 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
     }
 
     @Override
-    protected Class<UserDtoUnverified> getType() {
-        return UserDtoUnverified.class;
+    protected Class<UserUnverified> getType() {
+        return UserUnverified.class;
     }
 
     private String composeLoginKey(@NotNull String key) {

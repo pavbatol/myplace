@@ -16,7 +16,7 @@ import ru.pavbatol.myplace.role.repository.RoleRepository;
 import ru.pavbatol.myplace.user.client.ProfileClient;
 import ru.pavbatol.myplace.user.dto.UserDtoConfirm;
 import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
-import ru.pavbatol.myplace.user.dto.UserDtoUnverified;
+import ru.pavbatol.myplace.user.model.UserUnverified;
 import ru.pavbatol.myplace.user.dto.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.user.mapper.UserMapper;
 import ru.pavbatol.myplace.user.model.User;
@@ -48,29 +48,32 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void register(HttpServletRequest servletRequest, UserDtoRegistry dto) {
-        final String emailKey = dto.getEmail();
-        final String loginKey = dto.getLogin();
+        final String email = dto.getEmail();
+        final String login = dto.getLogin();
         final String code = generateCode();
         final String encodedCode = passwordEncoder.encode(code);
         final String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        final UserDtoUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
+        final UserUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
 
-        userRedisRepository.addAtomicLoginAndEmailKeys(loginKey, emailKey, dtoUnverified);
+        assert dtoUnverified.getEmail().equals(email) : "email should not change";
+        assert dtoUnverified.getLogin().equals(login) : "login should not change";
+
+        userRedisRepository.addByAtomicLoginAndEmailKeys(dtoUnverified);
         log.debug("Unverified {} saved to Redis with email: {}, login: {}, password and code are hidden for security",
                 ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
         log.debug("Login of unverified {} saved to Redis, login: {},", ENTITY_SIMPLE_NAME, dtoUnverified.getLogin());
 
         try {
-            if (userJpaRepository.existsByLogin(dtoUnverified.getLogin())) {
+            if (userJpaRepository.existsByLogin(login)) {
                 throw new RegistrationException("A user with this login is already registered and verified: " + dto.getLogin());
             }
 
-            if (profileClient.existsByEmail(dto.getEmail())) {
+            if (profileClient.existsByEmail(email)) {
                 throw new RegistrationException("A user with this email is already registered and verified: " + dto.getEmail());
             }
         } catch (Exception e) {
-            userRedisRepository.removeSilently(emailKey);
-            userRedisRepository.removeLoginSilently(loginKey);
+            userRedisRepository.removeSilently(email);
+            userRedisRepository.removeLoginKeySilently(login);
             throw new RegistrationException("Failed registering: " + e.getMessage());
         }
 
@@ -96,7 +99,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = {Exception.class})
     @Override
     public void confirmRegistration(UserDtoConfirm dtoConfirm) {
-        UserDtoUnverified dtoUnverified = userRedisRepository.find(dtoConfirm.getEmail())
+        UserUnverified dtoUnverified = userRedisRepository.find(dtoConfirm.getEmail())
                 .orElseThrow(() -> new NotFoundException("Email not confirmed", "Email not found"));
 
         if (!passwordEncoder.matches(dtoConfirm.getCode(), dtoUnverified.getCode())) {
@@ -115,7 +118,7 @@ public class UserServiceImpl implements UserService {
         profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
 
         userRedisRepository.removeSilently(dtoConfirm.getEmail());
-        userRedisRepository.removeLoginSilently(dtoUnverified.getLogin());
+        userRedisRepository.removeLoginKeySilently(dtoUnverified.getLogin());
 
         log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
         log.debug("{} created with id: {}, uuid: {}, login: {}, deleted: {}, roles {}, password: hidden for security",
