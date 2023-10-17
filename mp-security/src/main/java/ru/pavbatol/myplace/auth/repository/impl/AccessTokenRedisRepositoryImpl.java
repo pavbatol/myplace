@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.auth.repository;
+package ru.pavbatol.myplace.auth.repository.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,6 +6,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import ru.pavbatol.myplace.app.redis.RedisKey;
 import ru.pavbatol.myplace.auth.model.AccessTokenDetails;
+import ru.pavbatol.myplace.auth.repository.AbstractTokenRedisRepository;
+import ru.pavbatol.myplace.auth.repository.AccessTokenRedisRepository;
 
 @Slf4j
 @Component

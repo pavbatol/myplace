@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.user.service;
+package ru.pavbatol.myplace.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,7 @@ import ru.pavbatol.myplace.user.model.User;
 import ru.pavbatol.myplace.user.model.UserAuthenticatedPrincipal;
 import ru.pavbatol.myplace.user.repository.UnverifiedUserRedisRepository;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
+import ru.pavbatol.myplace.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Random;

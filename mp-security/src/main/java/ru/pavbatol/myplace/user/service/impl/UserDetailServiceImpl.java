@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.user.service;
+package ru.pavbatol.myplace.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -7,6 +7,7 @@ import ru.pavbatol.myplace.role.model.Role;
 import ru.pavbatol.myplace.user.model.User;
 import ru.pavbatol.myplace.user.model.UserAuthenticatedPrincipal;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
+import ru.pavbatol.myplace.user.service.UserDetailService;
 
 import java.util.stream.Collectors;
 
