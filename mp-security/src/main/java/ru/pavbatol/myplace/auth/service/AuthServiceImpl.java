@@ -107,16 +107,26 @@ public class AuthServiceImpl implements AuthService {
                 .orElseGet(() -> new AuthDtoResponse(null, null));
     }
 
+    /**
+     * The method is for the admin, so it is not checked whose ID is being used
+     *
+     * @param userUuid user UUID
+     */
     @Override
-    public void deleteRefreshTokensByUserUuid(UUID userUuid) {
+    public void removeRefreshTokensByUserUuid(UUID userUuid) {
         User user = getNonNullUserByUuid(userUuid);
         String login = user.getLogin();
         refreshTokenRedisRepository.removeAllByKeyStartsWith(login + KEY_SEPARATOR);
         log.debug("All refresh tokens removed for user with uuid: {}", userUuid);
     }
 
+    /**
+     * The method is for the admin, so it is not checked whose ID is being used
+     *
+     * @param userUuid user UUID
+     */
     @Override
-    public void deleteAccessTokensByUserUuid(UUID userUuid) {
+    public void removeAccessTokensByUserUuid(UUID userUuid) {
         User user = getNonNullUserByUuid(userUuid);
         String login = user.getLogin();
         accessTokenRedisRepository.removeAllByKeyStartsWith(login + KEY_SEPARATOR);

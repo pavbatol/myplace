@@ -24,12 +24,22 @@ public class PublicAuthController {
     private final AuthService authService;
 
     @GetMapping("/logout")
-    @Operation(summary = "logout", description = "de - logging (let the frontend not forget to delete the access token)")
+    @Operation(summary = "logout", description = "log out on the current")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         log.debug("GET logout()");
         authService.logout(request);
         return ResponseEntity.ok("Logout successful");
     }
+
+// TODO: 18.10.2023 implement the method
+
+//    @GetMapping("/logout/all")
+//    @Operation(summary = "logoutAllSessions", description = "log out on all devices")
+//    public ResponseEntity<String> logoutAllSessions(HttpServletRequest request) {
+//        log.debug("GET logoutAllSessions()");
+//        authService.logoutAllSessions(request);
+//        return ResponseEntity.ok("Logout successful");
+//    }
 
     @PostMapping("/login")
     @Operation(summary = "login", description = "checking login and password and provide access and refresh tokens")
@@ -39,7 +49,7 @@ public class PublicAuthController {
         return ResponseEntity.ok(dtoAuthResponse);
     }
 
-    @PostMapping("/token")
+    @PostMapping("/tokens")
     @Operation(summary = "getNewAccessToken", description = "getting a new access token to replace the old one")
     public ResponseEntity<AuthDtoResponse> getNewAccessToken(HttpServletRequest request,
                                                              @Valid @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {

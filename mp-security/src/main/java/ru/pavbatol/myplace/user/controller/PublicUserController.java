@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@RequestMapping("/users/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "Public: User", description = "API for working with User registration")
 public class PublicUserController {

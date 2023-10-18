@@ -16,9 +16,9 @@ public interface AuthService {
 
     AuthDtoResponse getNewRefreshToken(HttpServletRequest httpServletRequest, String refreshToken);
 
-    void deleteRefreshTokensByUserUuid(UUID userUuid);
+    void removeRefreshTokensByUserUuid(UUID userUuid);
 
-    void deleteAccessTokensByUserUuid(UUID userUuid);
+    void removeAccessTokensByUserUuid(UUID userUuid);
 
     boolean checkAccessTokenExists(HttpServletRequest httpServletRequest, String accessToken);
 
