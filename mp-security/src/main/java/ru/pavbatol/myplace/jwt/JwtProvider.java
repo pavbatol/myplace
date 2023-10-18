@@ -44,9 +44,6 @@ public class JwtProvider {
         this.jwtAccessLifeSeconds = jwtAccessLifeSeconds;
         this.jwtRefreshLifeSeconds = jwtRefreshLifeSeconds;
 
-        // TODO: 10.10.2023 Remove follow logs after testing
-        log.debug("Constructor: source for jwtAccessKey: " + accessSecretStr);
-        log.debug("Constructor: source for jwtRefreshKey: " + refreshSecretStr);
         log.debug("Constructor: jwtAccessLifeSeconds: " + this.jwtAccessLifeSeconds);
         log.debug("Constructor: jwtRefreshLifeSeconds: " + this.jwtRefreshLifeSeconds);
     }
