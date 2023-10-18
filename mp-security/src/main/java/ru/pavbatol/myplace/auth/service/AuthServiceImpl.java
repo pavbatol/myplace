@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -63,12 +64,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(HttpServletRequest servletRequest) {
-        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication != null ? authentication.getPrincipal() : null;
 
-            assert principal instanceof UserAuthenticatedPrincipal
-                    : "The 'principal' must be " + UserAuthenticatedPrincipal.class.getSimpleName();
-
+        if (principal instanceof UserAuthenticatedPrincipal) {
             String login = ((UserAuthenticatedPrincipal) principal).getLogin();
             String composedKey = composeKey(servletRequest, login);
 
@@ -108,7 +107,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * The method is for the admin, so it is not checked whose ID is being used
+     * The method is for the admin, so it is not checked whose UUID is being used
      *
      * @param userUuid user UUID
      */
@@ -121,7 +120,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
-     * The method is for the admin, so it is not checked whose ID is being used
+     * The method is for the admin, so it is not checked whose UUID is being used
      *
      * @param userUuid user UUID
      */
