@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.pavbatol.myplace.app.exception.BadRequestException;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.auth.dto.AuthDtoRequest;
 import ru.pavbatol.myplace.auth.dto.AuthDtoResponse;
@@ -77,7 +78,29 @@ public class AuthServiceImpl implements AuthService {
             accessTokenRedisRepository.remove(composedKey);
             log.debug("Access token deleted by key: {}", composedKey);
         } else {
-            log.debug("The de-login was not made because the user is anonymous");
+            log.info("The de-login was not made because the user is anonymous");
+        }
+
+        SecurityContextHolder.clearContext();
+        log.debug("Context cleared in SecurityContextHolder");
+    }
+
+    @Override
+    public void logoutAllSessions(HttpServletRequest servletRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication != null ? authentication.getPrincipal() : null;
+
+        if (principal instanceof UserAuthenticatedPrincipal) {
+            String login = ((UserAuthenticatedPrincipal) principal).getLogin();
+            String keyStartWith = login + KEY_SEPARATOR;
+
+            refreshTokenRedisRepository.removeAllByKeyStartsWith(keyStartWith);
+            log.debug("All refresh tokens deleted by key start with: {}", keyStartWith);
+
+            accessTokenRedisRepository.removeAllByKeyStartsWith(keyStartWith);
+            log.debug("All access tokens deleted by key start with: {}", keyStartWith);
+        } else {
+            throw new BadRequestException("The de-login was not made because the user is anonymous");
         }
 
         SecurityContextHolder.clearContext();
@@ -207,7 +230,7 @@ public class AuthServiceImpl implements AuthService {
     @NonNull
     private User getNonNullUserByLogin(String login) {
         return userJpaRepository.findByLogin(login).orElseThrow(() ->
-                new NotFoundException(String.format("%s not found by %s ", User.class.getSimpleName(), login)));
+                new NotFoundException(String.format("%s not found by login: %s ", User.class.getSimpleName(), login)));
     }
 
     @NonNull

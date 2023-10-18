@@ -12,6 +12,8 @@ public interface AuthService {
 
     void logout(HttpServletRequest httpServletRequest);
 
+    void logoutAllSessions(HttpServletRequest httpServletRequest);
+
     AuthDtoResponse getNewAccessToken(HttpServletRequest httpServletRequest, String refreshToken);
 
     AuthDtoResponse getNewRefreshToken(HttpServletRequest httpServletRequest, String refreshToken);
@@ -21,5 +23,4 @@ public interface AuthService {
     void removeAccessTokensByUserUuid(UUID userUuid);
 
     boolean checkAccessTokenExists(HttpServletRequest httpServletRequest, String accessToken);
-
 }

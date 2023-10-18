@@ -31,15 +31,13 @@ public class PublicAuthController {
         return ResponseEntity.ok("Logout successful");
     }
 
-// TODO: 18.10.2023 implement the method
-
-//    @GetMapping("/logout/all")
-//    @Operation(summary = "logoutAllSessions", description = "log out on all devices")
-//    public ResponseEntity<String> logoutAllSessions(HttpServletRequest request) {
-//        log.debug("GET logoutAllSessions()");
-//        authService.logoutAllSessions(request);
-//        return ResponseEntity.ok("Logout successful");
-//    }
+    @GetMapping("/logout/all")
+    @Operation(summary = "logoutAllSessions", description = "log out on all devices")
+    public ResponseEntity<String> logoutAllSessions(HttpServletRequest request) {
+        log.debug("GET logoutAllSessions()");
+        authService.logoutAllSessions(request);
+        return ResponseEntity.ok("Logout successful");
+    }
 
     @PostMapping("/login")
     @Operation(summary = "login", description = "checking login and password and provide access and refresh tokens")
