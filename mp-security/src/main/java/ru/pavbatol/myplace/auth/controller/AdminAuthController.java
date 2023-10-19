@@ -12,6 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.auth.service.AuthService;
 
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 @Slf4j
@@ -51,7 +55,7 @@ public class AdminAuthController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/secret")
+    @GetMapping("/secrets")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "printRandomSecrets", description = "printing random twu secret strings")
     public String printRandomSecrets() {
@@ -59,5 +63,31 @@ public class AdminAuthController {
         return String.format("%s\n\n%s",
                 Encoders.BASE64.encode(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded()),
                 Encoders.BASE64.encode(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded()));
+    }
+
+    @GetMapping("/secrets/pair")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "printRandomPairSecrets", description = "printing random two secret strings")
+    public String printRandomPairSecrets() {
+        log.debug("GET printRandomPairSecrets()");
+
+        KeyPair keyPair = generateKeyPair();
+        Key publicKey = keyPair.getPublic();
+        Key privateKey = keyPair.getPrivate();
+
+        return String.format("PUBLIC_KEY:%n%n%s\n\nPRIVATE_KEY:%n%n%s",
+                Encoders.BASE64.encode(publicKey.getEncoded()),
+                Encoders.BASE64.encode(privateKey.getEncoded()));
+    }
+
+    private static KeyPair generateKeyPair() {
+        KeyPairGenerator keyPairGenerator = null;
+        try {
+            keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        keyPairGenerator.initialize(2048);
+        return keyPairGenerator.generateKeyPair();
     }
 }
