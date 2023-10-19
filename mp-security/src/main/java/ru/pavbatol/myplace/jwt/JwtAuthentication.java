@@ -4,7 +4,7 @@ import lombok.*;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import ru.pavbatol.myplace.user.model.UserAuthenticatedPrincipal;
+import ru.pavbatol.myplace.user.model.UserAuthenticationPrincipal;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,13 +16,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JwtAuthentication implements Authentication {
-    private UserAuthenticatedPrincipal principal;
+    private UserAuthenticationPrincipal principal;
     private Set<GrantedAuthority> authorities;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private boolean authenticated = false;
 
-    public static JwtAuthentication of(UserAuthenticatedPrincipal principal,
+    public static JwtAuthentication of(UserAuthenticationPrincipal principal,
                                        Collection<? extends GrantedAuthority> authorities,
                                        boolean authenticated) {
         JwtAuthentication authentication = new JwtAuthentication();

@@ -32,4 +32,12 @@ public class PrivateAuthController {
         AuthDtoResponse body = authService.getNewRefreshToken(request, dtoRefreshRequest.getRefreshToken());
         return ResponseEntity.ok(body);
     }
+
+    @GetMapping("/logout/all")
+    @Operation(summary = "logoutAllSessions", description = "log out on all devices")
+    public ResponseEntity<String> logoutAllSessions(HttpServletRequest request) {
+        log.debug("GET logoutAllSessions()");
+        authService.logoutAllSessions(request);
+        return ResponseEntity.ok("Logout successful");
+    }
 }

@@ -21,7 +21,7 @@ import ru.pavbatol.myplace.user.model.UserUnverified;
 import ru.pavbatol.myplace.user.dto.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.user.mapper.UserMapper;
 import ru.pavbatol.myplace.user.model.User;
-import ru.pavbatol.myplace.user.model.UserAuthenticatedPrincipal;
+import ru.pavbatol.myplace.user.model.UserAuthenticationPrincipal;
 import ru.pavbatol.myplace.user.repository.UnverifiedUserRedisRepository;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
 import ru.pavbatol.myplace.user.service.UserService;
@@ -183,10 +183,10 @@ public class UserServiceImpl implements UserService {
         }
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        assert principal instanceof UserAuthenticatedPrincipal
-                : "The 'principal' must be " + UserAuthenticatedPrincipal.class.getSimpleName();
+        assert principal instanceof UserAuthenticationPrincipal
+                : "The 'principal' must be " + UserAuthenticationPrincipal.class.getSimpleName();
 
-        if (!userUuid.equals(((UserAuthenticatedPrincipal) principal).getUuid())) {
+        if (!userUuid.equals(((UserAuthenticationPrincipal) principal).getUuid())) {
             throw new BadRequestException(message);
         }
     }

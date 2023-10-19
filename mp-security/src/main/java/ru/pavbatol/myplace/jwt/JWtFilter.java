@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.pavbatol.myplace.auth.service.AuthService;
-import ru.pavbatol.myplace.user.model.UserAuthenticatedPrincipal;
+import ru.pavbatol.myplace.user.model.UserAuthenticationPrincipal;
 import ru.pavbatol.myplace.user.service.UserDetailService;
 
 import javax.servlet.FilterChain;
@@ -38,7 +37,7 @@ public class JWtFilter extends OncePerRequestFilter {
                 .filter(accessToken -> authService.checkAccessTokenExists(request, accessToken))
                 .map(accessToken -> jwtProvider.getAccessClaims(accessToken).getSubject()) // TODO: 18.10.2023 Optimize the token parsing call for the third time in this code
                 .map(login -> {
-                    UserAuthenticatedPrincipal principal = userDetailService.loadUserByLogin(login);
+                    UserAuthenticationPrincipal principal = userDetailService.loadUserByLogin(login);
                     return JwtAuthentication.of(principal, principal.getAuthorities(), principal.isEnabled());
                 })
                 .ifPresent(authentication -> {

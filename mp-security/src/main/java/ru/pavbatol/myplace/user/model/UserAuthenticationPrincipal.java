@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Value
-public class UserAuthenticatedPrincipal implements AuthenticatedPrincipal {
+public class UserAuthenticationPrincipal implements AuthenticatedPrincipal {
     Long id;
     UUID uuid;
     String login;

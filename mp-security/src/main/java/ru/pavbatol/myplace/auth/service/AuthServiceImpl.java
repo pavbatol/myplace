@@ -21,7 +21,7 @@ import ru.pavbatol.myplace.auth.repository.AccessTokenRedisRepository;
 import ru.pavbatol.myplace.auth.repository.RefreshTokenRedisRepository;
 import ru.pavbatol.myplace.jwt.JwtProvider;
 import ru.pavbatol.myplace.user.model.User;
-import ru.pavbatol.myplace.user.model.UserAuthenticatedPrincipal;
+import ru.pavbatol.myplace.user.model.UserAuthenticationPrincipal;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,8 +68,8 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication != null ? authentication.getPrincipal() : null;
 
-        if (principal instanceof UserAuthenticatedPrincipal) {
-            String login = ((UserAuthenticatedPrincipal) principal).getLogin();
+        if (principal instanceof UserAuthenticationPrincipal) {
+            String login = ((UserAuthenticationPrincipal) principal).getLogin();
             String composedKey = composeKey(servletRequest, login);
 
             refreshTokenRedisRepository.remove(composedKey);
@@ -90,8 +90,8 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication != null ? authentication.getPrincipal() : null;
 
-        if (principal instanceof UserAuthenticatedPrincipal) {
-            String login = ((UserAuthenticatedPrincipal) principal).getLogin();
+        if (principal instanceof UserAuthenticationPrincipal) {
+            String login = ((UserAuthenticationPrincipal) principal).getLogin();
             String keyStartWith = login + KEY_SEPARATOR;
 
             refreshTokenRedisRepository.removeAllByKeyStartsWith(keyStartWith);

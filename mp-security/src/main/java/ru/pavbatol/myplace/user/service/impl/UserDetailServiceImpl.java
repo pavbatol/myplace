@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.pavbatol.myplace.role.model.Role;
 import ru.pavbatol.myplace.user.model.User;
-import ru.pavbatol.myplace.user.model.UserAuthenticatedPrincipal;
+import ru.pavbatol.myplace.user.model.UserAuthenticationPrincipal;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
 import ru.pavbatol.myplace.user.service.UserDetailService;
 
@@ -17,10 +17,10 @@ public class UserDetailServiceImpl implements UserDetailService {
     private final UserJpaRepository repository;
 
     @Override
-    public UserAuthenticatedPrincipal loadUserByLogin(String login) throws UsernameNotFoundException {
+    public UserAuthenticationPrincipal loadUserByLogin(String login) throws UsernameNotFoundException {
         User user = repository.findByLogin(login).orElseThrow(() -> new UsernameNotFoundException(
                 String.format("%s with login: %s not found", User.class.getSimpleName(), login)));
-        return new UserAuthenticatedPrincipal(
+        return new UserAuthenticationPrincipal(
                 user.getId(),
                 user.getUuid(),
                 user.getLogin(),
