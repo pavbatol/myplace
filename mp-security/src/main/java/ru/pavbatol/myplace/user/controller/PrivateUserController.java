@@ -22,7 +22,7 @@ import java.util.UUID;
 public class PrivateUserController {
     private final UserService userService;
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PutMapping("/{userUuid}/password")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "changePassword", description = "setting new password")
@@ -34,7 +34,7 @@ public class PrivateUserController {
     }
 
     // TODO: 10.10.2023 This endpoint should only accept requests from the 'gateway' service
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{userUuid}/id")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "getIdByUuid", description = "obtaining User id by UUID")

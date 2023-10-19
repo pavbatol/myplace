@@ -30,9 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     public static final String[] PUBLIC_PATHS = {
-            "/login",
             "/auth/**",
-            "/users/auth/**",
             "/v3/api-docs.yaml",
             "/v3/api-docs/**",
             "/swagger-ui/**",
@@ -41,10 +39,11 @@ public class SecurityConfig {
     };
 
     public static final String[] ADMIN_PATHS = {
+            "/admin/**"
     };
 
     public static final String[] USER_PATHS = {
-            "/private/users/**"
+            "/users/**"
     };
 
     @Qualifier("JWtFilter")

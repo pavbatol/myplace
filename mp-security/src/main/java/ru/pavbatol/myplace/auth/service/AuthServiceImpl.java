@@ -208,11 +208,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String composeKey(@NonNull HttpServletRequest servletRequest, @NonNull String key) {
-        String ip = servletRequest.getRemoteAddr() != null && !servletRequest.getRemoteAddr().isEmpty()
-                ? servletRequest.getRemoteAddr() : DEFAULT_AP;
         String agent = servletRequest.getHeader(USER_AGENT_HEADER) != null
                 ? servletRequest.getHeader(USER_AGENT_HEADER) : DEFAULT_USER_AGENT;
-        return String.format("%s%s%s%s%s", key, KEY_SEPARATOR, ip, KEY_SEPARATOR, getMD5Hash(agent));
+        return String.format("%s%s%s", key, KEY_SEPARATOR, getMD5Hash(agent));
     }
 
     private Optional<User> getUserByVerifyingRefreshToken(HttpServletRequest servletRequest, String refreshToken) {
