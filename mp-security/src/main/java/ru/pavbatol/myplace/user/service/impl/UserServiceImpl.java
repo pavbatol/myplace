@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.user.service.impl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -102,10 +103,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void confirmRegistration(UserDtoConfirm dtoConfirm) {
         UserUnverified dtoUnverified = userRedisRepository.find(dtoConfirm.getEmail())
-                .orElseThrow(() -> new NotFoundException("Email not confirmed", "Email not found"));
+                .orElseThrow(() -> new NotFoundException("Email not confirmed.", "Email not found."));
 
         if (!passwordEncoder.matches(dtoConfirm.getCode(), dtoUnverified.getCode())) {
-            throw new RegistrationException("Invalid confirmation code");
+            throw new RegistrationException("Invalid confirmation code.");
         }
 
         Role role = getNonNullRoleFromDB(RoleName.USER);
@@ -131,9 +132,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(UUID userUuid, UserDtoUpdatePassword dto) {
         User origUser = userJpaRepository.findByUuid(userUuid).orElseThrow(() ->
-                new NotFoundException(String.format("%s with UUID: %s not found", ENTITY_SIMPLE_NAME, userUuid))
+                new NotFoundException(String.format("%s with UUID: %s not found.", ENTITY_SIMPLE_NAME, userUuid))
         );
-        checkUuidOwnership(userUuid, "You can only edit your own data");
+        checkUuidOwnership(userUuid, "You can only edit your own data.");
         origUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         userJpaRepository.save(origUser);
         log.debug("{} with UUID: {} is updated", ENTITY_SIMPLE_NAME, userUuid);
@@ -141,9 +142,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Long getIdByUuid(UUID userUuid) {
-        checkUuidOwnership(userUuid, "You do not have access to other user's data");
+        checkUuidOwnership(userUuid, "You do not have access to other user's data.");
         Long userId = userJpaRepository.getIdByUuid(userUuid).orElseThrow(() ->
-                new NotFoundException(String.format("%s with UUID: %s not found", ENTITY_SIMPLE_NAME, userUuid))
+                new NotFoundException(String.format("%s with UUID: %s not found.", ENTITY_SIMPLE_NAME, userUuid))
         );
         log.debug("Obtained {} id: {} by UUID: {}", ENTITY_SIMPLE_NAME, userId, userUuid);
         return userId;
@@ -172,27 +173,27 @@ public class UserServiceImpl implements UserService {
     private Role getNonNullRoleFromDB(RoleName roleName) {
         return roleRepository.findByRoleName(roleName)
                 .orElseThrow(() -> {
-                    return new NotFoundException(String.format("%s not found by %s ",
+                    return new NotFoundException(String.format("%s not found by %s.",
                             Role.class.getSimpleName(), roleName));
                 });
     }
 
     private void checkUuidOwnership(@NonNull UUID userUuid, String message) {
-        if (isAuthenticationInvalid()) {
-            throw new BadRequestException(message);
-        }
+        UserAuthenticationPrincipal principal = checkAndGetAuthenticationPrincipal();
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        assert principal instanceof UserAuthenticationPrincipal
-                : "The 'principal' must be " + UserAuthenticationPrincipal.class.getSimpleName();
-
-        if (!userUuid.equals(((UserAuthenticationPrincipal) principal).getUuid())) {
-            throw new BadRequestException(message);
+        if (!userUuid.equals(principal.getUuid())) {
+            throw new IllegalArgumentException(message);
         }
     }
 
-    private boolean isAuthenticationInvalid() {
-        return SecurityContextHolder.getContext().getAuthentication() == null
-                || SecurityContextHolder.getContext().getAuthentication().getPrincipal() == null;
+    private UserAuthenticationPrincipal checkAndGetAuthenticationPrincipal() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication != null ? authentication.getPrincipal() : null;
+
+        if (!(principal instanceof UserAuthenticationPrincipal)) {
+            throw new IllegalArgumentException("Authentication principal is invalid.");
+        }
+
+        return (UserAuthenticationPrincipal) principal;
     }
 }
