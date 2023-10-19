@@ -7,6 +7,8 @@ import eu.bitwalker.useragentutils.UserAgent;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.pavbatol.myplace.app.exception.BadRequestException;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
+import ru.pavbatol.myplace.app.exception.RedisException;
 import ru.pavbatol.myplace.auth.dto.AuthDtoRequest;
 import ru.pavbatol.myplace.auth.dto.AuthDtoResponse;
 import ru.pavbatol.myplace.auth.model.AccessTokenDetails;
@@ -43,6 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private final AccessTokenRedisRepository accessTokenRedisRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    protected final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public AuthDtoResponse login(HttpServletRequest servletRequest, AuthDtoRequest dtoAuthRequest) {
@@ -163,6 +167,16 @@ public class AuthServiceImpl implements AuthService {
         Optional<AccessTokenDetails> accessTokenDetails = accessTokenRedisRepository.find(composedKey);
 
         return accessTokenDetails.isPresent() && passwordEncoder.matches(accessToken, accessTokenDetails.get().getToken());
+    }
+
+    @Override
+    public void clearAuthStorage() {
+        RedisConnectionFactory connectionFactory = redisTemplate.getConnectionFactory();
+        if (connectionFactory != null) {
+            connectionFactory.getConnection().flushAll();
+        } else {
+            throw new RedisException("Storage cleanup error.", "Not received RedisConnectionFactory.");
+        }
     }
 
     private boolean checkAuthConditions(String rawPassword, User origUser) {

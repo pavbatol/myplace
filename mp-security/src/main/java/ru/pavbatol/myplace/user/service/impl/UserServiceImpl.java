@@ -102,18 +102,18 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = {Exception.class})
     @Override
     public void confirmRegistration(UserDtoConfirm dtoConfirm) {
-        UserUnverified dtoUnverified = userRedisRepository.find(dtoConfirm.getEmail())
+        UserUnverified userUnverified = userRedisRepository.find(dtoConfirm.getEmail())
                 .orElseThrow(() -> new NotFoundException("Email not confirmed.", "Email not found."));
 
-        if (!passwordEncoder.matches(dtoConfirm.getCode(), dtoUnverified.getCode())) {
+        if (!passwordEncoder.matches(dtoConfirm.getCode(), userUnverified.getCode())) {
             throw new RegistrationException("Invalid confirmation code.");
         }
 
         Role role = getNonNullRoleFromDB(RoleName.USER);
         User user = new User()
                 .setUuid(UUID.randomUUID())
-                .setPassword(dtoUnverified.getPassword())
-                .setLogin(dtoUnverified.getLogin())
+                .setPassword(userUnverified.getPassword())
+                .setLogin(userUnverified.getLogin())
                 .setRoles(Set.of(role))
                 .setDeleted(false);
 
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
         profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
 
         userRedisRepository.removeSilently(dtoConfirm.getEmail());
-        userRedisRepository.removeLoginKeySilently(dtoUnverified.getLogin());
+        userRedisRepository.removeLoginKeySilently(userUnverified.getLogin());
 
         log.debug("{} with email: {} confirmed with code: {}", ENTITY_SIMPLE_NAME, dtoConfirm.getEmail(), dtoConfirm.getCode());
         log.debug("{} created with id: {}, uuid: {}, login: {}, deleted: {}, roles {}, password: hidden for security",

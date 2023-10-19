@@ -41,16 +41,15 @@ public class AdminAuthController {
         return ResponseEntity.noContent().build();
     }
 
-    // TODO: 18.10.2023 implement the method
-
-//    @DeleteMapping("/tokens")
-//    @SecurityRequirement(name = "JWT")
-//    @Operation(summary = "removeAllRefreshTokens", description = "deleting all refresh tokens")
-//    public ResponseEntity<Void> removeAllRefreshTokens() {
-//        log.debug("DELETE removeAllRefreshTokens()");
-//        authService.removeAllRefreshTokens();
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/tokens")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "clearAuthStorage",
+            description = "deleting all tokens and unverified logins and emails, existing users are not deleted")
+    public ResponseEntity<Void> clearAuthStorage() {
+        log.debug("DELETE clearAuthStorage()");
+        authService.clearAuthStorage();
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping("/secret")
     @SecurityRequirement(name = "JWT")

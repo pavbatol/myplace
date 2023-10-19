@@ -23,4 +23,6 @@ public interface AuthService {
     void removeAccessTokensByUserUuid(UUID userUuid);
 
     boolean checkAccessTokenExists(HttpServletRequest httpServletRequest, String accessToken);
+
+    void clearAuthStorage();
 }
