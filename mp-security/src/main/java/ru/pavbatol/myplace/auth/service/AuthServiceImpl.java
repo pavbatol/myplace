@@ -7,6 +7,7 @@ import eu.bitwalker.useragentutils.UserAgent;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.AuthorizationServiceException;
@@ -37,6 +38,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+    @Value("${app.jwt.access.storing}")
+    private boolean accessTokenStoring;
     public static final String KEY_SEPARATOR = " "; //Since it is impossible to register a user with login containing a space
     private static final String USER_AGENT_HEADER = "User-Agent";
     private static final String DEFAULT_USER_AGENT = "no-user-agent";
@@ -59,11 +62,16 @@ public class AuthServiceImpl implements AuthService {
 
         final String accessToken = jwtProvider.createAccessToken(user);
         final String refreshToken = jwtProvider.createRefreshToken(user);
-
-        saveAccessToken(servletRequest, dtoAuthRequest.getLogin(), accessToken);
-        saveRefreshToken(servletRequest, dtoAuthRequest.getLogin(), refreshToken);
-
         log.debug("Access and refresh tokens are created");
+
+        saveRefreshToken(servletRequest, dtoAuthRequest.getLogin(), refreshToken);
+        log.debug("Refresh token is saved");
+
+        if (accessTokenStoring) {
+            saveAccessToken(servletRequest, dtoAuthRequest.getLogin(), accessToken);
+            log.debug("Access token is saved");
+        }
+
         return new AuthDtoResponse(accessToken, refreshToken);
     }
 
@@ -79,8 +87,10 @@ public class AuthServiceImpl implements AuthService {
             refreshTokenRedisRepository.remove(composedKey);
             log.debug("Refresh token deleted by key: {}", composedKey);
 
-            accessTokenRedisRepository.remove(composedKey);
-            log.debug("Access token deleted by key: {}", composedKey);
+            if (accessTokenStoring) {
+                accessTokenRedisRepository.remove(composedKey);
+                log.debug("Access token deleted by key: {}", composedKey);
+            }
         } else {
             log.info("The de-login was not made because the user is anonymous");
         }
@@ -101,8 +111,12 @@ public class AuthServiceImpl implements AuthService {
             refreshTokenRedisRepository.removeAllByKeyStartsWith(keyStartWith);
             log.debug("All refresh tokens deleted by key start with: {}", keyStartWith);
 
-            accessTokenRedisRepository.removeAllByKeyStartsWith(keyStartWith);
-            log.debug("All access tokens deleted by key start with: {}", keyStartWith);
+            if (accessTokenStoring) {
+                accessTokenRedisRepository.removeAllByKeyStartsWith(keyStartWith);
+                log.debug("All access tokens deleted by key start with: {}", keyStartWith);
+            } else {
+                log.debug("Access tokens that are on hand are still valid until they expire");
+            }
         } else {
             throw new BadRequestException("The de-login was not made because the user is anonymous");
         }
@@ -116,7 +130,9 @@ public class AuthServiceImpl implements AuthService {
         return getUserByVerifyingRefreshToken(servletRequest, refreshToken)
                 .map(user -> {
                     String accessToken = jwtProvider.createAccessToken(user);
-                    saveAccessToken(servletRequest, user.getLogin(), accessToken);
+                    if (accessTokenStoring) {
+                        saveAccessToken(servletRequest, user.getLogin(), accessToken);
+                    }
                     return new AuthDtoResponse(accessToken, null);
                 })
                 .orElseGet(() -> new AuthDtoResponse(null, null));
@@ -153,6 +169,9 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public void removeAccessTokensByUserUuid(UUID userUuid) {
+        if (!accessTokenStoring) {
+            throw new BadRequestException("The application is running without saving access tokens. There is no need to delete the token.");
+        }
         User user = getNonNullUserByUuid(userUuid);
         String login = user.getLogin();
         accessTokenRedisRepository.removeAllByKeyStartsWith(login + KEY_SEPARATOR);
@@ -161,12 +180,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean checkAccessTokenExists(HttpServletRequest servletRequest, String accessToken) {
+        log.debug("Checking access token exists");
+        if (accessToken == null) {
+            return false;
+        }
+
         String login = jwtProvider.getAccessClaims(accessToken).getSubject();
         String composedKey = composeKey(servletRequest, login);
 
         Optional<AccessTokenDetails> accessTokenDetails = accessTokenRedisRepository.find(composedKey);
 
-        return accessTokenDetails.isPresent() && passwordEncoder.matches(accessToken, accessTokenDetails.get().getToken());
+        return accessTokenDetails.isPresent() && accessToken.equals(accessTokenDetails.get().getToken());
     }
 
     @Override
@@ -198,9 +222,7 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenRedisRepository.set(composedKey, passwordEncoder.encode(refreshToken));
     }
 
-    private void saveAccessToken(HttpServletRequest servletRequest,
-                                 String login,
-                                 String accessToken) {
+    private void saveAccessToken(HttpServletRequest servletRequest, String login, String accessToken) {
         String composedKey = composeKey(servletRequest, login);
 
         String ip = servletRequest.getRemoteAddr() != null && !servletRequest.getRemoteAddr().isEmpty()
@@ -215,8 +237,7 @@ public class AuthServiceImpl implements AuthService {
         String browserName = browser.getName();
         String deviceTypeName = deviceType.getName();
 
-        AccessTokenDetails accessTokenDetails = new AccessTokenDetails(passwordEncoder.encode(accessToken), ip, osName,
-                browserName, deviceTypeName);
+        AccessTokenDetails accessTokenDetails = new AccessTokenDetails(accessToken, ip, osName, browserName, deviceTypeName);
 
         accessTokenRedisRepository.set(composedKey, accessTokenDetails);
     }

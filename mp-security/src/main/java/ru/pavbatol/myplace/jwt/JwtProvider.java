@@ -57,9 +57,10 @@ public class JwtProvider {
         final Date expiryDate = new Date(now.getTime() + jwtAccessLifeSeconds * 1000L);
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject(user.getLogin())
+                .setHeaderParam("alg", "HS512")
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
+                .setSubject(user.getLogin())
                 .claim("roles", roles)
                 .signWith(jwtAccessKey, SignatureAlgorithm.HS512)
                 .compact();
@@ -70,9 +71,11 @@ public class JwtProvider {
                 .atZone(ZoneId.systemDefault()).toInstant();
         final Date expiryDate = Date.from(refreshExpirationInstant);
         return Jwts.builder()
-                .setSubject(user.getLogin())
+                .setHeaderParam("typ", "JWT")
+                .setHeaderParam("alg", "HS512")
                 .setExpiration(expiryDate)
-                .signWith(jwtRefreshKey)
+                .setSubject(user.getLogin())
+                .signWith(jwtRefreshKey, SignatureAlgorithm.HS512)
                 .compact();
     }
 

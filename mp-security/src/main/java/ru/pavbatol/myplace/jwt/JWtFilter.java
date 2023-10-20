@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,8 @@ import java.io.IOException;
 @Component(value = "JWtFilter")
 @RequiredArgsConstructor
 public class JWtFilter extends OncePerRequestFilter {
+    @Value("${app.jwt.access.storing}")
+    private boolean accessTokenStoring;
     private final JwtProvider jwtProvider;
     private final UserDetailService userDetailService;
     @Lazy
@@ -34,17 +37,20 @@ public class JWtFilter extends OncePerRequestFilter {
         log.debug("Trying to set authentication");
         jwtProvider.resolveToken(request)
                 .filter(jwtProvider::validateAccessToken)
-                .filter(accessToken -> authService.checkAccessTokenExists(request, accessToken))
+                .filter(accessToken -> !accessTokenStoring || authService.checkAccessTokenExists(request, accessToken))
                 .map(accessToken -> jwtProvider.getAccessClaims(accessToken).getSubject()) // TODO: 18.10.2023 Optimize the token parsing call for the third time in this code
                 .map(login -> {
                     UserAuthenticationPrincipal principal = userDetailService.loadUserByLogin(login);
                     return JwtAuthentication.of(principal, principal.getAuthorities(), principal.isEnabled());
                 })
-                .ifPresent(authentication -> {
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    log.debug("Authentication was set into SecurityContextHolder: {}",
-                            SecurityContextHolder.getContext().getAuthentication().toString());
-                });
+                .ifPresentOrElse(
+                        authentication -> {
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            log.debug("Authentication was set: {}",
+                                    SecurityContextHolder.getContext().getAuthentication().toString());
+                        },
+                        () -> log.debug("Authentication was NOT set")
+                );
         filterChain.doFilter(request, response);
     }
 }

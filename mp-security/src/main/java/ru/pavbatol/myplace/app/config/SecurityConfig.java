@@ -61,12 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("*"));
-        corsConfig.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
-                "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin", "Cache-Control",
-                "Content-Type", "Auth"));
-        corsConfig.setAllowedMethods(List.of("DELETE", "GET", "POST", "PATCH", "PUT"));
+        CorsConfiguration corsConfig = getCorsConfiguration();
         UrlBasedCorsConfigurationSource corsConfigurationSource = new UrlBasedCorsConfigurationSource();
         corsConfigurationSource.registerCorsConfiguration("/**", corsConfig);
         return httpSecurity
@@ -85,5 +80,15 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jWtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    private CorsConfiguration getCorsConfiguration() {
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOrigins(List.of());
+        corsConfig.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
+                "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin", "Cache-Control",
+                "Content-Type", "Auth"));
+        corsConfig.setAllowedMethods(List.of("DELETE", "GET", "POST", "PATCH", "PUT"));
+        return corsConfig;
     }
 }
