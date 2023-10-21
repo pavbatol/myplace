@@ -3,12 +3,14 @@ package ru.pavbatol.myplace.user.service.impl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pavbatol.myplace.app.exception.BadRequestException;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.app.exception.RegistrationException;
 import ru.pavbatol.myplace.email.service.EmailService;
@@ -16,10 +18,8 @@ import ru.pavbatol.myplace.role.model.Role;
 import ru.pavbatol.myplace.role.model.RoleName;
 import ru.pavbatol.myplace.role.repository.RoleRepository;
 import ru.pavbatol.myplace.user.client.ProfileClient;
-import ru.pavbatol.myplace.user.dto.UserDtoConfirm;
-import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
+import ru.pavbatol.myplace.user.dto.*;
 import ru.pavbatol.myplace.user.model.UserUnverified;
-import ru.pavbatol.myplace.user.dto.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.user.mapper.UserMapper;
 import ru.pavbatol.myplace.user.model.User;
 import ru.pavbatol.myplace.user.model.UserAuthenticationPrincipal;
@@ -28,9 +28,7 @@ import ru.pavbatol.myplace.user.repository.UserJpaRepository;
 import ru.pavbatol.myplace.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -46,7 +44,69 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final ProfileClient profileClient;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
+
+
+    @Override
+    public void changePassword(UUID userUuid, UserDtoUpdatePassword dto) {
+        User origUser = getNonNullUserByUuid(userUuid);
+        checkUuidOwnership(userUuid, "You can only edit your own data.");
+        origUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userJpaRepository.save(origUser);
+        log.debug("{} with UUID: {} password updated", ENTITY_SIMPLE_NAME, userUuid);
+    }
+
+    @Override
+    public UserDtoResponse updateRoles(UUID userUuid, UserDtoUpdateRoles dto) {
+        User origUser = getNonNullUserByUuid(userUuid);
+        Set<Long> roleIds = dto.getRoleIds();
+
+        Set<Role> newRoles = new HashSet<>(roleRepository.findAllById(roleIds));
+        if (newRoles.size() != roleIds.size()) {
+            throw new NotFoundException(String.format("Out of %s role ids %s were found", roleIds.size(), newRoles.size()));
+        }
+
+        origUser.setRoles(newRoles);
+        User saved = userJpaRepository.save(origUser);
+        log.debug("{} with UUID: {} roles updated", ENTITY_SIMPLE_NAME, userUuid);
+
+        return userMapper.toResponseDto(saved);
+    }
+
+    @Override
+    public void delete(UUID userUuid) {
+        User origUser = getNonNullUserByUuid(userUuid);
+        origUser.setDeleted(true);
+        userJpaRepository.save(origUser);
+        log.debug("{} with UUID: {} marked as deleted", ENTITY_SIMPLE_NAME, userUuid);
+    }
+
+    @Override
+    public Long getIdByUuid(UUID userUuid) {
+        checkUuidOwnership(userUuid, "You do not have access to other user's data.");
+        Long userId = userJpaRepository.getIdByUuid(userUuid).orElseThrow(() ->
+                new NotFoundException(String.format("%s with UUID: %s not found.", ENTITY_SIMPLE_NAME, userUuid))
+        );
+        log.debug("Obtained {} id: {} by UUID: {}", ENTITY_SIMPLE_NAME, userId, userUuid);
+        return userId;
+    }
+
+    @Override
+    public UserDtoResponse findByUuid(UUID userUuid) {
+        User found = getNonNullUserByUuid(userUuid);
+        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, found);
+        return userMapper.toResponseDto(found);
+    }
+
+    @Override
+    public List<UserDtoResponse> findAll(Integer from, Integer size) {
+        Sort sort = Sort.by("id");
+        PageRequest pageRequest = PageRequest.of(from, size, sort);
+        Slice<User> page = userJpaRepository.findAll(pageRequest);
+        log.debug("Found number of {}'s: {} , number: {}, from: {}, size: {}, sort: {}", ENTITY_SIMPLE_NAME,
+                page.getNumberOfElements(), page.getNumber(), page.getNumber(), page.getSize(), page.getSort());
+        return userMapper.toResponseDtos(page.getContent());
+    }
 
     @Transactional
     @Override
@@ -56,15 +116,15 @@ public class UserServiceImpl implements UserService {
         final String code = generateCode();
         final String encodedCode = passwordEncoder.encode(code);
         final String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        final UserUnverified dtoUnverified = mapper.toDtoUnverified(dto, encodedCode, encodedPassword);
+        final UserUnverified userUnverified = userMapper.toUserUnverified(dto, encodedCode, encodedPassword);
 
-        assert dtoUnverified.getEmail().equals(email) : "email should not change";
-        assert dtoUnverified.getLogin().equals(login) : "login should not change";
+        assert userUnverified.getEmail().equals(email) : "email should not change";
+        assert userUnverified.getLogin().equals(login) : "login should not change";
 
-        userRedisRepository.addByAtomicLoginAndEmailKeys(dtoUnverified);
+        userRedisRepository.addByAtomicLoginAndEmailKeys(userUnverified);
         log.debug("Unverified {} saved to Redis with email: {}, login: {}, password and code are hidden for security",
-                ENTITY_SIMPLE_NAME, dtoUnverified.getEmail(), dtoUnverified.getLogin());
-        log.debug("Login of unverified {} saved to Redis, login: {},", ENTITY_SIMPLE_NAME, dtoUnverified.getLogin());
+                ENTITY_SIMPLE_NAME, userUnverified.getEmail(), userUnverified.getLogin());
+        log.debug("Login of unverified {} saved to Redis, login: {},", ENTITY_SIMPLE_NAME, userUnverified.getLogin());
 
         try {
             if (userJpaRepository.existsByLogin(login)) {
@@ -129,27 +189,6 @@ public class UserServiceImpl implements UserService {
         log.debug("Profile created in profile service with userId: {}, email: {}", savedUser.getId(), dtoConfirm.getEmail());
     }
 
-    @Override
-    public void changePassword(UUID userUuid, UserDtoUpdatePassword dto) {
-        User origUser = userJpaRepository.findByUuid(userUuid).orElseThrow(() ->
-                new NotFoundException(String.format("%s with UUID: %s not found.", ENTITY_SIMPLE_NAME, userUuid))
-        );
-        checkUuidOwnership(userUuid, "You can only edit your own data.");
-        origUser.setPassword(passwordEncoder.encode(dto.getPassword()));
-        userJpaRepository.save(origUser);
-        log.debug("{} with UUID: {} is updated", ENTITY_SIMPLE_NAME, userUuid);
-    }
-
-    @Override
-    public Long getIdByUuid(UUID userUuid) {
-        checkUuidOwnership(userUuid, "You do not have access to other user's data.");
-        Long userId = userJpaRepository.getIdByUuid(userUuid).orElseThrow(() ->
-                new NotFoundException(String.format("%s with UUID: %s not found.", ENTITY_SIMPLE_NAME, userUuid))
-        );
-        log.debug("Obtained {} id: {} by UUID: {}", ENTITY_SIMPLE_NAME, userId, userUuid);
-        return userId;
-    }
-
     private String generateCode() {
         final int codeLength = 5;
         final String[] source = {UPPER, LOWER, DIGITS};
@@ -195,5 +234,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return (UserAuthenticationPrincipal) principal;
+    }
+
+    private User getNonNullUserByUuid(UUID userUuid) {
+        return userJpaRepository.findByUuid(userUuid).orElseThrow(() ->
+                new NotFoundException(String.format("%s with UUID: %s not found.", ENTITY_SIMPLE_NAME, userUuid))
+        );
     }
 }
