@@ -169,7 +169,7 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("Invalid confirmation code.");
         }
 
-        Role role = getNonNullRoleFromDB(RoleName.USER);
+        Role role = getNonNullRoleByName(RoleName.USER);
         User user = new User()
                 .setUuid(UUID.randomUUID())
                 .setPassword(userUnverified.getPassword())
@@ -209,10 +209,10 @@ public class UserServiceImpl implements UserService {
         return builder.toString();
     }
 
-    private Role getNonNullRoleFromDB(RoleName roleName) {
+    private Role getNonNullRoleByName(RoleName roleName) {
         return roleRepository.findByRoleName(roleName)
                 .orElseThrow(() -> {
-                    return new NotFoundException(String.format("%s not found by %s.",
+                    return new NotFoundException(String.format("%s not found by role name:%s.",
                             Role.class.getSimpleName(), roleName));
                 });
     }
