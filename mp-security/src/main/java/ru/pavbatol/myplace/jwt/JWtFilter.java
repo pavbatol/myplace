@@ -38,7 +38,7 @@ public class JWtFilter extends OncePerRequestFilter {
         jwtProvider.resolveToken(request)
                 .filter(jwtProvider::validateAccessToken)
                 .filter(accessToken -> !accessTokenStoring || authService.checkAccessTokenExists(request, accessToken))
-                .map(accessToken -> jwtProvider.getAccessClaims(accessToken).getSubject()) // TODO: 18.10.2023 Optimize the token parsing call for the third time in this code
+                .map(accessToken -> jwtProvider.getAccessClaims(accessToken).getSubject())
                 .map(login -> {
                     UserAuthenticationPrincipal principal = userDetailService.loadUserByLogin(login);
                     return JwtAuthentication.of(principal, principal.getAuthorities(), principal.isEnabled());

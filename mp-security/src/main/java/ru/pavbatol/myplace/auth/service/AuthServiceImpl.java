@@ -144,7 +144,7 @@ public class AuthServiceImpl implements AuthService {
                 .map(user -> {
                     String newRefreshToken = jwtProvider.createRefreshToken(user);
                     saveRefreshToken(servletRequest, user.getLogin(), newRefreshToken);
-                    return new AuthDtoResponse(null, newRefreshToken); // TODO: 18.10.2023 Consider to return both tokens
+                    return new AuthDtoResponse(null, newRefreshToken);
                 })
                 .orElseGet(() -> new AuthDtoResponse(null, null));
     }

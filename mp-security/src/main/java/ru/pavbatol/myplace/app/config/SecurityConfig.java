@@ -21,7 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.Filter;
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -61,9 +60,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        CorsConfiguration corsConfig = getCorsConfiguration();
         UrlBasedCorsConfigurationSource corsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        corsConfigurationSource.registerCorsConfiguration("/**", corsConfig);
+        corsConfigurationSource.registerCorsConfiguration("/**", getCorsConfiguration());
         return httpSecurity
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -84,11 +82,17 @@ public class SecurityConfig {
 
     private CorsConfiguration getCorsConfiguration() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of());
-        corsConfig.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
-                "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin", "Cache-Control",
-                "Content-Type", "Auth"));
-        corsConfig.setAllowedMethods(List.of("DELETE", "GET", "POST", "PATCH", "PUT"));
+        corsConfig.setAllowedOrigins(List.of("*"));
+        corsConfig.setAllowedHeaders(List.of(
+                "Access-Control-Allow-Headers",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers",
+                "Cache-Control",
+                "Content-Type",
+                "Origin",
+                "Auth"));
+        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
         return corsConfig;
     }
 }
