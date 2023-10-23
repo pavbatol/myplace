@@ -20,6 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import ru.pavbatol.myplace.app.exception.BadRequestException;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
+import ru.pavbatol.myplace.app.exception.RedisException;
 import ru.pavbatol.myplace.app.exception.RegistrationException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ public class RestErrorHandler {
     public static final String MISSING_SERVLET_REQUEST_PARAMETER = "Missing servlet request parameter";
     public static final String NOT_FOUND_OR_UNAVAILABLE = "Not found or unavailable";
     public static final String INVALID_ARGUMENT = "Invalid argument";
+    private static final String NO_MASSAGE = "No massage";
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<Object> handleMethodArgumentNotValidEx(MethodArgumentNotValidException ex, WebRequest request) {
@@ -57,7 +59,6 @@ public class RestErrorHandler {
     protected ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
         return makeResponseEntity(INTEGRITY_CONSTRAINT_HAS_BEEN_VIOLATED, ex, CONFLICT, request);
     }
-
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
     protected ResponseEntity<Object> handleHttpMessageNotReadableEx(HttpMessageNotReadableException ex, WebRequest request) {
@@ -89,13 +90,18 @@ public class RestErrorHandler {
         return makeResponseEntity(ex.getReason(), ex, BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({RedisException.class})
+    protected ResponseEntity<Object> handleRedisExceptionEx(RedisException ex, WebRequest request) {
+        return makeResponseEntity(ex.getReason(), ex, INTERNAL_SERVER_ERROR, request);
+    }
+
     @ExceptionHandler({AuthorizationServiceException.class})
-    protected ResponseEntity<Object> handleConflictEx(AuthorizationServiceException ex, WebRequest request) {
-        return makeResponseEntity("", ex, UNAUTHORIZED, request);
+    protected ResponseEntity<Object> handleAuthorizationServiceEx(AuthorizationServiceException ex, WebRequest request) {
+        return makeResponseEntity(NO_MASSAGE, ex, UNAUTHORIZED, request);
     }
 
     @ExceptionHandler({RegistrationException.class})
-    protected ResponseEntity<Object> handleConflictEx(RegistrationException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleRegistrationEx(RegistrationException ex, WebRequest request) {
         return makeResponseEntity(ex.getReason(), ex, BAD_REQUEST, request);
     }
 

@@ -48,21 +48,22 @@ public class UnverifiedUserRedisRepositoryImpl extends AbstractRedisRepository<U
         try {
             try {
                 if (Boolean.TRUE.equals(redisTemplate.hasKey(loginKey)) || Boolean.FALSE.equals(addByLoginKey(login, email))) {
-                    throw new IllegalArgumentException("An unverified user with such login already exists, login: " + login);
+                    throw new IllegalArgumentException("An unverified user with such login already exists. Login: " + login);
                 }
             } catch (RedisException ignored) {
             }
 
             try {
                 if (Boolean.TRUE.equals(redisTemplate.hasKey(emailKey)) || Boolean.FALSE.equals(add(email, unverifiedUser))) {
-                    throw new IllegalArgumentException("An unverified user with such email already exists, email: " + email);
+                    throw new IllegalArgumentException("An unverified user with such email already exists. Email: " + email);
                 }
             } catch (RedisException ignored) {
             }
 
         } catch (Exception e) {
-            throw new RedisException("Failed to create login and email keys. Reason: "
-                    + (e.getMessage() != null ? e.getMessage() : "no message"));
+            log.debug("e.getMessage() = " + e.getMessage());
+            throw new RedisException("Failed to create login and email keys.",
+                    (e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : "no message"));
         }
     }
 
