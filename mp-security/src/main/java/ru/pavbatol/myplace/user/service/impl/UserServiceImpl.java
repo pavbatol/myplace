@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.user.service.impl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService {
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
     private static final String DIGITS = "0123456789";
+    private static final String TEST_PROFILE = "test";
     private final UnverifiedUserRedisRepository userRedisRepository;
     private final UserJpaRepository userJpaRepository;
     private final RoleRepository roleRepository;
@@ -45,6 +47,7 @@ public class UserServiceImpl implements UserService {
     private final ProfileClient profileClient;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final Environment environment;
 
 
     @Override
@@ -110,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void register(HttpServletRequest servletRequest, UserDtoRegistry dto) {
+    public String register(HttpServletRequest servletRequest, UserDtoRegistry dto) {
         final String email = dto.getEmail();
         final String login = dto.getLogin();
         final String code = generateCode();
@@ -157,6 +160,8 @@ public class UserServiceImpl implements UserService {
          */
         log.debug("Data for confirmation: email: {}, code: {}", dto.getEmail(), code);
 //      ...
+
+        return hasTestProfile() ? code : "Confirmation code has been sent to your email address.\nConfirm your email.";
     }
 
     @Transactional(rollbackFor = {Exception.class})
@@ -240,5 +245,9 @@ public class UserServiceImpl implements UserService {
         return userJpaRepository.findByUuid(userUuid).orElseThrow(() ->
                 new NotFoundException(String.format("%s with UUID: %s not found.", ENTITY_SIMPLE_NAME, userUuid))
         );
+    }
+
+    private boolean hasTestProfile() {
+        return environment.matchesProfiles(TEST_PROFILE);
     }
 }

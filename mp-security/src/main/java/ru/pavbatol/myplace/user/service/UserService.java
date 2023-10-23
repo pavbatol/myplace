@@ -19,7 +19,7 @@ public interface UserService {
 
     List<UserDtoResponse> findAll(Integer from, Integer size);
 
-    void register(HttpServletRequest servletRequest, UserDtoRegistry dto);
+    String register(HttpServletRequest servletRequest, UserDtoRegistry dto);
 
     void confirmRegistration(UserDtoConfirm dtoConfirm);
 }
