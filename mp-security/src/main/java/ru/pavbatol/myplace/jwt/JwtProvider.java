@@ -62,6 +62,7 @@ public class JwtProvider {
                 .setExpiration(expiryDate)
                 .setSubject(user.getLogin())
                 .claim("roles", roles)
+                .claim("uuid", user.getUuid())
                 .signWith(jwtAccessKey, SignatureAlgorithm.HS512)
                 .compact();
     }

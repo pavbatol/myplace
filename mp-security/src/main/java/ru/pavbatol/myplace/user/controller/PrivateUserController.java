@@ -23,7 +23,7 @@ public class PrivateUserController {
     private final UserService userService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @PutMapping("/{userUuid}/password")
+    @PatchMapping("/{userUuid}/password")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "changePassword", description = "setting new password")
     public ResponseEntity<Void> changePassword(@PathVariable(value = "userUuid") UUID userUuid,
