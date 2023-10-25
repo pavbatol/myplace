@@ -25,7 +25,7 @@ public class AdminUserController {
 
     private final UserService userService;
 
-    @PutMapping("/{userUuid}")
+    @PatchMapping("/{userUuid}/roles")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "updateRoles", description = "setting new role list")
     public ResponseEntity<UserDtoResponse> updateRoles(@PathVariable("userUuid") UUID userUuid,
