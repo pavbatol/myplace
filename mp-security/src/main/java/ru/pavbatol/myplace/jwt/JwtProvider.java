@@ -44,8 +44,8 @@ public class JwtProvider {
         this.jwtAccessLifeSeconds = jwtAccessLifeSeconds;
         this.jwtRefreshLifeSeconds = jwtRefreshLifeSeconds;
 
-        log.debug("Constructor: jwtAccessLifeSeconds: " + this.jwtAccessLifeSeconds);
-        log.debug("Constructor: jwtRefreshLifeSeconds: " + this.jwtRefreshLifeSeconds);
+        log.info("Constructor: jwtAccessLifeSeconds: " + this.jwtAccessLifeSeconds);
+        log.info("Constructor: jwtRefreshLifeSeconds: " + this.jwtRefreshLifeSeconds);
     }
 
     public String createAccessToken(User user) {

@@ -52,8 +52,18 @@ services:
       - APP_DB_PASSWORD=root
       - REDIS_HOST=security-redis-db
       - REDIS_PORT=6379
-      - REDIS_USERNAME=
-      - REDIS_PASSWORD=
+      - REDIS_USERNAME= # Optional
+      - REDIS_PASSWORD= # Optional
+      - APP_MAIL_SENDER= # Specify the email address for sending the confirmation code
+      - APP_MAIL_HOST= # Specify
+      - APP_MAIL_PORT= # Specify
+      - APP_MAIL_USERNAME= # Specify
+      - APP_MAIL_PASSWORD= # Specify
+      - APP_JWT_ACCESS_KEY= # Optional
+      - APP_JWT_ACCESS_LIFE-SECONDS= # Recommended to specify
+      - APP_JWT_ACCESS_STORING= # Recommended to specify
+      - APP_JWT_REFRESH_KEY= # Optional
+      - APP_JWT_REFRESH_LIFE-SECONDS= # Recommended to specify
 
   security-redis-db:
     image: redis:latest
