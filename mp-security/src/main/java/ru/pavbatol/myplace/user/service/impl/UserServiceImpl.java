@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.app.exception.RegistrationException;
+import ru.pavbatol.myplace.app.exception.SendingMailException;
 import ru.pavbatol.myplace.email.service.EmailService;
 import ru.pavbatol.myplace.role.model.Role;
 import ru.pavbatol.myplace.role.model.RoleName;
@@ -147,19 +148,17 @@ public class UserServiceImpl implements UserService {
                         "during registration on '%s'\nYour confirmation code:\n%s",
                 servletRequest.getServerName(), code);
 
-        // TODO: 04.10.2023 Connect GreenMail or JavaMailMock for testing
-        /**
-         * Temporary: The code below is commented out for testing without specifying email
-         */
-//      emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
-//      --
+        try {
+            emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
+        } catch (SendingMailException e) {
+            if (hasNoEmailTest()) {
+                log.error("{} {}", e.getMessage(), e.getReason());
+            } else {
+                throw new SendingMailException(e.getMessage(), e.getReason());
+            }
+        }
 
-        /**
-         * Temporary: The following code is intended for direct saving of the user, without confirmation by mail.
-         * This is for testing the application if you don't specify an email for sending.
-         */
         log.debug("Data for confirmation: email: {}, code: {}", dto.getEmail(), code);
-//      ...
 
         return hasTestProfile() ? code : "Confirmation code has been sent to your email address.\nConfirm your email.";
     }
@@ -249,5 +248,9 @@ public class UserServiceImpl implements UserService {
 
     private boolean hasTestProfile() {
         return environment.matchesProfiles(TEST_PROFILE, "postgres-test");
+    }
+
+    private boolean hasNoEmailTest() {
+        return environment.matchesProfiles("no-email-test");
     }
 }

@@ -20,4 +20,5 @@ spring:
         - jwt
         - mail
       postgres-test: # just a marker
+      no-email-test: # just a marker
       default: production
