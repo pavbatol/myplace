@@ -19,4 +19,5 @@ spring:
         - redis
         - jwt
         - mail
+      postgres-test: # just a marker
       default: production

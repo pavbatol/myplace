@@ -29,4 +29,44 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
       - ./mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-#      - ./db-saved-from-docker-container/mp-stats:/data/db
+      #- ./db-saved-from-docker-container/mp-stats:/data/db
+
+  security-service:
+    build: ./mp-security
+    image: mp-security
+    container_name: mp-security
+    ports:
+      - "8078:8078"
+    depends_on:
+      - security-postgres-db
+      - security-redis-db
+    environment:
+      #- SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db for testing in Postman!
+      #- SPRING_PROFILES_ACTIVE=default,postgres-test # Add 'postgres-test' to profile using PostgresSql for testing in Postman!
+      - SPRING_PROFILES_ACTIVE=default
+      - APP_PROFILE_SERVER_URL=http://profile-service:8076
+      - APP_DB_HOST=security-postgres-db
+      - APP_DB_PORT=5432
+      - APP_DB_NAME=mp-security
+      - APP_DB_USERNAME=root
+      - APP_DB_PASSWORD=root
+      - REDIS_HOST=security-redis-db
+      - REDIS_PORT=6379
+      - REDIS_USERNAME=
+      - REDIS_PASSWORD=
+
+  security-redis-db:
+    image: redis:latest
+    container_name: mp-security-redis-db
+    ports:
+      - "6380:6379"
+
+  security-postgres-db:
+    image: postgres:14-alpine
+    container_name: mp-security-postgres-db
+    ports:
+      - "5799:5432"
+    environment:
+      - POSTGRES_DB=mp-security
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root

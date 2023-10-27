@@ -248,6 +248,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean hasTestProfile() {
-        return environment.matchesProfiles(TEST_PROFILE);
+        return environment.matchesProfiles(TEST_PROFILE, "postgres-test");
     }
 }
