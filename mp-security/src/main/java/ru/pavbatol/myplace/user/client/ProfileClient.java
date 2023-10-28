@@ -33,8 +33,7 @@ public class ProfileClient {
         ProfileDtoCreate profileDto = new ProfileDtoCreate(userId, email);
         HttpEntity<ProfileDtoCreate> httpEntity = new HttpEntity<>(profileDto, defaultHeaders());
 
-        // TODO: 05.10.2023 Remove mocking when profile service is done
-        ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.CREATED).build();
+        ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.CREATED).build(); // TODO: 05.10.2023 Remove mocking when profile service is done
 //        ResponseEntity<Object> response = restTemplate.exchange(
 //                PROFILE_PATH,
 //                HttpMethod.POST,
@@ -51,8 +50,7 @@ public class ProfileClient {
         HttpEntity<Object> httpEntity = new HttpEntity<>(defaultHeaders());
         String path = PROFILE_PATH + "/check-email?email={email}";
 
-        // TODO: 05.10.2023 Remove mocking when profile service is done
-        ResponseEntity<Boolean> response = ResponseEntity.ok(false);
+        ResponseEntity<Boolean> response = ResponseEntity.ok(false); // TODO: 05.10.2023 Remove mocking when profile service is done
 //        ResponseEntity<Boolean> response = restTemplate.exchange(
 //                path,
 //                HttpMethod.GET,

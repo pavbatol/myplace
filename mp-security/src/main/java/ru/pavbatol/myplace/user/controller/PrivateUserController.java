@@ -33,7 +33,6 @@ public class PrivateUserController {
         return ResponseEntity.ok().build();
     }
 
-    // TODO: 10.10.2023 This endpoint should only accept requests from the 'gateway' service
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{userUuid}/id")
     @SecurityRequirement(name = "JWT")

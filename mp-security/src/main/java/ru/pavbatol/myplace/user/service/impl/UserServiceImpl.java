@@ -29,6 +29,7 @@ import ru.pavbatol.myplace.user.repository.UnverifiedUserRedisRepository;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
 import ru.pavbatol.myplace.user.service.UserService;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -40,7 +41,6 @@ public class UserServiceImpl implements UserService {
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
     private static final String DIGITS = "0123456789";
-    private static final String TEST_PROFILE = "test";
     private final UnverifiedUserRedisRepository userRedisRepository;
     private final UserJpaRepository userJpaRepository;
     private final RoleRepository roleRepository;
@@ -49,7 +49,14 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final Environment environment;
+    private boolean hasTestConfirmationCodeReading;
+    private boolean hasTestMailSenderBypassing;
 
+    @PostConstruct
+    private void init() {
+        hasTestConfirmationCodeReading = environment.matchesProfiles("test", "test-confirmation-code-reading");
+        hasTestMailSenderBypassing = environment.matchesProfiles("test-mail-sender-bypassing");
+    }
 
     @Override
     public void changePassword(UUID userUuid, UserDtoUpdatePassword dto) {
@@ -151,7 +158,7 @@ public class UserServiceImpl implements UserService {
         try {
             emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
         } catch (SendingMailException e) {
-            if (hasNoMailSenderTest()) {
+            if (hasTestMailSenderBypassing) {
                 log.error("{} {}", e.getMessage(), e.getReason());
             } else {
                 throw new SendingMailException(e.getMessage(), e.getReason());
@@ -160,7 +167,7 @@ public class UserServiceImpl implements UserService {
 
         log.debug("Data for confirmation: email: {}, code: {}", dto.getEmail(), code);
 
-        return hasTestProfile() ? code : "Confirmation code has been sent to your email address.\nConfirm your email.";
+        return hasTestConfirmationCodeReading ? code : "Confirmation code has been sent to your email address.\nConfirm your email.";
     }
 
     @Transactional(rollbackFor = {Exception.class})
@@ -214,11 +221,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private Role getNonNullRoleByName(RoleName roleName) {
-        return roleRepository.findByRoleName(roleName)
-                .orElseThrow(() -> {
-                    return new NotFoundException(String.format("%s not found by role name:%s.",
-                            Role.class.getSimpleName(), roleName));
-                });
+        return roleRepository.findByRoleName(roleName).orElseThrow(() ->
+                new NotFoundException(String.format("%s not found by role name:%s.", Role.class.getSimpleName(), roleName)));
     }
 
     private void checkUuidOwnership(@NonNull UUID userUuid, String message) {
@@ -244,13 +248,5 @@ public class UserServiceImpl implements UserService {
         return userJpaRepository.findByUuid(userUuid).orElseThrow(() ->
                 new NotFoundException(String.format("%s with UUID: %s not found.", ENTITY_SIMPLE_NAME, userUuid))
         );
-    }
-
-    private boolean hasTestProfile() {
-        return environment.matchesProfiles(TEST_PROFILE, "test-confirmation-code-reading");
-    }
-
-    private boolean hasNoMailSenderTest() {
-        return environment.matchesProfiles("test-mail-sender-bypassing");
     }
 }
