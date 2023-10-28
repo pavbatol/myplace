@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
         try {
             emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
         } catch (SendingMailException e) {
-            if (hasNoEmailTest()) {
+            if (hasNoMailSenderTest()) {
                 log.error("{} {}", e.getMessage(), e.getReason());
             } else {
                 throw new SendingMailException(e.getMessage(), e.getReason());
@@ -247,10 +247,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean hasTestProfile() {
-        return environment.matchesProfiles(TEST_PROFILE, "postgres-test");
+        return environment.matchesProfiles(TEST_PROFILE, "test-confirmation-code-reading");
     }
 
-    private boolean hasNoEmailTest() {
-        return environment.matchesProfiles("no-email-test");
+    private boolean hasNoMailSenderTest() {
+        return environment.matchesProfiles("test-mail-sender-bypassing");
     }
 }

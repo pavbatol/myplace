@@ -41,8 +41,11 @@ services:
       - security-postgres-db
       - security-redis-db
     environment:
-      #- SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db for testing in Postman!
-      #- SPRING_PROFILES_ACTIVE=default,postgres-test # Add 'postgres-test' to profile using PostgresSql for testing in Postman!
+      # ***** Examples for testing in Postman *****
+      #- SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db and automatic reading of the registration confirmation code!
+      #- SPRING_PROFILES_ACTIVE=test,test-mail-sender-bypassing # Add 'test-mail-sender-bypassing' to any profile to bypass the error if the sending mail is not specified!
+      #- SPRING_PROFILES_ACTIVE=default,test-confirmation-code-reading # Add "test-confirmation-code reading" to a profile other than 'test' for automatic reading of the registration confirmation code!
+      # *******************************************
       - SPRING_PROFILES_ACTIVE=default
       - APP_PROFILE_SERVER_URL=http://profile-service:8076
       - APP_DB_HOST=security-postgres-db
@@ -54,7 +57,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_USERNAME= # Optional
       - REDIS_PASSWORD= # Optional
-      - APP_MAIL_SENDER= # Specify the email address for sending the confirmation code
+      - APP_MAIL_SENDER= # Specify
       - APP_MAIL_HOST= # Specify
       - APP_MAIL_PORT= # Specify
       - APP_MAIL_USERNAME= # Specify

@@ -19,6 +19,6 @@ spring:
         - redis
         - jwt
         - mail
-      postgres-test: # just a marker
-      no-email-test: # just a marker
+      test-confirmation-code-reading: # Marker for automatic reading of the registration confirmation code. Convenient for Postman tests
+      test-mail-sender-bypassing: # Marker to bypass the error if the sending mail is not specified. Convenient for Postman tests
       default: production
