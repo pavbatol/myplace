@@ -33,8 +33,8 @@ public class JwtProvider {
     @Autowired
     public JwtProvider(@Value("${app.jwt.access.key:}") String accessSecretStr,
                        @Value("${app.jwt.refresh.key:}") String refreshSecretStr,
-                       @Value("${app.jwt.access.life-seconds:60}") long jwtAccessLifeSeconds,
-                       @Value("${app.jwt.refresh.life-seconds:600}") long jwtRefreshLifeSeconds) {
+                       @Value("${app.jwt.access.life-seconds}") long jwtAccessLifeSeconds,
+                       @Value("${app.jwt.refresh.life-seconds}") long jwtRefreshLifeSeconds) {
         this.jwtAccessKey = accessSecretStr != null && !accessSecretStr.isEmpty()
                 ? Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecretStr))
                 : Keys.secretKeyFor(SignatureAlgorithm.HS512);
