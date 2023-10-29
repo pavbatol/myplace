@@ -1,0 +1,877 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Security service Api",
+    "description": "MyPlace >> mp-security service",
+    "contact": {
+      "name": "Pavlik Sergey",
+      "email": "pavbatol@yandex.ru"
+    },
+    "license": {
+      "name": "License MIT",
+      "url": ")https://mit-license.org/"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8078",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Public: User",
+      "description": "API for working with User registration"
+    },
+    {
+      "name": "Admin: Auth",
+      "description": "API for working with authorization"
+    },
+    {
+      "name": "Private: Auth",
+      "description": "API for working with authorization"
+    },
+    {
+      "name": "Admin: User",
+      "description": "API for working with users"
+    },
+    {
+      "name": "Private: User",
+      "description": "API for working with User"
+    },
+    {
+      "name": "Admin: Role",
+      "description": "API for working with roles"
+    },
+    {
+      "name": "Public: Auth",
+      "description": "API for working with authorization"
+    }
+  ],
+  "paths": {
+    "/users/auth/refresh-tokens": {
+      "post": {
+        "tags": [
+          "Private: Auth"
+        ],
+        "summary": "getNewRefreshToken",
+        "description": "getting a new refresh token to replace the old one",
+        "operationId": "getNewRefreshToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthDtoRefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthDtoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/auth/tokens": {
+      "post": {
+        "tags": [
+          "Public: Auth"
+        ],
+        "summary": "getNewAccessToken",
+        "description": "getting a new access token to replace the old one",
+        "operationId": "getNewAccessToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthDtoRefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthDtoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/registry": {
+      "post": {
+        "tags": [
+          "Public: User"
+        ],
+        "summary": "register",
+        "description": "registering a new user",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDtoRegistry"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Public: Auth"
+        ],
+        "summary": "login",
+        "description": "checking login and password and provide access and refresh tokens",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthDtoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthDtoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/confirmation": {
+      "post": {
+        "tags": [
+          "Public: User"
+        ],
+        "summary": "confirmRegistration",
+        "description": "confirming registration",
+        "operationId": "confirmRegistration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDtoConfirm"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userUuid}/password": {
+      "patch": {
+        "tags": [
+          "Private: User"
+        ],
+        "summary": "changePassword",
+        "description": "setting new password",
+        "operationId": "changePassword",
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDtoUpdatePassword"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{userUuid}/roles": {
+      "patch": {
+        "tags": [
+          "Admin: User"
+        ],
+        "summary": "updateRoles",
+        "description": "setting new role list",
+        "operationId": "updateRoles",
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserDtoUpdateRoles"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDtoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/users/{userUuid}/id": {
+      "get": {
+        "tags": [
+          "Private: User"
+        ],
+        "summary": "getIdByUuid",
+        "description": "obtaining User id by UUID",
+        "operationId": "getIdByUuid",
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/users/auth/logout/all": {
+      "get": {
+        "tags": [
+          "Private: Auth"
+        ],
+        "summary": "logoutAllSessions",
+        "description": "log out on all devices",
+        "operationId": "logoutAllSessions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": [
+          "Public: Auth"
+        ],
+        "summary": "logout",
+        "description": "log out on the current",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "tags": [
+          "Admin: User"
+        ],
+        "summary": "findAll",
+        "description": "getting users page by page",
+        "operationId": "findAll",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDtoResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/users/{userUuid}": {
+      "get": {
+        "tags": [
+          "Admin: User"
+        ],
+        "summary": "findByUuid",
+        "description": "getting a user by Id",
+        "operationId": "findByUuid",
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDtoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Admin: User"
+        ],
+        "summary": "delete",
+        "description": "deleting a user (marks as deleted)",
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/roles": {
+      "get": {
+        "tags": [
+          "Admin: Role"
+        ],
+        "summary": "findAll",
+        "description": "getting roles",
+        "operationId": "findAll_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/roles/{roleId}": {
+      "get": {
+        "tags": [
+          "Admin: Role"
+        ],
+        "summary": "findById",
+        "description": "getting a role by Id",
+        "operationId": "findById",
+        "parameters": [
+          {
+            "name": "roleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoleDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/auth/secrets": {
+      "get": {
+        "tags": [
+          "Admin: Auth"
+        ],
+        "summary": "printRandomSecrets",
+        "description": "printing random twu secret strings",
+        "operationId": "printRandomSecrets",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/auth/secrets/pair": {
+      "get": {
+        "tags": [
+          "Admin: Auth"
+        ],
+        "summary": "printRandomPairSecrets",
+        "description": "printing random two secret strings",
+        "operationId": "printRandomPairSecrets",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/auth/users/{userUuid}/refresh-tokens": {
+      "delete": {
+        "tags": [
+          "Admin: Auth"
+        ],
+        "summary": "removeRefreshTokensByUserUuid",
+        "description": "deleting all refresh tokens for the user",
+        "operationId": "removeRefreshTokensByUserUuid",
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/auth/users/{userUuid}/access-tokens": {
+      "delete": {
+        "tags": [
+          "Admin: Auth"
+        ],
+        "summary": "removeAccessTokensByUserUuid",
+        "description": "deleting all access tokens for the user",
+        "operationId": "removeAccessTokensByUserUuid",
+        "parameters": [
+          {
+            "name": "userUuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/admin/auth/tokens": {
+      "delete": {
+        "tags": [
+          "Admin: Auth"
+        ],
+        "summary": "clearAuthStorage",
+        "description": "deleting all tokens and unverified logins and emails, existing users are not deleted",
+        "operationId": "clearAuthStorage",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthDtoRefreshRequest": {
+        "required": [
+          "refreshToken"
+        ],
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthDtoResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "UserDtoRegistry": {
+        "required": [
+          "email",
+          "login",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "login": {
+            "pattern": "^(?=\\S)(?!.*\\s$).{2,}$",
+            "type": "string"
+          },
+          "password": {
+            "pattern": "^(?=\\S)(?!.*\\s$).{6,}$",
+            "type": "string"
+          }
+        }
+      },
+      "AuthDtoRequest": {
+        "required": [
+          "login",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "login": {
+            "maxLength": 2147483647,
+            "minLength": 2,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 2147483647,
+            "minLength": 6,
+            "type": "string"
+          }
+        }
+      },
+      "UserDtoConfirm": {
+        "required": [
+          "code",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "UserDtoUpdatePassword": {
+        "required": [
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "password": {
+            "pattern": "^(?=\\S)(?!.*\\s$).{6,}$",
+            "type": "string"
+          }
+        }
+      },
+      "UserDtoUpdateRoles": {
+        "required": [
+          "roleIds"
+        ],
+        "type": "object",
+        "properties": {
+          "roleIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "RoleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "roleName": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "USER",
+              "MANAGER",
+              "MODERATOR",
+              "SHOP_ADMIN",
+              "SHOP_MANAGER",
+              "SHOP_MODERATOR",
+              "SHOP_STOREKEEPER"
+            ]
+          }
+        }
+      },
+      "UserDtoResponse": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "login": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean"
+          },
+          "roles": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoleDto"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "JWT": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
