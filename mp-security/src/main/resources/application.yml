@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    group:
+      develop:
+        - dev
+        - swagger
+        - redis
+        - jwt
+        - mail
+      production:
+        - prod
+        - swagger
+        - redis
+        - jwt
+        - mail
+      test:
+        - test
+        - swagger
+        - redis
+        - jwt
+        - mail
+      test-confirmation-code-reading: # Marker for automatic reading of the registration confirmation code. Convenient for Postman tests
+      test-mail-sender-bypassing: # Marker to bypass the error if the sending mail is not specified. Convenient for Postman tests
+      default: production

@@ -10,8 +10,13 @@
 <u>_Проект в разработке_</u>
 
 ### Готовые сервисы:
-- Статистика
--
+- **Статистика (mp-stats)** `MongoDB reactive, WebFlux, Junit, Mockito`   
+  - Сервис протестирован JUnit тестами, работая с базой 'mp-stats-test', которая после тестов автоматически очищается.  
+  - Приложена коллекция Postman тестов. Запускать на пустой базе. Рекомендую запустить сервис с профилем 'test', работа будет вестись с тестовой базой 'mp-stats-test', которую вы можете перед/после тестов удалять для очистки данных. Иначе работа будет происходить с реальной базой 'mp-stats', тогда после тестов не забудьте очистить базу.
+- **Безопасность (mp-security)** `PostgreSql, Redis, H2, Spring Security`  
+  - Проверка регистрации пользователя и прав доступа по JWT.  
+  - Приложена коллекция Postman тестов. Запускать на пустой базе с профилем 'test'. Можете добавить профили-маркеры: 
+    test-confirmation-code-reading и test-mail-sender-bypassing для автоматического считывания кода подтверждения регистрации и для обхода ошибки, если еще не указан MAIL_SENDER, соответственно.
 
 ### Планируемый стек:
 - Microservice architecture
@@ -22,9 +27,9 @@
 - Spring Security
 - Tomcat, Netty
 - Kafka
-- Elasticsearch
 - JDBC, Hibernate
-- Postgresql, H2, MongoDB (reactive), Redis
+- Liquibase
+- Postgresql, H2, MongoDB (reactive), Redis, Elasticsearch
 - Junit, Mockito
 - Docker-compose
 - Kubernetes
