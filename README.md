@@ -14,7 +14,8 @@ You can organize your own platform, invite sellers, attract buyers and earn mone
   - A collection of Postman tests is attached. Run on an empty database. I recommend starting the service with the 'test' profile, the work will be carried out with the 'mp-stats-test' test database, which you can delete before / after the tests to clear the data. Otherwise, the work will take place with the real base of 'mp-stats', then after the tests do not forget to clear the database.
 - **Security (mp-security)** `PostgreSql, Redis, H2, Spring Security`  
   - Checking user registration and access rights by JWT.  
-  - A collection of Postman tests is attached. Run on an empty database with the 'test' profile.
+  - A collection of Postman tests is attached. Run on an empty database with the 'test' profile. You can add marker profiles:
+    test-confirmation-code-reading and test-mail-sender-bypassing to automatically read the registration confirmation code and to bypass the error if MAIL_SENDER is not specified yet, respectively.
 
 ### Intended technologies:
 - Microservice architecture
