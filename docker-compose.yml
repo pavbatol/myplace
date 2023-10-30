@@ -4,7 +4,7 @@ services:
   stats-service:
     build: ./mp-stats/server
     image: mp-stats
-    container_name: mp-stats-cont
+    container_name: mp-stats
     ports:
       - "9090:9090"
       - "9091:9091"
@@ -20,7 +20,7 @@ services:
 
   stats-db:
     image: mongo:6.0.4
-    container_name: mp-stats-db-cont
+    container_name: mp-stats-db
     ports:
       - "27070:27017"
     environment:
@@ -30,6 +30,12 @@ services:
     volumes:
       - ./mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       #- ./db-saved-from-docker-container/mp-stats:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   security-service:
     build: ./mp-security
@@ -74,6 +80,12 @@ services:
     container_name: mp-security-redis-db
     ports:
       - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   security-postgres-db:
     image: postgres:14-alpine
@@ -84,3 +96,9 @@ services:
       - POSTGRES_DB=mp-security
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-security" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s

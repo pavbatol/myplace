@@ -1,0 +1,62 @@
+name: MyPlace Postman Tests
+
+on:
+  workflow-dispatch:
+    inputs:
+      deployment-target:
+        description: Choose target
+        required: true
+        default:
+        type: choice
+        options:
+          - stats-tests
+          - security-tests
+          - profile-tests
+          - develop-tests
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
+
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install docker-compose -y
+
+      - name: Build project images
+        run: docker-compose build
+
+      - name: Run project
+        run: docker-compose up -d
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: stats-tests
+        if: "github.events.inputs.deployment-target == 'stats-tests'"
+        run: newman run postman/MyPlace-mp-stats.postman_collection.json
+      - name: security-tests
+        if: "github.events.inputs.deployment-target == 'security-tests'"
+        run: newman run postman/MyPlace-mp-security.postman_collection.json
+      - name: profile-tests
+        if: "github.events.inputs.deployment-target == 'profile-tests'"
+        run: newman run postman/MyPlace-mp-profile.postman_collection.json
+      - name: develop-tests
+        if: "github.events.inputs.deployment-target == 'develop-tests'"
+        run: |
+          newman run postman/MyPlace-mp-profile.postman_collection.json
+          newman run postman/MyPlace-mp-security.postman_collection.json
+          newman run postman/MyPlace-mp-profile.postman_collection.json
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test Results
+          path: postman-report.xml
