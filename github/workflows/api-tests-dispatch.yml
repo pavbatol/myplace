@@ -1,4 +1,4 @@
-name: MyPlace Postman Tests
+name: MyPlace Postman Tests Dispatch
 
 on:
   workflow-dispatch:

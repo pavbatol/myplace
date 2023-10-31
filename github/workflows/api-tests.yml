@@ -7,9 +7,6 @@ on:
       - security
       - profile
       - develop
-  push:
-    branches:
-      - profile
 
 jobs:
   test:
@@ -26,10 +23,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install docker-compose -y
-#      - name: Set up Docker Compose
-#        run: |
-#          sudo curl -L "https://github.com/docker/compose/releases/download/3.7/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-#          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: Build project images
         run: docker-compose build
@@ -47,11 +40,11 @@ jobs:
           elif [[ ${{ github.ref }} == 'refs/heads/security' ]]; then
             newman run postman/MyPlace-mp-security.postman_collection.json
           elif [[ ${{ github.ref }} == 'refs/heads/profile' ]]; then
-            newman run postman/MyPlace-mp-stats.postman_collection.json
-            newman run postman/MyPlace-mp-security.postman_collection.json
+            newman run postman/MyPlace-mp-profile.postman_collection.json
           elif [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
             newman run postman/MyPlace-mp-stats.postman_collection.json
             newman run postman/MyPlace-mp-security.postman_collection.json
+            newman run postman/MyPlace-mp-profile.postman_collection.json
           else
             echo "No specific Postman tests for this branch."
           fi
@@ -61,15 +54,3 @@ jobs:
         with:
           name: Test Results
           path: postman-report.xml
-
-      - name: Stop Containers
-        run: |
-          docker-compose down        
-
-      - name: Remove Containers
-        run: |
-          docker container prune
-
-      - name: Remove Images
-        run: |
-          docker image rm mp-stats mp-security mp-profile
