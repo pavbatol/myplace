@@ -3,44 +3,42 @@ create table if not exists countries
 (
     country_id  bigint default nextval('seq_countries')     not null,
     code        varchar(2)                                  not null,
-    name_en     varchar(150)                                not null,
-    name_ru     varchar(150)                                not null,
+    name        varchar(150)                                not null,
     constraint pk_countries primary key (country_id),
-    constraint uq_countries_name_en unique (name_en),
-    constraint uq_countries_name_ru unique (name_ru)
+    constraint uq_countries_name unique (name)
 );
 
 create sequence if not exists seq_regions minvalue 1 start with 1 increment 1;
 create table if not exists regions
 (
-    regions_id   bigint default nextval('seq_regions')       not null,
+    region_id    bigint default nextval('seq_regions')       not null,
     country_id   bigint                                      not null,
-    name_en      varchar(255)                                not null,
-    name_ru      varchar(255)                                not null,
-    constraint pk_regions primary key (regions_id),
-    constraint uq_regions_country_id_name_en_name_ru unique (country_id, name_en, name_ru)
+    name         varchar(255)                                not null,
+    constraint pk_regions primary key (region_id),
+    constraint fk_regions_country_id foreign key (country_id) references countries (country_id) on delete cascade,
+    constraint uq_regions_country_id_name unique (country_id, name)
 );
 
-create sequence if not exists seq_provinces minvalue 1 start with 1 increment 1;
-create table if not exists provinces
+create sequence if not exists seq_districts minvalue 1 start with 1 increment 1;
+create table if not exists districts
 (
-    province_id  bigint default nextval('seq_provinces')     not null,
-    regions_id   bigint                                      not null,
-    name_en      varchar(255)                                not null,
-    name_ru      varchar(255)                                not null,
-    constraint pk_provinces primary key (province_id),
-    constraint uq_provinces_regions_id_name_en_name_ru unique (regions_id, name_en, name_ru)
+    district_id  bigint default nextval('seq_districts')     not null,
+    region_id    bigint                                      not null,
+    name         varchar(255)                                not null,
+    constraint pk_districts primary key (district_id),
+    constraint fk_districts_region_id foreign key (region_id) references regions (region_id) on delete cascade,
+    constraint uq_districts_region_id_name unique (region_id, name)
 );
 
 create sequence if not exists seq_cities minvalue 1 start with 1 increment 1;
 create table if not exists cities
 (
     city_id      bigint default nextval('seq_cities')        not null,
-    province_id  bigint                                      not null,
-    name_en      varchar(150)                                not null,
-    name_ru      varchar(150)                                not null,
+    district_id  bigint                                      not null,
+    name         varchar(150)                                not null,
     constraint pk_cities primary key (city_id),
-    constraint uq_cities_province_id_name_en_name_ru unique (province_id, name_en, name_ru)
+    constraint fk_cities_district_id foreign key (district_id) references districts (district_id) on delete cascade,
+    constraint uq_cities_district_id_name unique (district_id, name)
 );
 
 create sequence if not exists seq_streets minvalue 1 start with 1 increment 1;
@@ -48,12 +46,10 @@ create table if not exists streets
 (
     street_id      bigint default nextval('seq_streets')        not null,
     city_id        bigint                                       not null,
-    name_en        varchar(150)                                 not null,
-    name_ru        varchar(150)                                 not null,
-    lat            double precision                                     ,
-    lon            double precision                                     ,
+    name           varchar(150)                                 not null,
     constraint pk_streets primary key (street_id),
-    constraint uq_streets_city_id_name_en_name_ru_lat_lon unique (city_id, name_en, name_ru, lat, lon)
+    constraint fk_streets_city_id foreign key (city_id) references cities (city_id) on delete cascade,
+    constraint uq_streets_city_id_name unique (city_id, name)
 );
 
 create sequence if not exists seq_houses minvalue 1 start with 1 increment 1;
@@ -65,6 +61,7 @@ create table if not exists houses
     lat          double precision                                       ,
     lon          double precision                                       ,
     constraint pk_houses primary key (house_id),
+    constraint fk_houses_street_id foreign key (street_id) references streets (street_id) on delete cascade,
     constraint uq_hoses_street_id_number unique (street_id, number)
 );
 
@@ -81,13 +78,13 @@ create table if not exists profiles
     second_name             varchar(100)                                        ,
     birthday                timestamp without time zone                         ,
     gender                  varchar(50)                                         ,
-    country_id              bigint                                              ,
     house_id                bigint                                              ,
     apartment               varchar(10)                                         ,
     avatar                  bytea                                               ,
     status                  varchar(15)                                 not null,
     created_on              timestamp without time zone default now()   not null,
     constraint pk_profiles primary key (profile_id),
+    constraint fk_profiles_house_id foreign key (house_id) references houses (house_id),
     constraint uq_profiles_user_id unique (user_id),
     constraint uq_profiles_email unique (email),
     constraint uq_profiles_mobile_number unique (mobile_number)
