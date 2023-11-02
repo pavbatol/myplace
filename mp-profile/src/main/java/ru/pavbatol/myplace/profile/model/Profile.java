@@ -20,7 +20,7 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profile_id")
-    Long profileId;
+    Long id;
 
     @Column(name = "user_id", nullable = false)
     Long userId;

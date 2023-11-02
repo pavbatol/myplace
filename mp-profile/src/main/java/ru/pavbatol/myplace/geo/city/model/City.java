@@ -19,7 +19,7 @@ public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "city_id")
-    Long cityId;
+    Long id;
 
     @ManyToOne
     @JoinColumn(name = "district_id", nullable = false)

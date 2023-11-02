@@ -19,7 +19,7 @@ public class Region {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "region_id")
-    Long regionId;
+    Long id;
 
     @ManyToOne
     @JoinColumn(name = "country_id", nullable = false)
