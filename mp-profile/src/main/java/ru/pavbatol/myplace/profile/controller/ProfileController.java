@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.profile.dto.ProfileDtoCreateRequest;
@@ -28,7 +29,7 @@ public class ProfileController {
                                                            @Valid @RequestBody ProfileDtoCreateRequest dto) {
         log.debug("POST create() with userUuid: {}, dto: {}", dto, userUuid);
         ProfileDtoCreateResponse body = profileService.create(userUuid, dto);
-        return ResponseEntity.ok(body);
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
     @GetMapping("/check-email")

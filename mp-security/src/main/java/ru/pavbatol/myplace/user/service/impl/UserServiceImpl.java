@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService {
                 .setDeleted(false);
 
         User savedUser = userJpaRepository.save(user);
-        profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
+        profileClient.createProfile(savedUser.getId(), savedUser.getUuid(), dtoConfirm.getEmail());
 
         userRedisRepository.removeSilently(dtoConfirm.getEmail());
         userRedisRepository.removeLoginKeySilently(userUnverified.getLogin());

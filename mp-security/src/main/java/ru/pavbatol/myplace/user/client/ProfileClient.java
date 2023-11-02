@@ -12,6 +12,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.pavbatol.myplace.app.exception.ExternalServerException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -28,12 +29,13 @@ public class ProfileClient {
                 .build();
     }
 
-    public void createProfile(Long userId, String email) throws RuntimeException {
+    public void createProfile(Long userId, UUID userUuid, String email) throws RuntimeException {
         log.debug("Trying to send request for creating profile");
         ProfileDtoCreate profileDto = new ProfileDtoCreate(userId, email);
-        HttpEntity<ProfileDtoCreate> httpEntity = new HttpEntity<>(profileDto, defaultHeaders());
+        HttpHeaders headers = defaultHeaders();
+        headers.add("X-User-Uuid", userUuid.toString());
+        HttpEntity<ProfileDtoCreate> httpEntity = new HttpEntity<>(profileDto, headers);
 
-//        ResponseEntity<Object> response = ResponseEntity.status(HttpStatus.CREATED).build(); // TODO: 05.10.2023 Remove mocking when profile service is done
         ResponseEntity<Object> response = restTemplate.exchange(
                 PROFILE_PATH,
                 HttpMethod.POST,
@@ -50,7 +52,6 @@ public class ProfileClient {
         HttpEntity<Object> httpEntity = new HttpEntity<>(defaultHeaders());
         String path = PROFILE_PATH + "/check-email?email={email}";
 
-//        ResponseEntity<Boolean> response = ResponseEntity.ok(false); // TODO: 05.10.2023 Remove mocking when profile service is done
         ResponseEntity<Boolean> response = restTemplate.exchange(
                 path,
                 HttpMethod.GET,
