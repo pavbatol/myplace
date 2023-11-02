@@ -64,6 +64,9 @@ public class Profile {
     @Column(name = "status", nullable = false)
     ProfileStatus status;
 
+    @Column(name = "changed_status_on", nullable = false)
+    LocalDateTime changedStatusOn;
+
     @Column(name = "created_on", nullable = false)
     LocalDateTime createdOn;
 }

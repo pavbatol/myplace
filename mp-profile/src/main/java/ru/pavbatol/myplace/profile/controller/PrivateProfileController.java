@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequestMapping("/profiles")
 @RequiredArgsConstructor
 @Tag(name = "Private: Profile", description = "API for working with Profile")
-public class ProfileController {
+public class PrivateProfileController {
     private static final String X_USER_UUID = "X-User-Uuid";
     private final ProfileService profileService;
 

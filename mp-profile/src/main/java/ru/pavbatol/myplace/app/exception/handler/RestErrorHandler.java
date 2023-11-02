@@ -31,15 +31,15 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 @RestControllerAdvice
 public class RestErrorHandler {
-    public static final String UNEXPECTED_ERROR = "Unexpected error";
-    public static final String NO_HANDLER_FOUND = "No handler found";
-    public static final String NOT_READABLE_JSON = "Not readable JSON";
+    public static final String UNEXPECTED_ERROR = "Unexpected error.";
+    public static final String NO_HANDLER_FOUND = "No handler found.";
+    public static final String NOT_READABLE_JSON = "Not readable JSON.";
     public static final String INTEGRITY_CONSTRAINT_HAS_BEEN_VIOLATED = "Integrity constraint has been violated.";
     public static final String INCORRECTLY_MADE_REQUEST = "Incorrectly made request.";
-    public static final String MISSING_SERVLET_REQUEST_PARAMETER = "Missing servlet request parameter";
-    public static final String NOT_FOUND_OR_UNAVAILABLE = "Not found or unavailable";
-    public static final String INVALID_ARGUMENT = "Invalid argument";
-    private static final String NO_MASSAGE = "No massage";
+    public static final String MISSING_SERVLET_REQUEST_PARAMETER = "Missing servlet request parameter.";
+    public static final String NOT_FOUND_OR_UNAVAILABLE = "Not found or unavailable.";
+    public static final String INVALID_ARGUMENT = "Invalid argument.";
+    private static final String NO_MASSAGE = "No massage.";
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<Object> handleMethodArgumentNotValidEx(MethodArgumentNotValidException ex, WebRequest request) {
