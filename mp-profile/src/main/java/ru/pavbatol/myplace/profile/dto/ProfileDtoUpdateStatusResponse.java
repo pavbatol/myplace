@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Value
-public class ProfileDtoUpdateStatus {
+public class ProfileDtoUpdateStatusResponse {
     Long id;
     UUID userUuid;
     String email;

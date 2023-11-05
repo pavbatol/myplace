@@ -4,15 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.pavbatol.myplace.app.Util.Checker;
-import ru.pavbatol.myplace.profile.dto.ProfileDtoCreateRequest;
-import ru.pavbatol.myplace.profile.dto.ProfileDtoCreateResponse;
-import ru.pavbatol.myplace.profile.dto.ProfileDtoUpdateStatus;
+import ru.pavbatol.myplace.app.exception.NotFoundException;
+import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.mapper.ProfileMapper;
 import ru.pavbatol.myplace.profile.model.Profile;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.repository.ProfileJpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -42,18 +42,45 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileDtoUpdateStatus updateStatus(Long userId, UUID userUuid, ProfileStatus profileStatus) {
-        Profile profile = Checker.getNonNullObject(profileRepository, userId);
-        if (profile.getStatus() == profileStatus) {
+    public ProfileDtoUpdateStatusResponse adminUpdateStatusByUserId(Long userId, UUID userUuid, ProfileStatus status) {
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow(() ->
+                new NotFoundException(String.format("%s with userId #%s was not found", ENTITY_SIMPLE_NAME, userId)));
+        if (profile.getStatus() == status) {
             throw new IllegalArgumentException(String.format(
-                    "Status is already '%s' for %s with id: #%s", profileStatus, ENTITY_SIMPLE_NAME, userId));
+                    "Status is already '%s' for %s with id: #%s", status, ENTITY_SIMPLE_NAME, userUuid));
         }
         profile
-                .setStatus(profileStatus)
+                .setStatus(status)
                 .setChangedStatusOn(LocalDateTime.now());
         Profile updated = profileRepository.save(profile);
-        log.debug("Updated status: '{}' for {} with id: #{}", profileStatus, ENTITY_SIMPLE_NAME, userId);
+        log.debug("Updated status: '{}' for {} with id: #{}", status, ENTITY_SIMPLE_NAME, userId);
 
-        return profileMapper.toDtoUpdateStatus(updated, userUuid);
+        return profileMapper.toDtoUpdateStatusResponse(updated, userUuid);
+    }
+
+    @Override
+    public ProfileDto update(Long userId, UUID userUuid, Long profileId, ProfileDtoUpdate dto) {
+        Profile profile = Checker.getNonNullObject(profileRepository, profileId);
+        checkUserIdOwnership(userId, profile.getUserId());
+        Profile updated = profileMapper.updateEntity(profile, dto, userId);
+        log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
+        return profileMapper.toProfileDto(updated, userUuid);
+    }
+
+    @Override
+    public void delete(Long profileId) {
+        Profile profile = Checker.getNonNullObject(profileRepository, profileId);
+        profile
+                .setStatus(ProfileStatus.DELETED)
+                .setChangedStatusOn(LocalDateTime.now());
+        profileRepository.save(profile);
+        log.debug("Updated status: '{}' for {} with id: #{}", ProfileStatus.DELETED, ENTITY_SIMPLE_NAME, profileId);
+    }
+
+    private void checkUserIdOwnership(Long requesterId, Long ownerId) {
+        if (!Objects.equals(requesterId, ownerId)) {
+            log.debug("You do not have access to other people's data, requesterId: {}, ownerId: {}", requesterId, ownerId);
+            throw new IllegalArgumentException("You do not have access to other people's data.");
+        }
     }
 }

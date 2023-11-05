@@ -50,7 +50,7 @@ public class Profile {
     @Column(name = "gender")
     Gender gender;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id")
     House house;
 

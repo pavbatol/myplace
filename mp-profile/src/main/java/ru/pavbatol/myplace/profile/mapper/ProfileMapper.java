@@ -1,11 +1,7 @@
 package ru.pavbatol.myplace.profile.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
-import ru.pavbatol.myplace.profile.dto.ProfileDtoCreateRequest;
-import ru.pavbatol.myplace.profile.dto.ProfileDtoCreateResponse;
-import ru.pavbatol.myplace.profile.dto.ProfileDtoUpdateStatus;
+import org.mapstruct.*;
+import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.model.Profile;
 
 import java.util.UUID;
@@ -19,5 +15,12 @@ public interface ProfileMapper {
     ProfileDtoCreateResponse toDtoCreateResponse(Profile entity, UUID userUuid);
 
     @Mapping(target = "userUuid", source = "userUuid")
-    ProfileDtoUpdateStatus toDtoUpdateStatus(Profile entity, UUID userUuid);
+    ProfileDtoUpdateStatusResponse toDtoUpdateStatusResponse(Profile entity, UUID userUuid);
+
+    @Mapping(target = "userId", source = "userId")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Profile updateEntity(@MappingTarget Profile entity, ProfileDtoUpdate dto, Long userId);
+
+    @Mapping(target = "userUuid", source = "userUuid")
+    ProfileDto toProfileDto(Profile entity, UUID userUuid);
 }
