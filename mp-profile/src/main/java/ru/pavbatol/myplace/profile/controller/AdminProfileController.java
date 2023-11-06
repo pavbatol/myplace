@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/profiles")
+@RequestMapping("/admin/profiles")
 @RequiredArgsConstructor
 @Tag(name = "Admin: Profile", description = "API for working with Profile")
 public class AdminProfileController {

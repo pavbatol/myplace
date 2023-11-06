@@ -43,8 +43,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDtoUpdateStatusResponse adminUpdateStatusByUserId(Long userId, UUID userUuid, ProfileStatus status) {
-        Profile profile = profileRepository.findByUserId(userId).orElseThrow(() ->
-                new NotFoundException(String.format("%s with userId #%s was not found", ENTITY_SIMPLE_NAME, userId)));
+        Profile profile = getNonNullProfileByUserId(userId);
         if (profile.getStatus() == status) {
             throw new IllegalArgumentException(String.format(
                     "Status is already '%s' for %s with id: #%s", status, ENTITY_SIMPLE_NAME, userUuid));
@@ -80,6 +79,26 @@ public class ProfileServiceImpl implements ProfileService {
                 .setChangedStatusOn(LocalDateTime.now());
         profileRepository.save(profile);
         log.debug("Updated status: '{}' for {} with id: #{}", ProfileStatus.DELETED, ENTITY_SIMPLE_NAME, profileId);
+    }
+
+    @Override
+    public ProfileDto getById(Long userId, UUID userUuid, Long profileId) {
+        Profile profile = Checker.getNonNullObject(profileRepository, profileId);
+        checkUserIdOwnership(userId, profile.getUserId());
+        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, profile);
+        return profileMapper.toProfileDto(profile, userUuid);
+    }
+
+    @Override
+    public ProfileDto getByUserId(Long userId, UUID userUuid) {
+        Profile profile = getNonNullProfileByUserId(userId);
+        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, profile);
+        return profileMapper.toProfileDto(profile, userUuid);
+    }
+
+    private Profile getNonNullProfileByUserId(Long userId) {
+        return profileRepository.findByUserId(userId).orElseThrow(() ->
+                new NotFoundException(String.format("%s with userId #%s was not found", ENTITY_SIMPLE_NAME, userId)));
     }
 
     private void checkUserIdOwnership(Long requesterId, Long ownerId) {

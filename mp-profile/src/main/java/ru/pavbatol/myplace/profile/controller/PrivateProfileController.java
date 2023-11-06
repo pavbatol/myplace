@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/profiles")
+@RequestMapping("/user/profiles")
 @RequiredArgsConstructor
 @Tag(name = "Private: Profile", description = "API for working with Profile")
 public class PrivateProfileController {
@@ -30,14 +30,6 @@ public class PrivateProfileController {
         log.debug("POST create() with userUuid: {}, dto: {}", dto, userUuid);
         ProfileDtoCreateResponse body = profileService.create(userUuid, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
-    }
-
-    @GetMapping("/check-email")
-    @Operation(summary = "checkEmail", description = "checking a profile with this email exists")
-    public ResponseEntity<Boolean> checkEmail(@RequestParam(value = "email") String email) {
-        log.debug("GET checkEmail() with email: {}", email);
-        boolean body = profileService.checkEmail(email);
-        return ResponseEntity.ok(body);
     }
 
     @DeleteMapping("/{profileId}")
@@ -56,6 +48,25 @@ public class PrivateProfileController {
                                              @Valid @RequestBody ProfileDtoUpdate dto) {
         log.debug("PATCH update() with profileId: {}, userId: {}, userUuid: {}, dto: {}", profileId, userId, userUuid, dto);
         ProfileDto body = profileService.update(userId, userUuid, profileId, dto);
+        return ResponseEntity.ok(body);
+    }
+
+    @GetMapping("/{profileId}")
+    @Operation(summary = "getById", description = "get Profile")
+    public ResponseEntity<ProfileDto> getById(@RequestHeader(value = X_USER_ID) Long userId,
+                                              @RequestHeader(value = X_USER_UUID) UUID userUuid,
+                                              @PathVariable(value = "profileId") Long profileId) {
+        log.debug("GET getById() with userId: {}, userUuid: {}, profileId: {}", userId, userUuid, profileId);
+        ProfileDto body = profileService.getById(userId, userUuid, profileId);
+        return ResponseEntity.ok(body);
+    }
+
+    @GetMapping
+    @Operation(summary = "getByUserId", description = "get Profile")
+    public ResponseEntity<ProfileDto> getByUserId(@RequestHeader(value = X_USER_ID) Long userId,
+                                                  @RequestHeader(value = X_USER_UUID) UUID userUuid) {
+        log.debug("GET getByUserId() with userId: {}, userUuid: {}", userId, userUuid);
+        ProfileDto body = profileService.getByUserId(userId, userUuid);
         return ResponseEntity.ok(body);
     }
 }

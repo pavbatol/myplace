@@ -15,4 +15,8 @@ public interface ProfileService {
     ProfileDto update(Long userId, UUID userUuid, Long profileId, ProfileDtoUpdate dto);
 
     void delete(Long profileId);
+
+    ProfileDto getById(Long userId, UUID userUuid, Long profileId);
+
+    ProfileDto getByUserId(Long userId, UUID userUuid);
 }
