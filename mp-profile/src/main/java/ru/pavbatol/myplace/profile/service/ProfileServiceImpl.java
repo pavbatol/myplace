@@ -63,7 +63,12 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, profile.getUserId());
         Profile updated = profileMapper.updateEntity(profile, dto, userId);
+        if (updated.getAvatar() != null && updated.getAvatar().length > 2 * 1024 * 1024) {
+            throw new IllegalArgumentException("The size of the avatar image is too large: " + updated.getAvatar().length + "b");
+        }
+        updated = profileRepository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
+
         return profileMapper.toProfileDto(updated, userUuid);
     }
 

@@ -1,10 +1,13 @@
 package ru.pavbatol.myplace.profile.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.profile.model.Gender;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -29,6 +32,7 @@ public class ProfileDtoUpdate {
     @Size(max = 100)
     String secondName;
 
+    @Past
     LocalDateTime birthday;
 
     Gender gender;
@@ -38,6 +42,11 @@ public class ProfileDtoUpdate {
     @Size(max = 10)
     String apartment;
 
-    @Size(max = 3 * 1024 * 1024)
-    byte[] avatar;
+    @JsonProperty("avatar")
+    String encodedAvatar;
+
+    @AssertTrue(message = "Both 'house' and 'apartment' must be either filled or null")
+    public boolean isHouseAndApartmentValid() {
+        return (house != null && apartment != null && !apartment.trim().isEmpty()) || (house == null && apartment == null);
+    }
 }

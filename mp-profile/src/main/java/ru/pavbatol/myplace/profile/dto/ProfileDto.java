@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.profile.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.profile.model.Gender;
@@ -34,7 +35,8 @@ public class ProfileDto {
 
     String apartment;
 
-    byte[] avatar;
+    @JsonProperty("avatar")
+    String encodedAvatar;
 
     ProfileStatus status;
 
