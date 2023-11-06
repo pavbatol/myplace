@@ -13,6 +13,8 @@ import java.util.UUID;
 public class ProfileDto {
     Long id;
 
+    Long userId;
+
     UUID userUuid;
 
     String email;

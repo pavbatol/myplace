@@ -2,6 +2,9 @@ package ru.pavbatol.myplace.profile.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.pavbatol.myplace.app.Util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
@@ -86,14 +89,25 @@ public class ProfileServiceImpl implements ProfileService {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, profile.getUserId());
         log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, profile);
+
         return profileMapper.toProfileDto(profile, userUuid);
     }
 
     @Override
     public ProfileDto getByUserId(Long userId, UUID userUuid) {
-        Profile profile = getNonNullProfileByUserId(userId);
-        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, profile);
-        return profileMapper.toProfileDto(profile, userUuid);
+        Profile found = getNonNullProfileByUserId(userId);
+        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, found);
+
+        return profileMapper.toProfileDto(found, userUuid);
+    }
+
+    @Override
+    public Slice<ProfileDto> adminGetAll(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
+        Slice<Profile> found = profileRepository.findAll(pageRequest);
+        log.debug("Found Slice of {}: {}, numberOfElements: {}", ENTITY_SIMPLE_NAME, found, found.getNumberOfElements());
+
+        return found.map(profileMapper::toProfileDto);
     }
 
     private Profile getNonNullProfileByUserId(Long userId) {

@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.profile.service;
 
+import org.springframework.data.domain.Slice;
 import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 
@@ -19,4 +20,6 @@ public interface ProfileService {
     ProfileDto getById(Long userId, UUID userUuid, Long profileId);
 
     ProfileDto getByUserId(Long userId, UUID userUuid);
+
+    Slice<ProfileDto> adminGetAll(int page, int size);
 }

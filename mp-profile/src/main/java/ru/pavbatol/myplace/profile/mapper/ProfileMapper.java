@@ -23,15 +23,19 @@ public interface ProfileMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Profile updateEntity(@MappingTarget Profile entity, ProfileDtoUpdate dto, Long userId);
 
+    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "userUuid", source = "userUuid")
     @Mapping(target = "encodedAvatar", expression = "java(encodeBase64(entity.getAvatar()))")
     ProfileDto toProfileDto(Profile entity, UUID userUuid);
 
+    @Mapping(target = "encodedAvatar", expression = "java(encodeBase64(entity.getAvatar()))")
+    ProfileDto toProfileDto(Profile entity);
+
     default byte[] decodeBase64(String encodedString) {
-        return Base64.getDecoder().decode(encodedString);
+        return encodedString == null ? null : Base64.getDecoder().decode(encodedString);
     }
 
     default String encodeBase64(byte[] bytes) {
-        return Base64.getEncoder().encodeToString(bytes);
+        return bytes == null ? null : Base64.getEncoder().encodeToString(bytes);
     }
 }
