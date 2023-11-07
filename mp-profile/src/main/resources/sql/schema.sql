@@ -85,7 +85,7 @@ create table if not exists profiles
     changed_status_on       timestamp without time zone                 not null,
     created_on              timestamp without time zone                 not null,
     constraint pk_profiles primary key (profile_id),
-    constraint fk_profiles_house_id foreign key (house_id) references houses (house_id),
+    constraint fk_profiles_house_id foreign key (house_id) references houses (house_id) on delete cascade,
     constraint uq_profiles_user_id unique (user_id),
     constraint uq_profiles_email unique (email),
     constraint uq_profiles_mobile_number unique (mobile_number)
