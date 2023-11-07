@@ -11,7 +11,6 @@ import javax.validation.constraints.Null;
 public class CityDto {
 
     @Null(groups = Marker.OnCreate.class)
-    @NotNull(groups = Marker.OnUpdate.class)
     Long id;
 
     @NotNull(groups = Marker.OnCreate.class)

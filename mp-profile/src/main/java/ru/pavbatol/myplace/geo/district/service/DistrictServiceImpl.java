@@ -43,7 +43,7 @@ public class DistrictServiceImpl implements DistrictService {
     @Override
     public void delete(Long districtId) {
         repository.deleteById(districtId);
-        log.debug("Deleted {}: with cityId: #{}", ENTITY_SIMPLE_NAME, districtId);
+        log.debug("Deleted {}: with districtId: #{}", ENTITY_SIMPLE_NAME, districtId);
     }
 
     @Override

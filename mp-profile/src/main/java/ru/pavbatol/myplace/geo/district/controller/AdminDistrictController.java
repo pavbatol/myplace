@@ -35,7 +35,6 @@ public class AdminDistrictController {
     }
 
     @PatchMapping("/{districtId}")
-    @Validated(Marker.OnUpdate.class)
     @Operation(summary = "update", description = "updating District")
     public ResponseEntity<DistrictDto> update(@PathVariable(value = "districtId") Long districtId,
                                               @RequestBody @Valid DistrictDto dto) {

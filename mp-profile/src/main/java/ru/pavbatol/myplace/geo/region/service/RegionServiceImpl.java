@@ -43,7 +43,7 @@ public class RegionServiceImpl implements RegionService {
     @Override
     public void delete(Long regionId) {
         repository.deleteById(regionId);
-        log.debug("Deleted {}: with cityId: #{}", ENTITY_SIMPLE_NAME, regionId);
+        log.debug("Deleted {}: with regionId: #{}", ENTITY_SIMPLE_NAME, regionId);
     }
 
     @Override

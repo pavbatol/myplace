@@ -10,7 +10,6 @@ import javax.validation.constraints.Null;
 @Value
 public class RegionDto {
     @Null(groups = Marker.OnCreate.class)
-    @NotNull(groups = Marker.OnUpdate.class)
     Long id;
 
     @NotNull(groups = Marker.OnCreate.class)
