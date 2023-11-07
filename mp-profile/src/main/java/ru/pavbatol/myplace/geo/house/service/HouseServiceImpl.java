@@ -57,7 +57,7 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public Slice<HouseDto> getAll(String numberStartWith, int page, int size) {
         log.debug("Finding {}(e)s with numberStartWith: {}, page: {}, size: {}", ENTITY_SIMPLE_NAME, numberStartWith, page, size);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "number"));
         Slice<House> found;
         if (numberStartWith != null && !numberStartWith.isBlank()) {
             found = repository.findByNumberStartingWithIgnoreCase(numberStartWith, pageable);

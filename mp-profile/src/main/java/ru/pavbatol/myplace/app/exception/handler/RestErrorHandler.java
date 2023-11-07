@@ -20,6 +20,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,6 +84,11 @@ public class RestErrorHandler {
 
     @ExceptionHandler({IllegalArgumentException.class})
     protected ResponseEntity<Object> handleIllegalArgumentEx(IllegalArgumentException ex, WebRequest request) {
+        return makeResponseEntity(INVALID_ARGUMENT, ex, BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    protected ResponseEntity<Object> handleConstraintViolationExceptionEx(ConstraintViolationException ex, WebRequest request) {
         return makeResponseEntity(INVALID_ARGUMENT, ex, BAD_REQUEST, request);
     }
 
