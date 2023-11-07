@@ -6,7 +6,7 @@ import ru.pavbatol.myplace.geo.city.model.City;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface CityMapper {
-    CityDto toCityDto(City city);
+    CityDto toCityDto(City entity);
 
     City toEntity(CityDto dto);
 
