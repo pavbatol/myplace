@@ -18,40 +18,40 @@ import ru.pavbatol.myplace.geo.city.repository.CityRepository;
 @RequiredArgsConstructor
 public class CityServiceImpl implements CityService {
     private static final String ENTITY_SIMPLE_NAME = City.class.getSimpleName();
-    private final CityRepository cityRepository;
-    private final CityMapper cityMapper;
+    private final CityRepository repository;
+    private final CityMapper mapper;
 
     @Override
     public CityDto create(CityDto dto) {
-        City entity = cityMapper.toEntity(dto);
-        City saved = cityRepository.save(entity);
+        City entity = mapper.toEntity(dto);
+        City saved = repository.save(entity);
         log.debug("Saved {}: {}", ENTITY_SIMPLE_NAME, saved);
 
-        return cityMapper.toCityDto(saved);
+        return mapper.toCityDto(saved);
     }
 
     @Override
     public CityDto update(Long cityId, CityDto dto) {
-        City original = Checker.getNonNullObject(cityRepository, cityId);
-        City updated = cityMapper.updateEntity(original, dto);
-        updated = cityRepository.save(updated);
+        City original = Checker.getNonNullObject(repository, cityId);
+        City updated = mapper.updateEntity(original, dto);
+        updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
 
-        return cityMapper.toCityDto(updated);
+        return mapper.toCityDto(updated);
     }
 
     @Override
     public void delete(Long cityId) {
-        cityRepository.deleteById(cityId);
+        repository.deleteById(cityId);
         log.debug("Deleted {}: with cityId: #{}", ENTITY_SIMPLE_NAME, cityId);
     }
 
     @Override
     public CityDto getById(Long cityId) {
-        City found = Checker.getNonNullObject(cityRepository, cityId);
+        City found = Checker.getNonNullObject(repository, cityId);
         log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, found);
 
-        return cityMapper.toCityDto(found);
+        return mapper.toCityDto(found);
     }
 
     @Override
@@ -60,12 +60,12 @@ public class CityServiceImpl implements CityService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
         Slice<City> found;
         if (nameStartWith != null && !nameStartWith.isBlank()) {
-            found = cityRepository.findByNameStartingWith(nameStartWith, pageable);
+            found = repository.findByNameStartingWith(nameStartWith, pageable);
         } else {
-            found = cityRepository.findAll(pageable);
+            found = repository.findAll(pageable);
         }
         log.debug("Found Slice of {}: {}, numberOfElements: {}", ENTITY_SIMPLE_NAME, found, found.getNumberOfElements());
 
-        return found.map(cityMapper::toCityDto);
+        return found.map(mapper::toCityDto);
     }
 }
