@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.pavbatol.myplace.geo.region.model.Region;
 
 public interface RegionRepository extends JpaRepository<Region, Long> {
-    Slice<Region> findByNameStartingWith(String nameStartWith, Pageable pageable);
+    Slice<Region> findByNameStartingWithIgnoreCase(String nameStartWith, Pageable pageable);
 }

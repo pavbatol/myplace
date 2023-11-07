@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.pavbatol.myplace.geo.street.model.Street;
 
 public interface StreetRepository extends JpaRepository<Street, Long> {
-    Slice<Street> findByNameStartingWith(String nameStartWith, Pageable pageable);
+    Slice<Street> findByNameStartingWithIgnoreCase(String nameStartWith, Pageable pageable);
 }

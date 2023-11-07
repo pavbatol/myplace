@@ -60,7 +60,7 @@ public class CityServiceImpl implements CityService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
         Slice<City> found;
         if (nameStartWith != null && !nameStartWith.isBlank()) {
-            found = repository.findByNameStartingWith(nameStartWith, pageable);
+            found = repository.findByNameStartingWithIgnoreCase(nameStartWith, pageable);
         } else {
             found = repository.findAll(pageable);
         }

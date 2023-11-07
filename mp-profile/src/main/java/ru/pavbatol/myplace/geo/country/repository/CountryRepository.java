@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.pavbatol.myplace.geo.country.model.Country;
 
 public interface CountryRepository extends JpaRepository<Country, Long> {
-    Slice<Country> findByNameStartingWith(String nameStartWith, Pageable pageable);
+    Slice<Country> findByNameStartingWithIgnoreCase(String nameStartWith, Pageable pageable);
 }

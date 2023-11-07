@@ -60,7 +60,7 @@ public class HouseServiceImpl implements HouseService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
         Slice<House> found;
         if (numberStartWith != null && !numberStartWith.isBlank()) {
-            found = repository.findByNumberStartingWith(numberStartWith, pageable);
+            found = repository.findByNumberStartingWithIgnoreCase(numberStartWith, pageable);
         } else {
             found = repository.findAll(pageable);
         }

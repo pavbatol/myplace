@@ -60,7 +60,7 @@ public class CountryServiceImpl implements CountryService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
         Slice<Country> found;
         if (nameStartWith != null && !nameStartWith.isBlank()) {
-            found = repository.findByNameStartingWith(nameStartWith, pageable);
+            found = repository.findByNameStartingWithIgnoreCase(nameStartWith, pageable);
         } else {
             found = repository.findAll(pageable);
         }
