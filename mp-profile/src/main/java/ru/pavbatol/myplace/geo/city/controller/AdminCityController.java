@@ -6,36 +6,42 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.pavbatol.myplace.app.Util.Marker;
 import ru.pavbatol.myplace.geo.city.dto.CityDto;
-import ru.pavbatol.myplace.geo.city.model.City;
 import ru.pavbatol.myplace.geo.city.service.CityService;
 
 import javax.validation.Valid;
 
 @Slf4j
+@Validated
 @RestController
-@RequestMapping("/geo/cities")
+@RequestMapping("admin/geo/cities")
 @RequiredArgsConstructor
-@Tag(name = "Private: City", description = "API for working with City")
-public class CityController {
+@Tag(name = "Admin: City", description = "API for working with City")
+public class AdminCityController {
 
     private final CityService service;
 
     @PostMapping
+    @Validated({Marker.OnCreate.class})
     @Operation(summary = "create", description = "creating new City")
-    public ResponseEntity<CityDto> create(@Valid @RequestBody City dto) {
+    public ResponseEntity<CityDto> create(@RequestBody @Valid CityDto dto) {
         log.debug("POST create() with dto: {}", dto);
         CityDto body = service.create(dto);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
     @PatchMapping("/{cityId}")
+    @Validated(Marker.OnUpdate.class)
     @Operation(summary = "update", description = "updating City")
     public ResponseEntity<CityDto> update(@PathVariable(value = "cityId") Long cityId,
-                                          @Valid @RequestBody CityDto dto) {
+                                          @RequestBody @Valid CityDto dto) {
         log.debug("PATCH update() with cityId: {}, dto: {}", cityId, dto);
         CityDto body = service.update(cityId, dto);
+
         return ResponseEntity.ok(body);
     }
 
@@ -44,14 +50,7 @@ public class CityController {
     public ResponseEntity<Void> delete(@PathVariable(value = "cityId") Long cityId) {
         log.debug("DELETE delete() with cityId: {}", cityId);
         service.delete(cityId);
-        return ResponseEntity.noContent().build();
-    }
 
-    @GetMapping("/{cityId}")
-    @Operation(summary = "getById", description = "get City")
-    public ResponseEntity<CityDto> getById(@PathVariable(value = "cityId") Long cityId) {
-        log.debug("GET getById() with cityId: {}", cityId);
-        CityDto body = service.getById(cityId);
-        return ResponseEntity.ok(body);
+        return ResponseEntity.noContent().build();
     }
 }
