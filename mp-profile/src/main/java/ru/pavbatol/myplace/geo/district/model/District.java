@@ -21,7 +21,7 @@ public class District {
     @Column(name = "district_id")
     Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "region_id", nullable = false)
     Region region;
 

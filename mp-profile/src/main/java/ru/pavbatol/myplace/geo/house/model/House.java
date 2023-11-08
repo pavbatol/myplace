@@ -21,7 +21,7 @@ public class House {
     @Column(name = "house_id", nullable = false)
     Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "street_id", nullable = false)
     Street street;
 
