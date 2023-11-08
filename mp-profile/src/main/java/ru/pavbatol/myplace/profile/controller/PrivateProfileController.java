@@ -69,4 +69,14 @@ public class PrivateProfileController {
         ProfileDto body = profileService.getByUserId(userId, userUuid);
         return ResponseEntity.ok(body);
     }
+
+    @PatchMapping("/{profileId}/address")
+    @Operation(summary = "updateAddress", description = "setting address to Profile")
+    public ResponseEntity<ProfileDtoUpdateAddressResponse> updateAddress(@RequestHeader(value = X_USER_ID) Long userId,
+                                                                         @PathVariable(value = "profileId") Long profileId,
+                                                                         @RequestBody @Valid ProfileDtoUpdateAddressRequest dto) {
+        log.debug("PATCH updateAddress() with profileId: {}, userId: {}, dto: {}", profileId, userId, dto);
+        ProfileDtoUpdateAddressResponse body = profileService.updateAddress(userId, profileId, dto);
+        return ResponseEntity.ok(body);
+    }
 }
