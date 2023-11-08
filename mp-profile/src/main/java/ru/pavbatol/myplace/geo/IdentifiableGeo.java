@@ -1,5 +1,5 @@
 package ru.pavbatol.myplace.geo;
 
-public interface Identifiable {
+public interface IdentifiableGeo {
     Long getId();
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
-import ru.pavbatol.myplace.geo.Identifiable;
+import ru.pavbatol.myplace.geo.IdentifiableGeo;
 import ru.pavbatol.myplace.geo.city.dto.CityDto;
 import ru.pavbatol.myplace.geo.city.service.CityService;
 import ru.pavbatol.myplace.geo.country.dto.CountryDto;
@@ -30,9 +30,7 @@ import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.repository.ProfileJpaRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -105,54 +103,56 @@ public class ProfileServiceImpl implements ProfileService {
         Profile original = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, original.getUserId());
 
-        List<Identifiable> geo = new java.util.ArrayList<>(List.of(
-                dto.getCountry(),
-                dto.getRegion(),
-                dto.getDistrict(),
-                dto.getCity(),
-                dto.getStreet(),
-                dto.getHouse()
-        ));
-
+        Map<Class<? extends IdentifiableGeo>, IdentifiableGeo> parts = new LinkedHashMap<>(6) {{
+            put(CountryDto.class, dto.getCountry());
+            put(RegionDto.class, dto.getRegion());
+            put(DistrictDto.class, dto.getDistrict());
+            put(CityDto.class, dto.getCity());
+            put(StreetDto.class, dto.getStreet());
+            put(HouseDto.class, dto.getHouse());
+        }};
         boolean nextAsNewEntity = false;
-        CountryDto countryDto = dto.getCountry();
-        RegionDto regionDto = dto.getRegion();
-        DistrictDto districtDto = dto.getDistrict();
-        CityDto cityDto = dto.getCity();
-        StreetDto streetDto = dto.getStreet();
-        HouseDto houseDto = dto.getHouse();
-
-        for (Identifiable part : geo) {
+        for (IdentifiableGeo part : parts.values()) {
             if (!nextAsNewEntity && part.getId() == null) {
                 nextAsNewEntity = true;
             }
             if (nextAsNewEntity && part.getId() != null) {
-                throw new IllegalArgumentException("All next subsequent parts of the address must be new");
+                throw new IllegalArgumentException("All next subsequent parts of the address must be as a new");
             }
             if (nextAsNewEntity) {
-                if (part instanceof CountryDto) {
-                    countryDto = countryService.create((CountryDto) part);
-                } else if (part instanceof RegionDto) {
-                    regionDto = regionService.create(new RegionDto(null, countryDto, ((RegionDto) part).getName()));
-                } else if (part instanceof DistrictDto) {
-                    districtDto = districtService.create(new DistrictDto(null, regionDto, ((DistrictDto) part).getName()));
-                } else if (part instanceof CityDto) {
-                    cityDto = cityService.create(new CityDto(null, districtDto, ((CityDto) part).getName()));
-                } else if (part instanceof StreetDto) {
-                    streetDto = streetService.create(new StreetDto(null, cityDto, ((StreetDto) part).getName()));
-                } else if (part instanceof HouseDto) {
-                    houseDto = houseService.create(new HouseDto(null, streetDto, ((HouseDto) part).getNumber(), ((HouseDto) part).getLat(), ((HouseDto) part).getLon()));
-                    log.debug("A new address has been created: {}", houseDto);
+                Class<? extends IdentifiableGeo> partClass = part.getClass();
+
+                if (partClass == CountryDto.class) {
+                    parts.put(partClass, countryService.create((CountryDto) part));
+                } else if (partClass == RegionDto.class) {
+                    parts.put(partClass, regionService.create(new RegionDto(
+                            null, (CountryDto) parts.get(CountryDto.class), ((RegionDto) part).getName())));
+                } else if (partClass == DistrictDto.class) {
+                    parts.put(partClass, districtService.create(new DistrictDto(
+                            null, (RegionDto) parts.get(RegionDto.class), ((DistrictDto) part).getName())));
+                } else if (partClass == CityDto.class) {
+                    parts.put(partClass, cityService.create(new CityDto(
+                            null, (DistrictDto) parts.get(DistrictDto.class), ((CityDto) part).getName())));
+                } else if (partClass == StreetDto.class) {
+                    parts.put(partClass, streetService.create(new StreetDto(
+                            null, (CityDto) parts.get(CityDto.class), ((StreetDto) part).getName())));
+                } else if (partClass == HouseDto.class) {
+                    parts.put(partClass, houseService.create(new HouseDto(
+                            null, (StreetDto) parts.get(StreetDto.class), ((HouseDto) part).getNumber(),
+                            ((HouseDto) part).getLat(), ((HouseDto) part).getLon())));
+                    log.debug("A new address has been created: {}", parts.get(HouseDto.class));
                     break;
+                } else {
+                    throw new IllegalArgumentException("Unsupported address part type: " + part.getClass().getSimpleName());
                 }
             }
         }
 
-        original.setHouse(houseMapper.toEntity(houseDto));
+        original.setHouse(houseMapper.toEntity((HouseDto) parts.get(HouseDto.class)));
         original.setApartment(dto.getApartment());
         profileRepository.save(original);
 
-        return new ProfileDtoUpdateAddressResponse(houseDto, dto.getApartment());
+        return new ProfileDtoUpdateAddressResponse((HouseDto) parts.get(HouseDto.class), dto.getApartment());
     }
 
     @Override
