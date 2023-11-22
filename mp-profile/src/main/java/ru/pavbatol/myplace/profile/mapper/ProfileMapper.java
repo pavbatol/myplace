@@ -19,10 +19,10 @@ public interface ProfileMapper {
     ProfileDtoUpdateStatusResponse toDtoUpdateStatusResponse(Profile entity, UUID userUuid);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "userId", source = "userId")
+    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "avatar", expression = "java(decodeBase64(dto.getEncodedAvatar()))")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Profile updateEntity(@MappingTarget Profile entity, ProfileDtoUpdate dto, Long userId);
+    Profile updateEntity(@MappingTarget Profile entity, ProfileDtoUpdate dto);
 
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "userUuid", source = "userUuid")

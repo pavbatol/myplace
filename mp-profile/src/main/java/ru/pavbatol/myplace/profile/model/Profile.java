@@ -8,6 +8,45 @@ import ru.pavbatol.myplace.geo.house.model.House;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@NamedEntityGraph(
+        name = "profile.house",
+        attributeNodes = {
+                @NamedAttributeNode(value = "house", subgraph = "streetSubgraph")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "streetSubgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "street", subgraph = "citySubgraph")
+                        }
+                )
+                ,
+                @NamedSubgraph(
+                        name = "citySubgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "city", subgraph = "districtSubgraph")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "districtSubgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "district", subgraph = "regionSubgraph")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "regionSubgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "region", subgraph = "countrySubgraph")
+                        }
+                ),
+                @NamedSubgraph(
+                        name = "countrySubgraph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "country")
+                        }
+                )
+        }
+)
 @Getter
 @Setter
 @ToString
@@ -51,7 +90,9 @@ public class Profile {
     Gender gender;
 
     @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "house_id")
+    @ToString.Exclude
     House house;
 
     @Column(name = "apartment")

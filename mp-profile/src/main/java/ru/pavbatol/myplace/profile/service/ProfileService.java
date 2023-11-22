@@ -15,8 +15,6 @@ public interface ProfileService {
 
     ProfileDto update(Long userId, UUID userUuid, Long profileId, ProfileDtoUpdate dto);
 
-    ProfileDtoUpdateAddressResponse updateAddress(Long userId, Long profileId, ProfileDtoUpdateAddressRequest dto);
-
     void delete(Long profileId);
 
     ProfileDto getById(Long userId, UUID userUuid, Long profileId);

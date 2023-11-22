@@ -6,23 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
-import ru.pavbatol.myplace.geo.IdentifiableGeo;
-import ru.pavbatol.myplace.geo.city.dto.CityDto;
-import ru.pavbatol.myplace.geo.city.service.CityService;
-import ru.pavbatol.myplace.geo.country.dto.CountryDto;
-import ru.pavbatol.myplace.geo.country.service.CountryService;
-import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
-import ru.pavbatol.myplace.geo.district.service.DistrictService;
-import ru.pavbatol.myplace.geo.house.dto.HouseDto;
-import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
-import ru.pavbatol.myplace.geo.house.service.HouseService;
-import ru.pavbatol.myplace.geo.region.dto.RegionDto;
-import ru.pavbatol.myplace.geo.region.service.RegionService;
-import ru.pavbatol.myplace.geo.street.dto.StreetDto;
-import ru.pavbatol.myplace.geo.street.service.StreetService;
 import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.mapper.ProfileMapper;
 import ru.pavbatol.myplace.profile.model.Profile;
@@ -30,7 +17,8 @@ import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.repository.ProfileJpaRepository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Objects;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -40,13 +28,14 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileJpaRepository profileRepository;
     private final ProfileMapper profileMapper;
 
-    private final CountryService countryService;
-    private final RegionService regionService;
-    private final DistrictService districtService;
-    private final CityService cityService;
-    private final StreetService streetService;
-    private final HouseService houseService;
-    private final HouseMapper houseMapper;
+//    private final CountryService countryService;
+//    private final RegionService regionService;
+//    private final DistrictService districtService;
+//    private final CityService cityService;
+//    private final StreetService streetService;
+//    private final HouseService houseService;
+//    private final HouseMapper houseMapper;
+//    private final HouseRepository houseRepository;
 
 
     @Override
@@ -83,76 +72,21 @@ public class ProfileServiceImpl implements ProfileService {
         return profileMapper.toDtoUpdateStatusResponse(updated, userUuid);
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public ProfileDto update(Long userId, UUID userUuid, Long profileId, ProfileDtoUpdate dto) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, profile.getUserId());
-        Profile updated = profileMapper.updateEntity(profile, dto, userId);
+        Profile updated = profileMapper.updateEntity(profile, dto);
         if (updated.getAvatar() != null && updated.getAvatar().length > 2 * 1024 * 1024) {
-            throw new IllegalArgumentException("The size of the avatar image is too large: " + updated.getAvatar().length + "b");
-        }
-        updated = profileRepository.save(updated);
-        log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
-
-        return profileMapper.toProfileDto(updated, userUuid);
-    }
-
-    @Transactional
-    @Override
-    public ProfileDtoUpdateAddressResponse updateAddress(Long userId, Long profileId, ProfileDtoUpdateAddressRequest dto) {
-        Profile original = Checker.getNonNullObject(profileRepository, profileId);
-        checkUserIdOwnership(userId, original.getUserId());
-
-        Map<Class<? extends IdentifiableGeo>, IdentifiableGeo> parts = new LinkedHashMap<>(6) {{
-            put(CountryDto.class, dto.getCountry());
-            put(RegionDto.class, dto.getRegion());
-            put(DistrictDto.class, dto.getDistrict());
-            put(CityDto.class, dto.getCity());
-            put(StreetDto.class, dto.getStreet());
-            put(HouseDto.class, dto.getHouse());
-        }};
-        boolean nextAsNewEntity = false;
-        for (IdentifiableGeo part : parts.values()) {
-            if (!nextAsNewEntity && part.getId() == null) {
-                nextAsNewEntity = true;
-            }
-            if (nextAsNewEntity && part.getId() != null) {
-                throw new IllegalArgumentException("All next subsequent parts of the address must be as a new");
-            }
-            if (nextAsNewEntity) {
-                Class<? extends IdentifiableGeo> partClass = part.getClass();
-
-                if (partClass == CountryDto.class) {
-                    parts.put(partClass, countryService.create((CountryDto) part));
-                } else if (partClass == RegionDto.class) {
-                    parts.put(partClass, regionService.create(new RegionDto(
-                            null, (CountryDto) parts.get(CountryDto.class), ((RegionDto) part).getName())));
-                } else if (partClass == DistrictDto.class) {
-                    parts.put(partClass, districtService.create(new DistrictDto(
-                            null, (RegionDto) parts.get(RegionDto.class), ((DistrictDto) part).getName())));
-                } else if (partClass == CityDto.class) {
-                    parts.put(partClass, cityService.create(new CityDto(
-                            null, (DistrictDto) parts.get(DistrictDto.class), ((CityDto) part).getName())));
-                } else if (partClass == StreetDto.class) {
-                    parts.put(partClass, streetService.create(new StreetDto(
-                            null, (CityDto) parts.get(CityDto.class), ((StreetDto) part).getName())));
-                } else if (partClass == HouseDto.class) {
-                    parts.put(partClass, houseService.create(new HouseDto(
-                            null, (StreetDto) parts.get(StreetDto.class), ((HouseDto) part).getNumber(),
-                            ((HouseDto) part).getLat(), ((HouseDto) part).getLon())));
-                    log.debug("A new address has been created: {}", parts.get(HouseDto.class));
-                    break;
-                } else {
-                    throw new IllegalArgumentException("Unsupported address part type: " + part.getClass().getSimpleName());
-                }
-            }
+            throw new IllegalArgumentException("The size of the avatar image is too large: "
+                    + updated.getAvatar().length + "b");
         }
 
-        original.setHouse(houseMapper.toEntity((HouseDto) parts.get(HouseDto.class)));
-        original.setApartment(dto.getApartment());
-        profileRepository.save(original);
+        Profile saved = profileRepository.save(updated);
+        log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, saved);
 
-        return new ProfileDtoUpdateAddressResponse((HouseDto) parts.get(HouseDto.class), dto.getApartment());
+        return profileMapper.toProfileDto(saved, userUuid);
     }
 
     @Override
@@ -165,6 +99,7 @@ public class ProfileServiceImpl implements ProfileService {
         log.debug("Updated status: '{}' for {} with id: #{}", ProfileStatus.DELETED, ENTITY_SIMPLE_NAME, profileId);
     }
 
+//    @Transactional(isolation = Isolation.READ_COMMITTED)
     @Override
     public ProfileDto getById(Long userId, UUID userUuid, Long profileId) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
@@ -182,6 +117,7 @@ public class ProfileServiceImpl implements ProfileService {
         return profileMapper.toProfileDto(found, userUuid);
     }
 
+//    @Transactional(isolation = Isolation.READ_COMMITTED)
     @Override
     public Slice<ProfileDto> adminGetAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));

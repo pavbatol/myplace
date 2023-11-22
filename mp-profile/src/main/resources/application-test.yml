@@ -12,6 +12,8 @@ spring:
     password: test
   jpa:
     open-in-view: false
+#    open-in-view: true
+    show-sql: true
     hibernate:
       ddl-auto: none
     properties:
@@ -35,3 +37,7 @@ logging:
   level:
     ru.pavbatol: DEBUG
     org.springframework.web: DEBUG
+#    org:
+#      hibernate:
+#        SQL: debug
+#        type: trace

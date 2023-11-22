@@ -26,7 +26,7 @@ public class AdminProfileController {
 
     @PatchMapping("/status")
     @Operation(summary = "updateStatusByUserId", description = "setting Profile status")
-    public ResponseEntity<ProfileDtoUpdateStatusResponse> updateStatusByUserId(@PathVariable(value = "userId") Long userId,
+    public ResponseEntity<ProfileDtoUpdateStatusResponse> updateStatusByUserId(@RequestParam(value = "userId") Long userId,
                                                                                @RequestParam(value = "userUuid") UUID userUuid,
                                                                                @RequestParam(value = "status") String status) {
         log.debug("PATCH updateStatusByUserId() with userId: {}, userUuid: {}, status: {}", userId, userUuid, status);
