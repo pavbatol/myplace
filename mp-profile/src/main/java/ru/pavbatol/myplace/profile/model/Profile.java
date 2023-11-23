@@ -90,7 +90,6 @@ public class Profile {
     Gender gender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "house_id")
     @ToString.Exclude
     House house;

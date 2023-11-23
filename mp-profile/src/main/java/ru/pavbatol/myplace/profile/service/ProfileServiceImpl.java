@@ -28,16 +28,6 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileJpaRepository profileRepository;
     private final ProfileMapper profileMapper;
 
-//    private final CountryService countryService;
-//    private final RegionService regionService;
-//    private final DistrictService districtService;
-//    private final CityService cityService;
-//    private final StreetService streetService;
-//    private final HouseService houseService;
-//    private final HouseMapper houseMapper;
-//    private final HouseRepository houseRepository;
-
-
     @Override
     public ProfileDtoCreateResponse create(UUID userUuid, ProfileDtoCreateRequest createRequest) {
         LocalDateTime now = LocalDateTime.now();
@@ -77,16 +67,16 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileDto update(Long userId, UUID userUuid, Long profileId, ProfileDtoUpdate dto) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, profile.getUserId());
-        Profile updated = profileMapper.updateEntity(profile, dto);
-        if (updated.getAvatar() != null && updated.getAvatar().length > 2 * 1024 * 1024) {
+        profileMapper.updateEntity(profile, dto);
+        if (profile.getAvatar() != null && profile.getAvatar().length > 2 * 1024 * 1024) {
             throw new IllegalArgumentException("The size of the avatar image is too large: "
-                    + updated.getAvatar().length + "b");
+                    + profile.getAvatar().length + "b");
         }
 
-        Profile saved = profileRepository.save(updated);
-        log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, saved);
+        Profile updated = profileRepository.save(profile);
+        log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
 
-        return profileMapper.toProfileDto(saved, userUuid);
+        return profileMapper.toProfileDto(updated, userUuid);
     }
 
     @Override
@@ -99,7 +89,6 @@ public class ProfileServiceImpl implements ProfileService {
         log.debug("Updated status: '{}' for {} with id: #{}", ProfileStatus.DELETED, ENTITY_SIMPLE_NAME, profileId);
     }
 
-//    @Transactional(isolation = Isolation.READ_COMMITTED)
     @Override
     public ProfileDto getById(Long userId, UUID userUuid, Long profileId) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
@@ -117,14 +106,13 @@ public class ProfileServiceImpl implements ProfileService {
         return profileMapper.toProfileDto(found, userUuid);
     }
 
-//    @Transactional(isolation = Isolation.READ_COMMITTED)
     @Override
     public Slice<ProfileDto> adminGetAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
         Slice<Profile> found = profileRepository.findAll(pageRequest);
         log.debug("Found Slice of {}: {}, numberOfElements: {}", ENTITY_SIMPLE_NAME, found, found.getNumberOfElements());
 
-        return found.map(profileMapper::toProfileDto);
+        return found.map(profileMapper::toProfileDtoWithoutHose);
     }
 
     private Profile getNonNullProfileByUserId(Long userId) {

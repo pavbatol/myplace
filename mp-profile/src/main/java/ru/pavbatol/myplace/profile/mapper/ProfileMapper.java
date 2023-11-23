@@ -1,6 +1,8 @@
 package ru.pavbatol.myplace.profile.mapper;
 
 import org.mapstruct.*;
+import ru.pavbatol.myplace.geo.house.dto.HouseDto;
+import ru.pavbatol.myplace.geo.house.model.House;
 import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.model.Profile;
 
@@ -20,6 +22,7 @@ public interface ProfileMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "house", source = "house", qualifiedByName = "setHose")
     @Mapping(target = "avatar", expression = "java(decodeBase64(dto.getEncodedAvatar()))")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Profile updateEntity(@MappingTarget Profile entity, ProfileDtoUpdate dto);
@@ -29,8 +32,9 @@ public interface ProfileMapper {
     @Mapping(target = "encodedAvatar", expression = "java(encodeBase64(entity.getAvatar()))")
     ProfileDto toProfileDto(Profile entity, UUID userUuid);
 
+    @Mapping(target = "house", ignore = true)
     @Mapping(target = "encodedAvatar", expression = "java(encodeBase64(entity.getAvatar()))")
-    ProfileDto toProfileDto(Profile entity);
+    ProfileDto toProfileDtoWithoutHose(Profile entity);
 
     default byte[] decodeBase64(String encodedString) {
         return encodedString == null ? null : Base64.getDecoder().decode(encodedString);
@@ -38,5 +42,10 @@ public interface ProfileMapper {
 
     default String encodeBase64(byte[] bytes) {
         return bytes == null ? null : Base64.getEncoder().encodeToString(bytes);
+    }
+
+    @Named("setHose")
+    default House houseDtoToHose(HouseDto houseDto) {
+        return houseDto == null || houseDto.getId() == null ? null : new House().setId(houseDto.getId());
     }
 }
