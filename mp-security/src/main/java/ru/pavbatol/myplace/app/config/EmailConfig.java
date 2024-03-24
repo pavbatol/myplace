@@ -11,21 +11,21 @@ import java.util.Properties;
 @Configuration
 public class EmailConfig {
     @Value("${app.mail.host}")
-    public static String HOST;
+    private String host;
     @Value("${app.mail.port}")
-    public static int PORT;
+    private int port;
     @Value("${app.mail.username}")
-    public static String USERNAME;
+    private String username;
     @Value("${app.mail.password}")
-    public static String PASSWORD;
+    private String password;
 
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(HOST);
-        mailSender.setPort(PORT);
-        mailSender.setUsername(USERNAME);
-        mailSender.setPassword(PASSWORD);
+        mailSender.setHost(host);
+        mailSender.setPort(port);
+        mailSender.setUsername(username);
+        mailSender.setPassword(password);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

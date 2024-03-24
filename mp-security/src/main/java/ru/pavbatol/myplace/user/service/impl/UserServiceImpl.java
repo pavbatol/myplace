@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.user.service.impl;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -189,7 +190,7 @@ public class UserServiceImpl implements UserService {
                 .setDeleted(false);
 
         User savedUser = userJpaRepository.save(user);
-        profileClient.createProfile(savedUser.getId(), dtoConfirm.getEmail());
+        profileClient.createProfile(savedUser.getId(), savedUser.getUuid(), dtoConfirm.getEmail());
 
         userRedisRepository.removeSilently(dtoConfirm.getEmail());
         userRedisRepository.removeLoginKeySilently(userUnverified.getLogin());
@@ -200,6 +201,7 @@ public class UserServiceImpl implements UserService {
         log.debug("Profile created in profile service with userId: {}, email: {}", savedUser.getId(), dtoConfirm.getEmail());
     }
 
+    @SuppressFBWarnings("DMI_RANDOM_USED_ONLY_ONCE")
     private String generateCode() {
         final int codeLength = 5;
         final String[] source = {UPPER, LOWER, DIGITS};

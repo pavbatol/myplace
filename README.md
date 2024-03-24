@@ -16,7 +16,10 @@ You can organize your own platform, invite sellers, attract buyers and earn mone
   - Checking user registration and access rights by JWT.  
   - A collection of Postman tests is attached. Run on an empty database with the 'test' profile. You can add marker profiles:
     test-confirmation-code-reading and test-mail-sender-bypassing to automatically read the registration confirmation code and to bypass the error if MAIL_SENDER is not specified yet, respectively.
-
+- **Profile (mp-profile)** `PostgreSql, H2, JPA, Mapstruct`
+  - The user profile service provides work with data: from the date of registration to the avatar. 
+  - It contains the `Geo` service — working with addresses.
+    The service is being finalized. It is already ready, but the pre-filling of the address database is not included in the commit. I will add it soon along with the Postman tests and the specification.
 ### Intended technologies:
 - Microservice architecture
 - Maven
