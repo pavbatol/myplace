@@ -1,0 +1,11 @@
+app:
+  jwt:
+    access:
+      # 'key' may be empty for automatic. Or use end-point using 'printRandomSecrets' method. See AdminAuthController class.
+      key: RtT3L/B5F18vXQ1HKRl7NE9xaUzAPPsLY7lcojaSSxkJK517RXn+QshOMqvJVFxvj2KOJ2/qzmDzNLnNXzdNoA==
+      life-seconds: 36000
+      storing: true
+    refresh:
+      # 'key' may be empty for automatic. Or use end-point using 'printRandomSecrets' method. See AdminAuthController class.
+      key: IQH/dPyjpv/zDUFhVNnQH30+w2aYnUEAuoH7o5bgMxYfYE7M68g6brXyna+BA9u3lfEHbymVDz3P1PCg2AYFsQ==
+      life-seconds: 2592000

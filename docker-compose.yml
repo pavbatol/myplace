@@ -1,49 +1,139 @@
 version: '3.7'
 services:
-  gateway-service:
-    build: ./mp-gateway
-    image: mp-gateway
-    container_name: mp-gateway-cont
-    ports:
-      - "8080:8080"
-      - "8081:8081"
+
+# TODO Remove the external ports. Leave it only at the gateway service and databases
 
   stats-service:
-    build: ./mp-stats
+    build: ./mp-stats/server
     image: mp-stats
-    container_name: mp-stats-cont
+    container_name: mp-stats
     ports:
       - "9090:9090"
       - "9091:9091"
     depends_on:
       - stats-db
+    environment:
+      - APP_DB_HOST=stats-db
+      - APP_DB_PORT=27017
+      - APP_DB_NAME=mp-stats
+      - APP_DB_USERNAME=root
+      - APP_DB_PASSWORD=root
+      - SPRING_PROFILES_ACTIVE=default
 
   stats-db:
-    image: postgres:15.1-alpine
-    container_name: mp-stats-db-cont
+    image: mongo:6.0.4
+    container_name: mp-stats-db
     ports:
-      - "5777:5432"
+      - "27070:27017"
     environment:
-      - POSTGRES_DB=mp-stats
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+      MONGO_INITDB_DATABASE: mp-stats
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ./mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      #- ./db-saved-from-docker-container/mp-stats:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
-  main-service:
-    build: ./mp-main
-    image: mp-main
-    container_name: mp-main-cont
+  security-service:
+    build: ./mp-security
+    image: mp-security
+    container_name: mp-security
     ports:
-      - "7070:7070"
-      - "7071:7071"
+      - "8078:8078"
     depends_on:
-      - main-db
-
-  main-db:
-    image: postgres:15.1-alpine
-    container_name: mp-main-db-cont
-    ports:
-      - "5888:5432"
+      - security-postgres-db
+      - security-redis-db
     environment:
-      - POSTGRES_DB=mp-main
+# TODO Check that all the examples are commented out
+      # ***** Examples for testing in Postman *****
+      #- SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db and automatic reading of the registration confirmation code!
+      #- SPRING_PROFILES_ACTIVE=test,test-mail-sender-bypassing # Add 'test-mail-sender-bypassing' to any profile to bypass the error if the sending mail is not specified!
+      #- SPRING_PROFILES_ACTIVE=default,test-confirmation-code-reading # Add "test-confirmation-code reading" to a profile other than 'test' for automatic reading of the registration confirmation code!
+      - SPRING_PROFILES_ACTIVE=dev,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can!
+      # *******************************************
+#      - SPRING_PROFILES_ACTIVE=default
+      - APP_PROFILE_SERVER_URL=http://profile-service:8076
+      - APP_DB_HOST=security-postgres-db
+      - APP_DB_PORT=5432
+      - APP_DB_NAME=mp-security
+      - APP_DB_USERNAME=root
+      - APP_DB_PASSWORD=root
+      - REDIS_HOST=security-redis-db
+      - REDIS_PORT=6379
+      - REDIS_USERNAME= # Optional
+      - REDIS_PASSWORD= # Optional
+      - APP_MAIL_SENDER=
+      - APP_MAIL_HOST=
+      - APP_MAIL_PORT=
+      - APP_MAIL_USERNAME=
+      - APP_MAIL_PASSWORD=
+      - APP_JWT_ACCESS_KEY= # Optional
+      - APP_JWT_ACCESS_LIFE-SECONDS=36000
+      - APP_JWT_ACCESS_STORING=true
+      - APP_JWT_REFRESH_KEY= # Optional
+      - APP_JWT_REFRESH_LIFE-SECONDS=2592000
+
+  security-redis-db:
+    image: redis:latest
+    container_name: mp-security-redis-db
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  security-postgres-db:
+    image: postgres:14-alpine
+    container_name: mp-security-postgres-db
+    ports:
+      - "5799:5432"
+    environment:
+      - POSTGRES_DB=mp-security
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-security" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  profile-service:
+    build: ./mp-profile
+    image: mp-profile
+    container_name: mp-profile
+    ports:
+      - "8076:8076"
+    depends_on:
+      - profile-db
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - APP_DB_HOST=profile-db
+      - APP_DB_PORT=5432
+      - APP_DB_NAME=mp-profile
+      - APP_DB_USERNAME=root
+      - APP_DB_PASSWORD=root
+
+  profile-db:
+    image: postgres:14-alpine
+    container_name: mp-profile-db
+    ports:
+      - "5776:5432"
+    environment:
+      - POSTGRES_DB=mp-profile
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-profile" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s

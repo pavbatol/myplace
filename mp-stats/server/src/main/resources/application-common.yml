@@ -1,0 +1,18 @@
+server:
+  port: 9090
+
+springdoc:
+  swagger-ui:
+    path: /docs/swagger-ui.html
+  api-docs:
+    path: /docs
+    enabled: true
+
+app:
+  db:
+    host: localhost
+    port: 27017
+    name: mp-stats
+    username: root
+    password: root
+

@@ -1,15 +1,37 @@
+![myplace.png](logo.png)
 
-![Снимок экрана от 2023-02-28 19-21-13.png](assets%2F%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%20%D0%BE%D1%82%202023-02-28%2019-21-13.png)
-### What is the "myplace" application
-This is a startup, a server part for the marketplace in Java.  
-I will be glad if someone wants to participate
+[RU](README-RU.md)
 
-### The intended stack:
+### What is the "MyPlace" application
+The server part for the marketplace.  
+You can organize your own platform, invite sellers, attract buyers and earn money.
+
+<u>_Project in development_</u>
+
+### Ready-made services:
+- **Statistics (mp-stats)** `MongoDB reactive, Webflix, Junit, Mockito`  
+  - The service has been tested by JUnit tests, working with the 'mp-stats-test' database, which is automatically cleared after the tests.  
+  - A collection of Postman tests is attached. Run on an empty database. I recommend starting the service with the 'test' profile, the work will be carried out with the 'mp-stats-test' test database, which you can delete before / after the tests to clear the data. Otherwise, the work will take place with the real base of 'mp-stats', then after the tests do not forget to clear the database.
+- **Security (mp-security)** `PostgreSql, Redis, H2, Spring Security`  
+  - Checking user registration and access rights by JWT.  
+  - A collection of Postman tests is attached. Run on an empty database with the 'test' profile. You can add marker profiles:
+    test-confirmation-code-reading and test-mail-sender-bypassing to automatically read the registration confirmation code and to bypass the error if MAIL_SENDER is not specified yet, respectively.
+- **Profile (mp-profile)** `PostgreSql, H2, JPA, Mapstruct`
+  - The user profile service provides work with data: from the date of registration to the avatar. 
+  - It contains the `Geo` service — working with addresses.
+    The service is being finalized. It is already ready, but the pre-filling of the address database is not included in the commit. I will add it soon along with the Postman tests and the specification.
+### Intended technologies:
 - Microservice architecture
 - Maven
 - Spring Boot
-- Spring Boot Security
+- Spring Data
+- Spring Cloud
+- Spring Security
+- Tomcat, Netty
 - Kafka
 - JDBC, Hibernate
-- Postgresql, H2, MongoDB
+- Liquibase
+- Postgresql, H2, MongoDB (reactive), Redis, Elasticsearch
+- Junit, Mockito
 - Docker-compose
+- Kubernetes
