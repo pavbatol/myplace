@@ -19,8 +19,7 @@ import java.time.LocalDateTime;
                         attributeNodes = {
                                 @NamedAttributeNode(value = "street", subgraph = "citySubgraph")
                         }
-                )
-                ,
+                ),
                 @NamedSubgraph(
                         name = "citySubgraph",
                         attributeNodes = {

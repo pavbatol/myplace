@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: mp-security
+    name: mp-profile
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:test

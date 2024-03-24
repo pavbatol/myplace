@@ -29,6 +29,7 @@ import ru.pavbatol.myplace.user.model.UserAuthenticationPrincipal;
 import ru.pavbatol.myplace.user.repository.UserJpaRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
@@ -275,7 +276,7 @@ public class AuthServiceImpl implements AuthService {
     private String getMD5Hash(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(input.getBytes());
+            md.update(input.getBytes(StandardCharsets.UTF_8));
             byte[] digest = md.digest();
 
             StringBuilder sb = new StringBuilder();
