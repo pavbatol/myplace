@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <!-- geo-->
+    <include file="db/changelog/changeset/geo/create-countries-table.xml"/>
+    <include file="db/changelog/changeset/geo/create-regions-table.xml"/>
+    <include file="db/changelog/changeset/geo/create-districts-table.xml"/>
+    <include file="db/changelog/changeset/geo/create-cities-table.xml"/>
+    <include file="db/changelog/changeset/geo/create-streets-table.xml"/>
+    <include file="db/changelog/changeset/geo/create-houses-table.xml"/>
+
+    <!-- profile-->
+<!--    <include file="db/changelog/changeset/profile/create-profiles-table.xml"/>-->
+    <include file="db/changelog/changeset/profile/create-profiles-table.yml"/>
+
+</databaseChangeLog>

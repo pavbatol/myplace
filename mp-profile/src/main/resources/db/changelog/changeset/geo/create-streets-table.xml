@@ -1,0 +1,51 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-streets-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_streets"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-streets-table" author="your_name">
+        <createTable tableName="streets">
+
+            <column name="street_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="city_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addDefaultValue tableName="streets"
+                         columnName="street_id"
+                         defaultValueComputed="nextval('seq_streets')"/>
+
+        <addPrimaryKey tableName="streets"
+                       columnNames="street_id"
+                       constraintName="pk_streets"/>
+
+        <addForeignKeyConstraint baseTableName="streets"
+                                 baseColumnNames="city_id"
+                                 referencedTableName="cities"
+                                 referencedColumnNames="city_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_streets_city_id"/>
+
+        <addUniqueConstraint tableName="streets"
+                             columnNames="city_id, name"
+                             constraintName="uq_streets_city_id_name"/>
+    </changeSet>
+
+</databaseChangeLog>

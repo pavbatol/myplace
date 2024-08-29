@@ -4,10 +4,13 @@ spring:
       develop:
         - dev
         - swagger
+#        - liquibase
       production:
         - prod
         - swagger
+#        - liquibase
       test:
         - test
         - swagger
+        - liquibase
       default: production

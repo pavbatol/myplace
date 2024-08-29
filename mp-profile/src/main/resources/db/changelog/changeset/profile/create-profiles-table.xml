@@ -1,0 +1,73 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-profiles-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_profiles"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-profiles-table" author="your_name">
+        <createTable tableName="profiles">
+
+            <column name="profile_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trusted_email" type="varchar(255)"/>
+            <column name="mobile_number" type="varchar(12)"/>
+            <column name="trusted_mobile_number" type="varchar(12)"/>
+            <column name="first_name" type="varchar(100)"/>
+            <column name="second_name" type="varchar(100)"/>
+            <column name="birthday" type="timestamp without time zone"/>
+            <column name="gender" type="varchar(50)"/>
+            <column name="house_id" type="bigint"/>
+            <column name="apartment" type="varchar(10)"/>
+            <column name="avatar" type="bytea"/>
+            <column name="status" type="varchar(15)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="changed_status_on" type="timestamp without time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="timestamp without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addDefaultValue tableName="profiles"
+                         columnName="profile_id"
+                         defaultValueComputed="nextval('seq_profiles')"/>
+
+        <addPrimaryKey tableName="profiles"
+                       columnNames="profile_id"
+                       constraintName="pk_profiles"/>
+
+        <addForeignKeyConstraint baseTableName="profiles"
+                                 baseColumnNames="house_id"
+                                 referencedTableName="houses"
+                                 referencedColumnNames="house_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_profiles_house_id"/>
+
+        <addUniqueConstraint tableName="profiles"
+                             columnNames="user_id"
+                             constraintName="uq_profiles_user_id"/>
+        <addUniqueConstraint tableName="profiles"
+                             columnNames="email"
+                             constraintName="uq_profiles_email"/>
+        <addUniqueConstraint tableName="profiles"
+                             columnNames="mobile_number"
+                             constraintName="uq_profiles_mobile_number"/>
+    </changeSet>
+
+</databaseChangeLog>

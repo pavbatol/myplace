@@ -1,0 +1,43 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-regions-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_regions"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-regions-table" author="your_name">
+        <createTable tableName="regions">
+            <column name="region_id" type="bigint" defaultValueComputed="nextval('seq_regions')">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="regions"
+                       columnNames="region_id"
+                       constraintName="pk_regions"/>
+
+        <addForeignKeyConstraint baseTableName="regions"
+                                 baseColumnNames="country_id"
+                                 referencedTableName="countries"
+                                 referencedColumnNames="country_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_regions_country_id"/>
+
+        <addUniqueConstraint tableName="regions"
+                             columnNames="country_id, name"
+                             constraintName="uq_regions_country_id_name"/>
+    </changeSet>
+
+</databaseChangeLog>

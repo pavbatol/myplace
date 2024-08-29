@@ -1,0 +1,52 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-districts-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_districts"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-districts-table" author="your_name">
+
+        <createTable tableName="districts">
+            <column name="district_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="region_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addDefaultValue tableName="districts"
+                         columnName="district_id"
+                         defaultValueComputed="nextval('seq_districts')"/>
+
+        <addPrimaryKey tableName="districts"
+                       columnNames="district_id"
+                       constraintName="pk_districts"/>
+
+        <addForeignKeyConstraint baseTableName="districts"
+                                 baseColumnNames="region_id"
+                                 referencedTableName="regions"
+                                 referencedColumnNames="region_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_districts_region_id"/>
+
+        <addUniqueConstraint tableName="districts"
+                             columnNames="region_id, name"
+                             constraintName="uq_districts_region_id_name"/>
+    </changeSet>
+
+</databaseChangeLog>
+

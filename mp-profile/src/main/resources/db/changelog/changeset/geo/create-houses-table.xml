@@ -1,0 +1,56 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-houses-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_houses"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-houses-table" author="your_name">
+        <createTable tableName="houses">
+
+            <column name="house_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="street_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="number" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lat" type="double precision"/>
+
+            <column name="lon" type="double precision"/>
+
+        </createTable>
+
+
+        <addDefaultValue tableName="houses"
+                         columnName="house_id"
+                         defaultValueComputed="nextval('seq_houses')"/>
+
+        <addPrimaryKey tableName="houses"
+                       columnNames="house_id"
+                       constraintName="pk_houses"/>
+
+        <addForeignKeyConstraint baseTableName="houses"
+                                 baseColumnNames="street_id"
+                                 referencedTableName="streets"
+                                 referencedColumnNames="street_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_houses_street_id"/>
+
+        <addUniqueConstraint tableName="houses"
+                             columnNames="street_id, number"
+                             constraintName="uq_houses_street_id_number"/>
+    </changeSet>
+
+</databaseChangeLog>
