@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+
+# TODO Remove the external ports. Leave it only at the gateway service and databases
+
+  # Use sudo docker-compose -f docker/profile/docker-compose-profile-test.yml build/up/down
+
+  profile-service:
+    build: ../../mp-profile
+    image: mp-profile
+    container_name: mp-profile
+    restart: unless-stopped
+    ports:
+      - "8076:8076"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - APP_DB_HOST=profile-db
+      - APP_DB_PORT=5432
+      - APP_DB_NAME=mp-profile
+      - APP_DB_USERNAME=root
+      - APP_DB_PASSWORD=root
+
+  profile-db:
+    image: postgres:14-alpine
+    container_name: mp-profile-db
+    ports:
+      - "5776:5432"
+    environment:
+      - POSTGRES_DB=mp-profile
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-profile" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+#    volumes:
+#      - ./myplace-app/db/profile/postgres-data:/var/lib/postgresql/data

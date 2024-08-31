@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+
+# TODO Remove the external ports. Leave it only at the gateway service and databases
+
+# Use sudo docker-compose -f docker/stats/docker-compose-stats-dev.yml build/up/down
+
+  stats-service:
+    build: ../../mp-stats/server
+    image: mp-stats
+    container_name: mp-stats
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+    environment:
+      - APP_DB_HOST=stats-db
+      - APP_DB_PORT=27017
+      - APP_DB_NAME=mp-stats
+      - APP_DB_USERNAME=root
+      - APP_DB_PASSWORD=root
+      - SPRING_PROFILES_ACTIVE=default
+
+  stats-db:
+    image: mongo:6.0.4
+    container_name: mp-stats-db
+    ports:
+      - "27070:27017"
+    environment:
+      MONGO_INITDB_DATABASE: mp-stats
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      #- ./myplace-app/db/stats/mongo-data:/data/db

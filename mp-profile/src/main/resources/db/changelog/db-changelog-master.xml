@@ -14,7 +14,6 @@
     <include file="db/changelog/changeset/geo/create-houses-table.xml"/>
 
     <!-- profile-->
-<!--    <include file="db/changelog/changeset/profile/create-profiles-table.xml"/>-->
     <include file="db/changelog/changeset/profile/create-profiles-table.yml"/>
 
 </databaseChangeLog>

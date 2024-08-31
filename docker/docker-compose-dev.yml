@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+
+  stats:
+    extends:
+      file: stats/docker-compose-stats-dev.yml
+      service: stats-service
+    depends_on:
+      stats-db:
+        condition: service_healthy
+
+  stats-db:
+    extends:
+      file: stats/docker-compose-stats-dev.yml
+      service: stats-db
+
+  security:
+    extends:
+      file: security/docker-compose-security-dev.yml
+      service: security-service
+    depends_on:
+      security-redis-db:
+        condition: service_healthy
+      security-postgres-db:
+        condition: service_healthy
+
+  security-redis-db:
+    extends:
+      file: security/docker-compose-security-dev.yml
+      service: security-redis-db
+
+  security-postgres-db:
+    extends:
+      file: security/docker-compose-security-dev.yml
+      service: security-postgres-db
+
+  profile:
+    extends:
+      file: profile/docker-compose-profile-dev.yml
+      service: profile-service
+    depends_on:
+      profile-db:
+         condition: service_healthy
+
+  profile-db:
+    extends:
+      file: profile/docker-compose-profile-dev.yml
+      service: profile-db

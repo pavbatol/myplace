@@ -1,0 +1,72 @@
+version: '3.8'
+services:
+
+  # TODO Remove the external ports. Leave it only at the gateway service and databases
+
+  # Use sudo docker-compose -f docker/security/docker-compose-security-test.yml build/up/down
+
+  security-service:
+    build: ../../mp-security
+    image: mp-security
+    container_name: mp-security
+    restart: unless-stopped
+    ports:
+      - "8078:8078"
+    environment:
+      # TODO Check that all the examples are commented out
+      # ***** Examples for testing in Postman *****
+      - SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db and automatic reading of the registration confirmation code!
+      #- SPRING_PROFILES_ACTIVE=test,test-mail-sender-bypassing # Add 'test-mail-sender-bypassing' to any profile to bypass the error if the sending mail is not specified!
+      #- SPRING_PROFILES_ACTIVE=default,test-confirmation-code-reading # Add "test-confirmation-code reading" to a profile other than 'test' for automatic reading of the registration confirmation code!
+      #      - SPRING_PROFILES_ACTIVE=dev,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can!
+      # *******************************************
+      #      - SPRING_PROFILES_ACTIVE=default
+      - APP_PROFILE_SERVER_URL=http://profile-service:8076
+      - APP_DB_HOST=security-postgres-db
+      - APP_DB_PORT=5432
+      - APP_DB_NAME=mp-security
+      - APP_DB_USERNAME=root
+      - APP_DB_PASSWORD=root
+      - REDIS_HOST=security-redis-db
+      - REDIS_PORT=6379
+      - REDIS_USERNAME= # Optional
+      - REDIS_PASSWORD= # Optional
+      - APP_MAIL_SENDER=test@gmail.com
+      - APP_MAIL_HOST=smtp.gmail.com
+      - APP_MAIL_PORT=587
+      - APP_MAIL_USERNAME=
+      - APP_MAIL_PASSWORD=
+      - APP_JWT_ACCESS_KEY= # Optional
+      - APP_JWT_ACCESS_LIFE-SECONDS=36000
+      - APP_JWT_ACCESS_STORING=true
+      - APP_JWT_REFRESH_KEY= # Optional
+      - APP_JWT_REFRESH_LIFE-SECONDS=2592000
+
+  security-redis-db:
+    image: redis:latest
+    container_name: mp-security-redis-db
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  security-postgres-db:
+    image: postgres:14-alpine
+    container_name: mp-security-postgres-db
+    ports:
+      - "5799:5432"
+    environment:
+      - POSTGRES_DB=mp-security
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-security" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+

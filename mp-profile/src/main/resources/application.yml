@@ -4,11 +4,11 @@ spring:
       develop:
         - dev
         - swagger
-#        - liquibase
+        - liquibase
       production:
         - prod
         - swagger
-#        - liquibase
+        - liquibase
       test:
         - test
         - swagger
