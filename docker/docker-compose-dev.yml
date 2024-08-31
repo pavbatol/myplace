@@ -1,7 +1,10 @@
 version: '3.8'
+
+# Use sudo docker-compose -f docker/docker-compose-dev.yml build/up/down
+
 services:
 
-  stats:
+  stats-service:
     extends:
       file: stats/docker-compose-stats-dev.yml
       service: stats-service
@@ -14,7 +17,7 @@ services:
       file: stats/docker-compose-stats-dev.yml
       service: stats-db
 
-  security:
+  security-service:
     extends:
       file: security/docker-compose-security-dev.yml
       service: security-service
@@ -34,7 +37,7 @@ services:
       file: security/docker-compose-security-dev.yml
       service: security-postgres-db
 
-  profile:
+  profile-service:
     extends:
       file: profile/docker-compose-profile-dev.yml
       service: profile-service

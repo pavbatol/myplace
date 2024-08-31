@@ -1,9 +1,9 @@
 version: '3.8'
 services:
 
-# TODO Remove the external ports. Leave it only at the gateway service and databases
+  # TODO Remove the external ports. Leave it only at the gateway service and databases
 
-# Use sudo docker-compose -f docker/stats/docker-compose-stats-test.yml build/up/down
+  # Use sudo docker-compose -f docker/stats/docker-compose-stats-test.yml build/up/down
 
   stats-service:
     build: ../../mp-stats/server
@@ -19,7 +19,7 @@ services:
       - APP_DB_NAME=mp-stats
       - APP_DB_USERNAME=root
       - APP_DB_PASSWORD=root
-      - SPRING_PROFILES_ACTIVE=default
+      - SPRING_PROFILES_ACTIVE=production
 
   stats-db:
     image: mongo:6.0.4
@@ -31,11 +31,12 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
+      test: [ "CMD","mongosh", "--eval", "db.adminCommand('ping')" ]
+      #      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      #      test: echo "db.runCommand({serverStatus:1}).ok" | mongosh admin -u "root" -p "root" --quiet | grep 1
+      interval: 30s
       timeout: 5s
-      retries: 5
+      retries: 3
       start_period: 5s
     volumes:
       - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      #- ./myplace-app/db/stats/mongo-data:/data/db

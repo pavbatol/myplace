@@ -1,8 +1,6 @@
 version: '3.8'
 services:
 
-# TODO Remove the external ports. Leave it only at the gateway service and databases
-
   # Use sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml build/up/down
 
   profile-service:
@@ -11,9 +9,9 @@ services:
     container_name: mp-profile
     restart: unless-stopped
     ports:
-      - "8076:8076"
+      - "8076"
     environment:
-      - SPRING_PROFILES_ACTIVE=default
+      - SPRING_PROFILES_ACTIVE=production
       - APP_DB_HOST=profile-db
       - APP_DB_PORT=5432
       - APP_DB_NAME=mp-profile

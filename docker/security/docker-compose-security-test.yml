@@ -1,8 +1,6 @@
 version: '3.8'
 services:
 
-  # TODO Remove the external ports. Leave it only at the gateway service and databases
-
   # Use sudo docker-compose -f docker/security/docker-compose-security-test.yml build/up/down
 
   security-service:
@@ -15,12 +13,14 @@ services:
     environment:
       # TODO Check that all the examples are commented out
       # ***** Examples for testing in Postman *****
-      - SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db and automatic reading of the registration confirmation code!
-      #- SPRING_PROFILES_ACTIVE=test,test-mail-sender-bypassing # Add 'test-mail-sender-bypassing' to any profile to bypass the error if the sending mail is not specified!
+      #- SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db and automatic reading of the registration confirmation code!
+      - SPRING_PROFILES_ACTIVE=test,test-mail-sender-bypassing # Add 'test-mail-sender-bypassing' to any profile to bypass the error if the sending mail is not specified!
       #- SPRING_PROFILES_ACTIVE=default,test-confirmation-code-reading # Add "test-confirmation-code reading" to a profile other than 'test' for automatic reading of the registration confirmation code!
-      #      - SPRING_PROFILES_ACTIVE=dev,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can!
+      #- SPRING_PROFILES_ACTIVE=dev,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can!
+      #- SPRING_PROFILES_ACTIVE=test,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can!
+      #- SPRING_PROFILES_ACTIVE=prod,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can! (the test-confirmation-code-reading is unnecessary here, because the test profile does this by default, But specifying it will not be bad)
       # *******************************************
-      #      - SPRING_PROFILES_ACTIVE=default
+      #- SPRING_PROFILES_ACTIVE=default
       - APP_PROFILE_SERVER_URL=http://profile-service:8076
       - APP_DB_HOST=security-postgres-db
       - APP_DB_PORT=5432
@@ -54,19 +54,19 @@ services:
       retries: 5
       start_period: 5s
 
-  security-postgres-db:
-    image: postgres:14-alpine
-    container_name: mp-security-postgres-db
-    ports:
-      - "5799:5432"
-    environment:
-      - POSTGRES_DB=mp-security
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-security" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+#  security-postgres-db:
+#    image: postgres:14-alpine
+#    container_name: mp-security-postgres-db
+#    ports:
+#      - "5799:5432"
+#    environment:
+#      - POSTGRES_DB=mp-security
+#      - POSTGRES_USER=root
+#      - POSTGRES_PASSWORD=root
+#    healthcheck:
+#      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-security" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 5s
 

@@ -13,7 +13,7 @@ services:
     ports:
       - "8076:8076"
     environment:
-      - SPRING_PROFILES_ACTIVE=default
+      - SPRING_PROFILES_ACTIVE=develop
       - APP_DB_HOST=profile-db
       - APP_DB_PORT=5432
       - APP_DB_NAME=mp-profile

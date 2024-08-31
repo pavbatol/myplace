@@ -14,12 +14,12 @@ services:
       - "9090:9090"
       - "9091:9091"
     environment:
+      - SPRING_PROFILES_ACTIVE=develop
       - APP_DB_HOST=stats-db
       - APP_DB_PORT=27017
       - APP_DB_NAME=mp-stats
       - APP_DB_USERNAME=root
       - APP_DB_PASSWORD=root
-      - SPRING_PROFILES_ACTIVE=default
 
   stats-db:
     image: mongo:6.0.4
