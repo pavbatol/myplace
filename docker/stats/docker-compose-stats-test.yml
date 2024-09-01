@@ -1,9 +1,8 @@
 version: '3.8'
+
+# Use sudo docker-compose -f docker/stats/docker-compose-stats-test.yml build/up/down
+
 services:
-
-  # TODO Remove the external ports. Leave it only at the gateway service and databases
-
-  # Use sudo docker-compose -f docker/stats/docker-compose-stats-test.yml build/up/down
 
   stats-service:
     build: ../../mp-stats/server
@@ -19,7 +18,7 @@ services:
       - APP_DB_NAME=mp-stats
       - APP_DB_USERNAME=root
       - APP_DB_PASSWORD=root
-      - SPRING_PROFILES_ACTIVE=production
+      - SPRING_PROFILES_ACTIVE=production # Here is the production profile for the correct configuration of Mongo in Spring
 
   stats-db:
     image: mongo:6.0.4
@@ -38,5 +37,5 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
-    volumes:
-      - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+#    volumes:
+#      - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro

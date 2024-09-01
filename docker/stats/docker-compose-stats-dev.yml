@@ -1,9 +1,8 @@
 version: '3.8'
-services:
-
-# TODO Remove the external ports. Leave it only at the gateway service and databases
 
 # Use sudo docker-compose -f docker/stats/docker-compose-stats-dev.yml build/up/down
+
+services:
 
   stats-service:
     build: ../../mp-stats/server
@@ -34,8 +33,8 @@ services:
       test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
       start_period: 5s
-    volumes:
-      - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+#    volumes:
+#      - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       #- ./myplace-app/db/stats/mongo-data:/data/db

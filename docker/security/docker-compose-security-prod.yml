@@ -1,9 +1,8 @@
 version: '3.8'
-services:
-
-# TODO Remove the external ports. Leave it only at the gateway service and databases
 
 # Use sudo docker-compose -f docker/security/docker-compose-security-prod.yml build/up/down
+
+services:
 
   security-service:
     build: ../../mp-security
@@ -13,27 +12,48 @@ services:
     ports:
       - "8078"
     environment:
-      - SPRING_PROFILES_ACTIVE=production
-      - APP_PROFILE_SERVER_URL=http://profile-service:8076
-      - APP_DB_HOST=security-postgres-db
-      - APP_DB_PORT=5432
-      - APP_DB_NAME=mp-security
-      - APP_DB_USERNAME=root
-      - APP_DB_PASSWORD=root
-      - REDIS_HOST=security-redis-db
-      - REDIS_PORT=6379
-      - REDIS_USERNAME= # Optional
-      - REDIS_PASSWORD= # Optional
-      - APP_MAIL_SENDER=
-      - APP_MAIL_HOST=
-      - APP_MAIL_PORT=
-      - APP_MAIL_USERNAME=
-      - APP_MAIL_PASSWORD=
-      - APP_JWT_ACCESS_KEY= # Optional
-      - APP_JWT_ACCESS_LIFE-SECONDS=36000
-      - APP_JWT_ACCESS_STORING=true
-      - APP_JWT_REFRESH_KEY= # Optional
-      - APP_JWT_REFRESH_LIFE-SECONDS=2592000
+#      - SPRING_PROFILES_ACTIVE=production
+#      - APP_PROFILE_SERVER_URL=http://profile-service:8076
+#      - APP_DB_HOST=security-postgres-db
+#      - APP_DB_PORT=5432
+#      - APP_DB_NAME=mp-security
+#      - APP_DB_USERNAME=root
+#      - APP_DB_PASSWORD=root
+#      - REDIS_HOST=security-redis-db
+#      - REDIS_PORT=6379
+#      - REDIS_USERNAME= # Optional
+#      - REDIS_PASSWORD= # Optional
+#      - APP_MAIL_SENDER=
+#      - APP_MAIL_HOST=
+#      - APP_MAIL_PORT=
+#      - APP_MAIL_USERNAME=
+#      - APP_MAIL_PASSWORD=
+#      - APP_JWT_ACCESS_KEY= # Optional
+#      - APP_JWT_ACCESS_LIFE-SECONDS=36000
+#      - APP_JWT_ACCESS_STORING=true
+#      - APP_JWT_REFRESH_KEY= # Optional
+#      - APP_JWT_REFRESH_LIFE-SECONDS=2592000
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - APP_PROFILE_SERVER_URL=${APP_PROFILE_SERVER_URL}
+      - APP_DB_HOST=${APP_DB_HOST}
+      - APP_DB_PORT=${APP_DB_PORT}
+      - APP_DB_NAME=${APP_DB_NAME}
+      - APP_DB_USERNAME=${APP_DB_USERNAME}
+      - APP_DB_PASSWORD=${APP_DB_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_USERNAME=${REDIS_USERNAME} # Optional
+      - REDIS_PASSWORD=${REDIS_PASSWORD} # Optional
+      - APP_MAIL_SENDER=${APP_MAIL_SENDER}
+      - APP_MAIL_HOST=${APP_MAIL_HOST}
+      - APP_MAIL_PORT=${APP_MAIL_PORT}
+      - APP_MAIL_USERNAME=${APP_MAIL_USERNAME}
+      - APP_MAIL_PASSWORD=${APP_MAIL_PASSWORD}
+      - APP_JWT_ACCESS_KEY=${APP_JWT_ACCESS_KEY} # Optional
+      - APP_JWT_ACCESS_LIFE_SECONDS=${APP_JWT_ACCESS_LIFE_SECONDS}
+      - APP_JWT_ACCESS_STORING=${APP_JWT_ACCESS_STORING}
+      - APP_JWT_REFRESH_KEY=${APP_JWT_REFRESH_KEY} # Optional
+      - APP_JWT_REFRESH_LIFE_SECONDS=${APP_JWT_REFRESH_LIFE_SECONDS}
 
   security-redis-db:
     image: redis:latest
@@ -44,24 +64,28 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
       start_period: 5s
 
   security-postgres-db:
     image: postgres:14-alpine
     container_name: mp-security-postgres-db
     ports:
-      - "5799:5432"
+#      - "5799:5432"
+      - "${SECURITY_POSTGRES_DB_PORT}:5432"
     environment:
-      - POSTGRES_DB=mp-security
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+#      - POSTGRES_DB=mp-security
+#      - POSTGRES_USER=root
+#      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-security" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
       start_period: 5s
-    volumes:
-      - ./myplace-app/db/security/postgres-data:/var/lib/postgresql/data
+#    volumes:
+#      - ./myplace-app-saved-from-docker-container/db/security/postgres-data:/var/lib/postgresql/data
 

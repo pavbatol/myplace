@@ -1,7 +1,8 @@
 version: '3.8'
-services:
 
-  # Use sudo docker-compose -f docker/security/docker-compose-security-dev.yml build/up/down
+# Use sudo docker-compose -f docker/security/docker-compose-security-dev.yml build/up/down
+
+services:
 
   security-service:
     build: ../../mp-security
@@ -11,7 +12,7 @@ services:
     ports:
       - "8078:8078"
     environment:
-      # TODO Check that all the examples are commented out
+      # Check that all the examples are commented out
       # ***** Examples for testing in Postman *****
       #- SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db and automatic reading of the registration confirmation code!
       #- SPRING_PROFILES_ACTIVE=test,test-mail-sender-bypassing # Add 'test-mail-sender-bypassing' to any profile to bypass the error if the sending mail is not specified!
@@ -51,7 +52,7 @@ services:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
       start_period: 5s
 
   security-postgres-db:
@@ -67,7 +68,7 @@ services:
       test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-security" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
       start_period: 5s
 #    volumes:
 #      - ./myplace-app/db/security/postgres-data:/var/lib/postgresql/data

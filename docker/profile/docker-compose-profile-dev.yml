@@ -1,9 +1,8 @@
 version: '3.8'
+
+# Use sudo docker-compose -f docker/profile/docker-compose-profile-dev.yml build/up/down
+
 services:
-
-# TODO Remove the external ports. Leave it only at the gateway service and databases
-
-  # Use sudo docker-compose -f docker/profile/docker-compose-profile-dev.yml build/up/down
 
   profile-service:
     build: ../../mp-profile
@@ -33,7 +32,7 @@ services:
       test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-profile" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
       start_period: 5s
 #    volumes:
 #      - ./myplace-app/db/profile/postgres-data:/var/lib/postgresql/data

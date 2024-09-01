@@ -1,37 +1,46 @@
 version: '3.8'
-services:
 
-  # Use sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml build/up/down
+# Use sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml build/up/down
+# sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml --env-file docker/profile/.env.profile.prod up
+
+services:
 
   profile-service:
     build: ../../mp-profile
     image: mp-profile
     container_name: mp-profile
     restart: unless-stopped
-    ports:
-      - "8076"
     environment:
-      - SPRING_PROFILES_ACTIVE=production
-      - APP_DB_HOST=profile-db
-      - APP_DB_PORT=5432
-      - APP_DB_NAME=mp-profile
-      - APP_DB_USERNAME=root
-      - APP_DB_PASSWORD=root
+#      - SPRING_PROFILES_ACTIVE=production
+#      - APP_DB_HOST=profile-db
+#      - APP_DB_PORT=5432
+#      - APP_DB_NAME=mp-profile
+#      - APP_DB_USERNAME=root
+#      - APP_DB_PASSWORD=root
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - APP_DB_HOST=${APP_DB_HOST}
+      - APP_DB_PORT=${APP_DB_PORT}
+      - APP_DB_NAME=${APP_DB_NAME}
+      - APP_DB_USERNAME=${APP_DB_USERNAME}
+      - APP_DB_PASSWORD=${APP_DB_PASSWORD}
 
   profile-db:
     image: postgres:14-alpine
     container_name: mp-profile-db
     ports:
-      - "5776:5432"
+      - "${PROFILE_DB_PORT}:5432"
     environment:
-      - POSTGRES_DB=mp-profile
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+#      - POSTGRES_DB=mp-profile
+#      - POSTGRES_USER=root
+#      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-profile" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
       start_period: 5s
 #    volumes:
-#      - ./myplace-app/db/profile/postgres-data:/var/lib/postgresql/data
+#      - ./myplace-app-saved-from-docker-container/db/profile/postgres-data:/var/lib/postgresql/data

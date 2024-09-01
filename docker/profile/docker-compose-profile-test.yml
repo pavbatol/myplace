@@ -1,9 +1,8 @@
 version: '3.8'
+
+# Use sudo docker-compose -f docker/profile/docker-compose-profile-test.yml build/up/down
+
 services:
-
-# TODO Remove the external ports. Leave it only at the gateway service and databases
-
-  # Use sudo docker-compose -f docker/profile/docker-compose-profile-test.yml build/up/down
 
   profile-service:
     build: ../../mp-profile
