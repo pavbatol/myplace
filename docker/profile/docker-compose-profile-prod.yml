@@ -1,7 +1,6 @@
 version: '3.8'
 
 # Use sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml build/up/down
-# sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml --env-file docker/profile/.env.profile.prod up
 
 services:
 
@@ -10,32 +9,23 @@ services:
     image: mp-profile
     container_name: mp-profile
     restart: unless-stopped
+    env_file:
+      - ./.env.profile.prod
     environment:
-#      - SPRING_PROFILES_ACTIVE=production
-#      - APP_DB_HOST=profile-db
-#      - APP_DB_PORT=5432
-#      - APP_DB_NAME=mp-profile
-#      - APP_DB_USERNAME=root
-#      - APP_DB_PASSWORD=root
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - APP_DB_HOST=${APP_DB_HOST}
-      - APP_DB_PORT=${APP_DB_PORT}
-      - APP_DB_NAME=${APP_DB_NAME}
-      - APP_DB_USERNAME=${APP_DB_USERNAME}
-      - APP_DB_PASSWORD=${APP_DB_PASSWORD}
+      - SPRING_PROFILES_ACTIVE=production
+      - SERVER_PORT=8076
+      - APP_DB_HOST=profile-db
+      - APP_DB_PORT=5432
+      - APP_DB_NAME=mp-profile
 
   profile-db:
     image: postgres:14-alpine
     container_name: mp-profile-db
-    ports:
-      - "${PROFILE_DB_PORT}:5432"
+    env_file:
+      - ./.env.profile.prod
     environment:
-#      - POSTGRES_DB=mp-profile
-#      - POSTGRES_USER=root
-#      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=mp-profile
+      - POSTGRES_PORT=5432
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-profile" ]
       interval: 10s

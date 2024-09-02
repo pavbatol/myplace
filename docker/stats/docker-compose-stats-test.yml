@@ -37,5 +37,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+# TODO make COPY mongo-init.js in DockerFile
 #    volumes:
 #      - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
