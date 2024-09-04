@@ -1,7 +1,5 @@
 version: '3.8'
 
-# Use sudo docker-compose -f docker/security/docker-compose-security-prod.yml build/up/down
-
 services:
 
   security-service:
@@ -47,6 +45,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
-#    volumes:
-#      - ./myplace-app-saved-from-docker-container/db/security/postgres-data:/var/lib/postgresql/data
+    volumes:
+      - ./myplace-app-saved-from-docker-container/db/security/postgres-data:/var/lib/postgresql/data
 

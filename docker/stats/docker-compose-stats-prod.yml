@@ -1,11 +1,11 @@
 version: '3.8'
 
-# Use sudo docker-compose -f docker/stats/docker-compose-stats-prod.yml build/up/down
-
 services:
 
   stats-service:
-    build: ../../mp-stats/server
+    build:
+      context: ../../mp-stats/server
+      dockerfile: Dockerfile-service
     image: mp-stats
     container_name: mp-stats
     restart: unless-stopped
@@ -19,7 +19,10 @@ services:
       - APP_DB_NAME=mp-stats
 
   stats-db:
-    image: mongo:6.0.4
+    build:
+      context: ../../mp-stats/server
+      dockerfile: Dockerfile-mongo-db
+    image: mp-stats-mongo-db
     container_name: mp-stats-db
     env_file:
       - ./.env.stats.prod
@@ -27,10 +30,9 @@ services:
       - MONGO_INITDB_DATABASE=mp-stats
     healthcheck:
       test: [ "CMD","mongosh", "--eval", "db.adminCommand('ping')" ]
-      interval: 10s
+      interval: 60s
       timeout: 5s
       retries: 3
       start_period: 5s
-#    volumes:
-#      - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro # Сделать копирование и DockerFile^ COPY ../../mp-stats/server/mongo-init.js /docker-entrypoint-initdb.d/mongo-init.js
-#      - ./myplace-app-saved-from-docker-container/db/stats/mongo-data:/data/db
+    volumes:
+      - ./myplace-app-saved-from-docker-container/db/stats/mongo-data:/data/db

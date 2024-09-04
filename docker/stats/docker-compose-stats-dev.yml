@@ -1,11 +1,11 @@
 version: '3.8'
 
-# Use sudo docker-compose -f docker/stats/docker-compose-stats-dev.yml build/up/down
-
 services:
 
   stats-service:
-    build: ../../mp-stats/server
+    build:
+      context: ../../mp-stats/server
+      dockerfile: Dockerfile-service
     image: mp-stats
     container_name: mp-stats
     restart: unless-stopped
@@ -21,7 +21,10 @@ services:
       - APP_DB_PASSWORD=root
 
   stats-db:
-    image: mongo:6.0.4
+    build:
+      context: ../../mp-stats/server
+      dockerfile: Dockerfile-mongo-db
+    image: mp-stats-mongo-db
     container_name: mp-stats-db
     ports:
       - "27070:27017"
@@ -30,11 +33,10 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 60s
       timeout: 5s
       retries: 3
       start_period: 5s
 #    volumes:
-#      - ../../mp-stats/server/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      #- ./myplace-app/db/stats/mongo-data:/data/db
+#      - ./myplace-app-saved-from-docker-container/db/stats/mongo-data:/data/db

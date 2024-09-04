@@ -1,14 +1,11 @@
 version: '3.8'
 
-# Use sudo docker-compose -f docker/profile/docker-compose-profile-test.yml build/up/down
-
 services:
 
   profile-service:
     build: ../../mp-profile
     image: mp-profile
     container_name: mp-profile
-    restart: unless-stopped
     ports:
       - "8076:8076"
     environment:

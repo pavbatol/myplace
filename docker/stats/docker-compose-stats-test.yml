@@ -1,7 +1,5 @@
 version: '3.8'
 
-# Use sudo docker-compose -f docker/stats/docker-compose-stats-test.yml build/up/down
-
 services:
 
   stats-service:
@@ -15,14 +13,15 @@ services:
       - "9090:9090"
       - "9091:9091"
     environment:
+      - SPRING_PROFILES_ACTIVE=test
       - APP_DB_HOST=stats-db
       - APP_DB_PORT=27017
-      - SPRING_PROFILES_ACTIVE=test
 
   stats-db:
     build:
       context: ../../mp-stats/server
       dockerfile: Dockerfile-mongo-db
+    image: mp-stats-mongo-db
     container_name: mp-stats-db
     ports:
       - "27070:27017"

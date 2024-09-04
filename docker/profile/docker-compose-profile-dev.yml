@@ -1,7 +1,5 @@
 version: '3.8'
 
-# Use sudo docker-compose -f docker/profile/docker-compose-profile-dev.yml build/up/down
-
 services:
 
   profile-service:
@@ -35,4 +33,4 @@ services:
       retries: 3
       start_period: 5s
 #    volumes:
-#      - ./myplace-app/db/profile/postgres-data:/var/lib/postgresql/data
+#      - ./myplace-app-saved-from-docker-container/db/profile/postgres-data:/var/lib/postgresql/data

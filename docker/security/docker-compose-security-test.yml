@@ -1,18 +1,14 @@
 version: '3.8'
 
-# Use sudo docker-compose -f docker/security/docker-compose-security-test.yml build/up/down
-
 services:
 
   security-service:
     build: ../../mp-security
     image: mp-security
     container_name: mp-security
-    restart: unless-stopped
     ports:
       - "8078:8078"
     environment:
-      # Check that all the examples are commented out
       # ***** Examples for testing in Postman *****
       #- SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db and automatic reading of the registration confirmation code!
       - SPRING_PROFILES_ACTIVE=test,test-mail-sender-bypassing # Add 'test-mail-sender-bypassing' to any profile to bypass the error if the sending mail is not specified!
