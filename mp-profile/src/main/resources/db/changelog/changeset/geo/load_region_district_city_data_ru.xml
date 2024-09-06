@@ -1,0 +1,112 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1.create-temp-cities-table" author="Llama">
+        <createTable tableName="temp_cities">
+            <column name="name_ru" type="varchar(150)"/>
+            <column name="name_en" type="varchar(150)"/>
+            <column name="addr_country" type="varchar(10)"/>
+            <column name="addr_region" type="varchar(255)"/>
+            <column name="addr_district" type="varchar(255)"/>
+            <column name="name" type="varchar(150)"/>
+            <column name="wikipedia" type="varchar(255)"/>
+            <column name="longitude" type="varchar(20)"/>
+            <column name="latitude" type="varchar(20)"/>
+            <column name="id" type="bigint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2_load_data_to_temp-cities_pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            COPY temp_cities
+            FROM './mp-profile/src/main/resources/db/data/cities/cities-ru.csv'
+            DELIMITER ','
+            CSV HEADER;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2.1_load_data_to_temp-cities_h2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="h2"/>
+        </preConditions>
+        <sql>
+            INSERT INTO temp_cities
+            SELECT *
+            FROM
+            CSVREAD('./mp-profile/src/main/resources/db/data/cities/cities-ru.csv', NULL);
+        </sql>
+    </changeSet>
+
+    <changeSet id="3_insert_data_to_regions_pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            INSERT INTO regions (country_id, name)
+            SELECT c.country_id, COALESCE(t.addr_region, '-')
+            FROM countries c
+            JOIN temp_cities t
+            ON c.code = 'RU'
+            ON CONFLICT DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <changeSet id="3.1_insert_data_to_countries_h2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="h2"/>
+        </preConditions>
+        <sql>
+            MERGE INTO regions AS target
+            USING (
+            SELECT DISTINCT c.country_id AS country_id, COALESCE(t.addr_region, '-') AS addr_region
+            FROM countries c
+            JOIN temp_cities t
+            ON c.code = 'RU'
+            ) AS source
+            ON target.country_id = source.country_id AND target.name = source.addr_region
+            WHEN NOT MATCHED THEN
+            INSERT (country_id, name) VALUES (source.country_id, source.addr_region)
+        </sql>
+    </changeSet>
+
+    <changeSet id="4_insert_data_to_districts" author="pavbatol">
+        <sql>
+            INSERT INTO districts (region_id, name)
+            SELECT r.region_id AS region_id, COALESCE(t.addr_district, '-') AS addr_district
+            FROM regions r
+            JOIN temp_cities t ON r.name = COALESCE(t.addr_region, '-')
+            GROUP BY r.region_id, t.addr_district
+            HAVING NOT EXISTS (
+            SELECT 1
+            FROM districts d
+            WHERE d.region_id = r.region_id AND d.name = COALESCE(t.addr_district, '-')
+            )
+        </sql>
+    </changeSet>
+
+    <changeSet id="5_insert_data_to_cities" author="pavbatol">
+        <sql>
+            INSERT INTO cities (district_id, name)
+            SELECT DISTINCT d.district_id, t.name_ru
+            FROM districts d
+            JOIN temp_cities t ON d.name = COALESCE(t.addr_district, '-')
+            WHERE t.name_ru IS NOT NULL
+            AND NOT EXISTS (
+            SELECT 1
+            FROM cities s
+            WHERE s.district_id = d.district_id AND s.name = t.name_ru
+            )
+        </sql>
+    </changeSet>
+
+    <changeSet id="4_drop_temp_country_table" author="your_name">
+        <dropTable tableName="temp_cities"/>
+    </changeSet>
+
+</databaseChangeLog>
