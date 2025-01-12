@@ -39,7 +39,7 @@
             INSERT INTO temp_cities
             SELECT *
             FROM
-            CSVREAD('./mp-profile/src/main/resources/db/data/cities/cities-ru.csv', NULL);
+            CSVREAD('./mp-profile/src/main/resources/db/data/cities/cities-ru.csv',  ',', 'IGNORE 1');
         </sql>
     </changeSet>
 

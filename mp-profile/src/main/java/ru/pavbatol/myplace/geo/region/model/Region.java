@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.geo.region.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import ru.pavbatol.myplace.geo.IdableNameableGeo;
 import ru.pavbatol.myplace.geo.country.model.Country;
 
 import javax.persistence.*;
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "regions")
-public class Region {
+public class Region implements IdableNameableGeo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "region_id")

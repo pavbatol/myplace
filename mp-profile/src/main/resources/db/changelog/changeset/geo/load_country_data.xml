@@ -43,7 +43,7 @@
             INSERT INTO countries_temp
             SELECT *
             FROM
-            CSVREAD('./mp-profile/src/main/resources/db/data/countries/countries-all.csv', NULL);
+            CSVREAD('./mp-profile/src/main/resources/db/data/countries/countries-all.csv', ',', 'IGNORE 1');
         </sql>
     </changeSet>
 

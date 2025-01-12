@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.geo.street.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import ru.pavbatol.myplace.geo.IdableNameableGeo;
 import ru.pavbatol.myplace.geo.city.model.City;
 
 import javax.persistence.*;
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "streets")
-public class Street {
+public class Street implements IdableNameableGeo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "street_id", nullable = false)

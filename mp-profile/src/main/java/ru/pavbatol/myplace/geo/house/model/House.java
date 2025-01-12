@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.geo.house.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import ru.pavbatol.myplace.geo.IdableNameableGeo;
 import ru.pavbatol.myplace.geo.street.model.Street;
 
 import javax.persistence.*;
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "houses")
-public class House {
+public class House implements IdableNameableGeo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "house_id", nullable = false)
@@ -33,4 +34,9 @@ public class House {
 
     @Column(name = "lon")
     double lon;
+
+    @Override
+    public String getName() {
+        return number;
+    }
 }
