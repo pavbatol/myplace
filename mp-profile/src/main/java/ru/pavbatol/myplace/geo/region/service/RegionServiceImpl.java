@@ -7,7 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
+import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
 import ru.pavbatol.myplace.geo.region.dto.RegionDto;
 import ru.pavbatol.myplace.geo.region.mapper.RegionMapper;
 import ru.pavbatol.myplace.geo.region.model.Region;
@@ -19,11 +22,14 @@ import ru.pavbatol.myplace.geo.region.repository.RegionRepository;
 public class RegionServiceImpl implements RegionService {
     private static final String ENTITY_SIMPLE_NAME = Region.class.getSimpleName();
     private final RegionRepository repository;
+    private final CountryRepository countryRepository;
     private final RegionMapper mapper;
+    private final CountryMapper countryMapper;
 
+    @Transactional
     @Override
     public RegionDto create(RegionDto dto) {
-        Region entity = mapper.toEntity(dto);
+        Region entity = mapper.toEntity(dto, countryRepository, countryMapper);
         Region saved = repository.save(entity);
         log.debug("Saved {}: {}", ENTITY_SIMPLE_NAME, saved);
 

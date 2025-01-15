@@ -89,7 +89,7 @@ public class DataImportServiceImpl implements DataImportService {
             List<House> savedHouses = houseRepository.saveAll(housesToSave.values());
 
             String basePath = System.getProperty("user.dir");
-            String fileName = String.join("/", basePath, projectName, "loaded-geo-data.csv"); // TODO: Remove this after returning to the API request.
+            String fileName = String.join("/", basePath, projectName, "geo-data-load-report.csv"); // TODO: Remove this after returning to the API request.
             exportSavedDataToCsv(fileName, savedCountries, savedRegions, savedDistricts, savedCities, savedStreets, savedHouses, true); // TODO: replace exportWithId with parameters from APi request
         } catch (IOException e) {
             log.error("Error reading file: {}. Message: {}", file.getOriginalFilename(), e.getMessage());
@@ -247,14 +247,16 @@ public class DataImportServiceImpl implements DataImportService {
 
         Optional<IdableNameableGeo> optGoEntity = Optional.ofNullable(geoEntity);
         Optional<Long> optId = optGoEntity.map(IdentifiableGeo::getId);
-        String name = optGoEntity.map(NameableGeo::getName).orElse("");
 
         if (Objects.nonNull(ids)) {
             optId.ifPresent(ids::add);
         }
 
+        String name = optGoEntity.map(NameableGeo::getName).orElse("");
+        String idAsString = optId.map(id -> Long.toString(id)).orElse(" ");
+
         return stringBuilder.append("[")
-                .append(optId.map(Double::toString).orElse(" ")) // TODO: ID is displayed as a floating point, e.g., 1.0 - Correct
+                .append(idAsString)
                 .append("]")
                 .append(" ")
                 .append(name);
@@ -272,11 +274,13 @@ public class DataImportServiceImpl implements DataImportService {
     private void parseLine(String line, List<Country> countries, List<Region> regions,
                            List<District> districts, List<City> cities, List<Street> streets,
                            List<House> houses) {
+        int minFieldsRequired = 9;
         String[] fields = line.split(CSV_DELIMITER, -1);
-        if (fields.length < 9) {
-            log.error("Invalid CSV string format. Expected at least 9 fields but got: [{}]. Line: {}", fields.length, line);
+        if (fields.length < minFieldsRequired) {
+            log.error("Invalid CSV string format. Expected at least {} fields but got: [{}]. Line: {}", minFieldsRequired, fields.length, line);
             throw new IllegalArgumentException("Invalid CSV file format. Line: " + line);
         }
+
         String countryName = fields[0].trim();
         String countryCode = fields[1].trim();
         String regionName = fields[2].trim();

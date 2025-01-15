@@ -22,7 +22,7 @@ public class Region implements IdableNameableGeo {
     @Column(name = "region_id")
     Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "country_id", nullable = false)
     Country country;
 

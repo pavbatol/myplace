@@ -7,11 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
 import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.model.House;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
+import ru.pavbatol.myplace.geo.street.mapper.StreetMapper;
+import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
 
 @Slf4j
 @Service
@@ -19,11 +22,14 @@ import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
 public class HouseServiceImpl implements HouseService {
     private static final String ENTITY_SIMPLE_NAME = House.class.getSimpleName();
     private final HouseRepository repository;
+    private final StreetRepository streetRepository;
     private final HouseMapper mapper;
+    private final StreetMapper streetMapper;
 
+    @Transactional
     @Override
     public HouseDto create(HouseDto dto) {
-        House entity = mapper.toEntity(dto);
+        House entity = mapper.toEntity(dto, streetRepository, streetMapper);
         House saved = repository.save(entity);
         log.debug("Saved {}: {}", ENTITY_SIMPLE_NAME, saved);
 

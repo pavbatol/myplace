@@ -22,7 +22,7 @@ public class City implements IdableNameableGeo {
     @Column(name = "city_id")
     Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "district_id", nullable = false)
     District district;
 
