@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.geo.management;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,18 +23,10 @@ import ru.pavbatol.myplace.geo.region.repository.RegionRepository;
 import ru.pavbatol.myplace.geo.street.model.Street;
 import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.validation.constraints.NotNull;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,12 +43,9 @@ public class DataImportServiceImpl implements DataImportService {
     private final StreetRepository streetRepository;
     private final HouseRepository houseRepository;
 
-    @Value("${spring.application.name}")
-    private String projectName;
-
     @Override
     @Transactional
-    public void importDataFromCsv(MultipartFile file) {
+    public void importDataFromCsv(OutputStream outputStream, MultipartFile file) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             List<Country> countries = new ArrayList<>();
             List<Region> regions = new ArrayList<>();
@@ -88,16 +78,15 @@ public class DataImportServiceImpl implements DataImportService {
             List<Street> savedStreets = streetRepository.saveAll(streetsToSave.values());
             List<House> savedHouses = houseRepository.saveAll(housesToSave.values());
 
-            String basePath = System.getProperty("user.dir");
-            String fileName = String.join("/", basePath, projectName, "geo-data-load-report.csv"); // TODO: Remove this after returning to the API request.
-            exportSavedDataToCsv(fileName, savedCountries, savedRegions, savedDistricts, savedCities, savedStreets, savedHouses, true); // TODO: replace exportWithId with parameters from APi request
+            exportSavedDataToCsv(outputStream, savedCountries, savedRegions, savedDistricts, savedCities, savedStreets,
+                    savedHouses, true); // TODO: replace exportWithId with parameters from APi request
         } catch (IOException e) {
             log.error("Error reading file: {}. Message: {}", file.getOriginalFilename(), e.getMessage());
             throw new RuntimeException("Error reading file: " + file.getOriginalFilename(), e);
         }
     }
 
-    private void exportSavedDataToCsv(String fileName,
+    private void exportSavedDataToCsv(OutputStream outputStream,
                                       List<Country> countries,
                                       List<Region> regions,
                                       List<District> districts,
@@ -111,21 +100,9 @@ public class DataImportServiceImpl implements DataImportService {
         Set<Long> processedCityIds = new HashSet<>();
         Set<Long> processedStreetIds = new HashSet<>();
 
-        BiConsumer<IdentifiableGeo, Set<Long>> collectIds = (identifiableGeo, ids) ->
-                Optional.ofNullable(identifiableGeo)
-                        .map(IdentifiableGeo::getId)
-                        .ifPresent(ids::add);
-
-        BiFunction<NameableGeo, StringBuilder, StringBuilder> appendName = (nameableGeo, stringBuilder) ->
-                stringBuilder.append(Optional.ofNullable(nameableGeo)
-                        .map(NameableGeo::getName)
-                        .orElse(""));
-
-        Path path = Paths.get(fileName);
-        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
-                StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
-
-            writer.write(String.join(", ", "Country", "Region", "District", "City", "Street", "House", "\n")); // TODO: Add coordinates and also the ID as separate fields
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
+            writer.write(String.join(", ",
+                    "Country", "Region", "District", "City", "Street", "House", "Latitude", "Longitude", "\n"));
 
             List<List<? extends IdableNameableGeo>> nonNullGeos = Stream.of(houses, streets, cities, districts, regions, countries)
                     .filter(Objects::nonNull)
@@ -141,8 +118,8 @@ public class DataImportServiceImpl implements DataImportService {
                         exportWithId);
             }
         } catch (IOException e) {
-            log.error("Error writing file {}", path);
-            throw new RuntimeException("Error writing file " + path, e);
+            log.error("Error writing to CSV using OutputStream: {}", e.getMessage());
+            throw new RuntimeException("Error writing data to the stream", e);
         }
     }
 
@@ -153,30 +130,14 @@ public class DataImportServiceImpl implements DataImportService {
                                                           Set<Long> processedCityIds,
                                                           Set<Long> processedStreetIds,
                                                           boolean exportWithId) throws IOException {
-        assert Objects.nonNull(geos) : "Geos must not be null";
-
         StringBuilder line = new StringBuilder();
         geos = geos.stream()
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(IdableNameableGeo::getName, Comparator.nullsLast(Comparator.naturalOrder())))
+                .sorted(Comparator.comparing(IdableNameableGeo::getId, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
 
         for (IdableNameableGeo geo : geos) {
-            if (Objects.isNull(geo)) { // TODO Remove it if there is a null check above (for example, a filter in the sorting)
-                continue;
-            }
-
             line.setLength(0);
-
-            BiConsumer<IdentifiableGeo, Set<Long>> collectIds = (identifiableGeo, ids) ->
-                    Optional.ofNullable(identifiableGeo)
-                            .map(IdentifiableGeo::getId)
-                            .ifPresent(ids::add);
-
-            BiFunction<NameableGeo, StringBuilder, StringBuilder> appendName = (nameableGeo, stringBuilder) ->
-                    stringBuilder.append(Optional.ofNullable(nameableGeo)
-                            .map(NameableGeo::getName)
-                            .orElse(""));
 
             Long geoId = geo.getId();
             if (Objects.nonNull(geoId)) {
@@ -192,49 +153,34 @@ public class DataImportServiceImpl implements DataImportService {
             House house = (geo instanceof House) ? (House) geo : null;
             Street street = Optional.ofNullable(house)
                     .map(House::getStreet)
-                    .orElse((geo instanceof Street) ? (Street) geo : null);
+                    .orElseGet(() -> (geo instanceof Street) ? (Street) geo : null); // TODO: Consider return not null
             City city = Optional.ofNullable(street)
                     .map(Street::getCity)
-                    .orElse((geo instanceof City) ? (City) geo : null);
+                    .orElseGet(() -> (geo instanceof City) ? (City) geo : null);
             District district = Optional.ofNullable(city)
                     .map(City::getDistrict)
-                    .orElse((geo instanceof District) ? (District) geo : null);
+                    .orElseGet(() -> (geo instanceof District) ? (District) geo : null);
             Region region = Optional.ofNullable(district)
                     .map(District::getRegion)
-                    .orElse((geo instanceof Region) ? (Region) geo : null);
+                    .orElseGet(() -> (geo instanceof Region) ? (Region) geo : null);
             Country country = Optional.ofNullable(region)
                     .map(Region::getCountry)
-                    .orElse((geo instanceof Country) ? (Country) geo : null);
+                    .orElseGet(() -> (geo instanceof Country) ? (Country) geo : null);
 
-            if (exportWithId) {
-                appendGeoDetailsAndCollectIds(country, line, processedCountryIds)
-                        .append(CSV_DELIMITER);
-                appendGeoDetailsAndCollectIds(region, line, processedRegionIds)
-                        .append(CSV_DELIMITER);
-                appendGeoDetailsAndCollectIds(district, line, processedDistrictIds)
-                        .append(CSV_DELIMITER);
-                appendGeoDetailsAndCollectIds(city, line, processedCityIds)
-                        .append(CSV_DELIMITER);
-                appendGeoDetailsAndCollectIds(street, line, processedStreetIds)
-                        .append(CSV_DELIMITER);
-                appendGeoDetails(house, line);
-            } else {
-                appendName.apply(country, line).append(CSV_DELIMITER);
-                collectIds.accept(country, processedCountryIds);
+            appendGeoDetailsAndCollectIds(country, line, processedCountryIds, exportWithId)
+                    .append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(region, line, processedRegionIds, exportWithId)
+                    .append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(district, line, processedDistrictIds, exportWithId)
+                    .append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(city, line, processedCityIds, exportWithId)
+                    .append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(street, line, processedStreetIds, exportWithId)
+                    .append(CSV_DELIMITER);
+            appendGeoDetails(house, line, exportWithId);
 
-                appendName.apply(region, line).append(CSV_DELIMITER);
-                collectIds.accept(region, processedRegionIds);
-
-                appendName.apply(district, line).append(CSV_DELIMITER);
-                collectIds.accept(district, processedDistrictIds);
-
-                appendName.apply(city, line).append(CSV_DELIMITER);
-                collectIds.accept(city, processedCityIds);
-
-                appendName.apply(street, line).append(CSV_DELIMITER);
-                collectIds.accept(street, processedStreetIds);
-
-                appendName.apply(house, line);
+            if (Objects.nonNull(house)) {
+                line.append(CSV_DELIMITER).append(house.getLat()).append(CSV_DELIMITER).append(house.getLon());
             }
 
             line.append("\n");
@@ -242,9 +188,10 @@ public class DataImportServiceImpl implements DataImportService {
         }
     }
 
-    private StringBuilder processGeoDetailsByAppendingAndCollecting(IdableNameableGeo geoEntity, StringBuilder stringBuilder, Set<Long> ids) {
-        assert stringBuilder != null : "stringBuilder cannot be null";
-
+    private StringBuilder processGeoDetailsByAppendingAndCollecting(@Nullable IdableNameableGeo geoEntity,
+                                                                    @NotNull StringBuilder stringBuilder,
+                                                                    @Nullable Set<Long> ids,
+                                                                    boolean exportWithId) {
         Optional<IdableNameableGeo> optGoEntity = Optional.ofNullable(geoEntity);
         Optional<Long> optId = optGoEntity.map(IdentifiableGeo::getId);
 
@@ -253,22 +200,23 @@ public class DataImportServiceImpl implements DataImportService {
         }
 
         String name = optGoEntity.map(NameableGeo::getName).orElse("");
-        String idAsString = optId.map(id -> Long.toString(id)).orElse(" ");
 
-        return stringBuilder.append("[")
-                .append(idAsString)
+        return exportWithId
+                ? stringBuilder.append("[")
+                .append(optId.map(id -> Long.toString(id)).orElse(" "))
                 .append("]")
                 .append(" ")
-                .append(name);
+                .append(name)
+                : stringBuilder.append(name);
     }
 
-    private StringBuilder appendGeoDetailsAndCollectIds(IdableNameableGeo geoEntity, StringBuilder stringBuilder, Set<Long> ids) {
-        assert ids != null : "ids cannot be null";
-        return processGeoDetailsByAppendingAndCollecting(geoEntity, stringBuilder, ids);
+    private StringBuilder appendGeoDetailsAndCollectIds(IdableNameableGeo geoEntity, StringBuilder stringBuilder,
+                                                        @NotNull Set<Long> ids, boolean exportWithId) {
+        return processGeoDetailsByAppendingAndCollecting(geoEntity, stringBuilder, ids, exportWithId);
     }
 
-    private StringBuilder appendGeoDetails(IdableNameableGeo geoEntity, StringBuilder stringBuilder) {
-        return processGeoDetailsByAppendingAndCollecting(geoEntity, stringBuilder, null);
+    private StringBuilder appendGeoDetails(IdableNameableGeo geoEntity, StringBuilder stringBuilder, boolean exportWithId) {
+        return processGeoDetailsByAppendingAndCollecting(geoEntity, stringBuilder, null, exportWithId);
     }
 
     private void parseLine(String line, List<Country> countries, List<Region> regions,
@@ -288,7 +236,7 @@ public class DataImportServiceImpl implements DataImportService {
         String cityName = fields[4].trim();
         String streetName = fields[5].trim();
         String houseNumber = fields[6].trim();
-        double houseLat = parseCoordinate(fields[7]); // TODO: Consider what to return if the field is empty: 0.0 or null
+        double houseLat = parseCoordinate(fields[7]);
         double houseLon = parseCoordinate(fields[8]);
 
         Country country = null;
