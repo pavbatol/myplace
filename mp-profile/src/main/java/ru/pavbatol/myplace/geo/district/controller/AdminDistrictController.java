@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("admin/geo/districts")
+@RequestMapping("${api.prefix}/admin/geo/districts")
 @RequiredArgsConstructor
 @Tag(name = "Admin: District", description = "API for working with District")
 public class AdminDistrictController {

@@ -1,6 +1,9 @@
 server:
   port: 8076
 
+api:
+  prefix: /api/v1
+
 spring:
   application:
     name: mp-profile
@@ -35,4 +38,4 @@ logging:
   level:
     ru.pavbatol: DEBUG
     org.springframework.web: DEBUG
-    org.hibernate.type: TRACE
+#    org.hibernate.type: TRACE

@@ -12,7 +12,7 @@ import ru.pavbatol.myplace.geo.street.service.StreetService;
 
 @Slf4j
 @RestController
-@RequestMapping("user/geo/streets")
+@RequestMapping("${api.prefix}/user/geo/streets")
 @RequiredArgsConstructor
 @Tag(name = "Private: Street", description = "API for working with Street")
 public class PrivateStreetController {

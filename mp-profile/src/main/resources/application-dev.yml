@@ -1,6 +1,9 @@
 server:
   port: 8076
 
+api:
+  prefix: /api/v1
+
 spring:
   application:
     name: mp-profile

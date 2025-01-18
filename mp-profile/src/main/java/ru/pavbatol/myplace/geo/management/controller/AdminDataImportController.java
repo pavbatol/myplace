@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @RestController
-@RequestMapping("admin/geo/upload") // TODO: Add prefix for APi
+@RequestMapping("${api.prefix}/admin/geo/upload")
 @RequiredArgsConstructor
 @Tag(name = "Admin: Import geo data", description = "API for importing geo data from CSV")
 public class AdminDataImportController {
