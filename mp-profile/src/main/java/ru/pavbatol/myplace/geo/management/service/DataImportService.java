@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.geo.management;
+package ru.pavbatol.myplace.geo.management.service;
 
 import org.springframework.web.multipart.MultipartFile;
 

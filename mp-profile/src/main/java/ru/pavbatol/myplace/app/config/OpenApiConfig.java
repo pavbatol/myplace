@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Security service Api",
-                description = "MyPlace >> mp-security service", version = "1.0.0",
+                title = "Profile service Api",
+                description = "MyPlace >> mp-profile service", version = "1.0.0",
                 contact = @Contact(
                         name = "Pavlik Sergey",
                         email = "pavbatol@yandex.ru"
@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
                         name = "License MIT",
                         url = "https://mit-license.org/"
                 )
-
         )
 )
 @SecurityScheme(

@@ -13,11 +13,21 @@
             margin: 0;
             font-family: Arial, sans-serif;
         }
+
         form {
             border: 1px solid #ccc;
             padding: 20px;
             border-radius: 5px;
-            background-color: #f9f9f9; 
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="file"],
+        input[type="submit"],
+        label {
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -26,6 +36,12 @@
 <form action="http://localhost:8076/admin/geo/upload/csv" method="POST" enctype="multipart/form-data">
     <label for="file-input">Select CSV file:</label>
     <input type="file" id="file-input" name="file" accept=".csv" required>
+    <label>
+        <input type="checkbox" name="responseExportWithId" value="true">
+        Response with entity ID
+    </label>
+    <br/>
+    <br/>
     <input type="submit" value="Import from the file and get a CSV report">
 </form>
 

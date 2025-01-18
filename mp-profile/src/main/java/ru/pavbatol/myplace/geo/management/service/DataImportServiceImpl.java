@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.geo.management;
+package ru.pavbatol.myplace.geo.management.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +78,7 @@ public class DataImportServiceImpl implements DataImportService {
             List<House> savedHouses = houseRepository.saveAll(housesToSave.values());
 
             exportSavedDataToCsv(outputStream, savedCountries, savedRegions, savedDistricts, savedCities, savedStreets,
-                    savedHouses, responseExportWithId); // TODO: replace exportWithId with parameters from APi request
+                    savedHouses, responseExportWithId);
         } catch (IOException e) {
             log.error("Error reading file: {}. Message: {}", file.getOriginalFilename(), e.getMessage());
             throw new RuntimeException("Error reading file: " + file.getOriginalFilename(), e);
@@ -101,7 +101,7 @@ public class DataImportServiceImpl implements DataImportService {
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
             writer.write(String.join(", ",
-                    "CountryCode", "Country", "Region", "District", "City", "Street", "House", "Latitude", "Longitude", "\n")); // TODO: add country code
+                    "CountryCode", "Country", "Region", "District", "City", "Street", "House", "Latitude", "Longitude", "\n"));
 
             List<List<? extends IdableNameableGeo>> nonNullGeos = Stream.of(houses, streets, cities, districts, regions, countries)
                     .filter(Objects::nonNull)
