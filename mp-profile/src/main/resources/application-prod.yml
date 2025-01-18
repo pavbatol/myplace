@@ -17,11 +17,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         format_sql: true
-  sql:
-    init:
-      mode: always
-#      schema-locations: classpath:sql/schema.sql
-#      data-locations: classpath:sql/data.sql
   banner:
     location: banner/banner.txt
   mvc:

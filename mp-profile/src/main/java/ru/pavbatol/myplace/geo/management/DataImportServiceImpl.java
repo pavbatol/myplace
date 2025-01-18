@@ -2,7 +2,6 @@ package ru.pavbatol.myplace.geo.management;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +44,7 @@ public class DataImportServiceImpl implements DataImportService {
 
     @Override
     @Transactional
-    public void importDataFromCsv(OutputStream outputStream, MultipartFile file) {
+    public void importDataFromCsv(OutputStream outputStream, MultipartFile file, boolean responseExportWithId) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             List<Country> countries = new ArrayList<>();
             List<Region> regions = new ArrayList<>();
@@ -79,7 +78,7 @@ public class DataImportServiceImpl implements DataImportService {
             List<House> savedHouses = houseRepository.saveAll(housesToSave.values());
 
             exportSavedDataToCsv(outputStream, savedCountries, savedRegions, savedDistricts, savedCities, savedStreets,
-                    savedHouses, true); // TODO: replace exportWithId with parameters from APi request
+                    savedHouses, responseExportWithId); // TODO: replace exportWithId with parameters from APi request
         } catch (IOException e) {
             log.error("Error reading file: {}. Message: {}", file.getOriginalFilename(), e.getMessage());
             throw new RuntimeException("Error reading file: " + file.getOriginalFilename(), e);
@@ -102,7 +101,7 @@ public class DataImportServiceImpl implements DataImportService {
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
             writer.write(String.join(", ",
-                    "Country", "Region", "District", "City", "Street", "House", "Latitude", "Longitude", "\n"));
+                    "CountryCode", "Country", "Region", "District", "City", "Street", "House", "Latitude", "Longitude", "\n")); // TODO: add country code
 
             List<List<? extends IdableNameableGeo>> nonNullGeos = Stream.of(houses, streets, cities, districts, regions, countries)
                     .filter(Objects::nonNull)
@@ -133,7 +132,7 @@ public class DataImportServiceImpl implements DataImportService {
         StringBuilder line = new StringBuilder();
         geos = geos.stream()
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(IdableNameableGeo::getId, Comparator.nullsLast(Comparator.naturalOrder())))
+                .sorted(Comparator.comparing(IdableNameableGeo::getId, Comparator.nullsLast(Comparator.naturalOrder()))) // TODO: Try to sort with country name
                 .collect(Collectors.toList());
 
         for (IdableNameableGeo geo : geos) {
@@ -166,6 +165,10 @@ public class DataImportServiceImpl implements DataImportService {
             Country country = Optional.ofNullable(region)
                     .map(Region::getCountry)
                     .orElseGet(() -> (geo instanceof Country) ? (Country) geo : null);
+
+            if (Objects.nonNull(country)) {
+                line.append(country.getCode()).append(CSV_DELIMITER);
+            }
 
             appendGeoDetailsAndCollectIds(country, line, processedCountryIds, exportWithId)
                     .append(CSV_DELIMITER);

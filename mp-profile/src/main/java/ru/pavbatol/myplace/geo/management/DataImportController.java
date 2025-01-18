@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @RestController
-@RequestMapping("admin/geo/upload")
+@RequestMapping("admin/geo/upload") // TODO: Add prefix for APi
 @RequiredArgsConstructor
 public class DataImportController {
     private final DataImportService dataImportService;
@@ -26,8 +26,9 @@ public class DataImportController {
     private String serviceName;
 
     @PostMapping("/csv")
-    public ResponseEntity<StreamingResponseBody> uploadCsv(@RequestParam("file") MultipartFile file) {
-        log.debug("POST uploadCsv with file sized {} byte", file.getSize());
+    public ResponseEntity<StreamingResponseBody> uploadCsv(@RequestParam("file") MultipartFile file,
+                                                           @RequestParam(value = "responseExportWithId", defaultValue = "false") boolean responseExportWithId) { // TODO: Add this into html form
+        log.debug("POST uploadCsv with file sized {} byte; responseExportWithId={}", file.getSize(), responseExportWithId);
         long maxFileSizeMb = 5;
 
         if (file.isEmpty()) {
@@ -58,7 +59,7 @@ public class DataImportController {
 
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(outputStream -> dataImportService.importDataFromCsv(outputStream, file));
+                .body(outputStream -> dataImportService.importDataFromCsv(outputStream, file, responseExportWithId));
     }
 }
 
