@@ -33,6 +33,21 @@ public class AdminDataImportController {
             @Parameter(description = "CSV file to upload", required = true) @RequestPart("file") MultipartFile file,
             @RequestParam(value = "responseExportWithId", defaultValue = "false") boolean responseExportWithId) {
         log.debug("POST uploadCsv with file sized {} byte; responseExportWithId={}", file.getSize(), responseExportWithId);
+
+        validateFile(file);
+
+        String formattedDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
+        String fileName = String.join("_", serviceName, "geo-data-load-report", formattedDateTime) + ".csv";
+
+        return ResponseEntity.ok()
+                .headers(httpHeaders -> {
+                    httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+                    httpHeaders.add(HttpHeaders.CONTENT_TYPE, "text/csv");
+                })
+                .body(outputStream -> dataImportService.importDataFromCsv(outputStream, file, responseExportWithId));
+    }
+
+    private void validateFile(MultipartFile file) {
         long maxFileSizeMb = 5;
 
         if (file.isEmpty()) {
@@ -50,20 +65,7 @@ public class AdminDataImportController {
 
         String contentType = file.getContentType();
         if (!"text/csv".equals(contentType) && !"application/vnd.ms-excel".equals(contentType)) {
-            throw new IllegalArgumentException("Invalid file type. A text CSV file was expected..");
+            throw new IllegalArgumentException("Invalid file type. A text CSV file was expected.");
         }
-
-        LocalDateTime dateTime = LocalDateTime.now();
-        String formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
-        String fileName = String.join("_", serviceName, "geo-data-load-report", formattedDateTime) + ".csv";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
-        headers.add(HttpHeaders.CONTENT_TYPE, "text/csv");
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(outputStream -> dataImportService.importDataFromCsv(outputStream, file, responseExportWithId));
     }
 }
-

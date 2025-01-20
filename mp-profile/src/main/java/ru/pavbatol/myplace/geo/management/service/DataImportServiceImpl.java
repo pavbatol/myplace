@@ -27,7 +27,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -93,49 +92,41 @@ public class DataImportServiceImpl implements DataImportService {
                                       List<Street> streets,
                                       List<House> houses,
                                       boolean exportWithId) {
-        Set<Long> processedCountryIds = new HashSet<>();
-        Set<Long> processedRegionIds = new HashSet<>();
-        Set<Long> processedDistrictIds = new HashSet<>();
-        Set<Long> processedCityIds = new HashSet<>();
-        Set<Long> processedStreetIds = new HashSet<>();
-
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
             writer.write(String.join(", ",
                     "CountryCode", "Country", "Region", "District", "City", "Street", "House", "Latitude", "Longitude", "\n"));
 
-            List<List<? extends IdableNameableGeo>> nonNullGeos = Stream.of(houses, streets, cities, districts, regions, countries)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            List<IdableNameableGeo> allGeos = new ArrayList<>(houses);
+            allGeos.addAll(streets);
+            allGeos.addAll(cities);
+            allGeos.addAll(districts);
+            allGeos.addAll(regions);
+            allGeos.addAll(countries);
 
-            for (List<? extends IdableNameableGeo> geos : nonNullGeos) {
-                exportData(geos, writer,
-                        processedCountryIds,
-                        processedRegionIds,
-                        processedDistrictIds,
-                        processedCityIds,
-                        processedStreetIds,
-                        exportWithId);
-            }
+            allGeos.sort(new GeoComparator());
+
+            writeData(allGeos, writer, exportWithId);
+
         } catch (IOException e) {
             log.error("Error writing to CSV using OutputStream: {}", e.getMessage());
             throw new RuntimeException("Error writing data to the stream", e);
         }
     }
 
-    private <T extends IdableNameableGeo> void exportData(List<T> geos, BufferedWriter writer,
-                                                          Set<Long> processedCountryIds,
-                                                          Set<Long> processedRegionIds,
-                                                          Set<Long> processedDistrictIds,
-                                                          Set<Long> processedCityIds,
-                                                          Set<Long> processedStreetIds,
-                                                          boolean exportWithId) throws IOException {
+    private <T extends IdableNameableGeo> void writeData(List<T> geos, BufferedWriter writer, boolean exportWithId) throws IOException {
+        Set<Long> processedCountryIds = new HashSet<>();
+        Set<Long> processedRegionIds = new HashSet<>();
+        Set<Long> processedDistrictIds = new HashSet<>();
+        Set<Long> processedCityIds = new HashSet<>();
+        Set<Long> processedStreetIds = new HashSet<>();
+
         StringBuilder line = new StringBuilder();
-        geos = geos.stream()
-                .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(IdableNameableGeo::getId, Comparator.nullsLast(Comparator.naturalOrder()))) // TODO: Try to sort with country name
-                .collect(Collectors.toList());
 
         for (IdableNameableGeo geo : geos) {
+            if (Objects.isNull(geo)) {
+                continue;
+            }
+
             line.setLength(0);
 
             Long geoId = geo.getId();
@@ -150,38 +141,43 @@ public class DataImportServiceImpl implements DataImportService {
             }
 
             House house = (geo instanceof House) ? (House) geo : null;
-            Street street = Optional.ofNullable(house)
-                    .map(House::getStreet)
-                    .orElseGet(() -> (geo instanceof Street) ? (Street) geo : null); // TODO: Consider return not null
-            City city = Optional.ofNullable(street)
-                    .map(Street::getCity)
-                    .orElseGet(() -> (geo instanceof City) ? (City) geo : null);
-            District district = Optional.ofNullable(city)
-                    .map(City::getDistrict)
-                    .orElseGet(() -> (geo instanceof District) ? (District) geo : null);
-            Region region = Optional.ofNullable(district)
-                    .map(District::getRegion)
-                    .orElseGet(() -> (geo instanceof Region) ? (Region) geo : null);
-            Country country = Optional.ofNullable(region)
-                    .map(Region::getCountry)
-                    .orElseGet(() -> (geo instanceof Country) ? (Country) geo : null);
+
+            Street street = Objects.nonNull(house) ? house.getStreet() : null;
+            if (Objects.isNull(street)) {
+                street = (geo instanceof Street) ? (Street) geo : null;
+            }
+
+            City city = Objects.nonNull(street) ? street.getCity() : null;
+            if (Objects.isNull(city)) {
+                city = (geo instanceof City) ? (City) geo : null;
+            }
+
+
+            District district = Objects.nonNull(city) ? city.getDistrict() : null;
+            if (Objects.isNull(district)) {
+                district = (geo instanceof District) ? (District) geo : null;
+            }
+
+
+            Region region = Objects.nonNull(district) ? district.getRegion() : null;
+            if (Objects.isNull(region)) {
+                region = (geo instanceof Region) ? (Region) geo : null;
+            }
+
+            Country country = Objects.nonNull(region) ? region.getCountry() : null;
+            if (Objects.isNull(country)) {
+                country = (geo instanceof Country) ? (Country) geo : null;
+            }
 
             if (Objects.nonNull(country)) {
                 line.append(country.getCode()).append(CSV_DELIMITER);
             }
-
-            appendGeoDetailsAndCollectIds(country, line, processedCountryIds, exportWithId)
-                    .append(CSV_DELIMITER);
-            appendGeoDetailsAndCollectIds(region, line, processedRegionIds, exportWithId)
-                    .append(CSV_DELIMITER);
-            appendGeoDetailsAndCollectIds(district, line, processedDistrictIds, exportWithId)
-                    .append(CSV_DELIMITER);
-            appendGeoDetailsAndCollectIds(city, line, processedCityIds, exportWithId)
-                    .append(CSV_DELIMITER);
-            appendGeoDetailsAndCollectIds(street, line, processedStreetIds, exportWithId)
-                    .append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(country, line, processedCountryIds, exportWithId).append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(region, line, processedRegionIds, exportWithId).append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(district, line, processedDistrictIds, exportWithId).append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(city, line, processedCityIds, exportWithId).append(CSV_DELIMITER);
+            appendGeoDetailsAndCollectIds(street, line, processedStreetIds, exportWithId).append(CSV_DELIMITER);
             appendGeoDetails(house, line, exportWithId);
-
             if (Objects.nonNull(house)) {
                 line.append(CSV_DELIMITER).append(house.getLat()).append(CSV_DELIMITER).append(house.getLon());
             }
