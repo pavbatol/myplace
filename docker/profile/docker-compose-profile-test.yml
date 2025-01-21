@@ -10,3 +10,5 @@ services:
       - "8076:8076"
     environment:
       - SPRING_PROFILES_ACTIVE=test
+    volumes:
+      - ../../mp-profile/src/main/resources/db/data:/app/db/data

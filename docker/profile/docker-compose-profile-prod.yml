@@ -31,4 +31,4 @@ services:
       retries: 3
       start_period: 5s
     volumes:
-      - ./myplace-app-saved-from-docker-container/db/profile/postgres-data:/var/lib/postgresql/data
+      - ../../mp-profile/src/main/resources/db/data:/app/db/data

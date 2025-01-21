@@ -8,10 +8,10 @@
         <createTable tableName="countries_temp">
             <column name="name_ru" type="varchar(150)"/>
             <column name="name_en" type="varchar(150)"/>
-            <column name="ISO3166_1" type="varchar(10)"/>
-            <column name="ISO3166_1_alpha2" type="varchar(10)"/>
-            <column name="ISO3166_1_alpha3" type="varchar(10)"/>
-            <column name="ISO3166_1_numeric" type="varchar(10)"/>
+            <column name="iso3166_1" type="varchar(10)"/>
+            <column name="iso3166_1_alpha2" type="varchar(10)"/>
+            <column name="iso3166_1_alpha3" type="varchar(10)"/>
+            <column name="iso3166_1_numeric" type="varchar(10)"/>
             <column name="country_code_iso3166_1_alpha_2" type="varchar(10)"/>
             <column name="country_code_fips" type="varchar(10)"/>
             <column name="official_name_ru" type="varchar(150)"/>
@@ -29,7 +29,7 @@
         </preConditions>
         <sql>
             COPY countries_temp
-            FROM './mp-profile/src/main/resources/db/data/countries/countries-all.csv'
+            FROM '/app/db/data/countries/countries-all.csv'
             DELIMITER ','
             CSV HEADER;
         </sql>
@@ -43,7 +43,7 @@
             INSERT INTO countries_temp
             SELECT *
             FROM
-            CSVREAD('./mp-profile/src/main/resources/db/data/countries/countries-all.csv', ',', 'IGNORE 1');
+            CSVREAD('/app/db/data/countries/countries-all.csv', NULL, 'fieldSeparator=,' 'writeColumnHeader=false');
         </sql>
     </changeSet>
 
@@ -54,14 +54,14 @@
         <sql>
             INSERT INTO countries (code, name)
             SELECT
-            COALESCE(country_code_iso3166_1_alpha_2, ISO3166_1_alpha2) AS country_code,
+            COALESCE(country_code_iso3166_1_alpha_2, iso3166_1_alpha2) AS country_code,
             COALESCE(name_ru, official_name_ru, name_en, official_name_en) AS country_name
             FROM countries_temp
             WHERE
-            COALESCE(country_code_iso3166_1_alpha_2, ISO3166_1_alpha2) IS NOT NULL
+            COALESCE(country_code_iso3166_1_alpha_2, iso3166_1_alpha2) IS NOT NULL
             AND
             COALESCE(name_ru, official_name_ru, name_en, official_name_en) IS NOT NULL
-            ON CONFLICT (code) DO NOTHING;
+            ON CONFLICT (name) DO NOTHING;
         </sql>
     </changeSet>
 
@@ -73,11 +73,11 @@
             MERGE INTO countries AS target
             USING (
             SELECT
-            COALESCE(country_code_iso3166_1_alpha_2, ISO3166_1_alpha2) AS country_code,
+            COALESCE(country_code_iso3166_1_alpha_2, iso3166_1_alpha2) AS country_code,
             COALESCE(name_ru, official_name_ru, name_en, official_name_en) AS country_name
             FROM countries_temp
             WHERE
-            COALESCE(country_code_iso3166_1_alpha_2, ISO3166_1_alpha2) IS NOT NULL
+            COALESCE(country_code_iso3166_1_alpha_2, iso3166_1_alpha2) IS NOT NULL
             AND
             COALESCE(name_ru, official_name_ru, name_en, official_name_en) IS NOT NULL
             ) AS source

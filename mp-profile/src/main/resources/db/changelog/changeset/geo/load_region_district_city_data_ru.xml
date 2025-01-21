@@ -25,7 +25,7 @@
         </preConditions>
         <sql>
             COPY temp_cities
-            FROM './mp-profile/src/main/resources/db/data/cities/cities-ru.csv'
+            FROM '/app/db/data/cities/cities-ru.csv'
             DELIMITER ','
             CSV HEADER;
         </sql>
@@ -39,7 +39,7 @@
             INSERT INTO temp_cities
             SELECT *
             FROM
-            CSVREAD('./mp-profile/src/main/resources/db/data/cities/cities-ru.csv',  ',', 'IGNORE 1');
+            CSVREAD('/app/db/data/cities/cities-ru.csv', NULL, 'fieldSeparator=,' 'writeColumnHeader=false');
         </sql>
     </changeSet>
 
@@ -57,7 +57,7 @@
         </sql>
     </changeSet>
 
-    <changeSet id="3.1_insert_data_to_countries_h2" author="pavbatol">
+    <changeSet id="3.1_insert_data_to_regions_h2" author="pavbatol">
         <preConditions onFail="MARK_RAN">
             <dbms type="h2"/>
         </preConditions>
