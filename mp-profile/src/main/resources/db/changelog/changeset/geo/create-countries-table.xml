@@ -8,7 +8,7 @@
         <createSequence sequenceName="seq_countries" minValue="1" startValue="1" incrementBy="1"/>
     </changeSet>
 
-    <changeSet id="2-create-countries-table" author="your_name">
+    <changeSet id="2-create-countries-table" author="pavbatol">
         <createTable tableName="countries">
 
             <column name="country_id" type="bigint" defaultValueComputed="nextval('seq_countries')">

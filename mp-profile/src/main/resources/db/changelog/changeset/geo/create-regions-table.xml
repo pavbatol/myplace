@@ -11,7 +11,7 @@
                         incrementBy="1"/>
     </changeSet>
 
-    <changeSet id="2-create-regions-table" author="your_name">
+    <changeSet id="2-create-regions-table" author="pavbatol">
         <createTable tableName="regions">
             <column name="region_id" type="bigint" defaultValueComputed="nextval('seq_regions')">
                 <constraints nullable="false"/>

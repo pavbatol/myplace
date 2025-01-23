@@ -19,28 +19,22 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2_load_data_to_temp-cities_pgsql" author="pavbatol">
-        <preConditions onFail="MARK_RAN">
-            <dbms type="postgresql"/>
-        </preConditions>
-        <sql>
-            COPY temp_cities
-            FROM '/app/db/data/cities/cities-ru.csv'
-            DELIMITER ','
-            CSV HEADER;
-        </sql>
-    </changeSet>
-
-    <changeSet id="2.1_load_data_to_temp-cities_h2" author="pavbatol">
-        <preConditions onFail="MARK_RAN">
-            <dbms type="h2"/>
-        </preConditions>
-        <sql>
-            INSERT INTO temp_cities
-            SELECT *
-            FROM
-            CSVREAD('/app/db/data/cities/cities-ru.csv', NULL, 'fieldSeparator=,' 'writeColumnHeader=false');
-        </sql>
+    <changeSet id="2_load_data_to_temp-cities" author="pavbatol">
+        <loadData file="classpath:db/data/cities/cities-ru.csv"
+                  tableName="temp_cities"
+                  separator=","
+                  encoding="UTF-8">
+            <column name="name_ru" index="0"/>
+            <column name="name_en" index="1"/>
+            <column name="addr_country" index="2"/>
+            <column name="addr_region" index="3"/>
+            <column name="addr_district" index="4"/>
+            <column name="name" index="5"/>
+            <column name="wikipedia" index="6"/>
+            <column name="longitude" index="7"/>
+            <column name="latitude" index="8"/>
+            <column name="id" index="9"/>
+        </loadData>
     </changeSet>
 
     <changeSet id="3_insert_data_to_regions_pgsql" author="pavbatol">
@@ -49,7 +43,7 @@
         </preConditions>
         <sql>
             INSERT INTO regions (country_id, name)
-            SELECT c.country_id, COALESCE(t.addr_region, '-')
+            SELECT c.country_id, COALESCE(NULLIF(t.addr_region, ''), '-')
             FROM countries c
             JOIN temp_cities t
             ON c.code = 'RU'
@@ -64,12 +58,12 @@
         <sql>
             MERGE INTO regions AS target
             USING (
-            SELECT DISTINCT c.country_id AS country_id, COALESCE(t.addr_region, '-') AS addr_region
+            SELECT DISTINCT c.country_id AS country_id, COALESCE(NULLIF(t.addr_region, ''), '-') AS addr_region
             FROM countries c
             JOIN temp_cities t
             ON c.code = 'RU'
             ) AS source
-            ON target.country_id = source.country_id AND target.name = source.addr_region
+            ON target.country_id = source.country_id AND target.name =  source.addr_region
             WHEN NOT MATCHED THEN
             INSERT (country_id, name) VALUES (source.country_id, source.addr_region)
         </sql>
@@ -78,14 +72,14 @@
     <changeSet id="4_insert_data_to_districts" author="pavbatol">
         <sql>
             INSERT INTO districts (region_id, name)
-            SELECT r.region_id AS region_id, COALESCE(t.addr_district, '-') AS addr_district
+            SELECT r.region_id AS region_id, COALESCE(NULLIF(t.addr_district, ''), '-') AS addr_district
             FROM regions r
-            JOIN temp_cities t ON r.name = COALESCE(t.addr_region, '-')
+            JOIN temp_cities t ON r.name = COALESCE(NULLIF(t.addr_region, ''), '-')
             GROUP BY r.region_id, t.addr_district
             HAVING NOT EXISTS (
             SELECT 1
             FROM districts d
-            WHERE d.region_id = r.region_id AND d.name = COALESCE(t.addr_district, '-')
+            WHERE d.region_id = r.region_id AND d.name = COALESCE(NULLIF(t.addr_district, ''), '-')
             )
         </sql>
     </changeSet>
@@ -95,17 +89,17 @@
             INSERT INTO cities (district_id, name)
             SELECT DISTINCT d.district_id, t.name_ru
             FROM districts d
-            JOIN temp_cities t ON d.name = COALESCE(t.addr_district, '-')
-            WHERE t.name_ru IS NOT NULL
+            JOIN temp_cities t ON d.name = COALESCE(NULLIF(t.addr_district, ''), '-')
+            WHERE NULLIF(t.name_ru, '') IS NOT NULL
             AND NOT EXISTS (
             SELECT 1
             FROM cities s
-            WHERE s.district_id = d.district_id AND s.name = t.name_ru
+            WHERE s.district_id = d.district_id AND s.name = NULLIF(t.name_ru, '')
             )
         </sql>
     </changeSet>
 
-    <changeSet id="4_drop_temp_country_table" author="your_name">
+    <changeSet id="4_drop_temp_country_table" author="pavbatol">
         <dropTable tableName="temp_cities"/>
     </changeSet>
 

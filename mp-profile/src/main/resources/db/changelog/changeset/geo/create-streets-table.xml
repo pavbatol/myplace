@@ -11,7 +11,7 @@
                         incrementBy="1"/>
     </changeSet>
 
-    <changeSet id="2-create-streets-table" author="your_name">
+    <changeSet id="2-create-streets-table" author="pavbatol">
         <createTable tableName="streets">
 
             <column name="street_id" type="bigint">

@@ -23,28 +23,26 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2_load_data_to_countries_temp_pgsql" author="pavbatol">
-        <preConditions onFail="MARK_RAN">
-            <dbms type="postgresql"/>
-        </preConditions>
-        <sql>
-            COPY countries_temp
-            FROM '/app/db/data/countries/countries-all.csv'
-            DELIMITER ','
-            CSV HEADER;
-        </sql>
-    </changeSet>
-
-    <changeSet id="2.1_load_data_to_countries_temp_h2" author="pavbatol">
-        <preConditions onFail="MARK_RAN">
-            <dbms type="h2"/>
-        </preConditions>
-        <sql>
-            INSERT INTO countries_temp
-            SELECT *
-            FROM
-            CSVREAD('/app/db/data/countries/countries-all.csv', NULL, 'fieldSeparator=,' 'writeColumnHeader=false');
-        </sql>
+    <changeSet id="2_load_data_to_countries_temp" author="pavbatol">
+        <loadData file="classpath:db/data/countries/countries-all.csv"
+                  tableName="countries_temp"
+                  separator=","
+                  encoding="UTF-8">
+            <column name="name_ru" index="0" defaultValue="nullable"/>
+            <column name="name_en" index="1" defaultValue="nullable"/>
+            <column name="iso3166_1" index="2" defaultValue="nullable"/>
+            <column name="iso3166_1_alpha2" index="3" defaultValue="nullable"/>
+            <column name="iso3166_1_alpha3" index="4" defaultValue="nullable"/>
+            <column name="iso3166_1_numeric" index="5" defaultValue="nullable"/>
+            <column name="country_code_iso3166_1_alpha_2" index="6" defaultValue="nullable"/>
+            <column name="country_code_fips" index="7" defaultValue="nullable"/>
+            <column name="official_name_ru" index="8" defaultValue="nullable"/>
+            <column name="official_name_en" index="9" defaultValue="nullable"/>
+            <column name="wikipedia" index="10"/>
+            <column name="longitude" index="11"/>
+            <column name="latitude" index="12"/>
+            <column name="id" index="13"/>
+        </loadData>
     </changeSet>
 
     <changeSet id="3_insert_data_to_countries_pgsql" author="pavbatol">
@@ -54,13 +52,13 @@
         <sql>
             INSERT INTO countries (code, name)
             SELECT
-            COALESCE(country_code_iso3166_1_alpha_2, iso3166_1_alpha2) AS country_code,
-            COALESCE(name_ru, official_name_ru, name_en, official_name_en) AS country_name
+            COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) AS country_code,
+            COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) AS country_name
             FROM countries_temp
             WHERE
-            COALESCE(country_code_iso3166_1_alpha_2, iso3166_1_alpha2) IS NOT NULL
+            COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) IS NOT NULL
             AND
-            COALESCE(name_ru, official_name_ru, name_en, official_name_en) IS NOT NULL
+            COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) IS NOT NULL
             ON CONFLICT (name) DO NOTHING;
         </sql>
     </changeSet>
@@ -73,21 +71,21 @@
             MERGE INTO countries AS target
             USING (
             SELECT
-            COALESCE(country_code_iso3166_1_alpha_2, iso3166_1_alpha2) AS country_code,
-            COALESCE(name_ru, official_name_ru, name_en, official_name_en) AS country_name
+            COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) AS country_code,
+            COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) AS country_name
             FROM countries_temp
             WHERE
-            COALESCE(country_code_iso3166_1_alpha_2, iso3166_1_alpha2) IS NOT NULL
+            COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) IS NOT NULL
             AND
-            COALESCE(name_ru, official_name_ru, name_en, official_name_en) IS NOT NULL
+            COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) IS NOT NULL
             ) AS source
-            ON target.code = source.country_code
+            ON target.name = source.country_name
             WHEN NOT MATCHED THEN
             INSERT (code, name) VALUES (source.country_code, source.country_name)
         </sql>
     </changeSet>
 
-    <changeSet id="4_drop_temp_country_table" author="your_name">
+    <changeSet id="4_drop_temp_country_table" author="pavbatol">
         <dropTable tableName="countries_temp"/>
     </changeSet>
 
