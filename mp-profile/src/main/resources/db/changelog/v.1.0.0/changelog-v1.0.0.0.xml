@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <!-- geo-->
+    <include file="changeset/geo/2024-08-29-create-countries-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/geo/2024-08-29-create-regions-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/geo/2024-08-29-create-districts-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/geo/2024-08-29-create-cities-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/geo/2024-08-29-create-streets-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/geo/2024-08-29-create-houses-table.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/geo/2024-09-06-load_country_data.xml" relativeToChangelogFile="true"/>
+    <include file="changeset/geo/2024-09-06-load_region_district_city_data_ru.xml" relativeToChangelogFile="true"/>
+    <!-- profile-->
+    <include file="changeset/profile/2024-08-29-create-profiles-table.yml" relativeToChangelogFile="true"/>
+
+    <!-- views-->
+    <include file="views/2024-01-24-create-views.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>
