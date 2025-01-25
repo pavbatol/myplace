@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
 
-    <changeSet id="1.create-temp-cities-table" author="Llama">
+    <changeSet id="1.create-temp-cities-table" author="pavbatol">
         <createTable tableName="temp_cities">
             <column name="name_ru" type="varchar(150)"/>
             <column name="name_en" type="varchar(150)"/>

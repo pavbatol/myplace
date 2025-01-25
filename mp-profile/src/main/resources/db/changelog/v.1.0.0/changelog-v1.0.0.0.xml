@@ -18,5 +18,5 @@
     <include file="changeset/profile/2024-08-29-create-profiles-table.yml" relativeToChangelogFile="true"/>
 
     <!-- views-->
-    <include file="views/2024-01-24-create-views.xml" relativeToChangelogFile="true"/>
+    <include file="views/2025-01-24-create-views.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
