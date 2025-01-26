@@ -44,7 +44,7 @@
                 <viewExists viewName="full_geo_data_ru"/>
             </not>
         </preConditions>
-        <createView viewName="full_geo_data_ru" remarks="Use LIMIT or FETCH for it">
+        <createView viewName="full_geo_data_ru" remarks="Use LIMIT or FETCH or WHERE for limit result">
             select cn.country_id, cn.code, cn.name country_name,
             r.region_id, r.name region_name,
             d.district_id, d.name district_name,

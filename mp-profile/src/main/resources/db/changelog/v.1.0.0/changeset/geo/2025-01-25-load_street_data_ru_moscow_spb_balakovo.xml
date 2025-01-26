@@ -1,0 +1,102 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+
+    <changeSet id="1.create-temp-streets-table" author="pavbatol">
+        <createTable tableName="temp_streets">
+            <column name="name" type="varchar(150)"/>
+            <column name="highway" type="varchar(50)"/>
+            <column name="id" type="varchar(12)"/>
+            <column name="mark" type="varchar(20)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2_change_default_value_mark" author="pavbatol">
+        <addDefaultValue tableName="temp_streets" columnName="mark" defaultValue="БАЛАКОВО"/>
+    </changeSet>
+    <changeSet id="2_1_load_data_to_temp-streets" author="pavbatol">
+        <loadData file="classpath:db/data/streets/streets-balakovo.csv"
+                  tableName="temp_streets"
+                  separator=","
+                  encoding="UTF-8">
+            <column name="name" index="0"/>
+            <column name="highway" index="1"/>
+            <column name="id" index="2"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="3_change_default_value_mark" author="pavbatol">
+        <addDefaultValue tableName="temp_streets" columnName="mark" defaultValue="САНКТ-ПЕТЕРБУРГ"/>
+    </changeSet>
+    <changeSet id="3_1_load_data_to_temp-streets" author="pavbatol">
+        <loadData file="classpath:db/data/streets/streets-spb.csv"
+                  tableName="temp_streets"
+                  separator=","
+                  encoding="UTF-8">
+            <column name="name" index="0"/>
+            <column name="highway" index="1"/>
+            <column name="id" index="2"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="4_change_default_value_mark" author="pavbatol">
+        <addDefaultValue tableName="temp_streets" columnName="mark" defaultValue="МОСКВА"/>
+    </changeSet>
+    <changeSet id="4_1_load_data_to_temp-streets" author="pavbatol">
+        <loadData file="classpath:db/data/streets/streets-moscow.csv"
+                  tableName="temp_streets"
+                  separator=","
+                  encoding="UTF-8">
+            <column name="name" index="0"/>
+            <column name="highway" index="1"/>
+            <column name="id" index="2"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="5_insert_data_to_streets" author="pavbatol">
+        <sql>
+            WITH
+            BalakovoId AS (
+            SELECT c.city_id
+            FROM cities c
+            WHERE UPPER(c.name) = 'БАЛАКОВО'
+            LIMIT 1
+            ),
+            SPBId AS (
+            SELECT c.city_id
+            FROM cities c
+            WHERE UPPER(c.name) = 'САНКТ-ПЕТЕРБУРГ'
+            LIMIT 1
+            ),
+            MoscowId AS (
+            SELECT c.city_id
+            FROM cities c
+            WHERE UPPER(c.name) = 'МОСКВА'
+            LIMIT 1
+            ),
+            DistinctTempStreets AS (
+            SELECT DISTINCT t.name, t.mark
+            FROM temp_streets t
+            )
+
+            INSERT INTO streets (city_id, name)
+            SELECT(
+            CASE
+            WHEN UPPER(t.mark) = 'БАЛАКОВО' THEN (SELECT city_id FROM BalakovoId)
+            WHEN UPPER(t.mark) = 'САНКТ-ПЕТЕРБУРГ' THEN (SELECT city_id FROM SPBId)
+            WHEN UPPER(t.mark) = 'МОСКВА' THEN (SELECT city_id FROM MoscowId)
+            ELSE NULL
+            END
+            )AS city_id,
+            t.name
+            FROM DistinctTempStreets t
+        </sql>
+    </changeSet>
+
+    <changeSet id="6_drop_temp_streets_table" author="pavbatol">
+        <dropTable tableName="temp_streets"/>
+    </changeSet>
+</databaseChangeLog>

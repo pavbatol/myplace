@@ -46,7 +46,7 @@
             SELECT c.country_id, COALESCE(NULLIF(t.addr_region, ''), '-')
             FROM countries c
             JOIN temp_cities t
-            ON c.code = 'RU'
+            ON UPPER(c.code) = 'RU'
             ON CONFLICT DO NOTHING;
         </sql>
     </changeSet>
@@ -61,7 +61,7 @@
             SELECT DISTINCT c.country_id AS country_id, COALESCE(NULLIF(t.addr_region, ''), '-') AS addr_region
             FROM countries c
             JOIN temp_cities t
-            ON c.code = 'RU'
+            ON UPPER(c.code) = 'RU'
             ) AS source
             ON target.country_id = source.country_id AND target.name =  source.addr_region
             WHEN NOT MATCHED THEN
@@ -101,7 +101,7 @@
         </sql>
     </changeSet>
 
-    <changeSet id="4_drop_temp_country_table" author="pavbatol">
+    <changeSet id="4_drop_temp_cities_table" author="pavbatol">
         <dropTable tableName="temp_cities"/>
     </changeSet>
 
