@@ -1,4 +1,4 @@
-![myplace.png](images/logo.png)
+![myplace.png](docs/images/logo.png)
 
 [RU](README-RU.md)
 
@@ -31,14 +31,14 @@ You can organize your own platform.
     <details>
     <summary>Import:</summary>
 
-    ![sample-file-to-import_geo-data.png](images/sample-file-to-import_geo-data.png)
+    ![sample-file-to-import_geo-data.png](docs/images/sample-file-to-import_geo-data.png)
 
     </details>
 
     <details>
     <summary>Report:</summary>
 
-    ![sample-geo-data-load-report.png](images/sample-geo-data-load-report.png)
+    ![sample-geo-data-load-report.png](docs/images/sample-geo-data-load-report.png)
 
     </details>
 

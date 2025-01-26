@@ -1,4 +1,4 @@
-![myplace.png](images/logo.png)
+![myplace.png](docs/images/logo.png)
 
 [EN](README.md)
 
@@ -31,14 +31,14 @@
     <details>
     <summary>Импорт:</summary>
     
-      ![sample-file-to-import_geo-data.png](images/sample-file-to-import_geo-data.png)
+      ![sample-file-to-import_geo-data.png](docs/images/sample-file-to-import_geo-data.png)
 
     </details>
 
     <details>
     <summary>Отчет:</summary>
       
-      ![sample-geo-data-load-report.png](images/sample-geo-data-load-report.png)
+      ![sample-geo-data-load-report.png](docs/images/sample-geo-data-load-report.png)
 
     </details>
     
