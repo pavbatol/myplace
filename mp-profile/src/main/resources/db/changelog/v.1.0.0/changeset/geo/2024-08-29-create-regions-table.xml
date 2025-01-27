@@ -40,4 +40,30 @@
                              constraintName="uq_regions_country_id_name"/>
     </changeSet>
 
+    <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="H2"/>
+        </preConditions>
+        <sql>
+            ALTER TABLE regions
+            ADD COLUMN lower_name VARCHAR(150) GENERATED ALWAYS AS (LOWER(name));
+
+            ALTER TABLE regions
+            ALTER COLUMN lower_name SET NOT NULL;
+
+            ALTER TABLE regions
+            ADD CONSTRAINT uq_regions_country_id_lower_name UNIQUE (country_id, lower_name);
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            CREATE UNIQUE INDEX uq_regions_country_id_lower_name ON regions(country_id, LOWER(name));
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

@@ -48,4 +48,30 @@
                              constraintName="uq_streets_city_id_name"/>
     </changeSet>
 
+    <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="H2"/>
+        </preConditions>
+        <sql>
+            ALTER TABLE streets
+            ADD COLUMN lower_name VARCHAR(150) GENERATED ALWAYS AS (LOWER(name));
+
+            ALTER TABLE streets
+            ALTER COLUMN lower_name SET NOT NULL;
+
+            ALTER TABLE streets
+            ADD CONSTRAINT uq_streets_city_id_lower_name UNIQUE (city_id, lower_name);
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            CREATE UNIQUE INDEX uq_streets_city_id_lower_name ON streets(city_id, LOWER(name));
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

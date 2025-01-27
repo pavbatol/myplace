@@ -62,23 +62,23 @@
             BalakovoId AS (
             SELECT c.city_id
             FROM cities c
-            WHERE UPPER(c.name) = 'БАЛАКОВО'
+            WHERE LOWER(c.name) = 'балаково'
             LIMIT 1
             ),
             SPBId AS (
             SELECT c.city_id
             FROM cities c
-            WHERE UPPER(c.name) = 'САНКТ-ПЕТЕРБУРГ'
+            WHERE LOWER(c.name) = 'санкт-петербург'
             LIMIT 1
             ),
             MoscowId AS (
             SELECT c.city_id
             FROM cities c
-            WHERE UPPER(c.name) = 'МОСКВА'
+            WHERE LOWER(c.name) = 'москва'
             LIMIT 1
             ),
-            DistinctTempStreets AS (
-            SELECT DISTINCT t.name, t.mark
+            RankedTempStreets AS (
+            SELECT t.name AS name, t.mark AS mark, ROW_NUMBER() OVER (PARTITION BY LOWER(t.name) ORDER BY t.name) AS rn
             FROM temp_streets t
             )
 
@@ -92,7 +92,8 @@
             END
             )AS city_id,
             t.name
-            FROM DistinctTempStreets t
+            FROM RankedTempStreets t
+            WHERE rn = 1
         </sql>
     </changeSet>
 
