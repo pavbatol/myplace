@@ -6,7 +6,7 @@
 Серверная часть для маркетплейса.  
 Вы можете организовать свою собственную торговую площадку.  
 
-<u>_Проект в разработке_</u>
+> **!** _Проект в разработке_</u>
 
 ### Готовые сервисы:
 - **Статистика (mp-stats)** `MongoDB-reactive, WebFlux, Mapstruct, Junit, Mockito, Swagger`   
@@ -24,9 +24,9 @@
   
     <div style="margin-left: 20px;">
 
-      Пример загружаемого файла и полученного отчета в виде так же CSV файла.  
+      Пример загружаемого файла и полученного отчета в виде так же CSV файла (см. [sample-file-to-import-geo.csv](docs/files/sample-file-to-import-geo.csv) и [sample-geo-data-load-report.csv](docs/files/sample-geo-data-load-report.csv)).  
       Для удобства добавлено отображение в табличном виде.   
-      Как видно, исключены дубликаты и отсортировано последовательно по полям: `Country,Region,District,City,Street,House`.
+      Процесс исключает дубликаты и сортирует последовательно по полям: `Country,Region,District,City,Street,House`.
 
     <details>
     <summary>Импорт:</summary>
@@ -63,6 +63,16 @@
 - Kubernetes
 
 ---
+
+### Open API
+
+Для визуализации спецификации, вставьте ее в любой Swagger редактор, например, этот: https://editor.swagger.io
+
+| Сервис      | Swagger UI URL                                                             | OpenAPI Docs URL                           | Спецификация                                                                         |
+|-------------|----------------------------------------------------------------------------|--------------------------------------------|--------------------------------------------------------------------------------------|
+| mp-test     | [localhost:9090/docs/swagger-ui.html](localhost:9090/docs/swagger-ui.html) | [localhost:9090/docs](localhost:9090/docs) | [mp-stats-v-1-0-0.json](docs/specification/mp-stats-service-spec-v-1-0-0.json)       |
+| mp-security | [localhost:8078/docs/swagger-ui.html](localhost:8078/docs/swagger-ui.html) | [localhost:8078/docs](localhost:8078/docs) | [mp-security-v-1-0-0.json](docs/specification/mp-security-service-spec-v-1-0-0.json) |
+| mp-profile  | [localhost:8076/docs/swagger-ui.html](localhost:8076/docs/swagger-ui.html) | [localhost:8076/docs](localhost:8076/docs) | [mp-profile-v-1-0-0.json](docs/specification/mp-profile-service-spec-v-1-0-0.json)   |
 
 ### Запуск
 
@@ -112,7 +122,7 @@ mvn clean package -Dmaven.test.skip=true
 
 
  Для запуска каждого профиля, выполните следующие команды:  
- (включена проверка `healthcheck`, самый долгий интервал выставлен 60 сек, так что нужно подождать)
+ (включена проверка `healthcheck`, так что нужно подождать)
 
 <div style="margin-left: 20px;">
 

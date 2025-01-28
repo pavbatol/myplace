@@ -7,26 +7,49 @@ services:
     image: mp-profile
     container_name: mp-profile
     restart: unless-stopped
+    depends_on:
+      profile-db:
+        condition: service_healthy
     env_file:
       - ./.env.profile.prod
     environment:
       - SPRING_PROFILES_ACTIVE=production
       - SERVER_PORT=8076
       - APP_DB_HOST=profile-db
-      - APP_DB_PORT=5432
-      - APP_DB_NAME=mp-profile
+
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - >
+        echo -e '\nStarting to set database credentials...';
+        export APP_DB_USERNAME=$$POSTGRES_USER;
+        export APP_DB_PASSWORD=$$POSTGRES_PASSWORD;
+        export APP_DB_NAME=$$POSTGRES_DB;
+        export APP_DB_PORT=$$POSTGRES_PORT;
+        [ -z $$APP_DB_USERNAME ] && { echo 'Error: APP_DB_USERNAME is not set.'; exit 1; } || echo ' - APP_DB_USERNAME ✓';
+        [ -z $$APP_DB_PASSWORD ] && { echo 'Error: APP_DB_PASSWORD is not set.'; exit 1; } || echo ' - APP_DB_PASSWORD ✓';
+        [ -z $$APP_DB_NAME ] && { echo 'Error: APP_DB_NAME is not set.'; exit 1; } || echo ' - APP_DB_NAME ✓';
+        [ -z $$APP_DB_PORT ] && { echo 'Error: APP_DB_PORT is not set.'; exit 1; } || echo ' - APP_DB_PORT ✓';
+        echo -e 'Done\n';
+        exec java -jar /app/app.jar;
 
   profile-db:
     image: postgres:14-alpine
     container_name: mp-profile-db
     env_file:
       - ./.env.profile.prod
-    environment:
-      - POSTGRES_DB=mp-profile
-      - POSTGRES_PORT=5432
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-profile" ]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 10s
       timeout: 5s
       retries: 3
       start_period: 5s
+
+    command: [ "sh", "-c", "
+              echo -e '\nStarting to check database set...';
+              [ -z $$POSTGRES_USER ] && { echo 'Error: POSTGRES_USER is not set.'; exit 1; } || echo - POSTGRES_USER ✓;
+              [ -z $$POSTGRES_PASSWORD ] && { echo 'Error: POSTGRES_PASSWORD is not set.'; exit 1; } || echo - POSTGRES_PASSWORD ✓;
+              [ -z $$POSTGRES_DB ] && { echo 'Error: POSTGRES_DB is not set.'; exit 1; } || echo - POSTGRES_DB ✓;
+              [ -z $$POSTGRES_PORT ] && { echo 'Error: POSTGRES_PORT is not set.'; exit 1; } || echo - POSTGRES_PORT ✓;
+              echo -e 'Done\n';
+              exec docker-entrypoint.sh postgres
+              " ]

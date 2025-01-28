@@ -6,7 +6,7 @@
 The server part for the marketplace.  
 You can organize your own platform.
 
-<u>_Project in development_</u>
+> **!** _Project in development_
 
 ### Ready-made services:
 - **Statistics (mp-stats)** `MongoDB reactive, Webflix, Mapstruct, Junit, Mockito, Swagger`  
@@ -24,7 +24,7 @@ You can organize your own platform.
   
     <div style="margin-left: 20px;">
 
-    Example of the uploaded file and the generated report, also in CSV format.  
+    Example of the uploaded file and the generated report, also in CSV format (see [sample-file-to-import-geo.csv](docs/files/sample-file-to-import-geo.csv) and [sample-geo-data-load-report.csv](docs/files/sample-geo-data-load-report.csv)).  
     For convenience, a tabular representation is provided.  
     The process ensures that duplicate entries are excluded, and the data is sorted sequentially by the following fields: `Country,Region,District,City,Street,House`.
 
@@ -64,7 +64,17 @@ You can organize your own platform.
 
 ---
 
-### Running the Project
+### Open API
+
+To visualize the specification, paste it into any Swagger editor. For example this one: https://editor.swagger.io
+
+| Service     | Swagger UI URL                                                             | OpenAPI Docs URL                           | Specification                                                                        |
+|-------------|----------------------------------------------------------------------------|--------------------------------------------|--------------------------------------------------------------------------------------|
+| mp-test     | [localhost:9090/docs/swagger-ui.html](localhost:9090/docs/swagger-ui.html) | [localhost:9090/docs](localhost:9090/docs) | [mp-stats-v-1-0-0.json](docs/specification/mp-stats-service-spec-v-1-0-0.json)       |
+| mp-security | [localhost:8078/docs/swagger-ui.html](localhost:8078/docs/swagger-ui.html) | [localhost:8078/docs](localhost:8078/docs) | [mp-security-v-1-0-0.json](docs/specification/mp-security-service-spec-v-1-0-0.json) |
+| mp-profile  | [localhost:8076/docs/swagger-ui.html](localhost:8076/docs/swagger-ui.html) | [localhost:8076/docs](localhost:8076/docs) | [mp-profile-v-1-0-0.json](docs/specification/mp-profile-service-spec-v-1-0-0.json)   |
+
+# Running the Project
 
 #### To run locally make sure you have the following installed:
 - JDK 11
@@ -112,7 +122,7 @@ For the `production` profile, fill in the corresponding environment variable fil
 
 
 To run each profile, execute the following commands:  
-(including the `healthcheck`, the longest interval is set to 60 seconds, so please wait)
+(including the `healthcheck`, so please wait)
 
 <div style="margin-left: 20px;">
 
