@@ -41,10 +41,6 @@
                                  referencedColumnNames="district_id"
                                  onDelete="CASCADE"
                                  constraintName="fk_cities_district_id"/>
-
-        <addUniqueConstraint tableName="cities"
-                             columnNames="district_id, name"
-                             constraintName="uq_cities_district_id_name"/>
     </changeSet>
 
     <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
@@ -60,6 +56,9 @@
 
             ALTER TABLE cities
             ADD CONSTRAINT uq_cities_district_id_lower_name UNIQUE (district_id, lower_name);
+
+            ALTER TABLE cities
+            ADD CONSTRAINT uq_cities_lower_name_district_id UNIQUE (lower_name, district_id);
         </sql>
 
     </changeSet>
@@ -70,6 +69,7 @@
         </preConditions>
         <sql>
             CREATE UNIQUE INDEX uq_cities_district_id_lower_name ON cities(district_id, LOWER(name));
+            CREATE UNIQUE INDEX uq_cities_lower_name_district_id ON cities(LOWER(name), district_id);
         </sql>
     </changeSet>
 

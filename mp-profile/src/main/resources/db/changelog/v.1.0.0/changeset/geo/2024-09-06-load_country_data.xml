@@ -59,7 +59,7 @@
             COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) IS NOT NULL
             AND
             COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) IS NOT NULL
-            ON CONFLICT (name) DO NOTHING;
+            ON CONFLICT (LOWER(name)) DO NOTHING;
         </sql>
     </changeSet>
 

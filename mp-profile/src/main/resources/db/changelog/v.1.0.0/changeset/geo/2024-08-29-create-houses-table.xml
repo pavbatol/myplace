@@ -47,10 +47,6 @@
                                  referencedColumnNames="street_id"
                                  onDelete="CASCADE"
                                  constraintName="fk_houses_street_id"/>
-
-        <addUniqueConstraint tableName="houses"
-                             columnNames="street_id, number"
-                             constraintName="uq_houses_street_id_number"/>
     </changeSet>
 
     <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
@@ -66,6 +62,9 @@
 
             ALTER TABLE houses
             ADD CONSTRAINT uq_houses_street_id_lower_number UNIQUE (street_id, lower_number);
+
+            ALTER TABLE houses
+            ADD CONSTRAINT uq_houses_lower_number_street_id UNIQUE (lower_number, street_id);
         </sql>
 
     </changeSet>
@@ -76,6 +75,7 @@
         </preConditions>
         <sql>
             CREATE UNIQUE INDEX uq_houses_street_id_lower_number ON houses(street_id, LOWER(number));
+            CREATE UNIQUE INDEX uq_houses_lower_number_street_id ON houses(LOWER(number), street_id);
         </sql>
     </changeSet>
 

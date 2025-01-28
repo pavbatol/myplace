@@ -52,7 +52,7 @@
             INSERT INTO regions (country_id, name)
             SELECT (SELECT country_id FROM RUCountryID), COALESCE(NULLIF(t.addr_region, ''), '-')
             FROM temp_cities t
-            ON CONFLICT (country_id, name) DO NOTHING;
+            ON CONFLICT (country_id, LOWER(name)) DO NOTHING;
         </sql>
     </changeSet>
 

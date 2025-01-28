@@ -34,10 +34,6 @@
                                  referencedColumnNames="country_id"
                                  onDelete="CASCADE"
                                  constraintName="fk_regions_country_id"/>
-
-        <addUniqueConstraint tableName="regions"
-                             columnNames="country_id, name"
-                             constraintName="uq_regions_country_id_name"/>
     </changeSet>
 
     <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
@@ -53,6 +49,9 @@
 
             ALTER TABLE regions
             ADD CONSTRAINT uq_regions_country_id_lower_name UNIQUE (country_id, lower_name);
+
+            ALTER TABLE regions
+            ADD CONSTRAINT uq_regions_lower_name_country_id UNIQUE (lower_name, country_id);
         </sql>
 
     </changeSet>
@@ -63,6 +62,7 @@
         </preConditions>
         <sql>
             CREATE UNIQUE INDEX uq_regions_country_id_lower_name ON regions(country_id, LOWER(name));
+            CREATE UNIQUE INDEX uq_regions_lower_name_country_id ON regions(LOWER(name), country_id);
         </sql>
     </changeSet>
 
