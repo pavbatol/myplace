@@ -3,6 +3,7 @@ version: '3.8'
 services:
 
   stats-service:
+    profiles: [ "stats", "full" ]
     extends:
       file: stats/docker-compose-stats-test.yml
       service: stats-service
@@ -11,11 +12,13 @@ services:
         condition: service_healthy
 
   stats-db:
+    profiles: [ "stats", "full" ]
     extends:
       file: stats/docker-compose-stats-test.yml
       service: stats-db
 
   security-service:
+    profiles: [ "security", "full" ]
     extends:
       file: security/docker-compose-security-test.yml
       service: security-service
@@ -24,12 +27,14 @@ services:
         condition: service_healthy
 
   security-redis-db:
+    profiles: [ "security", "full" ]
     extends:
       file: security/docker-compose-security-test.yml
       service: security-redis-db
 
 
   profile-service:
+    profiles: [ "profile", "full" ]
     extends:
       file: profile/docker-compose-profile-test.yml
       service: profile-service

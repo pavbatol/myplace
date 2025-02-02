@@ -3,24 +3,17 @@ version: '3.8'
 services:
 
   env-merger:
-    profiles: [ "env-merger" ]
+    profiles: [ "env-merger", "full", "stats", "security", "profile" ]
     image: alpine
+    container_name: mp-env-merger
+    restart: "no"
     volumes:
       - .:/app
     working_dir: /app
-    entrypoint: >
-      /bin/sh -c "
-      echo 'Starting to combine .env files...';
-      [ ! -f security/.env ] && { echo 'Error: security/.env not found'; exit 1; } || echo ' - security/.env ✓';
-      [ ! -f profile/.env ] && { echo 'Error: profile/.env not found'; exit 1; } || echo ' - profile/.env ✓';
-      [ ! -f test/.env ] && { echo 'Error: test/.env not found'; exit 1; } || echo ' - test/.env ✓';
-      cat security/.env profile/.env test/.env > .env;
-      echo 'Done';
-      "
-    restart: "no"
+    entrypoint: /bin/sh -c "chmod +x ./merge_env.sh; ./merge_env.sh; sync; sleep 1; ls -la .env"
 
   stats-service:
-    profiles: [ "stats" ]
+    profiles: [ "stats", "full" ]
     extends:
       file: stats/docker-compose-stats-prod.yml
       service: stats-service
@@ -31,16 +24,18 @@ services:
         condition: service_completed_successfully
 
   stats-db:
-    profiles: [ "stats" ]
+    profiles: [ "stats", "full" ]
     extends:
       file: stats/docker-compose-stats-prod.yml
       service: stats-db
     depends_on:
       env-merger:
         condition: service_completed_successfully
+    volumes:
+      - ../db/docker-sync/stats-service/mongo/db:/data/db
 
   security-service:
-    profiles: [ "security" ]
+    profiles: [ "security", "full" ]
     extends:
       file: security/docker-compose-security-prod.yml
       service: security-service
@@ -53,25 +48,29 @@ services:
         condition: service_completed_successfully
 
   security-redis-db:
-    profiles: [ "security" ]
+    profiles: [ "security", "full" ]
     extends:
       file: security/docker-compose-security-prod.yml
       service: security-redis-db
     depends_on:
       env-merger:
         condition: service_completed_successfully
+    volumes:
+      - ../db/docker-sync/security-service/redis/data:/data
 
   security-postgres-db:
-    profiles: [ "security" ]
+    profiles: [ "security", "full" ]
     extends:
       file: security/docker-compose-security-prod.yml
       service: security-postgres-db
     depends_on:
       env-merger:
         condition: service_completed_successfully
+    volumes:
+      - ../db/docker-sync/security-service/postgres/data:/var/lib/postgresql/data
 
   profile-service:
-    profiles: [ "profile" ]
+    profiles: [ "profile", "full" ]
     extends:
       file: profile/docker-compose-profile-prod.yml
       service: profile-service
@@ -82,10 +81,12 @@ services:
         condition: service_completed_successfully
 
   profile-db:
-    profiles: [ "profile" ]
+    profiles: [ "profile", "full" ]
     extends:
       file: profile/docker-compose-profile-prod.yml
       service: profile-db
     depends_on:
       env-merger:
         condition: service_completed_successfully
+    volumes:
+      - ../db/docker-sync/profile-service/postgres/data:/var/lib/postgresql/data

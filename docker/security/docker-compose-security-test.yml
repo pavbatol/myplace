@@ -17,7 +17,7 @@ services:
       #- SPRING_PROFILES_ACTIVE=test,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can!
       #- SPRING_PROFILES_ACTIVE=prod,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can! (the test-confirmation-code-reading is unnecessary here, because the test profile does this by default, But specifying it will not be bad)
       # *******************************************
-      #- SPRING_PROFILES_ACTIVE=default
+      #- SPRING_PROFILES_ACTIVE=test
       - APP_PROFILE_SERVER_URL=http://profile-service:8076/api/v1
       - APP_DB_HOST=security-postgres-db
       - APP_DB_PORT=5432
