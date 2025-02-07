@@ -19,7 +19,7 @@
 - **Профиль (mp-profile)** `JPA/Hibernate, Liquibase, PostgreSql, H2, Mapstruct, Swagger`
   - Сервис профиля пользователя предоставляет работу с данными: от даты регистрации до аватарки. 
   - Содержит в себе сервис `Geo` — работа с адресами.
-  - Загружается предварительный набор гео-данных: все страны; регионы, районы, и города России.
+  - Загружается предварительный набор гео-данных: все страны; регионы, районы, и города России; улицы Москвы, СПБ, Балаково.
   - Администрирование гео-данных: Возможность импортировать данные из CSV файла с получением отчета загрузки.
   
     <div style="margin-left: 20px;">
@@ -76,19 +76,22 @@
 
 ### Запуск
 
-#### Для локального запуска убедитесь, что у вас установлены:
+#### Убедитесь, что у вас установлены:
 - JDK 11
 - Apache Maven
 - Docker (не ниже 19.03.0)
-- Docker Compose (не ниже 1.27.0)
+- Docker Compose (не ниже 1.28.0)
 
-> **Примечание:** Все команды выполняйте из корня проекта.
+> **Примечание:** Все команды выполняйте из корня проекта.  
+> Для удобства запуска предлагается стандартный вариант и альтернативный, с помощью скрипта manage.sh.
+> Этот скрипт написан для использования в системах, основанных на Linux, включая, но не ограничиваясь, Ubuntu, CentOS, Debian и другими дистрибутивами.
+> Скрипт не предназначен для работы в Windows или MacOS без использования дополнительных средств, таких как WSL (Windows Subsystem for Linux) или корректной настройки среды.
 
 #### 1. Соберите проект
 
 <div style="margin-left: 20px;">
 
-Собрать с запуском тестов перед сборкой. Должны быть установлены:
+Собрать с запуском тестов перед сборкой. Должны быть установлены и запущены:
 - Redis
 - MongoDB
 - PostgreSQL
@@ -116,9 +119,9 @@ mvn clean package -Dmaven.test.skip=true
 <div style="margin-left: 20px;">
 
 Для профиля `production` заполните соответствующие файлы с переменными окружения:
-   - docker/stats/.env.stats.prod
-   - docker/security/.env.security.prod
-   - docker/profile/.env.profile.prod
+   - docker/stats/.env
+   - docker/security/.env, docker/security/env.security.prod
+   - docker/profile/.env
 
 
  Для запуска каждого профиля, выполните следующие команды:  
@@ -133,11 +136,11 @@ mvn clean package -Dmaven.test.skip=true
 
 
   ```bash
-  sudo docker-compose -f docker/docker-compose-test.yml build
+  docker-compose -f docker/docker-compose-test.yml --profile full up
   ```
-
+или
   ```bash
-  sudo docker-compose -f docker/docker-compose-test.yml up
+  docker/manage.sh test up
   ```
 
 [//]: # (</div>)
@@ -152,11 +155,11 @@ mvn clean package -Dmaven.test.skip=true
 [//]: # (<div style="margin-left: 20px;">)
 
  ```bash  
-sudo docker-compose -f docker/docker-compose-dev.yml build
+docker-compose -f docker/docker-compose-dev.yml --profile full up
  ```
-
+или
  ```bash
-sudo docker-compose -f docker/docker-compose-dev.yml up
+docker/manage.sh dev up
  ```
 
 [//]: # (</div>)
@@ -171,11 +174,11 @@ sudo docker-compose -f docker/docker-compose-dev.yml up
 [//]: # (<div style="margin-left: 20px;">)
 
  ```bash  
-sudo docker-compose -f docker/docker-compose-prod.yml build
+docker-compose -f docker/docker-compose-prod.yml --profile full up
  ```
-
+или
  ```bash
-sudo docker-compose -f docker/docker-compose-prod.yml up
+docker/manage.sh prod up
  ```
 
 </details>
@@ -200,32 +203,32 @@ sudo docker-compose -f docker/docker-compose-prod.yml up
 Профиль `test`
 
 ```bash  
-sudo docker-compose -f docker/stats/docker-compose-stats-test.yml build
+docker-compose -f docker/docker-compose-test.yml --profile stats up
 ```
-
+или
 ```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-test.yml up
+docker/manage.sh test up stats
 ```
 
 Профиль `develop`
 
-```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-dev.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-dev.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-dev.yml --profile stats up
+ ```
+или
+ ```bash
+docker/manage.sh dev up stats
+ ```
 
 Профиль `production`
 
-```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-prod.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-prod.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-prod.yml --profile stats up
+ ```
+или
+ ```bash
+docker/manage.sh prod up stats
+ ```
 
 </div>
 
@@ -240,33 +243,33 @@ sudo docker-compose -f docker/stats/docker-compose-stats-prod.yml up
 
 Профиль `test`
 
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-test.yml build
+```bash  
+docker-compose -f docker/docker-compose-test.yml --profile security up
 ```
-
+или
 ```bash 
-sudo docker-compose -f docker/security/docker-compose-security-test.yml up
+docker/manage.sh test up security
 ```
 
 Профиль `develop`
 
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-dev.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-dev.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-dev.yml --profile security up
+ ```
+или
+ ```bash
+docker/manage.sh dev up security
+ ```
 
 Профиль `production`
 
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-prod.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-prod.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-prod.yml --profile security up
+ ```
+или
+ ```bash
+docker/manage.sh prod up security
+ ```
 
 </div>
 
@@ -281,33 +284,33 @@ sudo docker-compose -f docker/security/docker-compose-security-prod.yml up
 
 Профиль `test`
 
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-test.yml build
+```bash  
+docker-compose -f docker/docker-compose-test.yml --profile profile up
 ```
-
+или
 ```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-test.yml up
+docker/manage.sh test up profile
 ```
 
 Профиль `develop`
 
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-dev.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-dev.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-dev.yml --profile profile up
+ ```
+или
+ ```bash
+docker/manage.sh dev up profile
+ ```
 
 Профиль `production`
 
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-prod.yml --profile profile up
+ ```
+или
+ ```bash
+docker/manage.sh prod up profile
+ ```
 
 </div>
 

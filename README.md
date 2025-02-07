@@ -19,7 +19,7 @@ You can organize your own platform.
 - **Profile (mp-profile)** `JPA/Hibernate, Liquibase, PostgreSql, H2, Mapstruct, Swagger`
   - The user profile service provides work with data: from the date of registration to the avatar. 
   - It contains the `Geo` service — working with addresses.
-  - Loading a preliminary set of geo-data: all countries; regions, districts, and cities of Russia.
+  - Loading a preliminary set of geo-data: all countries; regions, districts, and cities of Russia; streets of Moscow, St. Petersburg, Balakovo.
   - Geo-data administration: Ability to import data from a CSV file with a loading report.
   
     <div style="margin-left: 20px;">
@@ -76,19 +76,22 @@ To visualize the specification, paste it into any Swagger editor. For example th
 
 # Running the Project
 
-#### To run locally make sure you have the following installed:
+#### Make sure you have the following installed:
 - JDK 11
 - Apache Maven
 - Docker (version 19.03.0 or higher)
-- Docker Compose (version 1.27.0 or higher)
+- Docker Compose (version 1.28.0 or higher)
 
-> **Note:** Execute all commands from the project root.
+> **Note:** Execute all commands from the project root.  
+> For ease of use, a standard and an alternative option are provided using the manage.sh script.
+> This script is designed for use on Linux-based systems, including but not limited to Ubuntu, CentOS, Debian, and other distributions. 
+> The script is not intended to run on Windows or MacOS without additional tools, such as WSL (Windows Subsystem for Linux) or proper environment configuration.
 
 #### 1. Build the Project
 
 <div style="margin-left: 20px;">
 
-Build with tests before packaging. The following services must be installed:
+Build with tests before packaging. The following services must be installed and running:
 - Redis
 - MongoDB
 - PostgreSQL
@@ -116,9 +119,9 @@ mvn clean package -Dmaven.test.skip=true
 <div style="margin-left: 20px;">
 
 For the `production` profile, fill in the corresponding environment variable files:
-- docker/stats/.env.stats.prod
-- docker/security/.env.security.prod
-- docker/profile/.env.profile.prod
+- docker/stats/.env
+- docker/security/.env, docker/security/env.security.prod
+- docker/profile/.env
 
 
 To run each profile, execute the following commands:  
@@ -133,11 +136,11 @@ To run each profile, execute the following commands:
 
 
   ```bash
-  sudo docker-compose -f docker/docker-compose-test.yml build
+  docker-compose -f docker/docker-compose-test.yml --profile full up
   ```
-
+or
   ```bash
-  sudo docker-compose -f docker/docker-compose-test.yml up
+  docker/manage.sh test up
   ```
 
 [//]: # (</div>)
@@ -152,11 +155,11 @@ To run each profile, execute the following commands:
 [//]: # (<div style="margin-left: 20px;">)
 
  ```bash  
-sudo docker-compose -f docker/docker-compose-dev.yml build
+ docker-compose -f docker/docker-compose-dev.yml --profile full up
  ```
-
+or
  ```bash
-sudo docker-compose -f docker/docker-compose-dev.yml up
+ docker/manage.sh dev up
  ```
 
 [//]: # (</div>)
@@ -171,11 +174,11 @@ sudo docker-compose -f docker/docker-compose-dev.yml up
 [//]: # (<div style="margin-left: 20px;">)
 
  ```bash  
-sudo docker-compose -f docker/docker-compose-prod.yml build
+ docker-compose -f docker/docker-compose-prod.yml --profile full up
  ```
-
+or
  ```bash
-sudo docker-compose -f docker/docker-compose-prod.yml up
+docker/manage.sh prod up
  ```
 
 </details>
@@ -200,32 +203,32 @@ Running services individually (examples with different profiles)
 `test` profile
 
 ```bash  
-sudo docker-compose -f docker/stats/docker-compose-stats-test.yml build
+docker-compose -f docker/docker-compose-test.yml --profile stats up
 ```
-
+or
 ```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-test.yml up
+docker/manage.sh test up stats
 ```
 
 `develop` profile
 
-```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-dev.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-dev.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-dev.yml --profile stats up
+ ```
+or
+ ```bash
+docker/manage.sh dev up stats
+ ```
 
 `production` profile
 
-```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-prod.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/stats/docker-compose-stats-prod.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-prod.yml --profile stats up
+ ```
+or
+ ```bash
+docker/manage.sh prod up stats
+ ```
 
 </div>
 
@@ -240,33 +243,33 @@ sudo docker-compose -f docker/stats/docker-compose-stats-prod.yml up
 
 `test` profile
 
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-test.yml build
+```bash  
+docker-compose -f docker/docker-compose-test.yml --profile security up
 ```
-
+or
 ```bash 
-sudo docker-compose -f docker/security/docker-compose-security-test.yml up
+docker/manage.sh test up security
 ```
 
 `develop` profile
 
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-dev.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-dev.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-dev.yml --profile security up
+ ```
+or
+ ```bash
+docker/manage.sh dev up security
+ ```
 
 `production` profile
 
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-prod.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/security/docker-compose-security-prod.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-prod.yml --profile security up
+ ```
+or
+ ```bash
+docker/manage.sh prod up security
+ ```
 
 </div>
 
@@ -281,33 +284,33 @@ sudo docker-compose -f docker/security/docker-compose-security-prod.yml up
 
 `test` profile
 
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-test.yml build
+```bash  
+docker-compose -f docker/docker-compose-test.yml --profile profile up
 ```
-
+or
 ```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-test.yml up
+docker/manage.sh test up profile
 ```
 
 `develop` profile
 
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-dev.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-dev.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-dev.yml --profile profile up
+ ```
+or
+ ```bash
+docker/manage.sh dev up profile
+ ```
 
 `production` profile
 
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml build
-```
-
-```bash 
-sudo docker-compose -f docker/profile/docker-compose-profile-prod.yml up
-```
+ ```bash  
+docker-compose -f docker/docker-compose-prod.yml --profile profile up
+ ```
+or
+ ```bash
+docker/manage.sh prod up profile
+ ```
 
 </div>
 
