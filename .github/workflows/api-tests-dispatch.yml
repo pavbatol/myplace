@@ -1,0 +1,156 @@
+name: MyPlace Postman Tests Dispatch
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment-targets:
+        description: "Choose targets for Postman tests (comma-separated, e.g., stats-tests,security-tests). 
+                      All items:
+                       - stats-tests
+                       - security-tests
+                       - profile-tests
+                       - develop-tests"
+        required: true
+        default: "develop-tests"
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+#      - name: List directory structure
+#        run: ls -R
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v3
+
+      - name: Set up Redis
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-server
+          sudo systemctl start redis
+          redis-cli ping
+
+      - name: Set up MongoDB
+        run: |
+          docker run --name mongodb -d -p 27017:27017 mongo:5.0
+          if [ $? -eq 0 ]; then
+            echo "MongoDB container started with ID: $(docker ps -aqf "name=mongodb")"
+          else
+            echo "Failed to start MongoDB container"
+            exit 1
+          fi          
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          MAX_RETRIES=10
+          count=0
+          until curl -s http://localhost:27017/ || [ $count -eq $MAX_RETRIES ]; do
+            echo "Waiting for MongoDB to start..."
+            sleep 5
+            count=$((count + 1))
+          done
+          if [ $count -eq $MAX_RETRIES ]; then
+            echo "MongoDB did not start within the expected time."
+            exit 1
+          fi
+
+      - name: Set up PostgreSQL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql postgresql-contrib
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '12345';"
+#          sudo -u postgres psql -c "CREATE USER user WITH PASSWORD '12345';"
+#          sudo -u postgres psql -c "CREATE DATABASE testdb OWNER user;"
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
+      - name: List all containers
+        run: docker ps -a
+
+      - name: Check Redis
+        run: redis-cli ping
+
+      - name: Check MongoDB logs
+        run: docker logs mongodb
+
+      - name: Check MongoDB
+        run: docker exec mongodb mongo --eval "db.adminCommand('ping')"
+
+      - name: Check PostgreSQL
+        run: pg_isready -h localhost -p 5432
+
+      - name: Build Java project
+        run: mvn clean package
+
+#      - name: Check for jar files
+#        run: ls -la mp-security/target/
+
+      - name: Build project images
+        working-directory: ./docker
+        run: docker-compose -f docker-compose-dev.yml --profile full build
+
+      - name: Run project
+        working-directory: ./docker
+        run: docker-compose -f docker-compose-dev.yml --profile full up -d
+
+      - name: Check Docker containers
+        run: docker ps
+
+      - name: Cache Node.js modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Check Newman version
+        run: newman --version
+
+      - name: Run Postman Tests
+        run: |
+          IFS=',' read -r -a targets <<< "${{ github.event.inputs.deployment-targets }}"
+          for target in "${targets[@]}"; do
+            echo "Running tests for target: $target"
+            if [ "$target" == "stats-tests" ]; then
+              echo "Running stats-tests"
+              newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml --disable-unicode --verbose
+            elif [ "$target" == "security-tests" ]; then
+              echo "Running security-tests"
+              newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml --disable-unicode --verbose
+            elif [ "$target" == "profile-tests" ]; then
+              echo "Running profile-tests"
+              newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml --disable-unicode --verbose
+            elif [ "$target" == "develop-tests" ]; then
+              echo "Running develop-tests"
+              newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml
+              newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml
+              newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml
+            else
+              echo "Unknown target: $target"
+            fi
+          done
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Results
+          path: |
+            postman-stats-report.xml
+            postman-security-report.xml
+            postman-profile-report.xml
