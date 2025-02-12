@@ -1,4 +1,58 @@
-name: MyPlace Postman Tests Dispatch
+name: MyPlace Unit And Postman Tests Dispatch
+
+#  DESCRIPTION
+#
+#  This workflow runs API tests for the specified environment.
+#  Example curl request for testing the API:
+#  - Simple Request
+#
+#      curl -X POST \
+#      -H "Accept: application/vnd.github+json" \
+#      -H "Authorization: Bearer <your_secret_code>" \
+#      -H "X-GitHub-Api-Version: 2022-11-28" \
+#      https://api.github.com/repos/pavbatol/myplace-rough/actions/workflows/api-tests-dispatch.yml/dispatches \
+#        -d '{
+#        "ref": "profile-gh-workflow",
+#        "inputs": {
+#          "deployment-targets": "security-tests",
+#          "environment": "dev"
+#        }
+#      }'
+#
+#  - Advanced Request
+#
+#      env_vars=$(cat <<EOL
+#      REDIS_PASSWORD=
+#      APP_MAIL_SENDER=test@gmail.com
+#      APP_MAIL_HOST=smtp.gmail.com
+#      APP_MAIL_PORT=587
+#      APP_MAIL_USERNAME=
+#      APP_MAIL_PASSWORD=
+#      APP_JWT_ACCESS_LIFE_SECONDS=36000
+#      APP_JWT_REFRESH_LIFE_SECONDS=2592000
+#      SECURITY_ADDITIONAL_SPRING_PROFILES=test-mail-sender-bypassing,test-confirmation-code-reading
+#      EOL
+#      )
+#
+#      env_vars_escaped=$(echo "$env_vars" | sed ':a;N;$!ba;s/\n/\\n/g')
+#
+#      curl -X POST \
+#      -H "Accept: application/vnd.github+json" \
+#      -H "Authorization: Bearer <your_secret_code>" \
+#      -H "X-GitHub-Api-Version: 2022-11-28" \
+#      https://api.github.com/repos/pavbatol/myplace-rough/actions/workflows/api-tests-dispatch.yml/dispatches \
+#      -d @- <<EOF
+#      {
+#        "ref": "profile-gh-workflow",
+#        "inputs": {
+#          "deployment-targets": "security-tests",
+#          "environment": "prod",
+#          "build-profiles": "check,coverage",
+#          "build-skip-tests": true,
+#          "security-service-env-vars": "$env_vars_escaped"
+#        }
+#      }
+#      EOF
 
 on:
   workflow_dispatch:
@@ -27,6 +81,19 @@ on:
         type: boolean
 
       # Parameters for running Postman tests
+      deployment-targets:
+        description: |
+          Choose targets for Postman tests (comma-separated, e.g., stats-tests,security-tests).
+          Available targets:
+           - stats-tests:    Run statistics-related tests.
+           - security-tests: Run security-related tests.
+           - profile-tests:  Run profile-related tests.
+           - all-tests:      Run all tests.
+          Default: all-tests.
+        required: true
+        default: "all-tests"
+        type: string
+
       environment:
         description: |
           Choose the environment for Postman tests.
@@ -43,28 +110,22 @@ on:
           - dev
           - test
 
-      additional-spring-profiles:
+      security-service-env-vars:
         description: |
-          Choose additional Spring profiles (comma-separated, e.g., test-mail-sender-bypassing,test-confirmation-code-reading).
-          Available profiles:
-           - test-mail-sender-bypassing:     Bypass email sending.
-           - test-confirmation-code-reading: Enable the reading of confirmation codes by responding to API requests.
+          Specify the variables for the security-service ('\n'-separated, e.g.,
+            APP_MAIL_SENDER=test@gmail.com
+            APP_MAIL_HOST=smtp.gmail.com
+            APP_MAIL_PORT=587
+            APP_JWT_ACCESS_LIFE_SECONDS=36000
+            SECURITY_ADDITIONAL_SPRING_PROFILES=test-mail-sender-bypassing,test-confirmation-code-reading
+          )
+          From these vars the '.env.security.prod' file will be created.
+          Here you can pass SECURITY_ADDITIONAL_SPRING_PROFILES to install additional profiles to test the 'prod' environment.
+          NOTE: 
+            This step will be in demand only for the 'prod' environment.
           Default: none.
         required: false
         default: ""
-        type: string
-
-      deployment-targets:
-        description: |
-          Choose targets for Postman tests (comma-separated, e.g., stats-tests,security-tests).
-          Available targets:
-           - stats-tests:    Run statistics-related tests.
-           - security-tests: Run security-related tests.
-           - profile-tests:  Run profile-related tests.
-           - all-tests:      Run all tests.
-          Default: all-tests.
-        required: true
-        default: "all-tests"
         type: string
 
 jobs:
@@ -155,6 +216,7 @@ jobs:
           mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG
 
       - name: Set up Docker Compose file
+        id: set-compose-file
         working-directory: ./docker
         run: |
           COMPOSE_FILE=docker-compose-${{ github.event.inputs.environment }}.yml
@@ -162,57 +224,66 @@ jobs:
             echo "file not found: $COMPOSE_FILE"
             exit 1
           fi
-          echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_ENV
+          echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_OUTPUT
           echo "Docker Compose file set to: $COMPOSE_FILE"
 
-      - name: Set up Spring profiles option
-        id: set-spring-profiles-option
+#      - name: Create env.security.prod file
+#        run: |
+#          INPUT_VARS_STRING=${{ github.event.inputs.security-service-env-vars }}
+#          ENV_FILE="./docker/security/.env.security.prod"
+#
+#          echo "Current context for: ENV_FILE"
+#          cat "$ENV_FILE"
+#
+#          if [ -n "$INPUT_VARS_STRING" ]; then
+#
+#            > "$ENV_FILE"
+#
+#            echo -e "$INPUT_VARS_STRING" | while IFS= read -r line; do
+#              echo "$line" >> "$ENV_FILE"
+#            done
+#
+#            echo "File $ENV_FILE created:"
+#            cat "$ENV_FILE"
+#          else
+#            echo "Input vars string is empty, file $ENV_FILE not created."
+#          fi
+
+#  -------------------------------------------------
+
+      - name: Up env-merger service
+        working-directory: ./docker
         run: |
-          ADDITIONAL_SPRING_PROFILES="${{ github.event.inputs.additional-spring-profiles }}"    
+          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
+          docker-compose -f $COMPOSE_FILE --profile env-merger up -d
+
+      - name: Check global.env existing
+        run: |
+          ENV_FILE="./docker/.env"
           
-          if [ -n "$ADDITIONAL_SPRING_PROFILES" ]; then
-            BASE_PROFILE=""          
-          
-            case ${{ github.event.inputs.environment }} in
-              test)
-                BASE_PROFILE="test"
-                ;;
-              dev)
-                BASE_PROFILE="develop"
-                ;;
-              prod)
-                BASE_PROFILE="production"
-                ;;
-              *)
-                echo "No matches for the environment: ${{ github.event.inputs.environment }}". 
-                exit 1
-                ;;
-            esac        
-          
-            SPRING_PROFILES_OPTION="SPRING_PROFILES_ACTIVE=$BASE_PROFILE,$ADDITIONAL_SPRING_PROFILES"
-            echo "SPRING_PROFILES_OPTION=$SPRING_PROFILES_OPTION" >> $GITHUB_OUTPUT
-            echo "Spring profiles option set to: $SPRING_PROFILES_OPTION" # TODO: not recipe value from $SPRING_PROFILES_OPTION
+          if [ ! -f $ENV_FILE ]; then
+            echo "File not found: $ENV_FILE"
           else
-            echo "SPRING_PROFILES_OPTION=" >> $GITHUB_OUTPUT
-            echo "No additional Spring profiles provided."
+            echo "Current context for: $ENV_FILE"
+            cat ./docker/.env
           fi
+
+#-------------------------------------------------
 
       - name: Build project images
         working-directory: ./docker
         run: |
+          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
           echo "COMMAND docker-compose -f $COMPOSE_FILE --profile full build"
           docker-compose -f $COMPOSE_FILE --profile full  build
+
+      - name: Check Images
+        run: docker images
 
       - name: Run project
         working-directory: ./docker
         run: |
-          SPRING_PROFILES_OPTION=${{ steps.set-spring-profiles-option.outputs.SPRING_PROFILES_OPTION }}
-          
-          if [ -n "$SPRING_PROFILES_OPTION" ]; then
-            echo "COMMAND export $SPRING_PROFILES_OPTION"
-            export "$SPRING_PROFILES_OPTION"
-          fi
-          
+          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
           echo "COMMAND docker-compose -f $COMPOSE_FILE --profile full up -d"
           docker-compose -f $COMPOSE_FILE --profile full up -d
 
@@ -237,7 +308,28 @@ jobs:
       - name: Run Postman Tests
         run: |
           IFS=',' read -r -a targets <<< "${{ github.event.inputs.deployment-targets }}"
+          
+          unique_targets=()
+          has_all_tests=false
           for target in "${targets[@]}"; do
+            if [[ " ${unique_targets[@]} " =~ " ${target} " ]]; then
+              continue
+            fi
+            if [ "$target" == "all-tests" ]; then
+              has_all_tests=true
+            fi
+            unique_targets+=("$target")
+          done
+          
+          if [ "$has_all_tests" == true ]; then
+            echo "Running all-tests"
+            newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml
+            newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml
+            newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml
+            exit 0
+          fi
+          
+          for target in "${unique_targets[@]}"; do
             echo "Running tests for target: $target"
             if [ "$target" == "stats-tests" ]; then
               echo "Running stats-tests"
@@ -248,11 +340,6 @@ jobs:
             elif [ "$target" == "profile-tests" ]; then
               echo "Running profile-tests"
               newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml --disable-unicode --verbose
-            elif [ "$target" == "all-tests" ]; then
-              echo "Running all-tests"
-              newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml
-              newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml
-              newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml
             else
               echo "Unknown target: $target"
             fi
