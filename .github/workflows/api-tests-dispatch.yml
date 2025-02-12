@@ -54,6 +54,11 @@ name: MyPlace Unit And Postman Tests Dispatch
 #      }
 #      EOF
 
+env:
+  _PROD: "prod"
+  _DEV: "dev"
+  _TEST: "test"
+
 on:
   workflow_dispatch:
     inputs:
@@ -250,53 +255,34 @@ jobs:
           echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_OUTPUT
           echo "Docker Compose file set to: $COMPOSE_FILE"
 
-#      - name: Create env.security.prod file
-#        run: |
-#          INPUT_VARS_STRING=${{ github.event.inputs.security-service-env-vars }}
-#          ENV_FILE="./docker/security/.env.security.prod"
-#
-#          echo "Current context for: ENV_FILE"
-#          cat "$ENV_FILE"
-#          echo
-#
-#          if [ -n "$INPUT_VARS_STRING" ]; then
-#
-#            cat <<EOL > "$ENV_FILE"
-#            $INPUT_VARS_STRING
-#            EOL
-#
-#            echo "File $ENV_FILE created:"
-#            cat "$ENV_FILE"
-#          else
-#            echo "Input vars string is empty, file $ENV_FILE not created."
-#          fi
-
       - name: Create env.security.prod file
         run: |
-          INPUT_VARS_STRING="${{ github.event.inputs.security-service-env-vars }}"
-          ENV_FILE="./docker/security/.env.security.prod"
-          
-          echo "Debug: INPUT_VARS_STRING content:"
-          echo "$INPUT_VARS_STRING"
-          echo
-          
-          echo "Checking if ENV_FILE exists: $ENV_FILE"
-          if [ -f "$ENV_FILE" ]; then
-            echo "Current content of $ENV_FILE:"
-            cat "$ENV_FILE"
+          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
+            INPUT_VARS_STRING="${{ github.event.inputs.security-service-env-vars }}"
+            ENV_FILE="./docker/security/.env.security.prod"
+            
+            echo "Debug: INPUT_VARS_STRING content:"
+            echo "$INPUT_VARS_STRING"
             echo
-          else
-            echo "File $ENV_FILE does not exist, it will be created."
-          fi
+            
+            echo "Checking if ENV_FILE exists: $ENV_FILE"
+            if [ -f "$ENV_FILE" ]; then
+              echo "Current content of $ENV_FILE:"
+              cat "$ENV_FILE"
+              echo
+            else
+              echo "File $ENV_FILE does not exist, it will be created."
+            fi
+            
+            if [ -n "$INPUT_VARS_STRING" ]; then
+              echo "Creating/updating $ENV_FILE with provided environment variables."
+               echo -e "$INPUT_VARS_STRING" > "$ENV_FILE"
           
-          if [ -n "$INPUT_VARS_STRING" ]; then
-            echo "Creating/updating $ENV_FILE with provided environment variables."
-             echo -e "$INPUT_VARS_STRING" > "$ENV_FILE"
-        
-            echo "File $ENV_FILE created/updated with the following content:"
-            cat "$ENV_FILE"          
-          else
-            echo "Input vars string is empty, file $ENV_FILE will not be created/updated."
+              echo "File $ENV_FILE created/updated with the following content:"
+              cat "$ENV_FILE"          
+            else
+              echo "Input vars string is empty, file $ENV_FILE will not be created/updated."
+            fi      
           fi      
 
 #  -------------------------------------------------
@@ -304,8 +290,10 @@ jobs:
       - name: Up env-merger service
         working-directory: ./docker
         run: |
-          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
-          docker-compose -f $COMPOSE_FILE --profile env-merger up -d
+          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
+            COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
+            docker-compose -f $COMPOSE_FILE --profile env-merger up -d
+          fi
 
       - name: Check for global .env
         run: |
@@ -339,28 +327,15 @@ jobs:
       - name: Check Docker containers
         run: docker ps -a
 
-#      - name: Check for package-lock.json
-#        run: |
-#          if [ -f "package-lock.json" ]; then
-#            echo "package-lock.json exists"
-#          else
-#            echo "package-lock.json does not exist"
-#          fi
-
-#      - name: Cache Node.js modules
-#        id: cache-node-modules
-#        uses: actions/cache@v3
-#        with:
-#          path: ~/.npm
-#          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') || 'default-key' }}
-#          restore-keys: |
-#            ${{ runner.os }}-node-
-
-#      - name: Install Newman
-#        run: npm install -g newman
-
-#      - name: Check Newman version
-#        run: newman --version
+      - name: Display security-service env vars
+        working-directory: ./docker
+        run: |
+          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}          
+          if docker ps -a --format '{{.Names}}' | grep -q "^mp-security$"; then
+            docker-compose -f $COMPOSE_FILE exec security-service env
+          else
+            echo "Container 'mp-security' not found"
+          fi
 
       - name: Run Postman Tests
         run: |
