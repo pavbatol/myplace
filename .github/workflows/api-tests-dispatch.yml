@@ -274,35 +274,35 @@ jobs:
           echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_ENV
           echo "Docker Compose file set to: $COMPOSE_FILE"
 
-      - name: Create env.security.prod file
-        run: |
-          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
-            INPUT_VARS_STRING="${{ github.event.inputs.security-service-env-vars }}"
-            ENV_FILE="./docker/security/.env.security.prod"
-            
-            echo "Debug: INPUT_VARS_STRING content:"
-            echo "$INPUT_VARS_STRING"
-            echo
-            
-            echo "Checking if ENV_FILE exists: $ENV_FILE"
-            if [ -f "$ENV_FILE" ]; then
-              echo "Current content of $ENV_FILE:"
-              cat "$ENV_FILE"
-              echo
-            else
-              echo "File $ENV_FILE does not exist, it will be created."
-            fi
-            
-            if [ -n "$INPUT_VARS_STRING" ]; then
-              echo "Creating/updating $ENV_FILE with provided environment variables."
-               echo -e "$INPUT_VARS_STRING" > "$ENV_FILE"
-          
-              echo "File $ENV_FILE created/updated with the following content:"
-              cat "$ENV_FILE"          
-            else
-              echo "Input vars string is empty, file $ENV_FILE will not be created/updated."
-            fi      
-          fi      
+#      - name: Create env.security.prod file
+#        run: |
+#          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
+#            INPUT_VARS_STRING="${{ github.event.inputs.security-service-env-vars }}"
+#            ENV_FILE="./docker/security/.env.security.prod"
+#
+#            echo "Debug: INPUT_VARS_STRING content:"
+#            echo "$INPUT_VARS_STRING"
+#            echo
+#
+#            echo "Checking if ENV_FILE exists: $ENV_FILE"
+#            if [ -f "$ENV_FILE" ]; then
+#              echo "Current content of $ENV_FILE:"
+#              cat "$ENV_FILE"
+#              echo
+#            else
+#              echo "File $ENV_FILE does not exist, it will be created."
+#            fi
+#
+#            if [ -n "$INPUT_VARS_STRING" ]; then
+#              echo "Creating/updating $ENV_FILE with provided environment variables."
+#               echo -e "$INPUT_VARS_STRING" > "$ENV_FILE"
+#
+#              echo "File $ENV_FILE created/updated with the following content:"
+#              cat "$ENV_FILE"
+#            else
+#              echo "Input vars string is empty, file $ENV_FILE will not be created/updated."
+#            fi
+#          fi
 
 #  -------------------------------------------------
 
@@ -380,6 +380,9 @@ jobs:
             exit 0
           fi
           
+          docker-compose logs -f security-service &
+          LOG_PID=$!
+          
           for target in "${unique_targets[@]}"; do
             echo "Running tests for target: $target"
             if [ "$target" == "stats-tests" ]; then
@@ -395,6 +398,8 @@ jobs:
               echo "Unknown target: $target"
             fi
           done
+          
+          kill $LOG_PID
 
       - name: Display Newman log
         run: |

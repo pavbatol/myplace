@@ -5,6 +5,14 @@ services:
   security-service:
     ports:
       - "8078:8078"
+    environment:
+      - SPRING_PROFILES_ACTIVE=production,test-confirmation-code-reading,test-mail-sender-bypassing
+      - APP_MAIL_SENDER=test@gmail.com
+      - APP_MAIL_HOST=smtp.gmail.com
+      - APP_MAIL_PORT=587
+      - APP_MAIL_USERNAME=
+      - APP_MAIL_PASSWORD=
+      - REDIS_USERNAME=
 
   profile-service:
     ports:

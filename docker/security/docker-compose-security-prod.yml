@@ -10,7 +10,7 @@ services:
     env_file:
       - ./.env.security.prod
     environment:
-      - SPRING_PROFILES_ACTIVE=production${SECURITY_ADDITIONAL_SPRING_PROFILES:-""}
+      - SPRING_PROFILES_ACTIVE=production
       - SERVER_PORT=8078
       - APP_PROFILE_SERVER_URL=http://profile-service:8076/api/v1
       - APP_DB_HOST=security-postgres-db

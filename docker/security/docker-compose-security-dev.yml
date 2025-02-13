@@ -36,10 +36,10 @@ services:
       - APP_MAIL_USERNAME=
       - APP_MAIL_PASSWORD=
       - APP_JWT_ACCESS_KEY= # Optional
-      - APP_JWT_ACCESS_LIFE-SECONDS=36000
+      - APP_JWT_ACCESS_LIFE_SECONDS=36000
       - APP_JWT_ACCESS_STORING=true
       - APP_JWT_REFRESH_KEY= # Optional
-      - APP_JWT_REFRESH_LIFE-SECONDS=2592000
+      - APP_JWT_REFRESH_LIFE_SECONDS=2592000
 
   security-redis-db:
     image: redis:latest
