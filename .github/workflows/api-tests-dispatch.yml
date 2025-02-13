@@ -156,6 +156,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+#      - name: Check for package-lock.json
+#        id: check-package-lock
+#        run: |
+#          if [ ! -f "package-lock.json" ]; then
+#            echo "package-lock.json not found. Generating it..."
+#            npm install -g newman
+#          else
+#            echo "package-lock.json found."
+#          fi
+
       - name: Cache Node.js modules
         id: cache-node-modules
         uses: actions/cache@v3
@@ -166,7 +176,8 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install Newman
-        run: npm install -g newman
+        run: npm install newman --save-dev
+#        run: npm install -g newman
 
       - name: Check Newman version
         run: newman --version
