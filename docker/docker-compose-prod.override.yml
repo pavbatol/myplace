@@ -12,8 +12,8 @@ services:
       - APP_MAIL_PORT=587
       - APP_MAIL_USERNAME=
       - APP_MAIL_PASSWORD=
-      - REDIS_USERNAME=
+#      - REDIS_USERNAME=
 
-  profile-service:
-    ports:
-      - "8076:8076"
+#  profile-service:
+#    ports:
+#      - "8076:8076"
