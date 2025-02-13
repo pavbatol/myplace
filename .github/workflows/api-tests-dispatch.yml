@@ -253,7 +253,7 @@ jobs:
         working-directory: ./docker
         run: |
           ENV="${{ github.event.inputs.environment }}"
-          OVERRIDE="${{ github.event.inputs.override-compose-file }}"
+          OVERRIDE=${{ github.event.inputs.override-compose-file }}
           COMPOSE_FILE="docker-compose-$ENV.yml"
           COMPOSE_OVERRIDE_FILE="docker-compose-$ENV.override.yml"
           
@@ -262,7 +262,7 @@ jobs:
             exit 1
           fi
           
-          if [ $OVERRIDE ] && [ ! -f "$COMPOSE_OVERRIDE_FILE" ]; then
+          if [ "$OVERRIDE" = "true" ] && [ ! -f "$COMPOSE_OVERRIDE_FILE" ]; then
             echo "file not found: $COMPOSE_OVERRIDE_FILE"
             exit 1
           fi
@@ -353,6 +353,42 @@ jobs:
             echo "Container 'mp-security' not found"
           fi
 
+      - name: Wait for security-service to be ready
+        run: |
+          max_attempts=10
+          attempt=1
+          
+          until curl -s -o /dev/null http://localhost:8078; do
+            if [ $attempt -eq $max_attempts ]; then
+              echo "Service is not available after $max_attempts attempts. Exiting."
+              exit 1
+            fi
+          
+            echo "Attempt $attempt: Service is not ready. Retrying in 5 seconds..."
+            sleep 5
+            attempt=$((attempt + 1))
+          done
+          
+          echo "Service is ready!"
+
+      - name: Send test request to security-service
+        run: |         
+          curl --verbose --request POST \
+          --url http://localhost:8078/auth/registry \
+          --header 'Content-Type: application/json' \
+          --data '{
+          "email": "user@user.com",
+          "login": "user_1",
+          "password": "user_1"
+          }'
+          
+          if [ "$response" -ne 200 ]; then
+            echo "Request failed with status code $response"
+            exit 1
+          else
+            echo "Request succeeded with status code $response"
+          fi
+
       - name: Run Postman Tests
         run: |
           echo "Running tests with inputs:"
@@ -379,10 +415,7 @@ jobs:
             newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml
             exit 0
           fi
-          
-          docker-compose logs -f security-service &
-          LOG_PID=$!
-          
+                    
           for target in "${unique_targets[@]}"; do
             echo "Running tests for target: $target"
             if [ "$target" == "stats-tests" ]; then
@@ -398,8 +431,6 @@ jobs:
               echo "Unknown target: $target"
             fi
           done
-          
-          kill $LOG_PID
 
       - name: Display Newman log
         run: |
