@@ -49,7 +49,8 @@ name: MyPlace Unit And Postman Tests Dispatch
 #          "environment": "prod",
 #          "build-profiles": "check,coverage",
 #          "build-skip-tests": true,
-#          "security-service-env-vars": "$env_vars_escaped"
+#          "security-service-env-vars": "$env_vars_escaped",
+#          "override-compose-file": true
 #        }
 #      }
 #      EOF
@@ -133,6 +134,18 @@ on:
         default: ""
         type: string
 
+      override-compose-file:
+        description: |
+          Use additional compose configurations by providing an override file.
+          The override file should be placed in 'docker' directory.
+          Example file structure:
+            - Main compose file:      docker/docker-compose-prod.yml
+            - Override compose file:  docker/docker-compose-prod.override.yml
+          Default value: false
+        required: false
+        default: false
+        type: boolean
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -142,14 +155,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Check for package-lock.json
-        run: |
-          if [ -f "package-lock.json" ]; then
-            echo "package-lock.json exists"
-          else
-            echo "package-lock.json does not exist"
-          fi
 
       - name: Cache Node.js modules
         id: cache-node-modules
@@ -243,38 +248,27 @@ jobs:
           echo "COMMAND: mvn clean package -B -P$MAVEN_PROFILES $SKIP_TESTS_FLAG"
           mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG
 
-#      - name: Set up Docker Compose file
-#        id: set-compose-file
-#        working-directory: ./docker
-#        run: |
-#          COMPOSE_FILE=docker-compose-${{ github.event.inputs.environment }}.yml
-#          if [ ! -f "$COMPOSE_FILE" ]; then
-#            echo "file not found: $COMPOSE_FILE"
-#            exit 1
-#          fi
-#          echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_OUTPUT
-#          echo "Docker Compose file set to: $COMPOSE_FILE"
-
       - name: Set up Docker Compose file
         id: set-compose-file
         working-directory: ./docker
         run: |
           ENV="${{ github.event.inputs.environment }}"
+          OVERRIDE="${{ github.event.inputs.override-compose-file }}"
           COMPOSE_FILE="docker-compose-$ENV.yml"
-          COMPOSE_PROD_OVERRIDE_FILE="./security/docker-compose-security-$ENV-test.override.yml"
+          COMPOSE_OVERRIDE_FILE="docker-compose-$ENV.override.yml"
           
           if [ ! -f "$COMPOSE_FILE" ]; then
             echo "file not found: $COMPOSE_FILE"
             exit 1
           fi
           
-          if [ $ENV = "$_PROD" ] && [ ! -f "$COMPOSE_PROD_OVERRIDE_FILE" ]; then
-            echo "file not found: $COMPOSE_PROD_OVERRIDE_FILE"
+          if [ $OVERRIDE ] && [ ! -f "$COMPOSE_OVERRIDE_FILE" ]; then
+            echo "file not found: $COMPOSE_OVERRIDE_FILE"
             exit 1
           fi
           
           if [ $ENV = "$_PROD" ]; then
-            COMPOSE_FILE="$COMPOSE_FILE:$COMPOSE_PROD_OVERRIDE_FILE"
+            COMPOSE_FILE="$COMPOSE_FILE:$COMPOSE_OVERRIDE_FILE"
           fi
           
           echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_ENV
@@ -312,14 +306,6 @@ jobs:
 
 #  -------------------------------------------------
 
-#      - name: Up env-merger service
-#        working-directory: ./docker
-#        run: |
-#          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
-#            COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
-#            docker-compose -f $COMPOSE_FILE --profile env-merger up -d
-#          fi
-
       - name: Up env-merger service
         working-directory: ./docker
         run: |
@@ -340,13 +326,6 @@ jobs:
 
 #-------------------------------------------------
 
-#      - name: Build project images
-#        working-directory: ./docker
-#        run: |
-#          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
-#          echo "COMMAND docker-compose -f $COMPOSE_FILE --profile full build"
-#          docker-compose -f $COMPOSE_FILE --profile full  build
-
       - name: Build project images
         working-directory: ./docker
         run: |
@@ -356,13 +335,6 @@ jobs:
       - name: Check Images
         run: docker images
 
-#      - name: Run project
-#        working-directory: ./docker
-#        run: |
-#          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
-#          echo "COMMAND docker-compose -f $COMPOSE_FILE --profile full up -d"
-#          docker-compose -f $COMPOSE_FILE --profile full up -d
-
       - name: Run project
         working-directory: ./docker
         run: |
@@ -371,16 +343,6 @@ jobs:
 
       - name: Check Docker containers
         run: docker ps -a
-
-#      - name: Display security-service env vars
-#        working-directory: ./docker
-#        run: |
-#          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
-#          if docker ps -a --format '{{.Names}}' | grep -q "^mp-security$"; then
-#            docker-compose -f $COMPOSE_FILE exec security-service env
-#          else
-#            echo "Container 'mp-security' not found"
-#          fi
 
       - name: Display security-service env vars
         working-directory: ./docker
@@ -393,6 +355,9 @@ jobs:
 
       - name: Run Postman Tests
         run: |
+          echo "Running tests with inputs:"
+          echo "${{ toJson(github.event.inputs) }}"
+          
           IFS=',' read -r -a targets <<< "${{ github.event.inputs.deployment-targets }}"
           
           unique_targets=()

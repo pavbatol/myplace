@@ -1,7 +1,0 @@
-version: '3.8'
-
-services:
-
-  security-service:
-    ports:
-      - "8078:8078"
