@@ -243,16 +243,41 @@ jobs:
           echo "COMMAND: mvn clean package -B -P$MAVEN_PROFILES $SKIP_TESTS_FLAG"
           mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG
 
+#      - name: Set up Docker Compose file
+#        id: set-compose-file
+#        working-directory: ./docker
+#        run: |
+#          COMPOSE_FILE=docker-compose-${{ github.event.inputs.environment }}.yml
+#          if [ ! -f "$COMPOSE_FILE" ]; then
+#            echo "file not found: $COMPOSE_FILE"
+#            exit 1
+#          fi
+#          echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_OUTPUT
+#          echo "Docker Compose file set to: $COMPOSE_FILE"
+
       - name: Set up Docker Compose file
         id: set-compose-file
         working-directory: ./docker
         run: |
-          COMPOSE_FILE=docker-compose-${{ github.event.inputs.environment }}.yml
+          ENV="${{ github.event.inputs.environment }}"
+          COMPOSE_FILE="docker-compose-$ENV.yml"
+          COMPOSE_PROD_OVERRIDE_FILE="./security/docker-compose-security-$ENV-test.override.yml"
+          
           if [ ! -f "$COMPOSE_FILE" ]; then
             echo "file not found: $COMPOSE_FILE"
             exit 1
           fi
-          echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_OUTPUT
+          
+          if [ $ENV = "$_PROD" ] && [ ! -f "$COMPOSE_PROD_OVERRIDE_FILE" ]; then
+            echo "file not found: $COMPOSE_PROD_OVERRIDE_FILE"
+            exit 1
+          fi
+          
+          if [ $ENV = "$_PROD" ]; then
+            COMPOSE_FILE="$COMPOSE_FILE:$COMPOSE_PROD_OVERRIDE_FILE"
+          fi
+          
+          echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_ENV
           echo "Docker Compose file set to: $COMPOSE_FILE"
 
       - name: Create env.security.prod file
@@ -287,12 +312,20 @@ jobs:
 
 #  -------------------------------------------------
 
+#      - name: Up env-merger service
+#        working-directory: ./docker
+#        run: |
+#          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
+#            COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
+#            docker-compose -f $COMPOSE_FILE --profile env-merger up -d
+#          fi
+
       - name: Up env-merger service
         working-directory: ./docker
         run: |
           if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
-            COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
-            docker-compose -f $COMPOSE_FILE --profile env-merger up -d
+            echo "COMMAND docker-compose --profile env-merger up -d (with COMPOSE_FILE = $COMPOSE_FILE)"
+            docker-compose --profile env-merger up -d
           fi
 
       - name: Check for global .env
@@ -307,32 +340,53 @@ jobs:
 
 #-------------------------------------------------
 
+#      - name: Build project images
+#        working-directory: ./docker
+#        run: |
+#          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
+#          echo "COMMAND docker-compose -f $COMPOSE_FILE --profile full build"
+#          docker-compose -f $COMPOSE_FILE --profile full  build
+
       - name: Build project images
         working-directory: ./docker
         run: |
-          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
-          echo "COMMAND docker-compose -f $COMPOSE_FILE --profile full build"
-          docker-compose -f $COMPOSE_FILE --profile full  build
+          echo "COMMAND docker-compose --profile full build (with COMPOSE_FILE = $COMPOSE_FILE)"
+          docker-compose --profile full  build
 
       - name: Check Images
         run: docker images
 
+#      - name: Run project
+#        working-directory: ./docker
+#        run: |
+#          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
+#          echo "COMMAND docker-compose -f $COMPOSE_FILE --profile full up -d"
+#          docker-compose -f $COMPOSE_FILE --profile full up -d
+
       - name: Run project
         working-directory: ./docker
         run: |
-          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
-          echo "COMMAND docker-compose -f $COMPOSE_FILE --profile full up -d"
-          docker-compose -f $COMPOSE_FILE --profile full up -d
+          echo "COMMAND docker-compose --profile full up -d (with COMPOSE_FILE = $COMPOSE_FILE)"
+          docker-compose --profile full up -d
 
       - name: Check Docker containers
         run: docker ps -a
 
+#      - name: Display security-service env vars
+#        working-directory: ./docker
+#        run: |
+#          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}
+#          if docker ps -a --format '{{.Names}}' | grep -q "^mp-security$"; then
+#            docker-compose -f $COMPOSE_FILE exec security-service env
+#          else
+#            echo "Container 'mp-security' not found"
+#          fi
+
       - name: Display security-service env vars
         working-directory: ./docker
         run: |
-          COMPOSE_FILE=${{steps.set-compose-file.outputs.COMPOSE_FILE}}          
           if docker ps -a --format '{{.Names}}' | grep -q "^mp-security$"; then
-            docker-compose -f $COMPOSE_FILE exec security-service env
+            docker-compose exec security-service env
           else
             echo "Container 'mp-security' not found"
           fi
