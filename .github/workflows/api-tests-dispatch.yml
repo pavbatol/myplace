@@ -234,14 +234,17 @@ jobs:
 
       - name: Build Java project
         run: |
-          MAVEN_PROFILES=${{ github.event.inputs.build-profiles }}
+          MAVEN_PROFILES="${{ github.event.inputs.build-profiles }}"
           MAVEN_PROFILES_OPTION=""
           if [ -n "$MAVEN_PROFILES" ]; then
+            echo "MAVEN_PROFILES is not empty"
             MAVEN_PROFILES_OPTION="-P$MAVEN_PROFILES"
+          else
+            echo "MAVEN_PROFILES is empty"          
           fi
           
           SKIP_TESTS_FLAG=""
-          if ${{ github.event.inputs.build-skip-tests }}; then
+          if [ "${{ github.event.inputs.build-skip-tests }}" = "true" ]; then
             SKIP_TESTS_FLAG="-Dmaven.test.skip=true"
           fi
           
@@ -330,7 +333,7 @@ jobs:
         working-directory: ./docker
         run: |
           echo "COMMAND docker-compose --profile full build (with COMPOSE_FILE = $COMPOSE_FILE)"
-          docker-compose --profile full  build
+          docker-compose --profile full build
 
       - name: Check Images
         run: docker images
