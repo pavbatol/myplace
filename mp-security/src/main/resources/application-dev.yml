@@ -6,9 +6,9 @@ spring:
     name: mp-security
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${app.db.host}:${app.db.port}/${app.db.name}
-    username: ${app.db.username}
-    password: ${app.db.password}
+    url: jdbc:postgresql://${postgres.host}:${postgres.port}/${postgres.db}
+    username: ${postgres.user}
+    password: ${postgres.password}
   jpa:
     open-in-view: false
     hibernate:
@@ -35,11 +35,12 @@ logging:
     ru.pavbatol: DEBUG
     org.springframework.web: DEBUG
 
+postgres:
+  host: localhost
+  port: 5432
+  db: mp-security
+  user: postgres
+  password: 12345
+
 app:
   profile-server-url: http://localhost:8076
-  db:
-    host: localhost
-    port: 5432
-    name: mp-security
-    username: postgres
-    password: 12345

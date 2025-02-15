@@ -9,14 +9,13 @@ services:
     image: mp-stats
     container_name: mp-stats
     restart: unless-stopped
+    env_file:
+      - ./.env.stats.prod
     environment:
       - SPRING_PROFILES_ACTIVE=production
       - SERVER_PORT=9090
-      - APP_DB_HOST=stats-db
-      - APP_DB_PORT=27017
-      - APP_DB_NAME=${STATS_MONGO_INITDB_DATABASE}
-      - APP_DB_USERNAME=${STATS_MONGO_INITDB_ROOT_USERNAME}
-      - APP_DB_PASSWORD=${STATS_MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_HOST=stats-db
+      - MONGO_PORT=27017
 
   stats-db:
     build:
@@ -24,10 +23,8 @@ services:
       dockerfile: Dockerfile-mongo-db
     image: mp-stats-mongo-db
     container_name: mp-stats-db
-    environment:
-      - MONGO_INITDB_DATABASE=${STATS_MONGO_INITDB_DATABASE}
-      - MONGO_INITDB_ROOT_USERNAME=${STATS_MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${STATS_MONGO_INITDB_ROOT_PASSWORD}
+    env_file:
+      - ./.env.stats.prod
     healthcheck:
       test: [ "CMD","mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s

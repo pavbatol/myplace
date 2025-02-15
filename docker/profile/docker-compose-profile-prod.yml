@@ -7,23 +7,21 @@ services:
     image: mp-profile
     container_name: mp-profile
     restart: unless-stopped
+    env_file:
+      - ./.env.profile.prod
     environment:
       - SPRING_PROFILES_ACTIVE=production
       - SERVER_PORT=8076
-      - APP_DB_HOST=profile-db
-      - APP_DB_PORT=5432
-      - APP_DB_NAME=${PROFILE_POSTGRES_DB}
-      - APP_DB_USERNAME=${PROFILE_POSTGRES_USER}
-      - APP_DB_PASSWORD=${PROFILE_POSTGRES_PASSWORD}
+      - POSTGRES_HOST=profile-db
+      - POSTGRES_PORT=5432
 
   profile-db:
     image: postgres:14-alpine
     container_name: mp-profile-db
+    env_file:
+      - ./.env.profile.prod
     environment:
       - POSTGRES_PORT=5432
-      - POSTGRES_DB=${PROFILE_POSTGRES_DB}
-      - POSTGRES_USER=${PROFILE_POSTGRES_USER}
-      - POSTGRES_PASSWORD=${PROFILE_POSTGRES_PASSWORD}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 10s

@@ -30,7 +30,7 @@ name: MyPlace Unit And Postman Tests Dispatch
 #      {
 #        "ref": "main",
 #        "inputs": {
-#          "deployment-targets": "security-tests",
+#          "deployment-targets": "security-tests,stats-tests",
 #          "environment": "prod",
 #          "build-profiles": "check,coverage",
 #          "build-skip-tests": true,
@@ -134,6 +134,9 @@ jobs:
       - name: Check Newman version
         run: newman --version
 
+      - name: Display inputs
+        run:  echo "${{ toJson(github.event.inputs) }}"
+
       - name: Set up Redis
         run: |
           sudo apt-get update
@@ -231,7 +234,6 @@ jobs:
           echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_ENV
           echo "Docker Compose file set to: $COMPOSE_FILE"
 
-
       - name: Up env-merger service
         working-directory: ./docker
         run: |
@@ -242,10 +244,12 @@ jobs:
 
       - name: Check for common .env file
         run: |
-          ENV_FILE="./docker/.env"
-          if [ ! -f $ENV_FILE ]; then
-            echo "File not found: $ENV_FILE"
-            exit 1
+          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
+            ENV_FILE="./docker/.env"
+            if [ ! -f $ENV_FILE ]; then
+              echo "File not found: $ENV_FILE"
+              exit 1
+            fi
           fi
 
       - name: Build project images

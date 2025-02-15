@@ -14,8 +14,8 @@ services:
       - "9091:9091"
     environment:
       - SPRING_PROFILES_ACTIVE=test
-      - APP_DB_HOST=stats-db
-      - APP_DB_PORT=27017
+      - MONGO_HOST=stats-db
+      - MONGO_PORT=27017
 
   stats-db:
     build:

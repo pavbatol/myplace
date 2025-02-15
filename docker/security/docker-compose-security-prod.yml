@@ -13,13 +13,10 @@ services:
       - SPRING_PROFILES_ACTIVE=production
       - SERVER_PORT=8078
       - APP_PROFILE_SERVER_URL=http://profile-service:8076/api/v1
-      - APP_DB_HOST=security-postgres-db
-      - APP_DB_PORT=5432
-      - APP_DB_NAME=${SECURITY_POSTGRES_DB}
-      - APP_DB_USERNAME=${SECURITY_POSTGRES_USER}
-      - APP_DB_PASSWORD=${SECURITY_POSTGRES_PASSWORD}
       - REDIS_HOST=security-redis-db
       - REDIS_PORT=6379
+      - POSTGRES_HOST=security-postgres-db
+      - POSTGRES_PORT=5432
 
   security-redis-db:
     image: redis:latest
@@ -36,11 +33,10 @@ services:
   security-postgres-db:
     image: postgres:14-alpine
     container_name: mp-security-postgres-db
+    env_file:
+      - ./.env.security.prod
     environment:
       - POSTGRES_PORT=5432
-      - POSTGRES_DB=${SECURITY_POSTGRES_DB}
-      - POSTGRES_USER=${SECURITY_POSTGRES_USER}
-      - POSTGRES_PASSWORD=${SECURITY_POSTGRES_PASSWORD}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 10s
