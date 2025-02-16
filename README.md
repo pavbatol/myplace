@@ -181,6 +181,14 @@ or
 docker/manage.sh prod up
  ```
 
+> NOTE: In the standard setup (without using a script),
+> you can specify an override file for docker-compose to set different values for services.
+> This is useful for testing in a 'production' environment.  
+Example:
+> ```bash
+>  docker-compose -f docker/docker-compose-prod.yml -f docker/docker-compose-prod.override.yml --profile full up
+>  ```
+
 </details>
 
 </div>

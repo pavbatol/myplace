@@ -181,6 +181,13 @@ docker-compose -f docker/docker-compose-prod.yml --profile full up
 docker/manage.sh prod up
  ```
 
+> NOTE: В стандартном варианте (без скрипта) вы можете указать файл переопределения для docker-compose, 
+> чтобы установить другие значения для сервисов. Это удобно для тестов в окружении 'production'.  
+Пример:
+> ```bash
+>  docker-compose -f docker/docker-compose-prod.yml -f docker/docker-compose-prod.override.yml --profile full up
+>  ```
+
 </details>
 
 </div>
