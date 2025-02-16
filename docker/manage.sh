@@ -3,15 +3,11 @@
 # Author: pavbatol
 # Created: February 07, 2025
 # Version: 1.0.0
-# License: MIT
 #
 # Description: This script simplifies docker-compose management for the MyPlace project.
 #              It supports the following environments: prod, dev, test.
 #              Available actions: up, down, build, logs.
 #              Optionally, you can specify a Docker Compose profile and the detached mode flag
-
-#-- Script settings
-ENV_MERGER_SERVICE="env-merger"  # Service that merges all .env files (the container will be removed after execution)
 
 #-- Functions
 show_help() {
@@ -72,23 +68,6 @@ check_args() {
       usage
   fi
 }
-up_then_remove_env_helper_container() {
-  COMPOSE_FILE=$1
-  WITH_COMPOSE_PROFILE=$2
-  DETACH_MODE=$3
-
-  printf "\033[1;33m💡  NOTE: Unset environment variables before the 'env-merger' service starts are expected and should not cause concern.\033[0m\n\n"
-
-  sudo docker-compose -f $COMPOSE_FILE up --no-start --no-recreate "$ENV_MERGER_SERVICE"
-  sudo docker-compose -f $COMPOSE_FILE start "$ENV_MERGER_SERVICE"
-  sudo docker-compose -f $COMPOSE_FILE logs --follow "$ENV_MERGER_SERVICE" &
-  LOG_PID=$!
-  wait $LOG_PID
-
-  sudo docker-compose -f $COMPOSE_FILE rm -f "$ENV_MERGER_SERVICE"
-
-  sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE --scale "$ENV_MERGER_SERVICE=0"
-}
 
 #-- Execute
 check_for_help "$1"
@@ -142,19 +121,9 @@ case $ACTION in
     sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build
     ;;
   up)
-    DOCKER_COMPOSE_CMD="sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE"
-    echo "EXPLAIN"
-    if [ "$ENV" = "prod" ]; then
-      echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE up $ENV_MERGER_SERVICE"
-      echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE rm -f $ENV_MERGER_SERVICE"
-      echo "COMMAND: $DOCKER_COMPOSE_CMD"
-      echo
-      up_then_remove_env_helper_container "$COMPOSE_FILE" "$WITH_COMPOSE_PROFILE" "$DETACH_MODE"
-    else
-      echo "COMMAND: $DOCKER_COMPOSE_CMD"
-      echo
-      sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE
-    fi
+    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE"
+    echo
+    sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE
     ;;
   down)
     echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE down"

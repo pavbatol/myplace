@@ -2,16 +2,6 @@ version: '3.8'
 
 services:
 
-  env-merger:
-    profiles: [ "env-merger", "full", "stats", "security", "profile" ]
-    image: alpine
-    container_name: mp-env-merger
-    restart: "no"
-    volumes:
-      - .:/app
-    working_dir: /app
-    entrypoint: /bin/sh -c "chmod +x ./merge_env.sh; ./merge_env.sh; sync; sleep 1; ls -la .env"
-
   stats-service:
     profiles: [ "stats", "full" ]
     extends:
@@ -20,17 +10,12 @@ services:
     depends_on:
       stats-db:
         condition: service_healthy
-      env-merger:
-        condition: service_completed_successfully
 
   stats-db:
     profiles: [ "stats", "full" ]
     extends:
       file: stats/docker-compose-stats-prod.yml
       service: stats-db
-    depends_on:
-      env-merger:
-        condition: service_completed_successfully
     volumes:
       - ../db/docker-sync/stats-service/mongo/db:/data/db
 
@@ -44,17 +29,12 @@ services:
         condition: service_healthy
       security-postgres-db:
         condition: service_healthy
-      env-merger:
-        condition: service_completed_successfully
 
   security-redis-db:
     profiles: [ "security", "full" ]
     extends:
       file: security/docker-compose-security-prod.yml
       service: security-redis-db
-    depends_on:
-      env-merger:
-        condition: service_completed_successfully
     volumes:
       - ../db/docker-sync/security-service/redis/data:/data
 
@@ -63,9 +43,6 @@ services:
     extends:
       file: security/docker-compose-security-prod.yml
       service: security-postgres-db
-    depends_on:
-      env-merger:
-        condition: service_completed_successfully
     volumes:
       - ../db/docker-sync/security-service/postgres/data:/var/lib/postgresql/data
 
@@ -77,16 +54,11 @@ services:
     depends_on:
       profile-db:
         condition: service_healthy
-      env-merger:
-        condition: service_completed_successfully
 
   profile-db:
     profiles: [ "profile", "full" ]
     extends:
       file: profile/docker-compose-profile-prod.yml
       service: profile-db
-    depends_on:
-      env-merger:
-        condition: service_completed_successfully
     volumes:
       - ../db/docker-sync/profile-service/postgres/data:/var/lib/postgresql/data
