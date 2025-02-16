@@ -139,10 +139,15 @@ jobs:
 
       - name: Set up Redis
         run: |
-          sudo apt-get update
-          sudo apt-get install -y redis-server
-          sudo systemctl start redis
-          redis-cli ping
+          docker run --name redis -d -p 6379:6379 redis:latest
+          docker ps -a
+
+      - name: Wait for Redis
+        run: |
+          timeout 60 bash -c 'until docker exec redis redis-cli ping; do
+            echo "Waiting for service to respond..."
+            sleep 5
+          done && echo "Service is ready!"'
 
       - name: Set up MongoDB
         run: |
@@ -158,7 +163,7 @@ jobs:
         run: |
           MAX_RETRIES=10
           count=0
-          until curl -s http://localhost:27017/ || [ $count -eq $MAX_RETRIES ]; do
+          until docker exec mongodb mongosh --eval "db.adminCommand('ping')" || [ $count -ge $MAX_RETRIES ]; do
             echo "Waiting for MongoDB to start..."
             sleep 5
             count=$((count + 1))
@@ -170,46 +175,57 @@ jobs:
 
       - name: Set up PostgreSQL
         run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql postgresql-contrib
-          sudo systemctl start postgresql
-          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '12345';"
+          docker run --name postgres -d -p 5432:5432 -e POSTGRES_PASSWORD=temp_password postgres:latest          
+          docker ps -a
+
+      - name: Wait for PostgreSQL
+        run: |
+          timeout 60 bash -c 'until docker exec postgres pg_isready -U postgres; do
+            echo "Waiting for service to respond..."
+            sleep 5
+          done && echo "Service is ready!"'
+
+      - name: Set PostgreSQL password for 'postgres' user
+        run: docker exec -u postgres postgres psql -U postgres -c "ALTER USER postgres WITH PASSWORD '12345';"
 
       - name: Install Docker Compose
         run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-
-      - name: Check Redis
-        run: redis-cli ping
-
-      - name: Check MongoDB
-        run: docker exec mongodb mongo --eval "db.adminCommand('ping')"
-
-      - name: Check PostgreSQL
-        run: pg_isready -h localhost -p 5432
+          DOCKER_COMPOSE_VERSION=1.28.0
+          sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose                    
+          echo
+          echo "Check uname's"
+          echo "OS (uname -s): $(uname -s)"
+          echo "Arch (uname -m): $(uname -m)"          
+          echo
+          echo "Check docker-compose version "
+          docker-compose --version
 
       - name: Set up Docker Compose file
         id: set-compose-file
         working-directory: ./docker
         run: |
+          set -e
+          
           ENV="${{ github.event.inputs.environment }}"
           OVERRIDE=${{ github.event.inputs.override-compose-file }}
           COMPOSE_FILE="docker-compose-$ENV.yml"
           COMPOSE_OVERRIDE_FILE="docker-compose-$ENV.override.yml"
           
           if [ ! -f "$COMPOSE_FILE" ]; then
-            echo "file not found: $COMPOSE_FILE"
+            echo "::error::Docker Compose file not found: $COMPOSE_FILE"
             exit 1
           fi
           
-          if [ "$OVERRIDE" = "true" ] && [ ! -f "$COMPOSE_OVERRIDE_FILE" ]; then
-            echo "file not found: $COMPOSE_OVERRIDE_FILE"
-            exit 1
-          fi
-          
-          if [ $ENV = "$_PROD" ]; then
+          if [ "$OVERRIDE" = "true" ]; then
+            if [ ! -f "$COMPOSE_OVERRIDE_FILE" ]; then
+              echo "::error::Docker Compose override file not found: $COMPOSE_OVERRIDE_FILE"
+              exit 1
+            fi
             COMPOSE_FILE="$COMPOSE_FILE:$COMPOSE_OVERRIDE_FILE"
+            echo "Override file enabled: $COMPOSE_OVERRIDE_FILE"
+          else
+            echo "Override file disabled."
           fi
           
           echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_ENV
@@ -231,7 +247,7 @@ jobs:
             SKIP_TESTS_FLAG="-Dmaven.test.skip=true"
           fi
           
-          echo "COMMAND: mvn clean package -B $MAVEN_PROFILES $SKIP_TESTS_FLAG"
+          echo "COMMAND: mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG"
           mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG
 
       - name: Build project images
