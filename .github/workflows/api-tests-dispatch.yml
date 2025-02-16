@@ -120,6 +120,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Display inputs
+        run: echo "${{ toJson(github.event.inputs) }}"
+
       - name: Cache Node.js modules
         id: cache-node-modules
         uses: actions/cache@v3
@@ -133,9 +136,6 @@ jobs:
 
       - name: Check Newman version
         run: newman --version
-
-      - name: Display inputs
-        run:  echo "${{ toJson(github.event.inputs) }}"
 
       - name: Set up Redis
         run: |
@@ -189,25 +189,6 @@ jobs:
       - name: Check PostgreSQL
         run: pg_isready -h localhost -p 5432
 
-      - name: Build Java project
-        run: |
-          MAVEN_PROFILES="${{ github.event.inputs.build-profiles }}"
-          MAVEN_PROFILES_OPTION=""
-          if [ -n "$MAVEN_PROFILES" ]; then
-            echo "MAVEN_PROFILES is not empty"
-            MAVEN_PROFILES_OPTION="-P$MAVEN_PROFILES"
-          else
-            echo "MAVEN_PROFILES is empty"          
-          fi
-          
-          SKIP_TESTS_FLAG=""
-          if [ "${{ github.event.inputs.build-skip-tests }}" = "true" ]; then
-            SKIP_TESTS_FLAG="-Dmaven.test.skip=true"
-          fi
-          
-          echo "COMMAND: mvn clean package -B $MAVEN_PROFILES $SKIP_TESTS_FLAG"
-          mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG
-
       - name: Set up Docker Compose file
         id: set-compose-file
         working-directory: ./docker
@@ -234,23 +215,24 @@ jobs:
           echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_ENV
           echo "Docker Compose file set to: $COMPOSE_FILE"
 
-      - name: Up env-merger service
-        working-directory: ./docker
+      - name: Build Java project
         run: |
-          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
-            echo "COMMAND docker-compose --profile env-merger up -d (with COMPOSE_FILE = $COMPOSE_FILE)"
-            docker-compose --profile env-merger up
+          MAVEN_PROFILES="${{ github.event.inputs.build-profiles }}"
+          MAVEN_PROFILES_OPTION=""
+          if [ -n "$MAVEN_PROFILES" ]; then
+            echo "MAVEN_PROFILES is not empty"
+            MAVEN_PROFILES_OPTION="-P$MAVEN_PROFILES"
+          else
+            echo "MAVEN_PROFILES is empty"          
           fi
-
-      - name: Check for common .env file
-        run: |
-          if [ "${{ github.event.inputs.environment }}" = "$_PROD" ]; then
-            ENV_FILE="./docker/.env"
-            if [ ! -f $ENV_FILE ]; then
-              echo "File not found: $ENV_FILE"
-              exit 1
-            fi
+          
+          SKIP_TESTS_FLAG=""
+          if [ "${{ github.event.inputs.build-skip-tests }}" = "true" ]; then
+            SKIP_TESTS_FLAG="-Dmaven.test.skip=true"
           fi
+          
+          echo "COMMAND: mvn clean package -B $MAVEN_PROFILES $SKIP_TESTS_FLAG"
+          mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG
 
       - name: Build project images
         working-directory: ./docker
@@ -313,7 +295,7 @@ jobs:
             unique_targets+=("$target")
           done
           
-          if [ "$has_all_tests" == true ]; then
+          if [ "$has_all_tests" = true ]; then
             echo "Running all-tests"
             newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml
             newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml
