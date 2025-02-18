@@ -110,6 +110,9 @@ jobs:
           if [ "$OVERRIDE" = "true" ]; then
             if [ ! -f "$COMPOSE_OVERRIDE_FILE" ]; then
               echo "::warning::Docker Compose override file not found: $COMPOSE_OVERRIDE_FILE"
+              echo "The environment variables are currently being loaded from: $COMPOSE_FILE. \
+              To customize these variables, create a file named $COMPOSE_OVERRIDE_FILE \
+              in the same directory as $COMPOSE_FILE and define your desired overrides there."
             else
               COMPOSE_FILE="$COMPOSE_FILE:$COMPOSE_OVERRIDE_FILE"
               echo "Override file enabled: $COMPOSE_OVERRIDE_FILE"
