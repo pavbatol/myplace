@@ -186,17 +186,17 @@ jobs:
 
       - name: Run Postman Tests
         run: |
-          case "${{ github.ref }}" in
-            refs/heads/stats)
+          case "${{ github.base_ref }}" in
+            stats)
               newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml
               ;;
-            refs/heads/security)
+            security)
               newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml
               ;;
-            refs/heads/profile)
+            profile)
               newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml
               ;;
-            refs/heads/develop)
+            develop|main)
               newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml
               newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml
               newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml
