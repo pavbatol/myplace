@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -17,7 +18,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
                 ),
                 license = @License(
                         name = "License MIT",
-                        url = ")https://mit-license.org/"
+                        url = "https://mit-license.org/"
                 )
 
         )
@@ -28,5 +29,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
         bearerFormat = "JWT",
         scheme = "bearer"
 )
+@Configuration
 public class OpenApiConfig {
 }

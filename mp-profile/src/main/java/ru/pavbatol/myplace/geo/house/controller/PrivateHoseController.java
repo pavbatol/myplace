@@ -12,7 +12,7 @@ import ru.pavbatol.myplace.geo.house.service.HouseService;
 
 @Slf4j
 @RestController
-@RequestMapping("user/geo/houses")
+@RequestMapping("${api.prefix}/user/geo/houses")
 @RequiredArgsConstructor
 @Tag(name = "Private: House", description = "API for working with House")
 public class PrivateHoseController {

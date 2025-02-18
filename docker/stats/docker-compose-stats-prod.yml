@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  stats-service:
+    build:
+      context: ../../mp-stats/server
+      dockerfile: Dockerfile-service
+    image: mp-stats
+    container_name: mp-stats
+    restart: unless-stopped
+    env_file:
+      - ./.env.stats.prod
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - SERVER_PORT=9090
+      - MONGO_HOST=stats-db
+      - MONGO_PORT=27017
+
+  stats-db:
+    build:
+      context: ../../mp-stats/server
+      dockerfile: Dockerfile-mongo-db
+    image: mp-stats-mongo-db
+    container_name: mp-stats-db
+    env_file:
+      - ./.env.stats.prod
+    healthcheck:
+      test: [ "CMD","mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

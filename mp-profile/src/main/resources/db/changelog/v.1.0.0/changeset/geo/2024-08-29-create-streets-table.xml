@@ -1,0 +1,77 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-streets-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_streets"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-streets-table" author="pavbatol">
+        <createTable tableName="streets">
+
+            <column name="street_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="city_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addDefaultValue tableName="streets"
+                         columnName="street_id"
+                         defaultValueComputed="nextval('seq_streets')"/>
+
+        <addPrimaryKey tableName="streets"
+                       columnNames="street_id"
+                       constraintName="pk_streets"/>
+
+        <addForeignKeyConstraint baseTableName="streets"
+                                 baseColumnNames="city_id"
+                                 referencedTableName="cities"
+                                 referencedColumnNames="city_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_streets_city_id"/>
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="H2"/>
+        </preConditions>
+        <sql>
+            ALTER TABLE streets
+            ADD COLUMN lower_name VARCHAR(150) GENERATED ALWAYS AS (LOWER(name));
+
+            ALTER TABLE streets
+            ALTER COLUMN lower_name SET NOT NULL;
+
+            ALTER TABLE streets
+            ADD CONSTRAINT uq_streets_city_id_lower_name UNIQUE (city_id, lower_name);
+
+            ALTER TABLE streets
+            ADD CONSTRAINT uq_streets_lower_name_city_id UNIQUE (lower_name, city_id);
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            CREATE UNIQUE INDEX uq_streets_city_id_lower_name ON streets(city_id, LOWER(name));
+            CREATE UNIQUE INDEX uq_streets_lower_name_city_id ON streets(LOWER(name), city_id);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

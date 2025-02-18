@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+
+  profile-service:
+    build: ../../mp-profile
+    image: mp-profile
+    container_name: mp-profile
+    ports:
+      - "8076:8076"
+    environment:
+      - SPRING_PROFILES_ACTIVE=test

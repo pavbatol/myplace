@@ -12,7 +12,7 @@ import ru.pavbatol.myplace.geo.region.service.RegionService;
 
 @Slf4j
 @RestController
-@RequestMapping("user/geo/regions")
+@RequestMapping("${api.prefix}/user/geo/regions")
 @RequiredArgsConstructor
 @Tag(name = "Private: Region", description = "API for working with Region")
 public class PrivateRegionController {

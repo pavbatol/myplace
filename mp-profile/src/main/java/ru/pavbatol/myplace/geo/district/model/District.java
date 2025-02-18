@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.geo.district.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import ru.pavbatol.myplace.geo.IdableNameableGeo;
 import ru.pavbatol.myplace.geo.region.model.Region;
 
 import javax.persistence.*;
@@ -15,13 +16,13 @@ import javax.persistence.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "districts")
-public class District {
+public class District implements IdableNameableGeo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "district_id")
     Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "region_id", nullable = false)
     Region region;
 

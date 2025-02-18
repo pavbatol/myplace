@@ -1,0 +1,54 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-countries-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_countries" minValue="1" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-countries-table" author="pavbatol">
+        <createTable tableName="countries">
+
+            <column name="country_id" type="bigint" defaultValueComputed="nextval('seq_countries')">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_countries"/>
+            </column>
+
+            <column name="code" type="varchar(2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(150)">
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="H2"/>
+        </preConditions>
+        <sql>
+            ALTER TABLE countries
+            ADD COLUMN lower_name VARCHAR(150) GENERATED ALWAYS AS (LOWER(name));
+
+            ALTER TABLE countries
+            ALTER COLUMN lower_name SET NOT NULL;
+
+            ALTER TABLE countries
+            ADD CONSTRAINT uq_countries_lower_name UNIQUE (lower_name);
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            CREATE UNIQUE INDEX uq_countries_lower_name ON countries(LOWER(name));
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

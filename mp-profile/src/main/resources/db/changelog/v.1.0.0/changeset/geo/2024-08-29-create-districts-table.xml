@@ -1,0 +1,77 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-districts-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_districts"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-districts-table" author="pavbatol">
+
+        <createTable tableName="districts">
+            <column name="district_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="region_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addDefaultValue tableName="districts"
+                         columnName="district_id"
+                         defaultValueComputed="nextval('seq_districts')"/>
+
+        <addPrimaryKey tableName="districts"
+                       columnNames="district_id"
+                       constraintName="pk_districts"/>
+
+        <addForeignKeyConstraint baseTableName="districts"
+                                 baseColumnNames="region_id"
+                                 referencedTableName="regions"
+                                 referencedColumnNames="region_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_districts_region_id"/>
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="H2"/>
+        </preConditions>
+        <sql>
+            ALTER TABLE districts
+            ADD COLUMN lower_name VARCHAR(150) GENERATED ALWAYS AS (LOWER(name));
+
+            ALTER TABLE districts
+            ALTER COLUMN lower_name SET NOT NULL;
+
+            ALTER TABLE districts
+            ADD CONSTRAINT uq_districts_region_id_lower_name UNIQUE (region_id, lower_name);
+
+            ALTER TABLE districts
+            ADD CONSTRAINT uq_districts_lower_name_region_id UNIQUE (lower_name, region_id);
+        </sql>
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            CREATE UNIQUE INDEX uq_districts_region_id_lower_name ON districts(region_id, LOWER(name));
+            CREATE UNIQUE INDEX uq_districts_lower_name_region_id ON districts(LOWER(name), region_id);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
+

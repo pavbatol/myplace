@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  security-service:
+    build: ../../mp-security
+    image: mp-security
+    container_name: mp-security
+    restart: unless-stopped
+    env_file:
+      - ./.env.security.prod
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - SERVER_PORT=8078
+      - APP_PROFILE_SERVER_URL=http://profile-service:8076/api/v1
+      - REDIS_HOST=security-redis-db
+      - REDIS_PORT=6379
+      - POSTGRES_HOST=security-postgres-db
+      - POSTGRES_PORT=5432
+
+  security-redis-db:
+    image: redis:latest
+    container_name: mp-security-redis-db
+    environment:
+      - REDIS_PORT=6379
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  security-postgres-db:
+    image: postgres:14-alpine
+    container_name: mp-security-postgres-db
+    env_file:
+      - ./.env.security.prod
+    environment:
+      - POSTGRES_PORT=5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

@@ -35,9 +35,10 @@ public class ProfileClient {
         HttpHeaders headers = defaultHeaders();
         headers.add("X-User-Uuid", userUuid.toString());
         HttpEntity<ProfileDtoCreate> httpEntity = new HttpEntity<>(profileDto, headers);
+        String path = "/user" + PROFILE_PATH;
 
         ResponseEntity<Object> response = restTemplate.exchange(
-                PROFILE_PATH,
+                path,
                 HttpMethod.POST,
                 httpEntity,
                 Object.class);

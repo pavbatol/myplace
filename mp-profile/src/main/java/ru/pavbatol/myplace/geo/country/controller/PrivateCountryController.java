@@ -12,7 +12,7 @@ import ru.pavbatol.myplace.geo.country.service.CountryService;
 
 @Slf4j
 @RestController
-@RequestMapping("user/geo/countries")
+@RequestMapping("${api.prefix}/user/geo/countries")
 @RequiredArgsConstructor
 @Tag(name = "Private: Country", description = "API for working with Country")
 public class PrivateCountryController {

@@ -1,0 +1,92 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1_create-countries_temp-table" author="pavbatol">
+        <createTable tableName="countries_temp">
+            <column name="name_ru" type="varchar(150)"/>
+            <column name="name_en" type="varchar(150)"/>
+            <column name="iso3166_1" type="varchar(10)"/>
+            <column name="iso3166_1_alpha2" type="varchar(10)"/>
+            <column name="iso3166_1_alpha3" type="varchar(10)"/>
+            <column name="iso3166_1_numeric" type="varchar(10)"/>
+            <column name="country_code_iso3166_1_alpha_2" type="varchar(10)"/>
+            <column name="country_code_fips" type="varchar(10)"/>
+            <column name="official_name_ru" type="varchar(150)"/>
+            <column name="official_name_en" type="varchar(150)"/>
+            <column name="wikipedia" type="varchar(150)"/>
+            <column name="longitude" type="varchar(20)"/>
+            <column name="latitude" type="varchar(20)"/>
+            <column name="id" type="varchar(20)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2_load_data_to_countries_temp" author="pavbatol">
+        <loadData file="classpath:db/data/countries/countries-all.csv"
+                  tableName="countries_temp"
+                  separator=","
+                  encoding="UTF-8">
+            <column name="name_ru" index="0" defaultValue="nullable"/>
+            <column name="name_en" index="1" defaultValue="nullable"/>
+            <column name="iso3166_1" index="2" defaultValue="nullable"/>
+            <column name="iso3166_1_alpha2" index="3" defaultValue="nullable"/>
+            <column name="iso3166_1_alpha3" index="4" defaultValue="nullable"/>
+            <column name="iso3166_1_numeric" index="5" defaultValue="nullable"/>
+            <column name="country_code_iso3166_1_alpha_2" index="6" defaultValue="nullable"/>
+            <column name="country_code_fips" index="7" defaultValue="nullable"/>
+            <column name="official_name_ru" index="8" defaultValue="nullable"/>
+            <column name="official_name_en" index="9" defaultValue="nullable"/>
+            <column name="wikipedia" index="10"/>
+            <column name="longitude" index="11"/>
+            <column name="latitude" index="12"/>
+            <column name="id" index="13"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="3_insert_data_to_countries_pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            INSERT INTO countries (code, name)
+            SELECT
+            COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) AS country_code,
+            COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) AS country_name
+            FROM countries_temp
+            WHERE
+            COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) IS NOT NULL
+            AND
+            COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) IS NOT NULL
+            ON CONFLICT (LOWER(name)) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <changeSet id="3.1_insert_data_to_countries_h2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="h2"/>
+        </preConditions>
+        <sql>
+            MERGE INTO countries AS target
+            USING (
+            SELECT
+            COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) AS country_code,
+            COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) AS country_name
+            FROM countries_temp
+            WHERE
+            COALESCE(NULLIF(country_code_iso3166_1_alpha_2, 'nullable'), NULLIF(iso3166_1_alpha2, 'nullable')) IS NOT NULL
+            AND
+            COALESCE(NULLIF(name_ru, 'nullable'), NULLIF(official_name_ru, 'nullable'), NULLIF(name_en, 'nullable'), NULLIF(official_name_en, 'nullable')) IS NOT NULL
+            ) AS source
+            ON target.name = source.country_name
+            WHEN NOT MATCHED THEN
+            INSERT (code, name) VALUES (source.country_code, source.country_name)
+        </sql>
+    </changeSet>
+
+    <changeSet id="4_drop_temp_country_table" author="pavbatol">
+        <dropTable tableName="countries_temp"/>
+    </changeSet>
+
+</databaseChangeLog>

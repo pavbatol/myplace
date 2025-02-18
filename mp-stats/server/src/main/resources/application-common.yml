@@ -8,11 +8,12 @@ springdoc:
     path: /docs
     enabled: true
 
-app:
-  db:
-    host: localhost
-    port: 27017
-    name: mp-stats
-    username: root
-    password: root
+mongo:
+  host: localhost
+  port: 27017
+  initdb:
+    database: mp-stats
+    root:
+      username: root
+      password: root
 

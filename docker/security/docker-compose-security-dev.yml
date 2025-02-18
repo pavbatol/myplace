@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+
+  security-service:
+    build: ../../mp-security
+    image: mp-security
+    container_name: mp-security
+    restart: unless-stopped
+    ports:
+      - "8078:8078"
+    environment:
+      # ***** Examples for testing in Postman with additional spring profiles *****
+      #- SPRING_PROFILES_ACTIVE=test # Use it instead of any other profile to use H2 db and automatic reading of the registration confirmation code!
+      #- SPRING_PROFILES_ACTIVE=test,test-mail-sender-bypassing # Add 'test-mail-sender-bypassing' to any profile to bypass the error if the sending mail is not specified!
+      #- SPRING_PROFILES_ACTIVE=default,test-confirmation-code-reading # Add "test-confirmation-code reading" to a profile other than 'test' for automatic reading of the registration confirmation code!
+      - SPRING_PROFILES_ACTIVE=develop,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can!
+      #- SPRING_PROFILES_ACTIVE=production,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can!
+      #- SPRING_PROFILES_ACTIVE=test,test-confirmation-code-reading,test-mail-sender-bypassing # Look you can! (the test-confirmation-code-reading is unnecessary here, because the test profile does this by default, But specifying it will not be bad)
+      #- SPRING_PROFILES_ACTIVE=develop${SECURITY_ADDITIONAL_SPRING_PROFILES:-""} Use .env or export the variable to the host to receive value of the SECURITY_ADDITIONAL_SPRING_PROFILES
+      # *******************************************
+      #- SPRING_PROFILES_ACTIVE=develop
+      - APP_PROFILE_SERVER_URL=http://profile-service:8076/api/v1
+      - REDIS_HOST=security-redis-db
+      - REDIS_PORT=6379
+      - REDIS_USERNAME= # Optional
+      - REDIS_PASSWORD= # Optional
+      - APP_MAIL_SENDER=test@gmail.com
+      - APP_MAIL_HOST=smtp.gmail.com
+      - APP_MAIL_PORT=587
+      - APP_MAIL_USERNAME=
+      - APP_MAIL_PASSWORD=
+      - APP_JWT_ACCESS_KEY= # Optional
+      - APP_JWT_ACCESS_LIFE_SECONDS=36000
+      - APP_JWT_ACCESS_STORING=true
+      - APP_JWT_REFRESH_KEY= # Optional
+      - APP_JWT_REFRESH_LIFE_SECONDS=2592000
+      - POSTGRES_HOST=security-postgres-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=mp-security
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
+  security-redis-db:
+    image: redis:latest
+    container_name: mp-security-redis-db
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  security-postgres-db:
+    image: postgres:14-alpine
+    container_name: mp-security-postgres-db
+    ports:
+      - "5799:5432"
+    environment:
+      - POSTGRES_DB=mp-security
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-security" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
