@@ -1,0 +1,82 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-houses-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_houses"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-houses-table" author="pavbatol">
+        <createTable tableName="houses">
+
+            <column name="house_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="street_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="number" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lat" type="double precision"/>
+
+            <column name="lon" type="double precision"/>
+
+        </createTable>
+
+
+        <addDefaultValue tableName="houses"
+                         columnName="house_id"
+                         defaultValueComputed="nextval('seq_houses')"/>
+
+        <addPrimaryKey tableName="houses"
+                       columnNames="house_id"
+                       constraintName="pk_houses"/>
+
+        <addForeignKeyConstraint baseTableName="houses"
+                                 baseColumnNames="street_id"
+                                 referencedTableName="streets"
+                                 referencedColumnNames="street_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_houses_street_id"/>
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="H2"/>
+        </preConditions>
+        <sql>
+            ALTER TABLE houses
+            ADD COLUMN lower_number VARCHAR(150) GENERATED ALWAYS AS (LOWER(number));
+
+            ALTER TABLE houses
+            ALTER COLUMN lower_number SET NOT NULL;
+
+            ALTER TABLE houses
+            ADD CONSTRAINT uq_houses_street_id_lower_number UNIQUE (street_id, lower_number);
+
+            ALTER TABLE houses
+            ADD CONSTRAINT uq_houses_lower_number_street_id UNIQUE (lower_number, street_id);
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            CREATE UNIQUE INDEX uq_houses_street_id_lower_number ON houses(street_id, LOWER(number));
+            CREATE UNIQUE INDEX uq_houses_lower_number_street_id ON houses(LOWER(number), street_id);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

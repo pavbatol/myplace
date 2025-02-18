@@ -3,11 +3,11 @@ spring:
     location: banner/banner-dev.txt
   data:
     mongodb:
-      host: ${app.db.host}
-      port: ${app.db.port}
-      database: ${app.db.name}
-      username: ${app.db.username}
-      password: ${app.db.password}
+      host: ${mongo.host}
+      port: ${mongo.port}
+      database: ${mongo.initdb.database}
+      username: ${mongo.initdb.root.username}
+      password: ${mongo.initdb.root.password}
       authentication-database: admin
 
 logging:

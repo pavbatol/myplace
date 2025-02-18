@@ -1,14 +1,17 @@
 server:
   port: 8076
 
+api:
+  prefix: /api/v1
+
 spring:
   application:
     name: mp-profile
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${app.db.host}:${app.db.port}/${app.db.name}
-    username: ${app.db.username}
-    password: ${app.db.password}
+    url: jdbc:postgresql://${postgres.host}:${postgres.port}/${postgres.db}
+    username: ${postgres.user}
+    password: ${postgres.password}
   jpa:
     open-in-view: false
     hibernate:
@@ -17,11 +20,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL10Dialect
         format_sql: true
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:sql/schema.sql
-#      data-locations: classpath:sql/data.sql
   banner:
     location: banner/banner.txt
   mvc:
@@ -35,10 +33,9 @@ logging:
     ru.pavbatol: DEBUG
     org.springframework.web: DEBUG
 
-app:
-  db:
-    host: localhost
-    port: 5432
-    name: mp-profile
-    username: postgres
-    password: 12345
+postgres:
+  host: localhost
+  port: 5432
+  db: mp-profile
+  user: postgres
+  password: 12345

@@ -3,6 +3,5 @@ redis:
   port: 6379
   database: 0
   password:
-  username:
   ttl-sec: 300
   ttl-sec-unverified-user: 180

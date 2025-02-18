@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="2025-01-24-drop-view-duplicated_countries_by_code" author="pavbatol" runAlways="true" runOnChange="true">
+        <preConditions onFail="CONTINUE">
+            <viewExists viewName="duplicated_countries_by_code"/>
+        </preConditions>
+        <dropView viewName="duplicated_countries_by_code"/>
+    </changeSet>
+
+    <changeSet id="2025-01-24-create-view-duplicated_countries_by_code" author="pavbatol" runAlways="true"
+               runOnChange="true">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <viewExists viewName="duplicated_countries_by_code"/>
+            </not>
+        </preConditions>
+        <createView viewName="duplicated_countries_by_code">
+            SELECT c.code, c.name, sub.cnt AS number_of_duplicates_by_code
+            FROM COUNTRIES c
+            JOIN (
+            SELECT code, COUNT(*) AS cnt
+            FROM COUNTRIES
+            GROUP BY code
+            HAVING COUNT(*) > 1
+            ) sub ON c.code = sub.code;
+        </createView>
+    </changeSet>
+
+    <changeSet id="2025-01-24-drop-view-full_geo_data_ru" author="pavbatol" runAlways="true" runOnChange="true">
+        <preConditions onFail="CONTINUE">
+            <viewExists viewName="full_geo_data_ru"/>
+        </preConditions>
+        <dropView viewName="full_geo_data_ru"/>
+    </changeSet>
+
+    <changeSet id="2025-01-24-create-view-full_geo_data_ru" author="pavbatol" runAlways="true" runOnChange="true">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <viewExists viewName="full_geo_data_ru"/>
+            </not>
+        </preConditions>
+        <createView viewName="full_geo_data_ru" remarks="Use LIMIT or FETCH or WHERE for limit result">
+            select cn.country_id, cn.code, cn.name country_name,
+            r.region_id, r.name region_name,
+            d.district_id, d.name district_name,
+            c.city_id, c.name  city_name,
+            s.street_id, s.name street_name,
+            h.house_id, h.number house_number
+            from countries cn
+            left join regions r on cn.country_id = r.country_id
+            left join districts d on r.region_id = d.region_id
+            left join cities c on d.district_id = c.district_id
+            left join streets s on c.city_id = s.city_id
+            left join houses h on s.street_id = h.street_id
+            where upper(cn.code) = 'RU'
+        </createView>
+    </changeSet>
+
+    <changeSet id="2025-01-24-drop-view-country_region_district_city_data_ru" author="pavbatol" runAlways="true" runOnChange="true">
+        <preConditions onFail="CONTINUE">
+            <viewExists viewName="country_region_district_city_data_ru"/>
+        </preConditions>
+        <dropView viewName="country_region_district_city_data_ru"/>
+    </changeSet>
+
+    <changeSet id="2025-01-24-create-view-country_region_district_city_data_ru" author="pavbatol" runAlways="true" runOnChange="true">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <viewExists viewName="country_region_district_city_data_ru"/>
+            </not>
+        </preConditions>
+        <createView viewName="country_region_district_city_data_ru">
+            select cn.country_id, cn.code, cn.name country_name,
+            r.region_id, r.name region_name,
+            d.district_id, d.name district_name,
+            c.city_id, c.name  city_name
+            from countries cn
+            left join regions r on cn.country_id = r.country_id
+            left join districts d on r.region_id = d.region_id
+            left join cities c on d.district_id = c.district_id
+            where upper(cn.code) = 'RU'
+        </createView>
+    </changeSet>
+</databaseChangeLog>

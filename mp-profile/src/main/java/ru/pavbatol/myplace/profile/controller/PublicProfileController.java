@@ -13,7 +13,7 @@ import ru.pavbatol.myplace.profile.service.ProfileService;
 
 @Slf4j
 @RestController
-@RequestMapping("/profiles")
+@RequestMapping("${api.prefix}/profiles")
 @RequiredArgsConstructor
 @Tag(name = "Public: Profile", description = "API for working with Profile")
 public class PublicProfileController {

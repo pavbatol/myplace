@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/user/profiles")
+@RequestMapping("${api.prefix}/user/profiles")
 @RequiredArgsConstructor
 @Tag(name = "Private: Profile", description = "API for working with Profile")
 public class PrivateProfileController {

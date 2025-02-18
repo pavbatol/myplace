@@ -1,0 +1,69 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+    <changeSet id="1-create-regions-sequence" author="pavbatol">
+        <createSequence sequenceName="seq_regions"
+                        minValue="1"
+                        startValue="1"
+                        incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="2-create-regions-table" author="pavbatol">
+        <createTable tableName="regions">
+            <column name="region_id" type="bigint" defaultValueComputed="nextval('seq_regions')">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="regions"
+                       columnNames="region_id"
+                       constraintName="pk_regions"/>
+
+        <addForeignKeyConstraint baseTableName="regions"
+                                 baseColumnNames="country_id"
+                                 referencedTableName="countries"
+                                 referencedColumnNames="country_id"
+                                 onDelete="CASCADE"
+                                 constraintName="fk_regions_country_id"/>
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-H2" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="H2"/>
+        </preConditions>
+        <sql>
+            ALTER TABLE regions
+            ADD COLUMN lower_name VARCHAR(150) GENERATED ALWAYS AS (LOWER(name));
+
+            ALTER TABLE regions
+            ALTER COLUMN lower_name SET NOT NULL;
+
+            ALTER TABLE regions
+            ADD CONSTRAINT uq_regions_country_id_lower_name UNIQUE (country_id, lower_name);
+
+            ALTER TABLE regions
+            ADD CONSTRAINT uq_regions_lower_name_country_id UNIQUE (lower_name, country_id);
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="2025-01-27-create-unique-index-lower_name-pgsql" author="pavbatol">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+        </preConditions>
+        <sql>
+            CREATE UNIQUE INDEX uq_regions_country_id_lower_name ON regions(country_id, LOWER(name));
+            CREATE UNIQUE INDEX uq_regions_lower_name_country_id ON regions(LOWER(name), country_id);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

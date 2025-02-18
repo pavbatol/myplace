@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+
+  stats-service:
+    ports:
+      - "9090:9090"
+
+  security-service:
+    ports:
+      - "8078:8078"
+    environment:
+      - SPRING_PROFILES_ACTIVE=production,test-confirmation-code-reading,test-mail-sender-bypassing
+      - APP_MAIL_SENDER=test@gmail.com
+      - APP_MAIL_HOST=smtp.gmail.com
+      - APP_MAIL_PORT=587
+      - APP_MAIL_USERNAME=
+      - APP_MAIL_PASSWORD=
+
+  profile-service:
+    ports:
+      - "8076:8076"

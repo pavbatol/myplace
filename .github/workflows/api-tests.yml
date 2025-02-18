@@ -1,0 +1,219 @@
+name: MyPlace Unit And Postman Tests
+
+on:
+  pull_request:
+    branches:
+      - stats
+      - security
+      - profile
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache Node.js modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('./.github/workflows/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install Newman
+        run: npm install newman --save-dev
+
+      - name: Check Newman version
+        run: newman --version
+
+      - name: Set up Redis
+        run: |
+          docker run --name redis -d -p 6379:6379 redis:latest
+          docker ps -a
+
+      - name: Wait for Redis
+        run: |
+          timeout 60 bash -c 'until docker exec redis redis-cli ping; do
+            echo "Waiting for service to respond..."
+            sleep 5
+          done && echo "Service is ready!"'
+
+      - name: Set up MongoDB
+        run: |
+          docker run --name mongodb -d -p 27017:27017 mongo:5.0
+          if [ $? -eq 0 ]; then
+            echo "MongoDB container started with ID: $(docker ps -aqf "name=mongodb")"
+          else
+            echo "Failed to start MongoDB container"
+            exit 1
+          fi          
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          MAX_RETRIES=10
+          count=0
+          until docker exec mongodb mongosh --eval "db.adminCommand('ping')" || [ $count -ge $MAX_RETRIES ]; do
+            echo "Waiting for MongoDB to start..."
+            sleep 5
+            count=$((count + 1))
+          done
+          if [ $count -eq $MAX_RETRIES ]; then
+            echo "MongoDB did not start within the expected time."
+            exit 1
+          fi
+
+      - name: Set up PostgreSQL
+        run: |
+          docker run --name postgres -d -p 5432:5432 -e POSTGRES_PASSWORD=12345 postgres:latest
+          docker ps -a
+
+      - name: Wait for PostgreSQL
+        run: |
+          timeout 60 bash -c 'until docker exec postgres pg_isready -U postgres; do
+            echo "Waiting for service to respond..."
+            sleep 5
+          done && echo "Service is ready!"'
+
+      - name: Install Docker Compose
+        run: |
+          DOCKER_COMPOSE_VERSION=1.28.0
+          sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          
+          echo
+          echo "Check uname's"
+          echo "OS (uname -s): $(uname -s)"
+          echo "Arch (uname -m): $(uname -m)"
+          
+          echo
+          echo "Check docker-compose version "
+          docker-compose --version
+
+      - name: Set up Docker Compose file
+        id: set-compose-file
+        working-directory: ./docker
+        run: |
+          ENV="test"
+          OVERRIDE=true
+          COMPOSE_FILE="docker-compose-$ENV.yml"
+          COMPOSE_OVERRIDE_FILE="docker-compose-$ENV.override.yml"
+          
+          if [ ! -f "$COMPOSE_FILE" ]; then
+            echo "::error::Docker Compose file not found: $COMPOSE_FILE"
+            exit 1
+          fi
+          
+          if [ "$OVERRIDE" = "true" ]; then
+            if [ ! -f "$COMPOSE_OVERRIDE_FILE" ]; then
+              echo "::warning::Docker Compose override file not found: $COMPOSE_OVERRIDE_FILE"
+              echo "The environment variables are currently being loaded from: $COMPOSE_FILE. \
+              To customize these variables, create a file named $COMPOSE_OVERRIDE_FILE \
+              in the same directory as $COMPOSE_FILE and define your desired overrides there."
+            else
+              COMPOSE_FILE="$COMPOSE_FILE:$COMPOSE_OVERRIDE_FILE"
+              echo "Override file enabled: $COMPOSE_OVERRIDE_FILE"
+            fi
+          else
+            echo "Override file disabled."
+          fi
+          
+          echo "COMPOSE_FILE=$COMPOSE_FILE" >> $GITHUB_ENV
+          echo "Docker Compose file set to: $COMPOSE_FILE"
+
+      - name: Build Java project
+        run: |
+          MAVEN_PROFILES="check,coverage"
+          BUILD_SKIP_TESTS=false
+          
+          MAVEN_PROFILES_OPTION=""
+          if [ -n "$MAVEN_PROFILES" ]; then
+            echo "MAVEN_PROFILES is not empty"
+            MAVEN_PROFILES_OPTION="-P$MAVEN_PROFILES"
+          else
+            echo "MAVEN_PROFILES is empty"          
+          fi
+          
+          SKIP_TESTS_FLAG=""
+          if [ "$BUILD_SKIP_TESTS" = "true" ]; then
+            SKIP_TESTS_FLAG="-Dmaven.test.skip=true"
+          fi
+          
+          echo "COMMAND: mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG"
+          mvn clean package -B $MAVEN_PROFILES_OPTION $SKIP_TESTS_FLAG
+
+      - name: Build project images
+        working-directory: ./docker
+        run: |
+          echo "COMMAND docker-compose --profile full build (with COMPOSE_FILE = $COMPOSE_FILE)"
+          docker-compose --profile full build
+
+      - name: Check Images
+        run: docker images
+
+      - name: Run project
+        working-directory: ./docker
+        run: |
+          echo "COMMAND docker-compose --profile full up -d (with COMPOSE_FILE = $COMPOSE_FILE)"
+          docker-compose --profile full up -d
+
+      - name: List all containers
+        run: docker ps -a
+
+      - name: Wait for security-service to be ready
+        run: |
+          timeout 60 bash -c 'until docker exec mp-security nc -z localhost 8078; do
+            echo "Waiting for service to respond..."
+            sleep 5
+          done'
+          echo "Service is ready!"
+
+      - name: Wait for profile-service to be ready
+        run: |
+          timeout 60 bash -c 'until docker exec mp-profile nc -z localhost 8076; do
+            echo "Waiting for service to respond..."
+            sleep 5
+          done'
+          echo "Service is ready!"
+
+      - name: Wait for stats-service to be ready
+        run: |
+          timeout 60 bash -c 'until docker exec mp-stats nc -z localhost 9090; do
+            echo "Waiting for service to respond..."
+            sleep 5
+          done'
+          echo "Service is ready!"
+
+      - name: Run Postman Tests
+        run: |
+          case "${{ github.base_ref }}" in
+            stats)
+              newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml
+              ;;
+            security)
+              newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml
+              ;;
+            profile)
+              newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml
+              ;;
+            develop|main)
+              newman run postman/MyPlace-mp-stats.postman_collection.json --reporters junit --reporter-junit-export postman-stats-report.xml
+              newman run postman/MyPlace-mp-security.postman_collection.json --reporters junit --reporter-junit-export postman-security-report.xml
+              newman run postman/MyPlace-mp-profile.postman_collection.json --reporters junit --reporter-junit-export postman-profile-report.xml
+              ;;
+            *)
+              echo "No specific Postman tests for this branch."
+              ;;
+          esac
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Results
+          path: |
+            postman-stats-report.xml
+            postman-security-report.xml
+            postman-profile-report.xml

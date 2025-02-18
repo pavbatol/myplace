@@ -12,7 +12,7 @@ import ru.pavbatol.myplace.geo.city.service.CityService;
 
 @Slf4j
 @RestController
-@RequestMapping("user/geo/cities")
+@RequestMapping("${api.prefix}/user/geo/cities")
 @RequiredArgsConstructor
 @Tag(name = "Private: City", description = "API for working with City")
 public class PrivateCityController {

@@ -12,7 +12,7 @@ import ru.pavbatol.myplace.geo.district.service.DistrictService;
 
 @Slf4j
 @RestController
-@RequestMapping("user/geo/districts")
+@RequestMapping("${api.prefix}/user/geo/districts")
 @RequiredArgsConstructor
 @Tag(name = "Private: District", description = "API for working with District")
 public class PrivateDistrictController {

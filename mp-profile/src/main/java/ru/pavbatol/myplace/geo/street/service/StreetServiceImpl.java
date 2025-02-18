@@ -7,7 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
+import ru.pavbatol.myplace.geo.city.repository.CityRepository;
 import ru.pavbatol.myplace.geo.street.dto.StreetDto;
 import ru.pavbatol.myplace.geo.street.mapper.StreetMapper;
 import ru.pavbatol.myplace.geo.street.model.Street;
@@ -19,11 +22,14 @@ import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
 public class StreetServiceImpl implements StreetService {
     private static final String ENTITY_SIMPLE_NAME = Street.class.getSimpleName();
     private final StreetRepository repository;
+    private final CityRepository cityRepository;
     private final StreetMapper mapper;
+    private final CityMapper cityMapper;
 
+    @Transactional
     @Override
     public StreetDto create(StreetDto dto) {
-        Street entity = mapper.toEntity(dto);
+        Street entity = mapper.toEntity(dto, cityRepository, cityMapper);
         Street saved = repository.save(entity);
         log.debug("Saved {}: {}", ENTITY_SIMPLE_NAME, saved);
 

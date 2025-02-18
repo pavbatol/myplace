@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+
+  profile-service:
+    build: ../../mp-profile
+    image: mp-profile
+    container_name: mp-profile
+    restart: unless-stopped
+    ports:
+      - "8076:8076"
+    environment:
+      - SPRING_PROFILES_ACTIVE=develop
+      - POSTGRES_HOST=profile-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=mp-profile
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
+  profile-db:
+    image: postgres:14-alpine
+    container_name: mp-profile-db
+    ports:
+      - "5776:5432"
+    environment:
+      - POSTGRES_DB=mp-profile
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "root", "-d", "mp-profile" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

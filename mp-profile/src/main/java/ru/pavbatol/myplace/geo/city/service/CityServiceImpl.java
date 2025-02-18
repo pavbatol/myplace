@@ -7,11 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
 import ru.pavbatol.myplace.geo.city.dto.CityDto;
 import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
 import ru.pavbatol.myplace.geo.city.model.City;
 import ru.pavbatol.myplace.geo.city.repository.CityRepository;
+import ru.pavbatol.myplace.geo.district.mapper.DistrictMapper;
+import ru.pavbatol.myplace.geo.district.repository.DistrictRepository;
 
 @Slf4j
 @Service
@@ -19,11 +22,14 @@ import ru.pavbatol.myplace.geo.city.repository.CityRepository;
 public class CityServiceImpl implements CityService {
     private static final String ENTITY_SIMPLE_NAME = City.class.getSimpleName();
     private final CityRepository repository;
+    private final DistrictRepository districtRepository;
     private final CityMapper mapper;
+    private final DistrictMapper districtMapper;
 
+    @Transactional
     @Override
     public CityDto create(CityDto dto) {
-        City entity = mapper.toEntity(dto);
+        City entity = mapper.toEntity(dto, districtRepository, districtMapper);
         City saved = repository.save(entity);
         log.debug("Saved {}: {}", ENTITY_SIMPLE_NAME, saved);
 
