@@ -1,35 +1,446 @@
 {
-  "info": {
-    "_postman_id": "2ff29014-1321-4176-bc7e-e0160c2eaea4",
-    "name": "MyPlace-mp-profile",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Always Pass Test",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://example.com",
-          "protocol": "https",
-          "host": ["example", "com"]
-        }
-      },
-      "response": [],
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Always pass\", function () {",
-              "    pm.expect(true).to.be.true;",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ]
-    }
-  ]
+	"info": {
+		"_postman_id": "bc37f675-8f42-4821-a57a-5f3a77b94b2c",
+		"name": "MyPlace-mp-profile",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23050345"
+	},
+	"item": [
+		{
+			"name": "geo",
+			"item": [
+				{
+					"name": "country",
+					"item": [
+						{
+							"name": "admin",
+							"item": [
+								{
+									"name": "Country create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.id, 'Muat have id').to.not.be.null;",
+													"    pm.expect(jsonData.code).to.eql('RU');",
+													"    pm.expect(jsonData.name).to.eql('Russia');",
+													"    ",
+													"    pm.collectionVariables.set('countryID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"RU\",\n  \"name\": \"Russia\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/geo/countries",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/admin/geo/countries/{{countryID}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries",
+												"{{countryID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country create agen",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.id, 'Muat have id').to.not.be.null;",
+													"    pm.expect(jsonData.code).to.eql('RU');",
+													"    pm.expect(jsonData.name).to.eql('Russia');",
+													"    ",
+													"    pm.collectionVariables.set('countryID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"RU\",\n  \"name\": \"Russia\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/geo/countries",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country create with other code",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"AU\",\n  \"name\": \"Russia\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/geo/countries",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country create with same code and name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"RU\",\n  \"name\": \"Russia\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/geo/countries",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "private",
+							"item": [
+								{
+									"name": "Country get all",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/user/geo/countries",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/user/geo/countries/{{countryID}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"countries",
+												"{{countryID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "region",
+					"item": [
+						{
+							"name": "admin",
+							"item": []
+						},
+						{
+							"name": "private",
+							"item": []
+						}
+					]
+				},
+				{
+					"name": "district",
+					"item": [
+						{
+							"name": "admin",
+							"item": []
+						},
+						{
+							"name": "private",
+							"item": []
+						}
+					]
+				},
+				{
+					"name": "city",
+					"item": [
+						{
+							"name": "admin",
+							"item": []
+						},
+						{
+							"name": "private",
+							"item": []
+						}
+					]
+				},
+				{
+					"name": "street",
+					"item": [
+						{
+							"name": "admin",
+							"item": []
+						},
+						{
+							"name": "private",
+							"item": []
+						}
+					]
+				},
+				{
+					"name": "house",
+					"item": [
+						{
+							"name": "admin",
+							"item": []
+						},
+						{
+							"name": "private",
+							"item": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "profile",
+			"item": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8076/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "countryID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "regionID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "districtID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cityID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "streetID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "houseID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "profileID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userUUID",
+			"value": "",
+			"type": "string"
+		}
+	]
 }
