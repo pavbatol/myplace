@@ -29,12 +29,24 @@
 													"});",
 													"pm.test(\"Check Country fields\", function () {",
 													"    var jsonData = pm.response.json();",
+													"    const countryCode = pm.variables.get(\"local_countryCode\");",
+													"    const countryName = pm.variables.get(\"local_countryName\");",
 													"    pm.expect(jsonData.id, 'Muat have id').to.not.be.null;",
-													"    pm.expect(jsonData.code).to.eql('RU');",
-													"    pm.expect(jsonData.name).to.eql('Russia');",
+													"    pm.expect(jsonData.code).to.eql(countryCode);",
+													"    pm.expect(jsonData.name).to.eql(countryName);",
 													"    ",
-													"    pm.collectionVariables.set('countryID', jsonData.id);",
+													"    pm.collectionVariables.set('coll_countryID', jsonData.id);",
 													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
 												],
 												"type": "text/javascript",
 												"packages": {}
@@ -46,7 +58,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"id\": null,\n  \"code\": \"RU\",\n  \"name\": \"Russia\"\n}",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"{{local_countryCode}}\",\n  \"name\": \"{{local_countryName}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -54,9 +66,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/admin/geo/countries",
+											"raw": "{{coll_baseUrl}}/admin/geo/countries",
 											"host": [
-												"{{baseUrl}}"
+												"{{coll_baseUrl}}"
 											],
 											"path": [
 												"admin",
@@ -87,15 +99,15 @@
 										"method": "DELETE",
 										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/admin/geo/countries/{{countryID}}",
+											"raw": "{{coll_baseUrl}}/admin/geo/countries/{{coll_countryID}}",
 											"host": [
-												"{{baseUrl}}"
+												"{{coll_baseUrl}}"
 											],
 											"path": [
 												"admin",
 												"geo",
 												"countries",
-												"{{countryID}}"
+												"{{coll_countryID}}"
 											]
 										}
 									},
@@ -115,11 +127,13 @@
 													"});",
 													"pm.test(\"Check Country fields\", function () {",
 													"    var jsonData = pm.response.json();",
+													"    const countryCode = pm.variables.get(\"local_countryCode\");",
+													"    const countryName = pm.variables.get(\"local_countryName\");",
 													"    pm.expect(jsonData.id, 'Muat have id').to.not.be.null;",
-													"    pm.expect(jsonData.code).to.eql('RU');",
-													"    pm.expect(jsonData.name).to.eql('Russia');",
+													"    pm.expect(jsonData.code).to.eql(countryCode);",
+													"    pm.expect(jsonData.name).to.eql(countryName);",
 													"    ",
-													"    pm.collectionVariables.set('countryID', jsonData.id);",
+													"    pm.collectionVariables.set('coll_countryID', jsonData.id);",
 													"});"
 												],
 												"type": "text/javascript",
@@ -132,7 +146,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"id\": null,\n  \"code\": \"RU\",\n  \"name\": \"Russia\"\n}",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"{{local_countryCode}}\",\n  \"name\": \"{{local_countryName}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -140,9 +154,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/admin/geo/countries",
+											"raw": "{{coll_baseUrl}}/admin/geo/countries",
 											"host": [
-												"{{baseUrl}}"
+												"{{coll_baseUrl}}"
 											],
 											"path": [
 												"admin",
@@ -167,6 +181,13 @@
 												"type": "text/javascript",
 												"packages": {}
 											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"packages": {},
+												"type": "text/javascript"
+											}
 										}
 									],
 									"request": {
@@ -174,7 +195,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"id\": null,\n  \"code\": \"AU\",\n  \"name\": \"Russia\"\n}",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"{{local_countryCode_other}}\",\n  \"name\": \"{{local_countryName}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -182,9 +203,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/admin/geo/countries",
+											"raw": "{{coll_baseUrl}}/admin/geo/countries",
 											"host": [
-												"{{baseUrl}}"
+												"{{coll_baseUrl}}"
 											],
 											"path": [
 												"admin",
@@ -217,7 +238,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"id\": null,\n  \"code\": \"RU\",\n  \"name\": \"Russia\"\n}",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"{{local_countryCode}}\",\n  \"name\": \"{{local_countryName}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -225,14 +246,64 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/admin/geo/countries",
+											"raw": "{{coll_baseUrl}}/admin/geo/countries",
 											"host": [
-												"{{baseUrl}}"
+												"{{coll_baseUrl}}"
 											],
 											"path": [
 												"admin",
 												"geo",
 												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const countryName = pm.variables.get(\"local_countryName_patched\");",
+													"    pm.expect(jsonData.name).to.eql(countryName);",
+													"    });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"{{local_countryName_patched}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/countries/{{coll_countryID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries",
+												"{{coll_countryID}}"
 											]
 										}
 									},
@@ -244,14 +315,36 @@
 							"name": "private",
 							"item": [
 								{
-									"name": "Country get all",
+									"name": "Country findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check countries list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
 									"request": {
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/user/geo/countries",
+											"raw": "{{coll_baseUrl}}/user/geo/countries",
 											"host": [
-												"{{baseUrl}}"
+												"{{coll_baseUrl}}"
 											],
 											"path": [
 												"user",
@@ -284,21 +377,49 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{baseUrl}}/user/geo/countries/{{countryID}}",
+											"raw": "{{coll_baseUrl}}/user/geo/countries/{{coll_countryID}}",
 											"host": [
-												"{{baseUrl}}"
+												"{{coll_baseUrl}}"
 											],
 											"path": [
 												"user",
 												"geo",
 												"countries",
-												"{{countryID}}"
+												"{{coll_countryID}}"
 											]
 										}
 									},
 									"response": []
 								}
 							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_countryCode\", \"RU\");",
+									"pm.variables.set(\"local_countryName\", \"test_Russia\");",
+									"",
+									"pm.variables.set(\"local_countryCode_other\", \"RR\");",
+									"pm.variables.set(\"local_countryName_other\", \"test_Russia_other\");",
+									"",
+									"pm.variables.set(\"local_countryName_patched\", \"test_Russia_patched\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				},
@@ -307,11 +428,393 @@
 					"item": [
 						{
 							"name": "admin",
-							"item": []
+							"item": [
+								{
+									"name": "Region create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const countryID = pm.variables.get(\"local_countryID\");",
+													"    const regionName = pm.variables.get(\"local_regionName\");",
+													"",
+													"    pm.expect(jsonData.id, 'Muat have id').to.not.be.null;",
+													"    pm.expect(jsonData.country.id).to.eql(countryID);",
+													"    pm.expect(jsonData.name).to.eql(regionName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_regionID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"country\": {\n\t\t\"id\": {{local_countryID}}\n  },\n  \"name\": \"{{local_regionName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions/{{coll_regionID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions",
+												"{{coll_regionID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region create agen",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const countryID = pm.variables.get(\"local_countryID\");",
+													"    const regionName = pm.variables.get(\"local_regionName\");",
+													"",
+													"    pm.expect(jsonData.id, 'Muat have id').to.not.be.null;",
+													"    pm.expect(jsonData.country.id).to.eql(countryID);",
+													"    pm.expect(jsonData.name).to.eql(regionName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_regionID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"country\": {\n\t\t\"id\": {{local_countryID}}\n  },\n  \"name\": \"{{local_regionName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region create with same Country and name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"country\": {\n\t\t\"id\": {{local_countryID}}\n  },\n  \"name\": \"{{local_regionName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const regionName = pm.variables.get(\"local_regionName_pached\");",
+													"    pm.expect(jsonData.name).to.eql(regionName);",
+													"    });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"{{local_regionName_pached}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions/{{coll_regionID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions",
+												"{{coll_regionID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											"const countryID = pm.collectionVariables.get(\"coll_countryID\");",
+											"pm.variables.set(\"local_countryID\", countryID);",
+											"",
+											"pm.variables.set(\"local_regionName\", \"test_MoscowReg\")",
+											"pm.variables.set(\"local_regionName_other\", \"test_MoscowReg_other\")",
+											"pm.variables.set(\"local_regionName_pached\", \"test_MoscowReg_pached\")",
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											""
+										]
+									}
+								}
+							]
 						},
 						{
 							"name": "private",
-							"item": []
+							"item": [
+								{
+									"name": "Region findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check countries list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/regions",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"regions"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/regions/{{coll_regionID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"regions",
+												"{{coll_regionID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_countryCode\", \"RU\");",
+									"pm.variables.set(\"local_countryName\", \"test_Russia\");",
+									"",
+									"pm.variables.set(\"local_countryCode_other\", \"RR\");",
+									"pm.variables.set(\"local_countryName_other\", \"test_Russia_other\");",
+									"",
+									"pm.variables.set(\"local_countryName_patched\", \"test_Russia_patched\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				},
@@ -398,49 +901,53 @@
 	],
 	"variable": [
 		{
-			"key": "baseUrl",
+			"key": "coll_baseUrl",
 			"value": "http://localhost:8076/api/v1",
 			"type": "string"
 		},
 		{
+			"key": "coll_countryID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_regionID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_districtID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_cityID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_streetID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_houseID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_profileID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_userUUID",
+			"value": "",
+			"type": "string"
+		},
+		{
 			"key": "countryID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "regionID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "districtID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "cityID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "streetID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "houseID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "profileID",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "userUUID",
-			"value": "",
-			"type": "string"
+			"value": ""
 		}
 	]
 }
