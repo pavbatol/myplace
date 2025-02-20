@@ -336,10 +336,11 @@ jobs:
           done
 
       - name: Display Newman log
-        run: |
-          cat newman.log
+        if: always()
+        run: cat newman.log
 
       - name: Upload Test Results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Test Results
