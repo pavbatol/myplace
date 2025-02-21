@@ -646,7 +646,7 @@
 													"});",
 													"pm.test(\"Check Region fields\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    const regionName = pm.variables.get(\"local_regionName_pached\");",
+													"    const regionName = pm.variables.get(\"local_regionName_patched\");",
 													"    pm.expect(jsonData.name).to.eql(regionName);",
 													"    });"
 												],
@@ -660,7 +660,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"{{local_regionName_pached}}\"\n}",
+											"raw": "{\n  \"name\": \"{{local_regionName_patched}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -802,7 +802,7 @@
 									"",
 									"pm.variables.set(\"local_regionName\", \"test_MoscowReg\")",
 									"pm.variables.set(\"local_regionName_other\", \"test_MoscowReg_other\")",
-									"pm.variables.set(\"local_regionName_pached\", \"test_MoscowReg_pached\")"
+									"pm.variables.set(\"local_regionName_patched\", \"test_MoscowReg_patched\")"
 								]
 							}
 						},
@@ -1051,7 +1051,7 @@
 													"});",
 													"pm.test(\"Check District fields\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    const districtName = pm.variables.get(\"local_districtName_pached\");",
+													"    const districtName = pm.variables.get(\"local_districtName_patched\");",
 													"    pm.expect(jsonData.name).to.eql(districtName);",
 													"    });"
 												],
@@ -1065,7 +1065,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"{{local_districtName_pached}}\"\n}",
+											"raw": "{\n  \"name\": \"{{local_districtName_patched}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -1183,7 +1183,7 @@
 									"",
 									"pm.variables.set(\"local_districtName\", \"test_MoscowDistr\")",
 									"pm.variables.set(\"local_districtName_other\", \"test_MoscowDistr_other\")",
-									"pm.variables.set(\"local_districtName_pached\", \"test_MoscowDistr_pached\")"
+									"pm.variables.set(\"local_districtName_patched\", \"test_MoscowDistr_patched\")"
 								]
 							}
 						},
@@ -1426,7 +1426,7 @@
 													"});",
 													"pm.test(\"Check City fields\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    const cityName = pm.variables.get(\"llocal_cityName_pached\");",
+													"    const cityName = pm.variables.get(\"llocal_cityName_patched\");",
 													"    pm.expect(jsonData.name).to.eql(cityName);",
 													"});"
 												],
@@ -1440,7 +1440,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"{{llocal_cityName_pached}}\"\n}",
+											"raw": "{\n  \"name\": \"{{llocal_cityName_patched}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -1558,7 +1558,7 @@
 									"",
 									"pm.variables.set(\"local_cityName\", \"test_MoscowCity\")",
 									"pm.variables.set(\"local_cityName_other\", \"test_MoscowCity_other\")",
-									"pm.variables.set(\"llocal_cityName_pached\", \"test_MoscowCity_pached\")"
+									"pm.variables.set(\"llocal_cityName_patched\", \"test_MoscowCity_patched\")"
 								]
 							}
 						},
@@ -1801,7 +1801,7 @@
 													"});",
 													"pm.test(\"Check Street fields\", function () {",
 													"    var jsonData = pm.response.json();",
-													"    const streetName = pm.variables.get(\"local_streetName_pached\");",
+													"    const streetName = pm.variables.get(\"local_streetName_patched\");",
 													"    pm.expect(jsonData.name).to.eql(streetName);",
 													"});"
 												],
@@ -1815,7 +1815,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"{{local_streetName_pached}}\"\n}",
+											"raw": "{\n  \"name\": \"{{local_streetName_patched}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -1933,7 +1933,7 @@
 									"",
 									"pm.variables.set(\"local_streetName\", \"test_MoscowStreet\")",
 									"pm.variables.set(\"local_streetName_other\", \"test_MoscowStreet_other\")",
-									"pm.variables.set(\"local_streetName_pached\", \"test_MoscowStreet_pached\")"
+									"pm.variables.set(\"local_streetName_patched\", \"test_MoscowStreet_patched\")"
 								]
 							}
 						},
@@ -1954,11 +1954,444 @@
 					"item": [
 						{
 							"name": "admin",
-							"item": []
+							"item": [
+								{
+									"name": "House create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const streetID = pm.variables.get(\"local_streetID\");",
+													"    const houseNumber = pm.variables.get(\"local_houseNumber\");",
+													"    const houseLat = pm.variables.get(\"local_houseLat\");",
+													"    const houseLon = pm.variables.get(\"local_houseLon\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.street.id).to.equal(streetID);",
+													"    pm.expect(jsonData.number).to.eql(houseNumber);",
+													"    pm.expect(jsonData.lat).to.eql(houseLat);",
+													"    pm.expect(jsonData.lon).to.eql(houseLon);",
+													"    ",
+													"    pm.collectionVariables.set('coll_houseID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"street\": {\n\t\t\"id\": {{local_streetID}}\n  },\n  \"number\": \"{{local_houseNumber}}\",\n  \"lat\": {{local_houseLat}},\n  \"lon\": {{local_houseLon}}\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses/{{coll_houseID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses",
+												"{{coll_houseID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House create again",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const streetID = pm.variables.get(\"local_streetID\");",
+													"    const houseNumber = pm.variables.get(\"local_houseNumber\");",
+													"    const houseLat = pm.variables.get(\"local_houseLat\");",
+													"    const houseLon = pm.variables.get(\"local_houseLon\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.street.id).to.equal(streetID);",
+													"    pm.expect(jsonData.number).to.eql(houseNumber);",
+													"    pm.expect(jsonData.lat).to.eql(houseLat);",
+													"    pm.expect(jsonData.lon).to.eql(houseLon);",
+													"    ",
+													"    pm.collectionVariables.set('coll_houseID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"street\": {\n\t\t\"id\": {{local_streetID}}\n  },\n  \"number\": \"{{local_houseNumber}}\",\n  \"lat\": {{local_houseLat}},\n  \"lon\": {{local_houseLon}}\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House create with same Street and number",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"street\": {\n\t\t\"id\": {{local_streetID}}\n  },\n  \"number\": \"{{local_houseNumber}}\",\n  \"lat\": 0,\n  \"lon\": 0\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House create with number 10 simbols more",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 400 (Field 'number': the maximum size must be 10 characters)\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"street\": {\n\t\t\"id\": {{local_streetID}}\n  },\n  \"number\": \"10/A_BCDFGH\",\n  \"lat\": 55.7558,\n  \"lon\": 37.6173\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const housetName = pm.variables.get(\"local_houseNumber_patched\");    ",
+													"    const houseLat = pm.variables.get(\"local_houseLat\");",
+													"    const houseLon = 100;",
+													"",
+													"    pm.expect(jsonData.number, 'field: namber').to.eql(housetName);",
+													"    pm.expect(jsonData.lat, 'field: lat').to.eql(houseLat);",
+													"    pm.expect(jsonData.lon, 'field: lon').to.eql(houseLon);    ",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"number\": \"{{local_houseNumber_patched}}\",\n  \"lon\": 100\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses/{{coll_houseID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses",
+												"{{coll_houseID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
 						},
 						{
 							"name": "private",
-							"item": []
+							"item": [
+								{
+									"name": "House findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/houses/{{coll_houseID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"houses",
+												"{{coll_houseID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_streetID\", Number(pm.collectionVariables.get(\"coll_streetID\")));",
+									"",
+									"pm.variables.set(\"local_houseNumber\", \"test_1\")",
+									"pm.variables.set(\"local_houseNumber_other\", \"test_other\")",
+									"pm.variables.set(\"local_houseNumber_patched\", \"t_pattched\")",
+									"",
+									"",
+									"pm.variables.set(\"local_houseLat\", 55.7558)",
+									"pm.variables.set(\"local_houseLon\", 37.6173)",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				}
@@ -2039,6 +2472,10 @@
 		},
 		{
 			"key": "countryID",
+			"value": ""
+		},
+		{
+			"key": "coll_hoseID",
 			"value": ""
 		}
 	]
