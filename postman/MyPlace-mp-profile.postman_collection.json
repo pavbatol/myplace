@@ -823,11 +823,379 @@
 					"item": [
 						{
 							"name": "admin",
-							"item": []
+							"item": [
+								{
+									"name": "District create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check District fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const regionID = pm.variables.get(\"local_regionID\");",
+													"    const districtName = pm.variables.get(\"local_districtName\");",
+													"",
+													"    console.log(\"regionID (variable):\", regionID, \"Type:\", typeof regionID);",
+													"    console.log(\"jsonData.country.id:\", jsonData.region.id, \"Type:\", typeof jsonData.region.id);",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.region.id).to.equal(regionID);",
+													"    pm.expect(jsonData.name).to.eql(districtName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_districtID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"region\": {\n\t\t\"id\": {{local_regionID}}\n  },\n  \"name\": \"{{local_districtName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts/{{coll_districtID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts",
+												"{{coll_districtID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District create agen",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check District fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const regionID = pm.variables.get(\"local_regionID\");",
+													"    const districtName = pm.variables.get(\"local_districtName\");",
+													"",
+													"    console.log(\"regionID (variable):\", regionID, \"Type:\", typeof regionID);",
+													"    console.log(\"jsonData.country.id:\", jsonData.region.id, \"Type:\", typeof jsonData.region.id);",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.region.id).to.equal(regionID);",
+													"    pm.expect(jsonData.name).to.eql(districtName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_districtID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"region\": {\n\t\t\"id\": {{local_regionID}}\n  },\n  \"name\": \"{{local_districtName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District create with same Region and name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"region\": {\n\t\t\"id\": {{local_regionID}}\n  },\n  \"name\": \"{{local_districtName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check District fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const districName = pm.variables.get(\"local_districtName_pached\");",
+													"    pm.expect(jsonData.name).to.eql(districName);",
+													"    });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"{{local_districtName_pached}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts/{{coll_districtID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts",
+												"{{coll_districtID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
 						},
 						{
 							"name": "private",
-							"item": []
+							"item": [
+								{
+									"name": "District findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check District list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/districts",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"districts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/districts/{{coll_districtID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"districts",
+												"{{coll_districtID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_regionID\", Number(pm.collectionVariables.get(\"coll_regionID\")));",
+									"",
+									"pm.variables.set(\"local_districtName\", \"test_MoscowDistr\")",
+									"pm.variables.set(\"local_districtName_other\", \"test_MoscowDistr_other\")",
+									"pm.variables.set(\"local_districtName_pached\", \"test_MoscowDistr_pached\")"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				},
@@ -836,11 +1204,103 @@
 					"item": [
 						{
 							"name": "admin",
-							"item": []
+							"item": [
+								{
+									"name": "City create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check City fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const districtID = pm.variables.get(\"local_districtID\");",
+													"    const cityName = pm.variables.get(\"local_cityName\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.district.id).to.equal(districtID);",
+													"    pm.expect(jsonData.name).to.eql(cityName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_cityID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"district\": {\n\t\t\"id\": {{local_districtID}}\n  },\n  \"name\": \"{{local_cityName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/cities",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"cities"
+											]
+										}
+									},
+									"response": []
+								}
+							]
 						},
 						{
 							"name": "private",
 							"item": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_districtID\", Number(pm.collectionVariables.get(\"coll_districtID\")));",
+									"",
+									"pm.variables.set(\"local_cityName\", \"test_MoscowCity\")",
+									"pm.variables.set(\"local_cityName_other\", \"test_MoscowCity_other\")",
+									"pm.variables.set(\"llocal_cityName_pached\", \"test_MoscowCity_pached\")"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
 						}
 					]
 				},
