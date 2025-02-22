@@ -262,8 +262,14 @@ jobs:
       - name: Run project
         working-directory: ./docker
         run: |
-          echo "COMMAND docker-compose --profile full up -d (with COMPOSE_FILE = $COMPOSE_FILE)"
-          docker-compose --profile full up -d
+          echo "COMMAND docker-compose --profile full up -d \
+          -v /etc/localtime:/etc/localtime:ro \
+          -v /etc/timezone:/etc/timezone:ro \
+          (with COMPOSE_FILE = $COMPOSE_FILE)"
+          
+          docker-compose --profile full up -d \
+          -v /etc/localtime:/etc/localtime:ro \
+          -v /etc/timezone:/etc/timezone:ro \
 
       - name: List all containers
         run: docker ps -a

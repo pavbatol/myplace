@@ -2488,7 +2488,522 @@
 		},
 		{
 			"name": "profile",
-			"item": []
+			"item": [
+				{
+					"name": "private",
+					"item": [
+						{
+							"name": "Profile create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 and data in json format\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const userUuid = pm.variables.get(\"locall_userUUID\");",
+											"    const email = pm.variables.get(\"locall_userEmail\");",
+											"    const status = \"ACTIVE\";",
+											"    const createdOn = new Date(jsonData.createdOn).getTime()",
+											"    const currentTime = new Date().getTime()",
+											"    const testStartTime = pm.variables.get(\"test_startTime\");",
+											"",
+											"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+											"    pm.expect(jsonData.userUuid, 'userUuid').to.equal(userUuid);",
+											"    pm.expect(jsonData.email, 'email').to.eql(email);",
+											"    pm.expect(jsonData.status, 'status').to.eql(status);",
+											"",
+											"    // Logs",
+											"    console.log(\"createdOn:\", createdOn);",
+											"    console.log(\"testStartTime:\", testStartTime);",
+											"",
+											"    console.log(\"createdOn type:\", typeof createdOn); ",
+											"    console.log(\"testStartTime type:\", typeof testStartTime); ",
+											"",
+											"    console.log(\"createdOn date:\", new Date(createdOn).toISOString()); ",
+											"    console.log(\"testStartTime date:\", new Date(testStartTime).toISOString()); ",
+											"",
+											"    // Check createdOn field",
+											"    pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
+											"    pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
+											"   ",
+											"    ",
+											"    pm.collectionVariables.set('coll_profileID', jsonData.id);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"test_startTime\", new Date().getTime())"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": {{locall_userID}},\n  \"email\": \"{{locall_userEmail}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile create with sane email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 409\", function () {",
+											"    pm.response.to.have.status(409);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"test_startTime\", new Date().getTime())"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID_other}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": {{locall_userID_other}},\n  \"email\": \"{{locall_userEmail}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile create with sane userId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 409\", function () {",
+											"    pm.response.to.have.status(409);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"test_startTime\", new Date().getTime())"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID_other}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": {{locall_userID}},\n  \"email\": \"{{locall_userEmail_other}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile create other",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 and data in json format\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const userUuid = pm.variables.get(\"locall_userUUID\");",
+											"    const email = pm.variables.get(\"locall_userEmail_other\");",
+											"    const status = \"ACTIVE\";",
+											"    const createdOn = new Date(jsonData.createdOn).getTime()",
+											"    const currentTime = new Date().getTime()",
+											"    const testStartTime = pm.variables.get(\"test_startTime\");",
+											"",
+											"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+											"    pm.expect(jsonData.userUuid, 'userUuid').to.equal(userUuid);",
+											"    pm.expect(jsonData.email, 'email').to.eql(email);",
+											"    pm.expect(jsonData.status, 'status').to.eql(status);",
+											"",
+											"    // Logs",
+											"    console.log(\"createdOn:\", createdOn);",
+											"    console.log(\"testStartTime:\", testStartTime);",
+											"",
+											"    console.log(\"createdOn type:\", typeof createdOn); ",
+											"    console.log(\"testStartTime type:\", typeof testStartTime); ",
+											"",
+											"    console.log(\"createdOn date:\", new Date(createdOn).toISOString()); ",
+											"    console.log(\"testStartTime date:\", new Date(testStartTime).toISOString()); ",
+											"",
+											"    // Check createdOn field",
+											"    pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
+											"    pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"test_startTime\", new Date().getTime())"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": {{locall_userID_other}},\n  \"email\": \"{{locall_userEmail_other}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const email = pm.variables.get(\"locall_userEmail_patched\");",
+											"",
+											"    pm.expect(jsonData.email, 'email').to.be.eql(email);",
+											"});    "
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"{{locall_userEmail_patched}}\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update full",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const email = pm.variables.get(\"locall_userEmail_patched\");",
+											"",
+											"    pm.expect(jsonData.email, 'email').to.be.eql(email);",
+											"});    "
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"{{locall_userEmail_patched}}\",\n  \"trustedEmail\": \"{{locall_trustedEmail_patched}}\",\n  \"mobileNumber\": \"{{locall_mobileNumber_patched}}\",\n  \"trustedMobileNumber\": \"{{locall_trustedMobileNumber_patched}}\",\n  \"firstName\": \"{{locall_firstName_patched}}\",\n  \"secondName\": \"{{locall_secondName_patched}}\",\n  \"birthday\": \"{{locall_birthday_patched}}\",\n  \"gender\": \"{{locall_gender_patched}}\",\n  \"house\": {\n    \"id\": {{coll_houseID}}\n  },  \t\n  \"apartment\": \"{{locall_apartment_patched}}\",\n  \"avatar\": \"{{locall_avatar_patched}}\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "admin",
+					"item": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.variables.set(\"locall_userUUID\", \"91902887-2a61-4a4e-bdde-e581514f39df\")",
+							"pm.variables.set(\"locall_userUUID_other\", \"68aeb536-d4cc-442b-a909-d08335797b86\")",
+							"",
+							"pm.variables.set(\"locall_userID\", 1000)",
+							"pm.variables.set(\"locall_userID_other\", 1001)",
+							"pm.variables.set(\"locall_userID_patched\", 2001)",
+							"",
+							"pm.variables.set(\"locall_userEmail\", \"test_string@test_string.com\")",
+							"pm.variables.set(\"locall_userEmail_other\", \"test_string_other@test_string.com\")",
+							"",
+							"pm.variables.set(\"locall_userEmail_patched\", \"test_string_patched@test_string.com\")",
+							"pm.variables.set(\"locall_trustedEmail_patched\", \"trustedEmail_patched@aaa.aa\")",
+							"pm.variables.set(\"locall_mobileNumber_patched\", \"0123456789\")",
+							"pm.variables.set(\"locall_trustedMobileNumber_patched\", \"9874563210\")",
+							"pm.variables.set(\"locall_firstName_patched\", \"firstName_patched\")",
+							"pm.variables.set(\"locall_secondName_patched\", \"secondName_patched\")",
+							"pm.variables.set(\"locall_birthday_patched\", \"2023-11-03T16:59:47.446Z\")",
+							"pm.variables.set(\"locall_gender_patched\", \"FEMALE\")",
+							"pm.variables.set(\"locall_apartment_patched\", \"ap_patched\")",
+							"pm.variables.set(\"locall_avatar_patched\", \"AQIDBAUGBwgJCg==\")",
+							"",
+							"const locall_houseFullNew = {",
+							"    \"id\": null,",
+							"    \"street\": {",
+							"        \"id\": null,",
+							"        \"city\": {",
+							"            \"id\": null,",
+							"            \"district\": {",
+							"                \"id\": null,",
+							"                \"region\": {",
+							"                    \"id\": null,",
+							"                    \"country\": {",
+							"                        \"id\": null,",
+							"                        \"code\": \"AA\",",
+							"                        \"name\": \"test_Country\"",
+							"                    },",
+							"                    \"name\": \"test_Region \"",
+							"                },",
+							"                \"name\": \"test_District\"",
+							"            },",
+							"            \"name\": \"test_City\"",
+							"        },",
+							"        \"name\": \"test_Street\"",
+							"    },",
+							"    \"number\": \"test_House\",",
+							"    \"lat\": 50.5,",
+							"    \"lon\": 60.5",
+							"}  \t",
+							"pm.variables.set(\"locall_houseFullNew\", JSON.stringify(locall_houseFullNew));"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
 		}
 	],
 	"event": [
