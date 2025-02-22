@@ -2224,6 +2224,95 @@
 									"response": []
 								},
 								{
+									"name": "House create with full entity chain",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"",
+													"const countryCode = pm.variables.get(\"test_countryCode\")",
+													"const countryName = pm.variables.get(\"test_countryName\")",
+													"const regionName = pm.variables.get(\"test_regionName\")",
+													"const districtName = pm.variables.get(\"test_districtName\")",
+													"const citytName = pm.variables.get(\"test_citytName\")",
+													"const streettName = pm.variables.get(\"test_streettName\")",
+													"const houseNumber = pm.variables.get(\"test_houseNumber\")",
+													"const houseLat = pm.variables.get(\"test_houseLat\") === null ? 0.0 : pm.variables.get(\"test_houseLat\"); // incoming null becomes 0.0",
+													"const houseLon = pm.variables.get(\"test_houseLon\") === null ? 0.0 : pm.variables.get(\"test_houseLon\"); // incoming null becomes 0.0",
+													"",
+													"// House check",
+													"pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"pm.expect(jsonData.number, 'houseNumber').to.eql(houseNumber);",
+													"pm.expect(jsonData.lat, 'houseLat').to.eql(houseLat);",
+													"pm.expect(jsonData.lon, 'houseLon').to.eql(houseLon);",
+													"",
+													"// Entities of chain check",
+													"pm.expect(jsonData.street.name, 'streettName').to.eql(streettName);",
+													"pm.expect(jsonData.street.city.name, 'citytName').to.eql(citytName);",
+													"pm.expect(jsonData.street.city.district.name, 'districtName').to.eql(districtName);",
+													"pm.expect(jsonData.street.city.district.region.name, 'regionName').to.eql(regionName);",
+													"pm.expect(jsonData.street.city.district.region.country.name, 'countryName').to.eql(countryName);",
+													"pm.expect(jsonData.street.city.district.region.country.code, 'countryCode').to.eql(countryCode);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.variables.set(\"test_countryCode\", \"RU\")",
+													"pm.variables.set(\"test_countryName\", \"test_Russia_other_byChainCreate\")",
+													"pm.variables.set(\"test_regionName\", \"test_MoscowReg_other_byChainCreate\")",
+													"pm.variables.set(\"test_districtName\", \"test_MoscowDistr_other_byChainCreate\")",
+													"pm.variables.set(\"test_citytName\", \"test_MoscowCity_other_byChainCreate\")",
+													"pm.variables.set(\"test_streettName\", \"test_MoscowStreet_other_byChainCreate\")",
+													"pm.variables.set(\"test_houseNumber\", \"t_byChain\")",
+													"pm.variables.set(\"test_houseLat\", null) // will be filled as 0.0 after DTO mapping",
+													"pm.variables.set(\"test_houseLon\", 37.6173)"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"id\": null,\n\t\"street\": {\n\t\t\"id\": null,\n\t\t\"city\": {\n\t\t\t\"id\": null,\n\t\t\t\"district\": {\n\t\t\t\t\"id\": null,\n\t\t\t\t\"region\": {\n\t\t\t\t\t\"id\": null,\n\t\t\t\t\t\"country\": {\n\t\t\t\t\t\t\"id\": null,\n\t\t\t\t\t\t\"code\": \"{{test_countryCode}}\",\n\t\t\t\t\t\t\"name\": \"{{test_countryName}}\"  \n\t\t\t\t\t},\n\t\t\t\t\t\"name\": \"{{test_regionName}}\"\n\t\t\t\t},\n\t\t\t\t\"name\": \"{{test_districtName}}\"\n\t\t\t},\n\t\t\t\"name\": \"{{test_citytName}}\"\n\t\t},\n\t\t\"name\": \"{{test_streettName}}\"\n\t},\n\t\"number\": \"{{test_houseNumber}}\",\n\t\"lat\": {{test_houseLat}},\n\t\"lon\": {{test_houseLon}}\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
 									"name": "House update",
 									"event": [
 										{
