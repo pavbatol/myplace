@@ -1,15 +1,18 @@
 package ru.pavbatol.myplace.profile.mapper;
 
 import org.mapstruct.*;
+import ru.pavbatol.myplace.app.Util.Checker;
 import ru.pavbatol.myplace.geo.house.dto.HouseDto;
+import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.model.House;
+import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
 import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.model.Profile;
 
 import java.util.Base64;
 import java.util.UUID;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = HouseMapper.class)
 public interface ProfileMapper {
 
     Profile toEntity(ProfileDtoCreateRequest dto);
@@ -22,10 +25,12 @@ public interface ProfileMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "house", source = "house", qualifiedByName = "setHose")
+    @Mapping(target = "house", source = "house", qualifiedByName = "getHouse")
     @Mapping(target = "avatar", expression = "java(decodeBase64(dto.getEncodedAvatar()))")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Profile updateEntity(@MappingTarget Profile entity, ProfileDtoUpdate dto);
+    Profile updateEntity(@MappingTarget Profile entity, ProfileDtoUpdate dto,
+                         @Context HouseRepository houseRepository,
+                         @Context HouseMapper houseMapper);
 
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "userUuid", source = "userUuid")
@@ -44,8 +49,16 @@ public interface ProfileMapper {
         return bytes == null ? null : Base64.getEncoder().encodeToString(bytes);
     }
 
-    @Named("setHose")
-    default House houseDtoToHose(HouseDto houseDto) {
-        return houseDto == null || houseDto.getId() == null ? null : new House().setId(houseDto.getId());
+    @Named("getHouse")
+    default House getStreet(HouseDto dto, @Context HouseRepository repository, @Context HouseMapper mapper) {
+        if (dto == null) {
+            return null;
+        }
+
+        Long houseId = dto.getId();
+
+        return houseId == null
+                ? mapper.toEntity(dto)
+                : Checker.getNonNullObject(repository, houseId);
     }
 }

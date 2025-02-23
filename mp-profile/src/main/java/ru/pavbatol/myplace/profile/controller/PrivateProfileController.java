@@ -57,7 +57,7 @@ public class PrivateProfileController {
                                               @RequestHeader(value = X_USER_UUID) UUID userUuid,
                                               @PathVariable(value = "profileId") Long profileId) {
         log.debug("GET getById() with userId: {}, userUuid: {}, profileId: {}", userId, userUuid, profileId);
-        ProfileDto body = profileService.getById(userId, userUuid, profileId);
+        ProfileDto body = profileService.privateGetById(userId, userUuid, profileId);
         return ResponseEntity.ok(body);
     }
 
@@ -66,7 +66,7 @@ public class PrivateProfileController {
     public ResponseEntity<ProfileDto> getByUserId(@RequestHeader(value = X_USER_ID) Long userId,
                                                   @RequestHeader(value = X_USER_UUID) UUID userUuid) {
         log.debug("GET getByUserId() with userId: {}, userUuid: {}", userId, userUuid);
-        ProfileDto body = profileService.getByUserId(userId, userUuid);
+        ProfileDto body = profileService.privateGetByUserId(userId, userUuid);
         return ResponseEntity.ok(body);
     }
 }

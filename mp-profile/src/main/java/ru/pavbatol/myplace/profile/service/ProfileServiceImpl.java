@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
+import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
+import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
 import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.mapper.ProfileMapper;
 import ru.pavbatol.myplace.profile.model.Profile;
@@ -26,7 +28,9 @@ import java.util.UUID;
 public class ProfileServiceImpl implements ProfileService {
     private static final String ENTITY_SIMPLE_NAME = Profile.class.getSimpleName();
     private final ProfileJpaRepository profileRepository;
+    private final HouseRepository houseRepository;
     private final ProfileMapper profileMapper;
+    private final HouseMapper houseMapper;
 
     @Override
     public ProfileDtoCreateResponse create(UUID userUuid, ProfileDtoCreateRequest createRequest) {
@@ -48,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDtoUpdateStatusResponse adminUpdateStatusByUserId(Long userId, UUID userUuid, ProfileStatus status) {
-        Profile profile = getNonNullProfileByUserId(userId);
+        Profile profile = adminGetNonNullProfileByUserId(userId);
         if (profile.getStatus() == status) {
             throw new IllegalArgumentException(String.format(
                     "Status is already '%s' for %s with id: #%s", status, ENTITY_SIMPLE_NAME, userUuid));
@@ -67,14 +71,17 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileDto update(Long userId, UUID userUuid, Long profileId, ProfileDtoUpdate dto) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, profile.getUserId());
-        profileMapper.updateEntity(profile, dto);
-        if (profile.getAvatar() != null && profile.getAvatar().length > 2 * 1024 * 1024) {
+
+        Profile intendedUpdate = profileMapper.updateEntity(profile, dto, houseRepository, houseMapper);
+        log.debug("intendedUpdate {}: {}. \nWith Hose {}", ENTITY_SIMPLE_NAME, intendedUpdate, intendedUpdate.getHouse());
+
+        if (intendedUpdate.getAvatar() != null && intendedUpdate.getAvatar().length > 2 * 1024 * 1024) {
             throw new IllegalArgumentException("The size of the avatar image is too large: "
-                    + profile.getAvatar().length + "b");
+                    + intendedUpdate.getAvatar().length + "b");
         }
 
-        Profile updated = profileRepository.save(profile);
-        log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
+        Profile updated = profileRepository.save(intendedUpdate);
+        log.debug("Updated {}: {}. \nWith Hose {}", ENTITY_SIMPLE_NAME, updated, updated.getHouse());
 
         return profileMapper.toProfileDto(updated, userUuid);
     }
@@ -90,7 +97,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileDto getById(Long userId, UUID userUuid, Long profileId) {
+    public ProfileDto adminGetById(Long userId, UUID userUuid, Long profileId) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, profile.getUserId());
         log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, profile);
@@ -99,8 +106,25 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileDto getByUserId(Long userId, UUID userUuid) {
-        Profile found = getNonNullProfileByUserId(userId);
+    public ProfileDto adminGetByUserId(Long userId, UUID userUuid) {
+        Profile found = adminGetNonNullProfileByUserId(userId);
+        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, found);
+
+        return profileMapper.toProfileDto(found, userUuid);
+    }
+
+    @Override
+    public ProfileDto privateGetById(Long userId, UUID userUuid, Long profileId) {
+        Profile profile = privateGetNonNullProfileById(profileId);
+        checkUserIdOwnership(userId, profile.getUserId());
+        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, profile);
+
+        return profileMapper.toProfileDto(profile, userUuid);
+    }
+
+    @Override
+    public ProfileDto privateGetByUserId(Long userId, UUID userUuid) {
+        Profile found = privateGetNonNullProfileByUserId(userId);
         log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, found);
 
         return profileMapper.toProfileDto(found, userUuid);
@@ -115,9 +139,19 @@ public class ProfileServiceImpl implements ProfileService {
         return found.map(profileMapper::toProfileDtoWithoutHose);
     }
 
-    private Profile getNonNullProfileByUserId(Long userId) {
+    private Profile adminGetNonNullProfileByUserId(Long userId) {
         return profileRepository.findByUserId(userId).orElseThrow(() ->
                 new NotFoundException(String.format("%s with userId #%s was not found", ENTITY_SIMPLE_NAME, userId)));
+    }
+
+    private Profile privateGetNonNullProfileByUserId(Long userId) {
+        return profileRepository.findByUserIdAndNotStatus(userId, ProfileStatus.DELETED).orElseThrow(() ->
+                new NotFoundException(String.format("%s with userId #%s was not found", ENTITY_SIMPLE_NAME, userId)));
+    }
+
+    private Profile privateGetNonNullProfileById(Long profileId) {
+        return profileRepository.findByIdAndNotStatus(profileId, ProfileStatus.DELETED).orElseThrow(() ->
+                new NotFoundException(String.format("%s with profileId #%s was not found", ENTITY_SIMPLE_NAME, profileId)));
     }
 
     private void checkUserIdOwnership(Long requesterId, Long ownerId) {

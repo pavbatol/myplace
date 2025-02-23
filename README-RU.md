@@ -119,10 +119,9 @@ mvn clean package -Dmaven.test.skip=true
 <div style="margin-left: 20px;">
 
 Для профиля `production` заполните соответствующие файлы с переменными окружения:
-   - docker/stats/.env
-   - docker/security/.env, docker/security/env.security.prod
-   - docker/profile/.env
-
+- docker/stats/.env.stats.prod
+- docker/security/.env.security.prod
+- docker/profile/.env.profile.prod
 
  Для запуска каждого профиля, выполните следующие команды:  
  (включена проверка `healthcheck`, так что нужно подождать)

@@ -1,35 +1,3616 @@
 {
-  "info": {
-    "_postman_id": "2ff29014-1321-4176-bc7e-e0160c2eaea4",
-    "name": "MyPlace-mp-profile",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Always Pass Test",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "https://example.com",
-          "protocol": "https",
-          "host": ["example", "com"]
-        }
-      },
-      "response": [],
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Always pass\", function () {",
-              "    pm.expect(true).to.be.true;",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ]
-    }
-  ]
+	"info": {
+		"_postman_id": "bc37f675-8f42-4821-a57a-5f3a77b94b2c",
+		"name": "MyPlace-mp-profile",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23050345"
+	},
+	"item": [
+		{
+			"name": "geo",
+			"item": [
+				{
+					"name": "country",
+					"item": [
+						{
+							"name": "admin",
+							"item": [
+								{
+									"name": "Country create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const countryCode = pm.variables.get(\"local_countryCode\");",
+													"    const countryName = pm.variables.get(\"local_countryName\");",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.code).to.eql(countryCode);",
+													"    pm.expect(jsonData.name).to.eql(countryName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_countryID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"{{local_countryCode}}\",\n  \"name\": \"{{local_countryName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/countries",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/countries/{{coll_countryID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries",
+												"{{coll_countryID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country create again",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const countryCode = pm.variables.get(\"local_countryCode\");",
+													"    const countryName = pm.variables.get(\"local_countryName\");",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.code).to.eql(countryCode);",
+													"    pm.expect(jsonData.name).to.eql(countryName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_countryID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"{{local_countryCode}}\",\n  \"name\": \"{{local_countryName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/countries",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country create with other code",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"packages": {},
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"{{local_countryCode_other}}\",\n  \"name\": \"{{local_countryName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/countries",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country create with same code and name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"code\": \"{{local_countryCode}}\",\n  \"name\": \"{{local_countryName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/countries",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Country fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const countryName = pm.variables.get(\"local_countryName_patched\");",
+													"    pm.expect(jsonData.name).to.eql(countryName);",
+													"    });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"{{local_countryName_patched}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/countries/{{coll_countryID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"countries",
+												"{{coll_countryID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "private",
+							"item": [
+								{
+									"name": "Country findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check countries list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/countries",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"countries"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Country getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/countries/{{coll_countryID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"countries",
+												"{{coll_countryID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_countryCode\", \"RU\");",
+									"pm.variables.set(\"local_countryName\", \"test_Russia\");",
+									"",
+									"pm.variables.set(\"local_countryCode_other\", \"RR\");",
+									"pm.variables.set(\"local_countryName_other\", \"test_Russia_other\");",
+									"",
+									"pm.variables.set(\"local_countryName_patched\", \"test_Russia_patched\");"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "region",
+					"item": [
+						{
+							"name": "admin",
+							"item": [
+								{
+									"name": "Region create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Region fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const countryID = pm.variables.get(\"local_countryID\");",
+													"    const regionName = pm.variables.get(\"local_regionName\");",
+													"",
+													"    console.log(\"countryID (variable):\", countryID, \"Type:\", typeof countryID);",
+													"    console.log(\"jsonData.country.id:\", jsonData.country.id, \"Type:\", typeof jsonData.country.id);",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.country.id).to.equal(Number(countryID));",
+													"    pm.expect(jsonData.name).to.eql(regionName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_regionID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"country\": {\n\t\t\"id\": {{local_countryID}}\n  },\n  \"name\": \"{{local_regionName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions/{{coll_regionID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions",
+												"{{coll_regionID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region create again",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Region fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const countryID = pm.variables.get(\"local_countryID\");",
+													"    const regionName = pm.variables.get(\"local_regionName\");",
+													"",
+													"    console.log(\"countryID (variable):\", countryID, \"Type:\", typeof countryID);",
+													"    console.log(\"jsonData.country.id:\", jsonData.country.id, \"Type:\", typeof jsonData.country.id);",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.country.id).to.equal(Number(countryID));",
+													"    pm.expect(jsonData.name).to.eql(regionName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_regionID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"country\": {\n\t\t\"id\": {{local_countryID}}\n  },\n  \"name\": \"{{local_regionName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region create with same Country and name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"country\": {\n\t\t\"id\": {{local_countryID}}\n  },\n  \"name\": \"{{local_regionName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Region fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const regionName = pm.variables.get(\"local_regionName_patched\");",
+													"    pm.expect(jsonData.name).to.eql(regionName);",
+													"    });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"{{local_regionName_patched}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/regions/{{coll_regionID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"regions",
+												"{{coll_regionID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											"",
+											""
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"packages": {},
+										"exec": [
+											""
+										]
+									}
+								}
+							]
+						},
+						{
+							"name": "private",
+							"item": [
+								{
+									"name": "Region findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Region list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/regions",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"regions"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Region getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/regions/{{coll_regionID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"regions",
+												"{{coll_regionID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"const countryID = pm.collectionVariables.get(\"coll_countryID\");",
+									"pm.variables.set(\"local_countryID\", countryID);",
+									"",
+									"pm.variables.set(\"local_regionName\", \"test_MoscowReg\")",
+									"pm.variables.set(\"local_regionName_other\", \"test_MoscowReg_other\")",
+									"pm.variables.set(\"local_regionName_patched\", \"test_MoscowReg_patched\")"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "district",
+					"item": [
+						{
+							"name": "admin",
+							"item": [
+								{
+									"name": "District create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check District fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const regionID = pm.variables.get(\"local_regionID\");",
+													"    const districtName = pm.variables.get(\"local_districtName\");",
+													"",
+													"    console.log(\"regionID (variable):\", regionID, \"Type:\", typeof regionID);",
+													"    console.log(\"jsonData.country.id:\", jsonData.region.id, \"Type:\", typeof jsonData.region.id);",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.region.id).to.equal(regionID);",
+													"    pm.expect(jsonData.name).to.eql(districtName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_districtID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"region\": {\n\t\t\"id\": {{local_regionID}}\n  },\n  \"name\": \"{{local_districtName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts/{{coll_districtID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts",
+												"{{coll_districtID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District create again",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check District fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const regionID = pm.variables.get(\"local_regionID\");",
+													"    const districtName = pm.variables.get(\"local_districtName\");",
+													"",
+													"    console.log(\"regionID (variable):\", regionID, \"Type:\", typeof regionID);",
+													"    console.log(\"jsonData.country.id:\", jsonData.region.id, \"Type:\", typeof jsonData.region.id);",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.region.id).to.equal(regionID);",
+													"    pm.expect(jsonData.name).to.eql(districtName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_districtID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"region\": {\n\t\t\"id\": {{local_regionID}}\n  },\n  \"name\": \"{{local_districtName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District create with same Region and name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"region\": {\n\t\t\"id\": {{local_regionID}}\n  },\n  \"name\": \"{{local_districtName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check District fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const districtName = pm.variables.get(\"local_districtName_patched\");",
+													"    pm.expect(jsonData.name).to.eql(districtName);",
+													"    });"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"{{local_districtName_patched}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/districts/{{coll_districtID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"districts",
+												"{{coll_districtID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "private",
+							"item": [
+								{
+									"name": "District findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check District list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/districts",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"districts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "District getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/districts/{{coll_districtID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"districts",
+												"{{coll_districtID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_regionID\", Number(pm.collectionVariables.get(\"coll_regionID\")));",
+									"",
+									"pm.variables.set(\"local_districtName\", \"test_MoscowDistr\")",
+									"pm.variables.set(\"local_districtName_other\", \"test_MoscowDistr_other\")",
+									"pm.variables.set(\"local_districtName_patched\", \"test_MoscowDistr_patched\")"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "city",
+					"item": [
+						{
+							"name": "admin",
+							"item": [
+								{
+									"name": "City create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check City fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const districtID = pm.variables.get(\"local_districtID\");",
+													"    const cityName = pm.variables.get(\"local_cityName\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.district.id).to.equal(districtID);",
+													"    pm.expect(jsonData.name).to.eql(cityName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_cityID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"district\": {\n\t\t\"id\": {{local_districtID}}\n  },\n  \"name\": \"{{local_cityName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/cities",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"cities"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "City delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/cities/{{coll_cityID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"cities",
+												"{{coll_cityID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "City create again",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check City fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const districtID = pm.variables.get(\"local_districtID\");",
+													"    const cityName = pm.variables.get(\"local_cityName\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.district.id).to.equal(districtID);",
+													"    pm.expect(jsonData.name).to.eql(cityName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_cityID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"district\": {\n\t\t\"id\": {{local_districtID}}\n  },\n  \"name\": \"{{local_cityName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/cities",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"cities"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "City create with same District and name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"district\": {\n\t\t\"id\": {{local_districtID}}\n  },\n  \"name\": \"{{local_cityName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/cities",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"cities"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "City update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check City fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const cityName = pm.variables.get(\"llocal_cityName_patched\");",
+													"    pm.expect(jsonData.name).to.eql(cityName);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"{{llocal_cityName_patched}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/cities/{{coll_cityID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"cities",
+												"{{coll_cityID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "private",
+							"item": [
+								{
+									"name": "City findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Citiy list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/cities",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"cities"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "City getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/cities/{{coll_cityID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"cities",
+												"{{coll_cityID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_districtID\", Number(pm.collectionVariables.get(\"coll_districtID\")));",
+									"",
+									"pm.variables.set(\"local_cityName\", \"test_MoscowCity\")",
+									"pm.variables.set(\"local_cityName_other\", \"test_MoscowCity_other\")",
+									"pm.variables.set(\"llocal_cityName_patched\", \"test_MoscowCity_patched\")"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "street",
+					"item": [
+						{
+							"name": "admin",
+							"item": [
+								{
+									"name": "Street create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Street fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const citytID = pm.variables.get(\"local_cityID\");",
+													"    const streetName = pm.variables.get(\"local_streetName\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.city.id).to.equal(citytID);",
+													"    pm.expect(jsonData.name).to.eql(streetName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_streetID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"city\": {\n\t\t\"id\": {{local_cityID}}\n  },\n  \"name\": \"{{local_streetName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/streets",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"streets"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Street delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/streets/{{coll_streetID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"streets",
+												"{{coll_streetID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Street create again",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Street fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const citytID = pm.variables.get(\"local_cityID\");",
+													"    const streetName = pm.variables.get(\"local_streetName\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.city.id).to.equal(citytID);",
+													"    pm.expect(jsonData.name).to.eql(streetName);",
+													"    ",
+													"    pm.collectionVariables.set('coll_streetID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"city\": {\n\t\t\"id\": {{local_cityID}}\n  },\n  \"name\": \"{{local_streetName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/streets",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"streets"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Street create with same City and name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"city\": {\n\t\t\"id\": {{local_cityID}}\n  },\n  \"name\": \"{{local_streetName}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/streets",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"streets"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Street update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Street fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const streetName = pm.variables.get(\"local_streetName_patched\");",
+													"    pm.expect(jsonData.name).to.eql(streetName);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"{{local_streetName_patched}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/streets/{{coll_streetID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"streets",
+												"{{coll_streetID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "private",
+							"item": [
+								{
+									"name": "Street findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check Street list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/streets",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"streets"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Street getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/streets/{{coll_streetID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"streets",
+												"{{coll_streetID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_cityID\", Number(pm.collectionVariables.get(\"coll_cityID\")));",
+									"",
+									"pm.variables.set(\"local_streetName\", \"test_MoscowStreet\")",
+									"pm.variables.set(\"local_streetName_other\", \"test_MoscowStreet_other\")",
+									"pm.variables.set(\"local_streetName_patched\", \"test_MoscowStreet_patched\")"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "house",
+					"item": [
+						{
+							"name": "admin",
+							"item": [
+								{
+									"name": "House create",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const streetID = pm.variables.get(\"local_streetID\");",
+													"    const houseNumber = pm.variables.get(\"local_houseNumber\");",
+													"    const houseLat = pm.variables.get(\"local_houseLat\");",
+													"    const houseLon = pm.variables.get(\"local_houseLon\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.street.id).to.equal(streetID);",
+													"    pm.expect(jsonData.number).to.eql(houseNumber);",
+													"    pm.expect(jsonData.lat).to.eql(houseLat);",
+													"    pm.expect(jsonData.lon).to.eql(houseLon);",
+													"    ",
+													"    pm.collectionVariables.set('coll_houseID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"street\": {\n\t\t\"id\": {{local_streetID}}\n  },\n  \"number\": \"{{local_houseNumber}}\",\n  \"lat\": {{local_houseLat}},\n  \"lon\": {{local_houseLon}}\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House delete",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 204\", function () {",
+													"    pm.response.to.have.status(204);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses/{{coll_houseID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses",
+												"{{coll_houseID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House create again",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const streetID = pm.variables.get(\"local_streetID\");",
+													"    const houseNumber = pm.variables.get(\"local_houseNumber\");",
+													"    const houseLat = pm.variables.get(\"local_houseLat\");",
+													"    const houseLon = pm.variables.get(\"local_houseLon\");",
+													"",
+													"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"    pm.expect(jsonData.street.id).to.equal(streetID);",
+													"    pm.expect(jsonData.number).to.eql(houseNumber);",
+													"    pm.expect(jsonData.lat).to.eql(houseLat);",
+													"    pm.expect(jsonData.lon).to.eql(houseLon);",
+													"    ",
+													"    pm.collectionVariables.set('coll_houseID', jsonData.id);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"street\": {\n\t\t\"id\": {{local_streetID}}\n  },\n  \"number\": \"{{local_houseNumber}}\",\n  \"lat\": {{local_houseLat}},\n  \"lon\": {{local_houseLon}}\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House create with same Street and number",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 409\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([409]);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"street\": {\n\t\t\"id\": {{local_streetID}}\n  },\n  \"number\": \"{{local_houseNumber}}\",\n  \"lat\": 0,\n  \"lon\": 0\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House create with number 10 simbols more",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 400 (Field 'number': the maximum size must be 10 characters)\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"id\": null,\n  \"street\": {\n\t\t\"id\": {{local_streetID}}\n  },\n  \"number\": \"10/A_BCDFGH\",\n  \"lat\": 55.7558,\n  \"lon\": 37.6173\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House create with full entity chain",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 201 and data in json format\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"",
+													"const countryCode = pm.variables.get(\"test_countryCode\")",
+													"const countryName = pm.variables.get(\"test_countryName\")",
+													"const regionName = pm.variables.get(\"test_regionName\")",
+													"const districtName = pm.variables.get(\"test_districtName\")",
+													"const citytName = pm.variables.get(\"test_citytName\")",
+													"const streettName = pm.variables.get(\"test_streettName\")",
+													"const houseNumber = pm.variables.get(\"test_houseNumber\")",
+													"const houseLat = pm.variables.get(\"test_houseLat\") === null ? 0.0 : pm.variables.get(\"test_houseLat\"); // incoming null becomes 0.0",
+													"const houseLon = pm.variables.get(\"test_houseLon\") === null ? 0.0 : pm.variables.get(\"test_houseLon\"); // incoming null becomes 0.0",
+													"",
+													"// House check",
+													"pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+													"pm.expect(jsonData.number, 'houseNumber').to.eql(houseNumber);",
+													"pm.expect(jsonData.lat, 'houseLat').to.eql(houseLat);",
+													"pm.expect(jsonData.lon, 'houseLon').to.eql(houseLon);",
+													"",
+													"// Entities of chain check",
+													"pm.expect(jsonData.street.name, 'streettName').to.eql(streettName);",
+													"pm.expect(jsonData.street.city.name, 'citytName').to.eql(citytName);",
+													"pm.expect(jsonData.street.city.district.name, 'districtName').to.eql(districtName);",
+													"pm.expect(jsonData.street.city.district.region.name, 'regionName').to.eql(regionName);",
+													"pm.expect(jsonData.street.city.district.region.country.name, 'countryName').to.eql(countryName);",
+													"pm.expect(jsonData.street.city.district.region.country.code, 'countryCode').to.eql(countryCode);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.variables.set(\"test_countryCode\", \"RU\")",
+													"pm.variables.set(\"test_countryName\", \"test_Russia_other_byChainCreate\")",
+													"pm.variables.set(\"test_regionName\", \"test_MoscowReg_other_byChainCreate\")",
+													"pm.variables.set(\"test_districtName\", \"test_MoscowDistr_other_byChainCreate\")",
+													"pm.variables.set(\"test_citytName\", \"test_MoscowCity_other_byChainCreate\")",
+													"pm.variables.set(\"test_streettName\", \"test_MoscowStreet_other_byChainCreate\")",
+													"pm.variables.set(\"test_houseNumber\", \"t_byChain\")",
+													"pm.variables.set(\"test_houseLat\", null) // will be filled as 0.0 after DTO mapping",
+													"pm.variables.set(\"test_houseLon\", 37.6173)"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"id\": null,\n\t\"street\": {\n\t\t\"id\": null,\n\t\t\"city\": {\n\t\t\t\"id\": null,\n\t\t\t\"district\": {\n\t\t\t\t\"id\": null,\n\t\t\t\t\"region\": {\n\t\t\t\t\t\"id\": null,\n\t\t\t\t\t\"country\": {\n\t\t\t\t\t\t\"id\": null,\n\t\t\t\t\t\t\"code\": \"{{test_countryCode}}\",\n\t\t\t\t\t\t\"name\": \"{{test_countryName}}\"  \n\t\t\t\t\t},\n\t\t\t\t\t\"name\": \"{{test_regionName}}\"\n\t\t\t\t},\n\t\t\t\t\"name\": \"{{test_districtName}}\"\n\t\t\t},\n\t\t\t\"name\": \"{{test_citytName}}\"\n\t\t},\n\t\t\"name\": \"{{test_streettName}}\"\n\t},\n\t\"number\": \"{{test_houseNumber}}\",\n\t\"lat\": {{test_houseLat}},\n\t\"lon\": {{test_houseLon}}\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House fields\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    const housetName = pm.variables.get(\"local_houseNumber_patched\");    ",
+													"    const houseLat = pm.variables.get(\"local_houseLat\");",
+													"    const houseLon = 100;",
+													"",
+													"    pm.expect(jsonData.number, 'field: namber').to.eql(housetName);",
+													"    pm.expect(jsonData.lat, 'field: lat').to.eql(houseLat);",
+													"    pm.expect(jsonData.lon, 'field: lon').to.eql(houseLon);    ",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"number\": \"{{local_houseNumber_patched}}\",\n  \"lon\": 100\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{coll_baseUrl}}/admin/geo/houses/{{coll_houseID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"geo",
+												"houses",
+												"{{coll_houseID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "private",
+							"item": [
+								{
+									"name": "House findAll",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"pm.test(\"Check House list length\", function () {",
+													"    var jsonData = pm.response.json();",
+													"    pm.expect(jsonData.content.length).to.be.gte(1);",
+													"",
+													"    console.log(\"Length of jsonData.content:\", jsonData.content.length);",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/houses",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"houses"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "House getById",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200 and data in json format\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{coll_baseUrl}}/user/geo/houses/{{coll_houseID}}",
+											"host": [
+												"{{coll_baseUrl}}"
+											],
+											"path": [
+												"user",
+												"geo",
+												"houses",
+												"{{coll_houseID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.variables.set(\"local_streetID\", Number(pm.collectionVariables.get(\"coll_streetID\")));",
+									"",
+									"pm.variables.set(\"local_houseNumber\", \"test_1\")",
+									"pm.variables.set(\"local_houseNumber_other\", \"test_other\")",
+									"pm.variables.set(\"local_houseNumber_patched\", \"t_pattched\")",
+									"",
+									"",
+									"pm.variables.set(\"local_houseLat\", 55.7558)",
+									"pm.variables.set(\"local_houseLon\", 37.6173)",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "profile",
+			"item": [
+				{
+					"name": "private",
+					"item": [
+						{
+							"name": "Profile create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 and data in json format\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const userUuid = pm.variables.get(\"locall_userUUID\");",
+											"    const email = pm.variables.get(\"locall_userEmail\");",
+											"    const status = \"ACTIVE\";",
+											"    const createdOn = new Date(jsonData.createdOn).getTime()",
+											"    const currentTime = new Date().getTime()",
+											"    const testStartTime = pm.variables.get(\"test_startTime\");",
+											"",
+											"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+											"    pm.expect(jsonData.userUuid, 'userUuid').to.equal(userUuid);",
+											"    pm.expect(jsonData.email, 'email').to.eql(email);",
+											"    pm.expect(jsonData.status, 'status').to.eql(status);",
+											"",
+											"    // Logs",
+											"    console.log(\"createdOn:\", createdOn);",
+											"    console.log(\"testStartTime:\", testStartTime);",
+											"",
+											"    console.log(\"createdOn type:\", typeof createdOn); ",
+											"    console.log(\"testStartTime type:\", typeof testStartTime); ",
+											"",
+											"    console.log(\"createdOn date:\", new Date(createdOn).toISOString()); ",
+											"    console.log(\"testStartTime date:\", new Date(testStartTime).toISOString()); ",
+											"",
+											"    // Check createdOn field ()",
+											"    // This check is disabled due to a time discrepancy between the server and the host.  ",
+											"    // I have synchronized the time via volumes in docker (for Linux) and the test passes: ",
+											"    // volumes:",
+											"    // - /etc/localtime:/etc/localtime:ro",
+											"    // - /etc/timezone:/etc/timezone:ro ",
+											"    // But I still leave the check disabled.",
+											"    // pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
+											"    // pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
+											"   ",
+											"    ",
+											"    pm.collectionVariables.set('coll_profileID', jsonData.id);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"test_startTime\", new Date().getTime())"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": {{locall_userID}},\n  \"email\": \"{{locall_userEmail}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile create with sane email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 409\", function () {",
+											"    pm.response.to.have.status(409);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"test_startTime\", new Date().getTime())"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID_other}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": {{locall_userID_other}},\n  \"email\": \"{{locall_userEmail}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile create with sane userId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 409\", function () {",
+											"    pm.response.to.have.status(409);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"test_startTime\", new Date().getTime())"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID_other}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": {{locall_userID}},\n  \"email\": \"{{locall_userEmail_other}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile create other",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201 and data in json format\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const userUuid = pm.variables.get(\"locall_userUUID\");",
+											"    const email = pm.variables.get(\"locall_userEmail_other\");",
+											"    const status = \"ACTIVE\";",
+											"    const createdOn = new Date(jsonData.createdOn).getTime()",
+											"    const currentTime = new Date().getTime()",
+											"    const testStartTime = pm.variables.get(\"test_startTime\");",
+											"",
+											"    pm.expect(jsonData.id, 'Must have id').to.not.be.null;",
+											"    pm.expect(jsonData.userUuid, 'userUuid').to.equal(userUuid);",
+											"    pm.expect(jsonData.email, 'email').to.eql(email);",
+											"    pm.expect(jsonData.status, 'status').to.eql(status);",
+											"",
+											"    // Logs",
+											"    console.log(\"createdOn:\", createdOn);",
+											"    console.log(\"testStartTime:\", testStartTime);",
+											"",
+											"    console.log(\"createdOn type:\", typeof createdOn); ",
+											"    console.log(\"testStartTime type:\", typeof testStartTime); ",
+											"",
+											"    console.log(\"createdOn date:\", new Date(createdOn).toISOString()); ",
+											"    console.log(\"testStartTime date:\", new Date(testStartTime).toISOString()); ",
+											"",
+											"    // Check createdOn field",
+											"    // pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
+											"    // pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"test_startTime\", new Date().getTime())"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": {{locall_userID_other}},\n  \"email\": \"{{locall_userEmail_other}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update email",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const email = pm.variables.get(\"locall_userEmail_patched\");",
+											"",
+											"    pm.expect(jsonData.email, 'email').to.be.eql(email);",
+											"});    "
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"{{locall_userEmail_patched}}\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update house",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const countryName = pm.variables.get(\"locall_houseCountryName_patched\");",
+											"",
+											"    pm.expect(jsonData.house.street.city.district.region.country.name, 'countryName').to.be.eql(countryName);",
+											"});    "
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"house\": {\n    \"id\": null,\n    \"street\": {\n        \"id\": null,\n        \"city\": {\n            \"id\": null,\n            \"district\": {\n                \"id\": null,\n                \"region\": {\n                    \"id\": null,\n                    \"country\": {\n                        \"id\": null,\n                        \"code\": \"{{locall_houseCountryCode_patched}}\",\n                        \"name\": \"{{locall_houseCountryName_patched}}\"\n                    },\n                    \"name\": \"{{locall_houseRegionName_patched}} \"\n                },\n                \"name\": \"{{locall_houseDistrictName_patched}}\"\n            },\n            \"name\": \"{{locall_houseCityName_patched}}\"\n        },\n        \"name\": \"{{locall_houseStreetName_patched}}\"\n    },\n    \"number\": \"{{locall_houseHouseNumber_patched}}\",\n    \"lat\": 50.5,\n    \"lon\": 60.5\n  },\n  \"apartment\": \"{{locall_apartment_patched}}\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update full",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const email = pm.variables.get(\"locall_userEmail_patched\");",
+											"",
+											"    pm.expect(jsonData.email, 'email').to.be.eql(email);",
+											"});    "
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"{{locall_userEmail_patched}}\",\n  \"trustedEmail\": \"{{locall_trustedEmail_patched}}\",\n  \"mobileNumber\": \"{{locall_mobileNumber_patched}}\",\n  \"trustedMobileNumber\": \"{{locall_trustedMobileNumber_patched}}\",\n  \"firstName\": \"{{locall_firstName_patched}}\",\n  \"secondName\": \"{{locall_secondName_patched}}\",\n  \"birthday\": \"{{locall_birthday_patched}}\",\n  \"gender\": \"{{locall_gender_patched}}\",\n  \"house\": {\n    \"id\": {{coll_houseID}}\n  },  \t\n  \"apartment\": \"{{locall_apartment_patched}}\",\n  \"avatar\": \"{{locall_avatar_patched}}\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getByUserId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getByUserId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "admin",
+					"item": [
+						{
+							"name": "Profile findAll",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles?page=0&size=10",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getByUserId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles/byuserid",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles",
+										"byuserid"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update status by userId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const status = pm.variables.get(\"locall_houseStatusBLOCKED\");",
+											"",
+											"    pm.expect(jsonData.status, 'status').to.be.eql(status);",
+											"});    "
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles/status?status={{locall_houseStatusBLOCKED}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "{{locall_houseStatusBLOCKED}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update status by userId with same status",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400 and data in json format\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles/status?status={{locall_houseStatusBLOCKED}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "{{locall_houseStatusBLOCKED}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.variables.set(\"locall_userUUID\", \"91902887-2a61-4a4e-bdde-e581514f39df\")",
+							"pm.variables.set(\"locall_userUUID_other\", \"68aeb536-d4cc-442b-a909-d08335797b86\")",
+							"",
+							"pm.variables.set(\"locall_userID\", 1000)",
+							"pm.variables.set(\"locall_userID_other\", 1001)",
+							"pm.variables.set(\"locall_userID_patched\", 2001)",
+							"",
+							"pm.variables.set(\"locall_userEmail\", \"test_string@test_string.com\")",
+							"pm.variables.set(\"locall_userEmail_other\", \"test_string_other@test_string.com\")",
+							"",
+							"pm.variables.set(\"locall_userEmail_patched\", \"test_string_patched@test_string.com\")",
+							"pm.variables.set(\"locall_trustedEmail_patched\", \"trustedEmail_patched@aaa.aa\")",
+							"pm.variables.set(\"locall_mobileNumber_patched\", \"0123456789\")",
+							"pm.variables.set(\"locall_trustedMobileNumber_patched\", \"9874563210\")",
+							"pm.variables.set(\"locall_firstName_patched\", \"firstName_patched\")",
+							"pm.variables.set(\"locall_secondName_patched\", \"secondName_patched\")",
+							"pm.variables.set(\"locall_birthday_patched\", \"2023-11-03T16:59:47.446Z\")",
+							"pm.variables.set(\"locall_gender_patched\", \"FEMALE\")",
+							"pm.variables.set(\"locall_apartment_patched\", \"ap_patched\")",
+							"pm.variables.set(\"locall_avatar_patched\", \"AQIDBAUGBwgJCg==\")",
+							"",
+							"pm.variables.set(\"locall_houseCountryCode_patched\", \"RU\")",
+							"pm.variables.set(\"locall_houseCountryName_patched\", \"test_Country_patched\")",
+							"pm.variables.set(\"locall_houseRegionName_patched\", \"test_Region_patched\")",
+							"pm.variables.set(\"locall_houseDistrictName_patched\", \"test_District_patched\")",
+							"pm.variables.set(\"locall_houseCityName_patched\", \"test_City_patched\")",
+							"pm.variables.set(\"locall_houseStreetName_patched\", \"test_Street_patched\")",
+							"pm.variables.set(\"locall_houseHouseNumber_patched\", \"t_HPatched\")",
+							"",
+							"",
+							"pm.variables.set(\"locall_houseStatusACTIVE\", \"ACTIVE\")",
+							"pm.variables.set(\"locall_houseStatusBLOCKED\", \"BLOCKED\")",
+							"pm.variables.set(\"locall_houseStatusDELETED\", \"DELETED\")",
+							"",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "coll_baseUrl",
+			"value": "http://localhost:8076/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "coll_countryID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_regionID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_districtID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_cityID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_streetID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_houseID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_profileID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "coll_userUUID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "countryID",
+			"value": ""
+		},
+		{
+			"key": "coll_hoseID",
+			"value": ""
+		}
+	]
 }
