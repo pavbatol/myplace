@@ -17,10 +17,13 @@ public interface ProfileService {
 
     void delete(Long profileId);
 
-    ProfileDto getById(Long userId, UUID userUuid, Long profileId);
+    ProfileDto privateGetById(Long userId, UUID userUuid, Long profileId);
 
-    ProfileDto getByUserId(Long userId, UUID userUuid);
+    ProfileDto privateGetByUserId(Long userId, UUID userUuid);
+
+    ProfileDto adminGetById(Long userId, UUID userUuid, Long profileId);
+
+    ProfileDto adminGetByUserId(Long userId, UUID userUuid);
 
     Slice<ProfileDto> adminGetAll(int page, int size);
-
 }

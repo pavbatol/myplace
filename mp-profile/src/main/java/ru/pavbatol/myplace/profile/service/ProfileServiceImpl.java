@@ -52,7 +52,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileDtoUpdateStatusResponse adminUpdateStatusByUserId(Long userId, UUID userUuid, ProfileStatus status) {
-        Profile profile = getNonNullProfileByUserId(userId);
+        Profile profile = adminGetNonNullProfileByUserId(userId);
         if (profile.getStatus() == status) {
             throw new IllegalArgumentException(String.format(
                     "Status is already '%s' for %s with id: #%s", status, ENTITY_SIMPLE_NAME, userUuid));
@@ -97,7 +97,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileDto getById(Long userId, UUID userUuid, Long profileId) {
+    public ProfileDto adminGetById(Long userId, UUID userUuid, Long profileId) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, profile.getUserId());
         log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, profile);
@@ -106,8 +106,25 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileDto getByUserId(Long userId, UUID userUuid) {
-        Profile found = getNonNullProfileByUserId(userId);
+    public ProfileDto adminGetByUserId(Long userId, UUID userUuid) {
+        Profile found = adminGetNonNullProfileByUserId(userId);
+        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, found);
+
+        return profileMapper.toProfileDto(found, userUuid);
+    }
+
+    @Override
+    public ProfileDto privateGetById(Long userId, UUID userUuid, Long profileId) {
+        Profile profile = privateGetNonNullProfileById(profileId);
+        checkUserIdOwnership(userId, profile.getUserId());
+        log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, profile);
+
+        return profileMapper.toProfileDto(profile, userUuid);
+    }
+
+    @Override
+    public ProfileDto privateGetByUserId(Long userId, UUID userUuid) {
+        Profile found = privateGetNonNullProfileByUserId(userId);
         log.debug("Found {}: {}", ENTITY_SIMPLE_NAME, found);
 
         return profileMapper.toProfileDto(found, userUuid);
@@ -122,9 +139,19 @@ public class ProfileServiceImpl implements ProfileService {
         return found.map(profileMapper::toProfileDtoWithoutHose);
     }
 
-    private Profile getNonNullProfileByUserId(Long userId) {
+    private Profile adminGetNonNullProfileByUserId(Long userId) {
         return profileRepository.findByUserId(userId).orElseThrow(() ->
                 new NotFoundException(String.format("%s with userId #%s was not found", ENTITY_SIMPLE_NAME, userId)));
+    }
+
+    private Profile privateGetNonNullProfileByUserId(Long userId) {
+        return profileRepository.findByUserIdAndNotStatus(userId, ProfileStatus.DELETED).orElseThrow(() ->
+                new NotFoundException(String.format("%s with userId #%s was not found", ENTITY_SIMPLE_NAME, userId)));
+    }
+
+    private Profile privateGetNonNullProfileById(Long profileId) {
+        return profileRepository.findByIdAndNotStatus(profileId, ProfileStatus.DELETED).orElseThrow(() ->
+                new NotFoundException(String.format("%s with profileId #%s was not found", ENTITY_SIMPLE_NAME, profileId)));
     }
 
     private void checkUserIdOwnership(Long requesterId, Long ownerId) {
