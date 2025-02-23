@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
+import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
+import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
 import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.mapper.ProfileMapper;
 import ru.pavbatol.myplace.profile.model.Profile;
@@ -26,7 +28,9 @@ import java.util.UUID;
 public class ProfileServiceImpl implements ProfileService {
     private static final String ENTITY_SIMPLE_NAME = Profile.class.getSimpleName();
     private final ProfileJpaRepository profileRepository;
+    private final HouseRepository houseRepository;
     private final ProfileMapper profileMapper;
+    private final HouseMapper houseMapper;
 
     @Override
     public ProfileDtoCreateResponse create(UUID userUuid, ProfileDtoCreateRequest createRequest) {
@@ -67,14 +71,17 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileDto update(Long userId, UUID userUuid, Long profileId, ProfileDtoUpdate dto) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
         checkUserIdOwnership(userId, profile.getUserId());
-        profileMapper.updateEntity(profile, dto);
-        if (profile.getAvatar() != null && profile.getAvatar().length > 2 * 1024 * 1024) {
+
+        Profile intendedUpdate = profileMapper.updateEntity(profile, dto, houseRepository, houseMapper);
+        log.debug("intendedUpdate {}: {}. \nWith Hose {}", ENTITY_SIMPLE_NAME, intendedUpdate, intendedUpdate.getHouse());
+
+        if (intendedUpdate.getAvatar() != null && intendedUpdate.getAvatar().length > 2 * 1024 * 1024) {
             throw new IllegalArgumentException("The size of the avatar image is too large: "
-                    + profile.getAvatar().length + "b");
+                    + intendedUpdate.getAvatar().length + "b");
         }
 
-        Profile updated = profileRepository.save(profile);
-        log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
+        Profile updated = profileRepository.save(intendedUpdate);
+        log.debug("Updated {}: {}. \nWith Hose {}", ENTITY_SIMPLE_NAME, updated, updated.getHouse());
 
         return profileMapper.toProfileDto(updated, userUuid);
     }

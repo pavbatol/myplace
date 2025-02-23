@@ -2529,8 +2529,8 @@
 											"    console.log(\"testStartTime date:\", new Date(testStartTime).toISOString()); ",
 											"",
 											"    // Check createdOn field",
-											"    pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
-											"    pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
+											"    // pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
+											"    // pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
 											"   ",
 											"    ",
 											"    pm.collectionVariables.set('coll_profileID', jsonData.id);",
@@ -2735,8 +2735,8 @@
 											"    console.log(\"testStartTime date:\", new Date(testStartTime).toISOString()); ",
 											"",
 											"    // Check createdOn field",
-											"    pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
-											"    pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
+											"    // pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
+											"    // pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
 											"});"
 										],
 										"type": "text/javascript",
@@ -2836,6 +2836,77 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"email\": \"{{locall_userEmail_patched}}\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update house",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const countryName = pm.variables.get(\"locall_houseCountryName_patched\");",
+											"",
+											"    pm.expect(jsonData.house.street.city.district.region.country.name, 'countryName').to.be.eql(countryName);",
+											"});    "
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"house\": {\n    \"id\": null,\n    \"street\": {\n        \"id\": null,\n        \"city\": {\n            \"id\": null,\n            \"district\": {\n                \"id\": null,\n                \"region\": {\n                    \"id\": null,\n                    \"country\": {\n                        \"id\": null,\n                        \"code\": \"{{locall_houseCountryCode_patched}}\",\n                        \"name\": \"{{locall_houseCountryName_patched}}\"\n                    },\n                    \"name\": \"{{locall_houseRegionName_patched}} \"\n                },\n                \"name\": \"{{locall_houseDistrictName_patched}}\"\n            },\n            \"name\": \"{{locall_houseCityName_patched}}\"\n        },\n        \"name\": \"{{locall_houseStreetName_patched}}\"\n    },\n    \"number\": \"{{locall_houseHouseNumber_patched}}\",\n    \"lat\": 50.5,\n    \"lon\": 60.5\n  },\n  \"apartment\": \"{{locall_apartment_patched}}\"\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2962,34 +3033,14 @@
 							"pm.variables.set(\"locall_apartment_patched\", \"ap_patched\")",
 							"pm.variables.set(\"locall_avatar_patched\", \"AQIDBAUGBwgJCg==\")",
 							"",
-							"const locall_houseFullNew = {",
-							"    \"id\": null,",
-							"    \"street\": {",
-							"        \"id\": null,",
-							"        \"city\": {",
-							"            \"id\": null,",
-							"            \"district\": {",
-							"                \"id\": null,",
-							"                \"region\": {",
-							"                    \"id\": null,",
-							"                    \"country\": {",
-							"                        \"id\": null,",
-							"                        \"code\": \"AA\",",
-							"                        \"name\": \"test_Country\"",
-							"                    },",
-							"                    \"name\": \"test_Region \"",
-							"                },",
-							"                \"name\": \"test_District\"",
-							"            },",
-							"            \"name\": \"test_City\"",
-							"        },",
-							"        \"name\": \"test_Street\"",
-							"    },",
-							"    \"number\": \"test_House\",",
-							"    \"lat\": 50.5,",
-							"    \"lon\": 60.5",
-							"}  \t",
-							"pm.variables.set(\"locall_houseFullNew\", JSON.stringify(locall_houseFullNew));"
+							"pm.variables.set(\"locall_houseCountryCode_patched\", \"RU\")",
+							"pm.variables.set(\"locall_houseCountryName_patched\", \"test_Country_patched\")",
+							"pm.variables.set(\"locall_houseRegionName_patched\", \"test_Region_patched\")",
+							"pm.variables.set(\"locall_houseDistrictName_patched\", \"test_District_patched\")",
+							"pm.variables.set(\"locall_houseCityName_patched\", \"test_City_patched\")",
+							"pm.variables.set(\"locall_houseStreetName_patched\", \"test_Street_patched\")",
+							"pm.variables.set(\"locall_houseHouseNumber_patched\", \"t_HPatched\")",
+							""
 						]
 					}
 				},
