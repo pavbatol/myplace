@@ -80,7 +80,7 @@ To visualize the specification, paste it into any Swagger editor. For example th
 - JDK 11
 - Apache Maven
 - Docker (version 19.03.0 or higher)
-- Docker Compose (version 1.28.0 or higher but lower than 2.0.0)
+- Docker Compose (version 1.28.0 or higher)
 
 > **Note:** Execute all commands from the project root.  
 > For ease of use, a standard and an alternative option are provided using the manage.sh script.
