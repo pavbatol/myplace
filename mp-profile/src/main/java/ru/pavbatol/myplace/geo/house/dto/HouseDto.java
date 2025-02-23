@@ -7,6 +7,7 @@ import ru.pavbatol.myplace.geo.street.dto.StreetDto;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Value
@@ -21,7 +22,9 @@ public class HouseDto implements IdentifiableGeo {
     @Size(max = 10)
     String number;
 
-    double lat;
+    @PositiveOrZero
+    Double lat;
 
-    double lon;
+    @PositiveOrZero
+    Double lon;
 }

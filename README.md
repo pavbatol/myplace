@@ -119,10 +119,9 @@ mvn clean package -Dmaven.test.skip=true
 <div style="margin-left: 20px;">
 
 For the `production` profile, fill in the corresponding environment variable files:
-- docker/stats/.env
-- docker/security/.env, docker/security/env.security.prod
-- docker/profile/.env
-
+- docker/stats/.env.stats.prod
+- docker/security/.env.security.prod
+- docker/profile/.env.profile.prod
 
 To run each profile, execute the following commands:  
 (including the `healthcheck`, so please wait)

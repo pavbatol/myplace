@@ -88,7 +88,7 @@ public class Profile {
     @Column(name = "gender")
     Gender gender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "house_id")
     @ToString.Exclude
     House house;
