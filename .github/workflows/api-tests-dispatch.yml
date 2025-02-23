@@ -175,7 +175,7 @@ jobs:
 
       - name: Set up PostgreSQL
         run: |
-          docker run --name postgres -d -p 5432:5432 -e POSTGRES_PASSWORD=temp_password postgres:latest          
+          docker run --name postgres -d -p 5432:5432 -e POSTGRES_PASSWORD=12345 postgres:latest          
           docker ps -a
 
       - name: Wait for PostgreSQL
@@ -184,9 +184,6 @@ jobs:
             echo "Waiting for service to respond..."
             sleep 5
           done && echo "Service is ready!"'
-
-      - name: Set PostgreSQL password for 'postgres' user
-        run: docker exec -u postgres postgres psql -U postgres -c "ALTER USER postgres WITH PASSWORD '12345';"
 
       - name: Install Docker Compose
         run: |
