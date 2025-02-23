@@ -28,13 +28,13 @@ public class AdminProfileController {
 
     @PatchMapping("/status")
     @Operation(summary = "updateStatusByUserId", description = "setting Profile status")
-    public ResponseEntity<ProfileDtoUpdateStatusResponse> updateStatusByUserId(@RequestParam(value = "userId") Long userId,
-                                                                               @RequestParam(value = "userUuid") UUID userUuid,
+    public ResponseEntity<ProfileDtoUpdateStatusResponse> updateStatusByUserId(@RequestHeader(value = X_USER_ID) Long userId,
+                                                                               @RequestHeader(value = X_USER_UUID) UUID userUuid,
                                                                                @RequestParam(value = "status") String status) {
         log.debug("PATCH updateStatusByUserId() with userId: {}, userUuid: {}, status: {}", userId, userUuid, status);
         ProfileStatus profileStatus = EnumUtils.valueOfIgnoreCase(ProfileStatus.class, status);
         ProfileDtoUpdateStatusResponse body = profileService.adminUpdateStatusByUserId(userId, userUuid, profileStatus);
-        return ResponseEntity.status(HttpStatus.CREATED).body(body);
+        return ResponseEntity.status(HttpStatus.OK).body(body);
     }
 
     @GetMapping

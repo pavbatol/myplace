@@ -3366,6 +3366,114 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Profile update status by userId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Check Profile fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    const status = pm.variables.get(\"locall_houseStatusBLOCKED\");",
+											"",
+											"    pm.expect(jsonData.status, 'status').to.be.eql(status);",
+											"});    "
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles/status?status={{locall_houseStatusBLOCKED}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "{{locall_houseStatusBLOCKED}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile update status by userId with same status",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400 and data in json format\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles/status?status={{locall_houseStatusBLOCKED}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles",
+										"status"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "{{locall_houseStatusBLOCKED}}"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				}
@@ -3405,6 +3513,12 @@
 							"pm.variables.set(\"locall_houseCityName_patched\", \"test_City_patched\")",
 							"pm.variables.set(\"locall_houseStreetName_patched\", \"test_Street_patched\")",
 							"pm.variables.set(\"locall_houseHouseNumber_patched\", \"t_HPatched\")",
+							"",
+							"",
+							"pm.variables.set(\"locall_houseStatusACTIVE\", \"ACTIVE\")",
+							"pm.variables.set(\"locall_houseStatusBLOCKED\", \"BLOCKED\")",
+							"pm.variables.set(\"locall_houseStatusDELETED\", \"DELETED\")",
+							"",
 							""
 						]
 					}
