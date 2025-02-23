@@ -2528,7 +2528,13 @@
 											"    console.log(\"createdOn date:\", new Date(createdOn).toISOString()); ",
 											"    console.log(\"testStartTime date:\", new Date(testStartTime).toISOString()); ",
 											"",
-											"    // Check createdOn field",
+											"    // Check createdOn field ()",
+											"    // This check is disabled due to a time discrepancy between the server and the host.  ",
+											"    // I have synchronized the time via volumes in docker (for Linux) and the test passes: ",
+											"    // volumes:",
+											"    // - /etc/localtime:/etc/localtime:ro",
+											"    // - /etc/timezone:/etc/timezone:ro ",
+											"    // But I still leave the check disabled.",
 											"    // pm.expect(createdOn, `createdOn greater than or equal to ${testStartTime}`).to.be.gte(testStartTime);",
 											"    // pm.expect(createdOn, `createdOn less than or equal to ${currentTime}`).to.be.lte(currentTime)",
 											"   ",
@@ -2997,12 +3003,371 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Profile getById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getByUserId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getByUserId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/user/profiles",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profiles"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
 				{
 					"name": "admin",
-					"item": []
+					"item": [
+						{
+							"name": "Profile findAll",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles?page=0&size=10",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles/{{coll_profileID}}",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles",
+										"{{coll_profileID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Profile getByUserId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "X-User-Uuid",
+										"value": "{{locall_userUUID}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{coll_baseUrl}}/admin/profiles/byuserid",
+									"host": [
+										"{{coll_baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"profiles",
+										"byuserid"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			],
 			"event": [
