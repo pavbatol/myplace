@@ -68,6 +68,15 @@ check_args() {
       usage
   fi
 }
+get_docker_compose_cmd() {
+  if docker compose version > /dev/null 2>&1; then
+    echo "Using Docker Compose V2 (docker compose)" >&2
+    echo "docker compose"
+  else
+    echo "Using Docker Compose V1 (docker-compose)" >&2
+    echo "docker-compose"
+  fi
+}
 
 #-- Execute
 check_for_help "$1"
@@ -114,26 +123,29 @@ if [ -n "$COMPOSE_PROFILE" ]; then
   WITH_COMPOSE_PROFILE="--profile $COMPOSE_PROFILE"
 fi
 
+DOCKER_COMPOSE_CMD=$(get_docker_compose_cmd)
+echo "Selected command: $DOCKER_COMPOSE_CMD" >&2
+
 case $ACTION in
   build)
-    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build"
+    echo "COMMAND: sudo $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build"
     echo
-    sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build
+    sudo $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build
     ;;
   up)
-    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE"
+    echo "COMMAND: sudo $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE"
     echo
-    sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE
+    sudo $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE
     ;;
   down)
-    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE down"
+    echo "COMMAND: sudo $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE down"
     echo
-    sudo docker-compose -f $COMPOSE_FILE down
+    sudo $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE down
     ;;
   logs)
-    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE logs"
+    echo "COMMAND: sudo $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE logs"
     echo
-    sudo docker-compose -f $COMPOSE_FILE logs
+    sudo $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE logs
     ;;
   *)
     printf "\033[31m !\033[0m Error: Unknown action: $ACTION.\n\n"
