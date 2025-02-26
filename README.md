@@ -86,6 +86,10 @@ To visualize the specification, paste it into any Swagger editor. For example th
 > For ease of use, a standard and an alternative option are provided using the manage.sh script.
 > This script is designed for use on Linux-based systems, including but not limited to Ubuntu, CentOS, Debian, and other distributions. 
 > The script is not intended to run on Windows or MacOS without additional tools, such as WSL (Windows Subsystem for Linux) or proper environment configuration.
+>
+> When running manually (not via scripts), use the appropriate command for your Docker Compose version:
+> - Docker Compose V1: docker-compose
+> - Docker Compose V2: docker compose
 
 #### 1. Build the Project
 
