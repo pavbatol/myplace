@@ -17,7 +17,7 @@ services:
       file: stats/docker-compose-stats-prod.yml
       service: stats-db
     volumes:
-      - ../db/docker-sync/stats-service/mongo/db:/data/db
+      - stats_mongo_data:/data/db
 
   security-service:
     profiles: [ "security", "full" ]
@@ -36,7 +36,7 @@ services:
       file: security/docker-compose-security-prod.yml
       service: security-redis-db
     volumes:
-      - ../db/docker-sync/security-service/redis/data:/data
+      - security_redis_data:/data
 
   security-postgres-db:
     profiles: [ "security", "full" ]
@@ -44,7 +44,7 @@ services:
       file: security/docker-compose-security-prod.yml
       service: security-postgres-db
     volumes:
-      - ../db/docker-sync/security-service/postgres/data:/var/lib/postgresql/data
+      - security_postgres_data:/var/lib/postgresql/data
 
   profile-service:
     profiles: [ "profile", "full" ]
@@ -61,4 +61,14 @@ services:
       file: profile/docker-compose-profile-prod.yml
       service: profile-db
     volumes:
-      - ../db/docker-sync/profile-service/postgres/data:/var/lib/postgresql/data
+      - profile_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  stats_mongo_data:
+    name: myplace_stats_mongo_data
+  security_redis_data:
+    name: myplace_security_redis_data
+  security_postgres_data:
+    name: myplace_security_postgres_data
+  profile_postgres_data:
+    name: myplace_profile_postgres_data
