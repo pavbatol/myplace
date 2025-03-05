@@ -44,6 +44,40 @@ You can organize your own platform.
 
     </div>  
 
+    <div style="margin-left: 20px;">
+
+    #### Testing  in Postman
+
+    By placing the file for testing the upload functionality in the correct local directory, the collection will operate as expected both locally and in the GitHub Workflow. This is recommended for convenient local testing. Alternatively, you can manually select the file for local testing directly within the test itself.
+
+    ###### Project Structure in GitHub:
+
+    ```
+    root
+      └── postman
+          ├── MyPlace-mp-profile.postman_collection.json
+          ├── MyPlace-mp-security.postman_collection.json
+          ├── MyPlace-mp-stats.postman_collection.json
+          └── data
+              └── sample-file-to-import-geo.csv
+    ```
+
+    ###### Local Structure:
+
+    ```
+    ~/Postman
+      └── files
+          └── postman
+              └── data
+                  └── sample-file-to-import-geo.csv
+    ```
+
+    _~/Postman/files_ — Postman working directory.  
+    _~/Postman/files/postman/data_ — Directory for files used to test API uploads.  
+    You can view or change the Postman working directory in Postman → Settings → General → Working Directory → Location.
+
+    </div>
+
 ---
 
 ### Intended technologies:
@@ -83,13 +117,16 @@ To visualize the specification, paste it into any Swagger editor. For example th
 - Docker Compose (version 1.28.0 or higher)
 
 > **Note:** Execute all commands from the project root.  
-> For ease of use, a standard and an alternative option are provided using the manage.sh script.
+> For ease of use, a standard and an alternative option are provided using the `manage.sh` script.
 > This script is designed for use on Linux-based systems, including but not limited to Ubuntu, CentOS, Debian, and other distributions. 
 > The script is not intended to run on Windows or MacOS without additional tools, such as WSL (Windows Subsystem for Linux) or proper environment configuration.
 >
 > When running manually (not via scripts), use the appropriate command for your Docker Compose version:
-> - Docker Compose V1: docker-compose
-> - Docker Compose V2: docker compose
+> - Docker Compose V1: `docker-compose`
+> - Docker Compose V2: `docker compose`
+> 
+> **Container names are labeled by adding a suffix.** By default, the suffix is `'std'`. When running via a script, the suffix will be changed to `'prod'`, `'dev'`, or `'test'`, depending on the environment you are running. For manual execution, you can override the default label (`'std'`) by specifying a value for the `CONTAINER_MARK` environment variable. Here is an example:  
+>`CONTAINER_MARK=my_label docker-compose -f docker/docker-compose-test.yml --profile full up`
 
 #### 1. Build the Project
 
