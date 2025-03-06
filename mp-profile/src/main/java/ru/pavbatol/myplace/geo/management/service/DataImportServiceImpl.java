@@ -44,7 +44,7 @@ public class DataImportServiceImpl implements DataImportService {
     @Override
     @Transactional
     public void importDataFromCsv(OutputStream outputStream, MultipartFile file, boolean responseExportWithId) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             List<Country> countries = new ArrayList<>();
             List<Region> regions = new ArrayList<>();
             List<District> districts = new ArrayList<>();

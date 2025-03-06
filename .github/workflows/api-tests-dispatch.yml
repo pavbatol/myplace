@@ -259,34 +259,55 @@ jobs:
       - name: Run project
         working-directory: ./docker
         run: |
-          echo "COMMAND docker-compose --profile full up -d  (with COMPOSE_FILE = $COMPOSE_FILE)"
-          docker-compose --profile full up -d 
+          ENV="${{ github.event.inputs.environment }}"
+          echo "COMMAND CONTAINER_MARK=$ENV docker-compose --profile full up -d  (with COMPOSE_FILE = $COMPOSE_FILE)"
+          CONTAINER_MARK="$ENV" docker-compose --profile full up -d 
 
       - name: List all containers
         run: docker ps -a
 
       - name: Wait for security-service to be ready
         run: |
-          timeout 60 bash -c 'until docker exec mp-security nc -z localhost 8078; do
-            echo "Waiting for service to respond..."
+          ENV="${{ github.event.inputs.environment }}"
+          CONTAINER_NAME="mp-security-${ENV}"
+          
+          echo "Checking if container $CONTAINER_NAME is running..."
+          
+          CONTAINER_ID=$(docker ps -q -f name="^${CONTAINER_NAME}$")
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "Error: Container $CONTAINER_NAME is not running."
+            exit 1
+          else
+            echo "Container $CONTAINER_NAME is running with ID: $CONTAINER_ID"
+          fi
+          
+          timeout 60 bash -c "until docker exec $CONTAINER_NAME nc -z localhost 8078; do
+            echo 'Waiting for service to respond...'
             sleep 5
-          done'
+          done"
+          
           echo "Service is ready!"
 
       - name: Wait for profile-service to be ready
         run: |
-          timeout 60 bash -c 'until docker exec mp-profile nc -z localhost 8076; do
-            echo "Waiting for service to respond..."
+          ENV="${{ github.event.inputs.environment }}"
+          CONTAINER_NAME="mp-profile-${ENV}"
+          
+          timeout 60 bash -c "until docker exec $CONTAINER_NAME nc -z localhost 8076; do
+            echo 'Waiting for service to respond...'
             sleep 5
-          done'
+          done"
           echo "Service is ready!"
 
       - name: Wait for stats-service to be ready
         run: |
-          timeout 60 bash -c 'until docker exec mp-stats nc -z localhost 9090; do
-            echo "Waiting for service to respond..."
+          ENV="${{ github.event.inputs.environment }}"
+          CONTAINER_NAME="mp-stats-${ENV}"
+          
+          timeout 60 bash -c "until docker exec $CONTAINER_NAME nc -z localhost 9090; do
+            echo 'Waiting for service to respond...'
             sleep 5
-          done'
+          done"
           echo "Service is ready!"
 
       - name: Run Postman Tests
