@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   stats-service:
@@ -7,6 +5,7 @@ services:
     extends:
       file: stats/docker-compose-stats-test.yml
       service: stats-service
+    container_name: mp-stats-${CONTAINER_MARK:-std}
     depends_on:
       stats-db:
         condition: service_healthy
@@ -16,12 +15,14 @@ services:
     extends:
       file: stats/docker-compose-stats-test.yml
       service: stats-db
+    container_name: mp-stats-db-${CONTAINER_MARK:-std}
 
   security-service:
     profiles: [ "security", "full" ]
     extends:
       file: security/docker-compose-security-test.yml
       service: security-service
+    container_name: mp-security-${CONTAINER_MARK:-std}
     depends_on:
       security-redis-db:
         condition: service_healthy
@@ -31,6 +32,7 @@ services:
     extends:
       file: security/docker-compose-security-test.yml
       service: security-redis-db
+    container_name: mp-security-redis-db-${CONTAINER_MARK:-std}
 
 
   profile-service:
@@ -38,4 +40,4 @@ services:
     extends:
       file: profile/docker-compose-profile-test.yml
       service: profile-service
-
+    container_name: mp-profile-${CONTAINER_MARK:-std}

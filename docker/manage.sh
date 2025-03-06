@@ -27,6 +27,7 @@ show_help() {
   echo "  $0 dev up security   # Start development environment with 'security' profile."
   echo "  $0 prod up -d        # Start production environment in detached mode."
   echo "  $0 prod down         # Stop and remove production environment."
+  echo "  $0 dev down security # Stop and remove development environment with 'security' profile."
   echo "  $0 prod logs         # View logs for production environment."
   echo "  $0 test build        # Build services for the test environment."
   echo
@@ -63,9 +64,18 @@ check_args() {
       printf "\033[31m !\033[0m Error: Don't use [-d] with 'build' action.\n\n"
       usage
   fi
-  if [ "$ACTION" = "down" ] && { [ -n "$DETACH_MODE" ] || [ -n "$COMPOSE_PROFILE" ]; }; then
-      printf "\033[31m !\033[0m Error: Don't use [-d] or [COMPOSE_PROFILE] with 'down' action.\n\n"
+  if [ "$ACTION" = "down" ] && [ -n "$DETACH_MODE" ]; then
+      printf "\033[31m !\033[0m Error: Don't use [-d] with 'down' action.\n\n"
       usage
+  fi
+}
+get_docker_compose_cmd() {
+  if docker compose version > /dev/null 2>&1; then
+    echo "Using Docker Compose V2 (docker compose)" >&2
+    echo "docker compose"
+  else
+    echo "Using Docker Compose V1 (docker-compose)" >&2
+    echo "docker-compose"
   fi
 }
 
@@ -114,26 +124,29 @@ if [ -n "$COMPOSE_PROFILE" ]; then
   WITH_COMPOSE_PROFILE="--profile $COMPOSE_PROFILE"
 fi
 
+DOCKER_COMPOSE_CMD=$(get_docker_compose_cmd)
+echo "Selected command: $DOCKER_COMPOSE_CMD" >&2
+
 case $ACTION in
   build)
-    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build"
+    echo "COMMAND: sudo CONTAINER_MARK=$ENV $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build"
     echo
-    sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build
+    sudo CONTAINER_MARK="$ENV" $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE build
     ;;
   up)
-    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE"
+    echo "COMMAND: sudo CONTAINER_MARK=$ENV $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE"
     echo
-    sudo docker-compose -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE
+    sudo CONTAINER_MARK="$ENV" $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE up $DETACH_MODE
     ;;
   down)
-    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE down"
+    echo "COMMAND: sudo CONTAINER_MARK=$ENV $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE down"
     echo
-    sudo docker-compose -f $COMPOSE_FILE down
+    sudo CONTAINER_MARK="$ENV" $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE $WITH_COMPOSE_PROFILE down
     ;;
   logs)
-    echo "COMMAND: sudo docker-compose -f $COMPOSE_FILE logs"
+    echo "COMMAND: sudo CONTAINER_MARK=$ENV $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE logs"
     echo
-    sudo docker-compose -f $COMPOSE_FILE logs
+    sudo CONTAINER_MARK="$ENV" $DOCKER_COMPOSE_CMD -f $COMPOSE_FILE logs
     ;;
   *)
     printf "\033[31m !\033[0m Error: Unknown action: $ACTION.\n\n"
