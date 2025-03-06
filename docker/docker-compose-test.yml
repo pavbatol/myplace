@@ -1,5 +1,12 @@
 services:
 
+  gateway-service:
+    profiles: [ "gateway", "full" ]
+    extends:
+      file: gateway/docker-compose-gateway-test.yml
+      service: gateway-service
+    container_name: mp-gateway-${CONTAINER_MARK:-std}
+
   stats-service:
     profiles: [ "stats", "full" ]
     extends:

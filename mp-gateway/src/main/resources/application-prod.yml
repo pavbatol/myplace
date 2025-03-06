@@ -8,7 +8,7 @@ spring:
   application:
     name: mp-gateway
   banner:
-    location: banner/banner-test.txt
+    location: banner/banner.txt
   mvc:
     throw-exception-if-no-handler-found: true
   web:
@@ -19,3 +19,4 @@ logging:
   level:
     ru.pavbatol: DEBUG
     org.springframework.web: DEBUG
+

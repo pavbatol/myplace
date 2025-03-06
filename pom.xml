@@ -22,6 +22,7 @@
         <module>mp-stats</module>
         <module>mp-security</module>
         <module>mp-profile</module>
+        <module>mp-shared</module>
     </modules>
 
     <properties>
