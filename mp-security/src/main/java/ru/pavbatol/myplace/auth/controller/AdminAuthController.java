@@ -57,7 +57,7 @@ public class AdminAuthController {
 
     @GetMapping("/secrets")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "printRandomSecrets", description = "printing random twu secret strings")
+    @Operation(summary = "printRandomSecrets", description = "printing random two secret strings")
     public String printRandomSecrets() {
         log.debug("GET printRandomSecrets()");
         return String.format("%s\n\n%s",
@@ -67,7 +67,7 @@ public class AdminAuthController {
 
     @GetMapping("/secrets/pair")
     @SecurityRequirement(name = "JWT")
-    @Operation(summary = "printRandomPairSecrets", description = "printing random two secret strings")
+    @Operation(summary = "printRandomPairSecrets", description = "printing random two secret strings (publicKey, privateKey)")
     public String printRandomPairSecrets() {
         log.debug("GET printRandomPairSecrets()");
 
