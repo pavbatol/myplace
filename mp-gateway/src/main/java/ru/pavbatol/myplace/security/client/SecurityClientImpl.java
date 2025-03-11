@@ -5,7 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.pavbatol.myplace.app.client.BaseRestClient;
+import ru.pavbatol.myplace.shared.client.BaseRestClient;
 
 import java.util.UUID;
 

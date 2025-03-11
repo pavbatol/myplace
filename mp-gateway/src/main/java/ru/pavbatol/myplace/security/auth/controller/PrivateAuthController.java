@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.auth.dto.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.auth.dto.AuthDtoResponse;
 import ru.pavbatol.myplace.auth.service.AuthService;
+import ru.pavbatol.myplace.security.client.SecurityClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -21,7 +22,7 @@ import javax.validation.Valid;
 @Tag(name = "Private: Auth", description = "API for working with authorization")
 public class PrivateAuthController {
 
-    private final AuthService authService;
+    private final SecurityClient client;
 
     @PostMapping("/refresh-tokens")
     @SecurityRequirement(name = "JWT")

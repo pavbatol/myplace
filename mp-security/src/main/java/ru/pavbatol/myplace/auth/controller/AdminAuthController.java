@@ -21,7 +21,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("admin/auth")
+@RequestMapping("${api.prefix}/admin/auth")
 @Tag(name = "Admin: Auth", description = "API for working with authorization")
 public class AdminAuthController {
 

@@ -18,7 +18,6 @@ import java.util.UUID;
 @Tag(name = "Admin: Auth", description = "API for working with authorization")
 public class AdminAuthController {
 
-//    private final AuthService authService;
     private final SecurityClient client;
 
     @DeleteMapping("users/{userUuid}/refresh-tokens")

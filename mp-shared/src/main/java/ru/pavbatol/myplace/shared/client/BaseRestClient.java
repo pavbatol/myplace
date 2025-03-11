@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.app.client;
+package ru.pavbatol.myplace.shared.client;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
