@@ -23,10 +23,10 @@ public class PublicAuthController {
 
     private final AuthService authService;
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     @Operation(summary = "logout", description = "log out on the current")
     public ResponseEntity<String> logout(HttpServletRequest request) {
-        log.debug("GET logout()");
+        log.debug("POST logout()");
         authService.logout(request);
         return ResponseEntity.ok("Logout successful");
     }

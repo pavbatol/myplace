@@ -15,6 +15,7 @@ import ru.pavbatol.myplace.app.api.ApiResponse;
 import ru.pavbatol.myplace.app.api.ResponseHandler;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import java.util.UUID;
 public class SecurityClientImpl extends BaseRestClient implements SecurityClient {
     private static final String ADMIN_AUTH_CONTEXT = "/admin/auth";
     private static final String PRIVATE_AUTH_CONTEXT = "/user/auth";
+    private static final String PUBLIC_AUTH_CONTEXT = "/auth";
     private final ResponseHandler responseHandler;
 
     public SecurityClientImpl(@Value("${app.mp.security.url}") String serverUrl, RestTemplateBuilder builder, ResponseHandler responseHandler) {
@@ -97,6 +99,72 @@ public class SecurityClientImpl extends BaseRestClient implements SecurityClient
         }
 
         ApiResponse<String> apiResponse = responseHandler.processResponse(response, String.class);
+
+        return ResponseEntity.status(response.getStatusCode()).body(apiResponse);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
+        String resourcePath = "/logout";
+        String fullResourcePath = PUBLIC_AUTH_CONTEXT + resourcePath;
+
+        ResponseEntity<Object> response;
+        try {
+            response = rest.exchange(
+                    fullResourcePath,
+                    HttpMethod.POST,
+                    new HttpEntity<>(null, extractHeaders(request)),
+                    Object.class
+            );
+        } catch (RestClientException e) {
+            throw new RuntimeException("Failed to call target service: " + e.getMessage(), e);
+        }
+
+        ApiResponse<String> apiResponse = responseHandler.processResponse(response, String.class);
+
+        return ResponseEntity.status(response.getStatusCode()).body(apiResponse);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<AuthDtoResponse>> login(HttpServletRequest request, AuthDtoRequest dtoAuthRequest) {
+        String resourcePath = "/login";
+        String fullResourcePath = PUBLIC_AUTH_CONTEXT + resourcePath;
+
+        ResponseEntity<Object> response;
+        try {
+            response = rest.exchange(
+                    fullResourcePath,
+                    HttpMethod.POST,
+                    new HttpEntity<>(dtoAuthRequest, extractHeaders(request)),
+                    Object.class
+            );
+        } catch (RestClientException e) {
+            throw new RuntimeException("Failed to call target service: " + e.getMessage(), e);
+        }
+
+        ApiResponse<AuthDtoResponse> apiResponse = responseHandler.processResponse(response, AuthDtoResponse.class);
+
+        return ResponseEntity.status(response.getStatusCode()).body(apiResponse);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<AuthDtoResponse>> getNewAccessToken(HttpServletRequest request, AuthDtoRefreshRequest dtoRefreshRequest) {
+        String resourcePath = "/tokens";
+        String fullResourcePath = PUBLIC_AUTH_CONTEXT + resourcePath;
+
+        ResponseEntity<Object> response;
+        try {
+            response = rest.exchange(
+                    fullResourcePath,
+                    HttpMethod.POST,
+                    new HttpEntity<>(dtoRefreshRequest, extractHeaders(request)),
+                    Object.class
+            );
+        } catch (RestClientException e) {
+            throw new RuntimeException("Failed to call target service: " + e.getMessage(), e);
+        }
+
+        ApiResponse<AuthDtoResponse> apiResponse = responseHandler.processResponse(response, AuthDtoResponse.class);
 
         return ResponseEntity.status(response.getStatusCode()).body(apiResponse);
     }
