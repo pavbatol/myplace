@@ -33,10 +33,10 @@ public class PrivateAuthController {
         return ResponseEntity.ok(body);
     }
 
-    @GetMapping("/logout/all")
+    @PostMapping("/logout/all")
     @Operation(summary = "logoutAllSessions", description = "log out on all devices")
     public ResponseEntity<String> logoutAllSessions(HttpServletRequest request) {
-        log.debug("GET logoutAllSessions()");
+        log.debug("POST logoutAllSessions()");
         authService.logoutAllSessions(request);
         return ResponseEntity.ok("Logout successful");
     }

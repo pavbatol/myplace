@@ -16,9 +16,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Component
 public class BaseRestClient {
-    private static final String X_USER_ID = "X-User-Id";
-    private static final String X_USER_UUID = "X-User-Uuid";
-    private final RestTemplate rest;
+    protected static final String X_USER_ID = "X-User-Id";
+    protected static final String X_USER_UUID = "X-User-Uuid";
+    protected final RestTemplate rest;
 
     // get
     protected ResponseEntity<Object> get(String path) {
@@ -117,9 +117,8 @@ public class BaseRestClient {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
 
-        return prepareResponse(serverResponse);
+        return serverResponse;
     }
-
 
     private HttpHeaders defaultHeaders(UUID userUuid, Long userId) {
         HttpHeaders headers = new HttpHeaders();
@@ -133,19 +132,5 @@ public class BaseRestClient {
         }
 
         return headers;
-    }
-
-    private static ResponseEntity<Object> prepareResponse(ResponseEntity<Object> response) {
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response;
-        }
-
-        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
-
-        if (response.hasBody()) {
-            return responseBuilder.body(response.getBody());
-        }
-
-        return responseBuilder.build();
     }
 }

@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.auth.dto.AuthDtoRefreshRequest;
-import ru.pavbatol.myplace.auth.dto.AuthDtoRequest;
-import ru.pavbatol.myplace.auth.dto.AuthDtoResponse;
-import ru.pavbatol.myplace.auth.service.AuthService;
+import ru.pavbatol.myplace.security.client.SecurityClient;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -21,13 +21,13 @@ import javax.validation.Valid;
 @Tag(name = "Public: Auth", description = "API for working with authorization")
 public class PublicAuthController {
 
-    private final AuthService authService;
+    private final SecurityClient client;
 
     @GetMapping("/logout")
     @Operation(summary = "logout", description = "log out on the current")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         log.debug("GET logout()");
-        authService.logout(request);
+        client.logout(request);
         return ResponseEntity.ok("Logout successful");
     }
 
@@ -35,7 +35,7 @@ public class PublicAuthController {
     @Operation(summary = "login", description = "checking login and password and provide access and refresh tokens")
     public ResponseEntity<AuthDtoResponse> login(HttpServletRequest request, @Valid @RequestBody AuthDtoRequest dtoAuthRequest) {
         log.debug("POST login() with login: {}, password: hidden for security", dtoAuthRequest.getLogin());
-        AuthDtoResponse dtoAuthResponse = authService.login(request, dtoAuthRequest);
+        AuthDtoResponse dtoAuthResponse = client.login(request, dtoAuthRequest);
         return ResponseEntity.ok(dtoAuthResponse);
     }
 
@@ -44,7 +44,7 @@ public class PublicAuthController {
     public ResponseEntity<AuthDtoResponse> getNewAccessToken(HttpServletRequest request,
                                                              @Valid @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {
         log.debug("POST getNewAccessToken() with refreshToken: hidden for security");
-        AuthDtoResponse body = authService.getNewAccessToken(request, dtoRefreshRequest.getRefreshToken());
+        AuthDtoResponse body = client.getNewAccessToken(request, dtoRefreshRequest.getRefreshToken());
         return ResponseEntity.ok(body);
     }
 }
