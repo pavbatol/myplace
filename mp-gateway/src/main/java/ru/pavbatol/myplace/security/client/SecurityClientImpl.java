@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.pavbatol.myplace.app.api.ApiResponse;
@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 @Slf4j
-@Component
+@Service
 public class SecurityClientImpl extends BaseRestClient implements SecurityClient {
     private static final String ADMIN_AUTH_CONTEXT = "/admin/auth";
     private static final String PRIVATE_AUTH_CONTEXT = "/user/auth";
@@ -39,24 +39,39 @@ public class SecurityClientImpl extends BaseRestClient implements SecurityClient
     }
 
     @Override
-    public void removeRefreshTokensByUserUuid(UUID userUuid) {
+    public ResponseEntity<ApiResponse<Void>> removeRefreshTokensByUserUuid(UUID userUuid) {
         String resourcePath = String.format("/users/%s/refresh-tokens", userUuid);
         String fullResourcePath = ADMIN_AUTH_CONTEXT + resourcePath;
-        delete(fullResourcePath);
+
+        ResponseEntity<Object> response = delete(fullResourcePath);
+
+        ApiResponse<Void> apiResponse = responseHandler.processResponse(response, Void.class);
+
+        return ResponseEntity.status(response.getStatusCode()).body(apiResponse);
     }
 
     @Override
-    public void removeAccessTokensByUserUuid(UUID userUuid) {
+    public ResponseEntity<ApiResponse<Void>> removeAccessTokensByUserUuid(UUID userUuid) {
         String resourcePath = String.format("/users/%s/access-tokens", userUuid);
         String fullResourcePath = ADMIN_AUTH_CONTEXT + resourcePath;
-        delete(fullResourcePath);
+
+        ResponseEntity<Object> response = delete(fullResourcePath);
+
+        ApiResponse<Void> apiResponse = responseHandler.processResponse(response, Void.class);
+
+        return ResponseEntity.status(response.getStatusCode()).body(apiResponse);
     }
 
     @Override
-    public void clearAuthStorage() {
+    public ResponseEntity<ApiResponse<Void>> clearAuthStorage() {
         String resourcePath = "/tokens";
         String fullResourcePath = ADMIN_AUTH_CONTEXT + resourcePath;
-        delete(fullResourcePath);
+
+        ResponseEntity<Object> response = delete(fullResourcePath);
+
+        ApiResponse<Void> apiResponse = responseHandler.processResponse(response, Void.class);
+
+        return ResponseEntity.status(response.getStatusCode()).body(apiResponse);
     }
 
     @Override

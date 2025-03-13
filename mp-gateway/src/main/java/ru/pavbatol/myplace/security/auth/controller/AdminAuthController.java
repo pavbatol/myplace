@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.pavbatol.myplace.app.api.ApiResponse;
 import ru.pavbatol.myplace.security.client.SecurityClient;
 
 import java.util.UUID;
@@ -23,28 +24,25 @@ public class AdminAuthController {
     @DeleteMapping("users/{userUuid}/refresh-tokens")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "removeRefreshTokensByUserUuid", description = "deleting all refresh tokens for the user")
-    public ResponseEntity<Void> removeRefreshTokensByUserUuid(@PathVariable(value = "userUuid") UUID userUuid) {
+    public ResponseEntity<ApiResponse<Void>> removeRefreshTokensByUserUuid(@PathVariable(value = "userUuid") UUID userUuid) {
         log.debug("DELETE removeRefreshTokensByUserUuid() with userUuid: {}", userUuid);
-        client.removeRefreshTokensByUserUuid(userUuid);
-        return ResponseEntity.noContent().build();
+        return client.removeRefreshTokensByUserUuid(userUuid);
     }
 
     @DeleteMapping("users/{userUuid}/access-tokens")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "removeAccessTokensByUserUuid", description = "deleting all access tokens for the user")
-    public ResponseEntity<Void> removeAccessTokensByUserUuid(@PathVariable(value = "userUuid") UUID userUuid) {
+    public ResponseEntity<ApiResponse<Void>> removeAccessTokensByUserUuid(@PathVariable(value = "userUuid") UUID userUuid) {
         log.debug("DELETE removeAccessTokensByUserUuid() with userUuid: {}", userUuid);
-        client.removeAccessTokensByUserUuid(userUuid);
-        return ResponseEntity.noContent().build();
+        return client.removeAccessTokensByUserUuid(userUuid);
     }
 
     @DeleteMapping("/tokens")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "clearAuthStorage",
             description = "deleting all tokens and unverified logins and emails, existing users are not deleted")
-    public ResponseEntity<Void> clearAuthStorage() {
+    public ResponseEntity<ApiResponse<Void>> clearAuthStorage() {
         log.debug("DELETE clearAuthStorage()");
-        client.clearAuthStorage();
-        return ResponseEntity.noContent().build();
+        return client.clearAuthStorage();
     }
 }

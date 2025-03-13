@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 public interface SecurityClient {
-    void removeRefreshTokensByUserUuid(UUID userUuid);
+    ResponseEntity<ApiResponse<Void>> removeRefreshTokensByUserUuid(UUID userUuid);
 
-    void removeAccessTokensByUserUuid(UUID userUuid);
+    ResponseEntity<ApiResponse<Void>> removeAccessTokensByUserUuid(UUID userUuid);
 
-    void clearAuthStorage();
+    ResponseEntity<ApiResponse<Void>> clearAuthStorage();
 
     ResponseEntity<ApiResponse<AuthDtoResponse>> getNewRefreshToken(HttpServletRequest request, AuthDtoRefreshRequest dtoRefreshRequest);
 
