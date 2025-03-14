@@ -6,6 +6,8 @@ services:
       file: gateway/docker-compose-gateway-test.yml
       service: gateway-service
     container_name: mp-gateway-${CONTAINER_MARK:-std}
+    networks:
+      - myplace
 
   stats-service:
     profiles: [ "stats", "full" ]
@@ -16,6 +18,8 @@ services:
     depends_on:
       stats-db:
         condition: service_healthy
+    networks:
+      - myplace
 
   stats-db:
     profiles: [ "stats", "full" ]
@@ -23,6 +27,8 @@ services:
       file: stats/docker-compose-stats-test.yml
       service: stats-db
     container_name: mp-stats-db-${CONTAINER_MARK:-std}
+    networks:
+      - myplace
 
   security-service:
     profiles: [ "security", "full" ]
@@ -33,6 +39,8 @@ services:
     depends_on:
       security-redis-db:
         condition: service_healthy
+    networks:
+      - myplace
 
   security-redis-db:
     profiles: [ "security", "full" ]
@@ -40,7 +48,8 @@ services:
       file: security/docker-compose-security-test.yml
       service: security-redis-db
     container_name: mp-security-redis-db-${CONTAINER_MARK:-std}
-
+    networks:
+      - myplace
 
   profile-service:
     profiles: [ "profile", "full" ]
@@ -48,3 +57,9 @@ services:
       file: profile/docker-compose-profile-test.yml
       service: profile-service
     container_name: mp-profile-${CONTAINER_MARK:-std}
+    networks:
+      - myplace
+
+networks:
+  myplace:
+    driver: bridge

@@ -9,6 +9,8 @@ services:
     depends_on:
       stats-db:
         condition: service_healthy
+    networks:
+      - myplace
 
   stats-db:
     profiles: [ "stats", "full" ]
@@ -16,6 +18,8 @@ services:
       file: stats/docker-compose-stats-dev.yml
       service: stats-db
     container_name: mp-stats-db-${CONTAINER_MARK:-std}
+    networks:
+      - myplace
 
   security-service:
     profiles: [ "security", "full" ]
@@ -28,6 +32,8 @@ services:
         condition: service_healthy
       security-postgres-db:
         condition: service_healthy
+    networks:
+      - myplace
 
   security-redis-db:
     profiles: [ "security", "full" ]
@@ -35,6 +41,8 @@ services:
       file: security/docker-compose-security-dev.yml
       service: security-redis-db
     container_name: mp-security-redis-db-${CONTAINER_MARK:-std}
+    networks:
+      - myplace
 
   security-postgres-db:
     profiles: [ "security", "full" ]
@@ -42,6 +50,8 @@ services:
       file: security/docker-compose-security-dev.yml
       service: security-postgres-db
     container_name: mp-security-postgres-db-${CONTAINER_MARK:-std}
+    networks:
+      - myplace
 
   profile-service:
     profiles: [ "profile", "full" ]
@@ -52,6 +62,8 @@ services:
     depends_on:
       profile-db:
          condition: service_healthy
+    networks:
+      - myplace
 
   profile-db:
     profiles: [ "profile", "full" ]
@@ -59,3 +71,9 @@ services:
       file: profile/docker-compose-profile-dev.yml
       service: profile-db
     container_name: mp-profile-db-${CONTAINER_MARK:-std}
+    networks:
+      - myplace
+
+networks:
+  myplace:
+    driver: bridge

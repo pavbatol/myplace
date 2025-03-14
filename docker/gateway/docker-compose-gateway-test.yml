@@ -10,3 +10,4 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=test
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8081
+      - APP_MP_SECURITY_URL=http://security-service:8078/api/v1
