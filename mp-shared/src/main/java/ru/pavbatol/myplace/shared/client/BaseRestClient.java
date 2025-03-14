@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,7 +13,6 @@ import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class BaseRestClient {
     protected static final String X_USER_ID = "X-User-Id";
     protected static final String X_USER_UUID = "X-User-Uuid";
