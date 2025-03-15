@@ -3,13 +3,12 @@ package ru.pavbatol.myplace.gateway.security.client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.api.ResponseHandler;
@@ -149,8 +148,16 @@ public class SecurityClientImpl extends BaseRestClient implements SecurityClient
                     new HttpEntity<>(body, extractHeaders(httpServletRequest)),
                     Object.class
             );
+        } catch (HttpStatusCodeException e) {
+            log.error("HTTP request failed with status code: {}", e.getStatusCode(), e);
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+        } catch (RestClientResponseException e) {
+            log.error("RestClientResponseException occurred: {}", e.getMessage(), e);
+            return ResponseEntity.status(e.getRawStatusCode()).body(e.getResponseBodyAsByteArray());
         } catch (RestClientException e) {
-            throw new RuntimeException("Failed to call target service: " + e.getMessage(), e);
+            log.error("RestClientException occurred: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Request processing failed. Error: " + e.getMessage());
         }
     }
 }

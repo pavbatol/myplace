@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -113,6 +115,13 @@ public class BaseRestClient {
         } catch (HttpStatusCodeException e) {
             log.error("HTTP request failed with status code: {}", e.getStatusCode(), e);
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+        } catch (RestClientResponseException e) {
+            log.error("RestClientResponseException occurred: {}", e.getMessage(), e);
+            return ResponseEntity.status(e.getRawStatusCode()).body(e.getResponseBodyAsByteArray());
+        } catch (RestClientException e) {
+            log.error("RestClientException occurred: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Request processing failed. Error: " + e.getMessage());
         }
 
         return serverResponse;
