@@ -29,4 +29,10 @@ public class ApiResponse<T> {
         response.setStatus(status);
         return response;
     }
+
+    public static <T> ApiResponse<T> status(HttpStatus status) {
+        ApiResponse<T> response = new ApiResponse<>();
+        response.setStatus(status);
+        return response;
+    }
 }

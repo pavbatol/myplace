@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Security service Api",
-                description = "MyPlace >> mp-security service", version = "1.0.0",
+                title = "Gateway service Api",
+                description = "MyPlace >> mp-gateway service", version = "1.0.0",
                 contact = @Contact(
                         name = "Pavlik Sergey",
                         email = "pavbatol@yandex.ru"

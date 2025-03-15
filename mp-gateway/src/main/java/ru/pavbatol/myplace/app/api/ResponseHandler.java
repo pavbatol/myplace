@@ -27,7 +27,7 @@ public class ResponseHandler {
                             throw new RuntimeException("Failed to parse response body", e);
                         }
                     })
-                    .orElseGet(() -> new ApiResponse<T>().setStatus(response.getStatusCode()));
+                    .orElseGet(() -> ApiResponse.status(response.getStatusCode()));
         } else {
             return Optional.ofNullable(response.getBody())
                     .map(body -> {
@@ -37,13 +37,16 @@ public class ResponseHandler {
                             return ApiResponse.<T>error(apiError, response.getStatusCode());
                         } catch (JsonProcessingException e) {
                             log.error("Failed to parse error response body: {} into {}", jsonBody, ApiError.class.getSimpleName(), e);
-                            ApiError apiError = new ApiError(null, null, null, jsonBody, null, null, null);
-                            return ApiResponse.<T>error(apiError, response.getStatusCode());
+                            return (jsonBody.equals("\"\""))
+                                    ? ApiResponse.<T>status(response.getStatusCode())
+                                    : ApiResponse.<T>error(
+                                    new ApiError(null, null, null, jsonBody, null, null, null),
+                                    response.getStatusCode());
                         }
                     })
                     .orElseGet(() -> {
                         log.warn("No response body for error status: {}", response.getStatusCode());
-                        return new ApiResponse<T>().setStatus(response.getStatusCode());
+                        return ApiResponse.status(response.getStatusCode());
                     });
         }
     }
