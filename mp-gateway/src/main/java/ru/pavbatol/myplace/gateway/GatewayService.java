@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace;
+package ru.pavbatol.myplace.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.security.client;
+package ru.pavbatol.myplace.gateway.security.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +11,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.pavbatol.myplace.app.api.ApiResponse;
-import ru.pavbatol.myplace.app.api.ResponseHandler;
+import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
+import ru.pavbatol.myplace.gateway.app.api.ResponseHandler;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;

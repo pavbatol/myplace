@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.security.auth.controller;
+package ru.pavbatol.myplace.gateway.security.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.app.api.ApiResponse;
-import ru.pavbatol.myplace.security.client.SecurityClient;
+import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
+import ru.pavbatol.myplace.gateway.security.client.SecurityClient;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;

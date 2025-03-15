@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.app.api;
+package ru.pavbatol.myplace.gateway.app.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import ru.pavbatol.myplace.app.exeption.ApiError;
+import ru.pavbatol.myplace.gateway.app.exeption.ApiError;
 
 import java.util.Optional;
 

@@ -1,7 +1,7 @@
-package ru.pavbatol.myplace.security.client;
+package ru.pavbatol.myplace.gateway.security.client;
 
 import org.springframework.http.ResponseEntity;
-import ru.pavbatol.myplace.app.api.ApiResponse;
+import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;

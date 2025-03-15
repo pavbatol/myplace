@@ -1,11 +1,11 @@
-package ru.pavbatol.myplace.app.api;
+package ru.pavbatol.myplace.gateway.app.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.http.HttpStatus;
-import ru.pavbatol.myplace.app.exeption.ApiError;
+import ru.pavbatol.myplace.gateway.app.exeption.ApiError;
 
 @Data
 @Accessors(chain = true)

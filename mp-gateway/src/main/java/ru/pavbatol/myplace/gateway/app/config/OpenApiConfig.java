@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.app.config;
+package ru.pavbatol.myplace.gateway.app.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
