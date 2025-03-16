@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.gateway.security.client;
+package ru.pavbatol.myplace.gateway.security.auth.client;
 
 import org.springframework.http.ResponseEntity;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
@@ -9,7 +9,7 @@ import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
-public interface SecurityClient {
+public interface SecurityAuthClient {
     ResponseEntity<ApiResponse<Void>> removeRefreshTokensByUserUuid(UUID userUuid);
 
     ResponseEntity<ApiResponse<Void>> removeAccessTokensByUserUuid(UUID userUuid);

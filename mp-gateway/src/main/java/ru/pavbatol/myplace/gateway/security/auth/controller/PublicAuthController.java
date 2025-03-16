@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
-import ru.pavbatol.myplace.gateway.security.client.SecurityClient;
+import ru.pavbatol.myplace.gateway.security.auth.client.SecurityAuthClient;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
@@ -22,7 +22,7 @@ import javax.validation.Valid;
 @Tag(name = "Public: Auth", description = "API for working with authorization")
 public class PublicAuthController {
 
-    private final SecurityClient client;
+    private final SecurityAuthClient client;
 
     @PostMapping("/logout")
     @Operation(summary = "logout", description = "log out on the current")

@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
-import ru.pavbatol.myplace.gateway.security.client.SecurityClient;
+import ru.pavbatol.myplace.gateway.security.auth.client.SecurityAuthClient;
 
 import java.util.UUID;
 
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Tag(name = "Admin: Auth", description = "API for working with authorization")
 public class AdminAuthController {
 
-    private final SecurityClient client;
+    private final SecurityAuthClient client;
 
     @DeleteMapping("users/{userUuid}/refresh-tokens")
     @SecurityRequirement(name = "JWT")

@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.gateway.security.client;
+package ru.pavbatol.myplace.gateway.security.auth.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,15 +23,15 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class SecurityClientImpl extends BaseRestClient implements SecurityClient {
+public class SecurityAuthClientImpl extends BaseRestClient implements SecurityAuthClient {
     private static final String ADMIN_AUTH_CONTEXT = "/admin/auth";
     private static final String PRIVATE_AUTH_CONTEXT = "/user/auth";
     private static final String PUBLIC_AUTH_CONTEXT = "/auth";
     private final ResponseHandler responseHandler;
 
-    public SecurityClientImpl(@Value("${app.mp.security.url}") String serverUrl,
-                              RestTemplateBuilder builder,
-                              ResponseHandler responseHandler) {
+    public SecurityAuthClientImpl(@Value("${app.mp.security.url}") String serverUrl,
+                                  RestTemplateBuilder builder,
+                                  ResponseHandler responseHandler) {
         super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 .build());
