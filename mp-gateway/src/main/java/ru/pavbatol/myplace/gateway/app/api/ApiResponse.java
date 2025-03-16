@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.http.HttpStatus;
-import ru.pavbatol.myplace.gateway.app.exeption.ApiError;
 
 @Data
 @Accessors(chain = true)

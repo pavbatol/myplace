@@ -149,7 +149,7 @@ public class SecurityClientImpl extends BaseRestClient implements SecurityClient
                     Object.class
             );
         } catch (HttpStatusCodeException e) {
-            log.error("HTTP request failed with status code: {}", e.getStatusCode(), e);
+            log.error("HTTP request failed with status code: {}", e.getStatusCode());
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         } catch (RestClientResponseException e) {
             log.error("RestClientResponseException occurred: {}", e.getMessage(), e);

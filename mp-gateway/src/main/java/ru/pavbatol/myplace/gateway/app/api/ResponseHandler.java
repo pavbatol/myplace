@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import ru.pavbatol.myplace.gateway.app.exeption.ApiError;
 
 import java.util.Optional;
 
@@ -24,6 +23,7 @@ public class ResponseHandler {
                             T successResponse = objectMapper.readValue(body.toString(), successType);
                             return ApiResponse.success(successResponse, response.getStatusCode());
                         } catch (JsonProcessingException e) {
+                            log.error("Failed to parse error response body: {} into {}", body.toString(), successType.getSimpleName(), e);
                             throw new RuntimeException("Failed to parse response body", e);
                         }
                     })

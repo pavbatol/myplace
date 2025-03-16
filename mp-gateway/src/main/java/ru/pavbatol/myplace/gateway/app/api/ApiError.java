@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.gateway.app.exeption;
+package ru.pavbatol.myplace.gateway.app.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Value;
