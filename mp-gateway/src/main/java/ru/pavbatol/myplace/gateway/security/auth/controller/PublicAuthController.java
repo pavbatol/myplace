@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
+import ru.pavbatol.myplace.gateway.app.util.HttpUtils;
 import ru.pavbatol.myplace.gateway.security.auth.client.SecurityAuthClient;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
@@ -26,23 +27,24 @@ public class PublicAuthController {
 
     @PostMapping("/logout")
     @Operation(summary = "logout", description = "log out on the current")
-    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest servletRequest) {
         log.debug("POST logout()");
-        return client.logout(request);
+        return client.logout(HttpUtils.extractHeaders(servletRequest));
     }
 
     @PostMapping("/login")
     @Operation(summary = "login", description = "checking login and password and provide access and refresh tokens")
-    public ResponseEntity<ApiResponse<AuthDtoResponse>> login(HttpServletRequest request, @Valid @RequestBody AuthDtoRequest dtoAuthRequest) {
+    public ResponseEntity<ApiResponse<AuthDtoResponse>> login(HttpServletRequest servletRequest,
+                                                              @Valid @RequestBody AuthDtoRequest dtoAuthRequest) {
         log.debug("POST login() with login: {}, password: hidden for security", dtoAuthRequest.getLogin());
-        return client.login(request, dtoAuthRequest);
+        return client.login(dtoAuthRequest, HttpUtils.extractHeaders(servletRequest));
     }
 
     @PostMapping("/tokens")
     @Operation(summary = "getNewAccessToken", description = "getting a new access token to replace the old one")
-    public ResponseEntity<ApiResponse<AuthDtoResponse>> getNewAccessToken(HttpServletRequest request,
+    public ResponseEntity<ApiResponse<AuthDtoResponse>> getNewAccessToken(HttpServletRequest servletRequest,
                                                                           @Valid @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {
         log.debug("POST getNewAccessToken() with refreshToken: hidden for security");
-        return client.getNewAccessToken(request, dtoRefreshRequest);
+        return client.getNewAccessToken(dtoRefreshRequest, HttpUtils.extractHeaders(servletRequest));
     }
 }

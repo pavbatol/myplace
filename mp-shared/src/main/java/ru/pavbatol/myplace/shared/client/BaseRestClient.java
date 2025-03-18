@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.shared.client;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -9,109 +10,102 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
 public class BaseRestClient {
-    protected static final String X_USER_ID = "X-User-Id";
-    protected static final String X_USER_UUID = "X-User-Uuid";
     protected final RestTemplate rest;
 
-    // get
-    protected ResponseEntity<Object> get(String path) {
-        return get(path, null);
+    //-- GET
+    protected <T> ResponseEntity<Object> get(@NonNull String path,
+                                             @Nullable UUID userUuid,
+                                             @Nullable Long userId,
+                                             @Nullable HttpHeaders initialHttpHeaders,
+                                             @Nullable T body,
+                                             @Nullable Map<String, Object> parameters) {
+        return executeRequest(path, HttpMethod.GET, userUuid, userId, initialHttpHeaders, body, parameters);
     }
 
-    protected ResponseEntity<Object> get(String path, UUID userUuid) {
-        return get(path, userUuid, null);
+    //-- POST
+
+    protected ResponseEntity<Object> post(@NonNull String path,
+                                          @Nullable HttpHeaders initialHttpHeaders) {
+        return post(path, null, null, initialHttpHeaders, null, null);
     }
 
-    protected ResponseEntity<Object> get(String path, UUID userUuid, Long userId) {
-        return get(path, userUuid, userId, null);
+    protected <T> ResponseEntity<Object> post(@NonNull String path,
+                                              @Nullable HttpHeaders initialHttpHeaders,
+                                              @Nullable T body) {
+        return post(path, null, null, initialHttpHeaders, body, null);
     }
 
-    protected ResponseEntity<Object> get(String path, UUID userUuid, Long userId, @Nullable Map<String, Object> parameters) {
-        return executeRestCall(HttpMethod.GET, path, userUuid, userId, parameters, null);
+    protected <T> ResponseEntity<Object> post(@NonNull String path,
+                                              @Nullable UUID userUuid,
+                                              @Nullable Long userId,
+                                              @Nullable HttpHeaders initialHttpHeaders,
+                                              @Nullable T body,
+                                              @Nullable Map<String, Object> parameters) {
+        return executeRequest(path, HttpMethod.POST, userUuid, userId, initialHttpHeaders, body, parameters);
     }
 
-    // post
-    protected <T> ResponseEntity<Object> post(String path, T body) {
-        return post(path, null, body);
+    //-- PATCH
+    protected <T> ResponseEntity<Object> patch(@NonNull String path,
+                                               @Nullable UUID userUuid,
+                                               @Nullable Long userId,
+                                               @Nullable HttpHeaders initialHttpHeaders,
+                                               @Nullable T body,
+                                               @Nullable Map<String, Object> parameters) {
+        return executeRequest(path, HttpMethod.PATCH, userUuid, userId, initialHttpHeaders, body, parameters);
     }
 
-    protected <T> ResponseEntity<Object> post(String path, UUID userUuid, T body) {
-        return post(path, userUuid, null, body);
-    }
-
-    protected <T> ResponseEntity<Object> post(String path, UUID userUuid, Long userId, T body) {
-        return post(path, userUuid, userId, null, body);
-    }
-
-    protected <T> ResponseEntity<Object> post(String path, UUID userUuid, Long userId, @Nullable Map<String, Object> parameters, T body) {
-        return executeRestCall(HttpMethod.GET, path, userUuid, userId, parameters, body);
-    }
-
-    // put
-    protected <T> ResponseEntity<Object> put(String path, UUID userUuid, Long userId, @Nullable Map<String, Object> parameters, T body) {
-        return executeRestCall(HttpMethod.PUT, path, userUuid, userId, parameters, body);
-    }
-
-    // patch
-    protected <T> ResponseEntity<Object> patch(String path, T body) {
-        return patch(path, null, body);
-    }
-
-    protected <T> ResponseEntity<Object> patch(String path, UUID userUuid, T body) {
-        return patch(path, userUuid, null, body);
-    }
-
-    protected <T> ResponseEntity<Object> patch(String path, UUID userUuid, Long userId, T body) {
-        return patch(path, userUuid, userId, null, body);
-    }
-
-    protected ResponseEntity<Object> patch(String path, UUID userUuid, Long userId, @Nullable Map<String, Object> parameters) {
-        return patch(path, userUuid, userId, parameters, null);
-    }
-
-    protected <T> ResponseEntity<Object> patch(String path, UUID userUuid, Long userId, @Nullable Map<String, Object> parameters, T body) {
-        return executeRestCall(HttpMethod.PATCH, path, userUuid, userId, parameters, body);
-    }
-
-    // delete
+    //-- DELETE
     protected ResponseEntity<Object> delete(String path) {
         return delete(path, null);
     }
 
-    protected ResponseEntity<Object> delete(String path, UUID userUuid) {
-        return delete(path, userUuid, null);
+    protected ResponseEntity<Object> delete(String path, HttpHeaders initialHttpHeaders) {
+        return delete(path, null, null, initialHttpHeaders, null);
     }
 
-    protected ResponseEntity<Object> delete(String path, UUID userUuid, Long userId) {
-        return delete(path, userUuid, userId, null);
+    protected <T> ResponseEntity<Object> delete(@NonNull String path,
+                                                @Nullable UUID userUuid,
+                                                @Nullable Long userId,
+                                                @Nullable HttpHeaders initialHttpHeaders,
+                                                @Nullable Map<String, Object> parameters) {
+        return executeRequest(path, HttpMethod.DELETE, userUuid, userId, initialHttpHeaders, null, parameters);
     }
 
-    protected ResponseEntity<Object> delete(String path, UUID userUuid, Long userId, @Nullable Map<String, Object> parameters) {
-        return executeRestCall(HttpMethod.DELETE, path, userUuid, userId, parameters, null);
+    //-- Execute Custom Request
+    protected <T> ResponseEntity<Object> rawExecuteRequest(@NonNull String path,
+                                                           @NonNull HttpMethod method,
+                                                           @Nullable UUID userUuid,
+                                                           @Nullable Long userId,
+                                                           @Nullable HttpHeaders initialHttpHeaders,
+                                                           @Nullable T body,
+                                                           @Nullable Map<String, Object> parameters) {
+        return executeRequest(path, method, userUuid, userId, initialHttpHeaders, body, parameters);
     }
 
-    private <T> ResponseEntity<Object> executeRestCall(HttpMethod method,
-                                                       String path,
-                                                       @Nullable UUID userUuid,
-                                                       @Nullable Long userId,
-                                                       @Nullable Map<String, Object> parameters,
-                                                       @Nullable T body) {
-        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders(userUuid, userId));
-        ResponseEntity<Object> serverResponse;
+    private <T> ResponseEntity<Object> executeRequest(@NonNull String path,
+                                                      @NonNull HttpMethod method,
+                                                      @Nullable UUID userUuid,
+                                                      @Nullable Long userId,
+                                                      @Nullable HttpHeaders initialHttpHeaders,
+                                                      @Nullable T body,
+                                                      @Nullable Map<String, Object> parameters) {
+        if (parameters == null) {
+            parameters = Map.of();
+        }
+
+        HttpHeaders preparedHeaders = (initialHttpHeaders == null)
+                ? defaultHeaders(userUuid, userId)
+                : defaultHeaders(initialHttpHeaders, userUuid, userId);
+
+        HttpEntity<T> httpEntity = new HttpEntity<>(body, preparedHeaders);
 
         try {
-            if (parameters != null) {
-                serverResponse = rest.exchange(path, method, requestEntity, Object.class, parameters);
-            } else {
-                serverResponse = rest.exchange(path, method, requestEntity, Object.class);
-            }
+            return rest.exchange(path, method, httpEntity, Object.class, parameters);
         } catch (HttpStatusCodeException e) {
             log.error("HTTP request failed with status code: {}", e.getStatusCode());
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
@@ -123,21 +117,19 @@ public class BaseRestClient {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Request processing failed. Error: " + e.getMessage());
         }
-
-        return serverResponse;
     }
 
-    private HttpHeaders defaultHeaders(UUID userUuid, Long userId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-        if (userUuid != null) {
-            headers.set(X_USER_UUID, userUuid.toString());
-        }
-        if (userId != null) {
-            headers.set(X_USER_ID, String.valueOf(userId));
-        }
+    private HttpHeaders defaultHeaders(@Nullable UUID userUuid, @Nullable Long userId) {
+        return HttpHeadersBuilder.create()
+                .withUserUuid(userUuid)
+                .withUserId(userId)
+                .build();
+    }
 
-        return headers;
+    private HttpHeaders defaultHeaders(HttpHeaders headers, @Nullable UUID userUuid, @Nullable Long userId) {
+        return HttpHeadersBuilder.create(headers)
+                .withUserUuid(userUuid)
+                .withUserId(userId)
+                .build();
     }
 }

@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
+import ru.pavbatol.myplace.gateway.app.util.HttpUtils;
 import ru.pavbatol.myplace.gateway.security.auth.client.SecurityAuthClient;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 @Slf4j
@@ -24,25 +26,27 @@ public class AdminAuthController {
     @DeleteMapping("users/{userUuid}/refresh-tokens")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "removeRefreshTokensByUserUuid", description = "deleting all refresh tokens for the user")
-    public ResponseEntity<ApiResponse<Void>> removeRefreshTokensByUserUuid(@PathVariable(value = "userUuid") UUID userUuid) {
+    public ResponseEntity<ApiResponse<Void>> removeRefreshTokensByUserUuid(HttpServletRequest servletRequest,
+                                                                           @PathVariable(value = "userUuid") UUID userUuid) {
         log.debug("DELETE removeRefreshTokensByUserUuid() with userUuid: {}", userUuid);
-        return client.removeRefreshTokensByUserUuid(userUuid);
+        return client.removeRefreshTokensByUserUuid(userUuid, HttpUtils.extractHeaders(servletRequest));
     }
 
     @DeleteMapping("users/{userUuid}/access-tokens")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "removeAccessTokensByUserUuid", description = "deleting all access tokens for the user")
-    public ResponseEntity<ApiResponse<Void>> removeAccessTokensByUserUuid(@PathVariable(value = "userUuid") UUID userUuid) {
+    public ResponseEntity<ApiResponse<Void>> removeAccessTokensByUserUuid(HttpServletRequest servletRequest,
+                                                                          @PathVariable(value = "userUuid") UUID userUuid) {
         log.debug("DELETE removeAccessTokensByUserUuid() with userUuid: {}", userUuid);
-        return client.removeAccessTokensByUserUuid(userUuid);
+        return client.removeAccessTokensByUserUuid(userUuid, HttpUtils.extractHeaders(servletRequest));
     }
 
     @DeleteMapping("/tokens")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "clearAuthStorage",
             description = "deleting all tokens and unverified logins and emails, existing users are not deleted")
-    public ResponseEntity<ApiResponse<Void>> clearAuthStorage() {
+    public ResponseEntity<ApiResponse<Void>> clearAuthStorage(HttpServletRequest servletRequest) {
         log.debug("DELETE clearAuthStorage()");
-        return client.clearAuthStorage();
+        return client.clearAuthStorage(HttpUtils.extractHeaders(servletRequest));
     }
 }
