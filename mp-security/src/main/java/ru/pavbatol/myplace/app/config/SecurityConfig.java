@@ -2,6 +2,7 @@ package ru.pavbatol.myplace.app.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import java.util.List;
 
@@ -28,25 +30,39 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    public static final String[] PUBLIC_PATHS = {
-            "/auth/**",
-            "/v3/api-docs.yaml",
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            "/swagger-ui.html",
-            "/docs/**"
-    };
+    @Value("${api.prefix}")
+    private String apiPrefix;
 
-    public static final String[] ADMIN_PATHS = {
-            "/admin/**"
-    };
-
-    public static final String[] USER_PATHS = {
-            "/users/**"
-    };
+    private String[] publicPaths;
+    private String[] adminPaths;
+    private String[] userPaths;
 
     @Qualifier("JWtFilter")
     private final Filter jWtFilter;
+
+    @PostConstruct
+    protected void init() {
+        publicPaths = new String[]{
+                "/auth/**",
+                apiPrefix + "/auth/**",
+                "/v3/api-docs.yaml",
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/docs/**",
+                "/h2-console/**"
+        };
+
+        adminPaths = new String[]{
+                "/admin/**",
+                apiPrefix + "/admin/**"
+        };
+
+        userPaths = new String[]{
+                "/users/**",
+                apiPrefix + "/users/**"
+        };
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -67,9 +83,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
-                                .antMatchers(ADMIN_PATHS).hasRole("ADMIN")
-                                .antMatchers(USER_PATHS).hasRole("USER")
-                                .antMatchers(PUBLIC_PATHS).permitAll()
+                                .antMatchers(adminPaths).hasRole("ADMIN")
+                                .antMatchers(userPaths).hasRole("USER")
+                                .antMatchers(publicPaths).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->
