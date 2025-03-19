@@ -19,8 +19,9 @@ public class ResponseHandler {
         if (response.getStatusCode().is2xxSuccessful()) {
             return Optional.ofNullable(response.getBody())
                     .map(body -> {
+                        String jsonBody = serializeBody(body);
                         try {
-                            T successResponse = objectMapper.readValue(body.toString(), successType);
+                            T successResponse = objectMapper.readValue(jsonBody, successType);
                             return ApiResponse.success(successResponse, response.getStatusCode());
                         } catch (JsonProcessingException e) {
                             log.error("Failed to parse error response body: {} into {}", body.toString(), successType.getSimpleName(), e);
