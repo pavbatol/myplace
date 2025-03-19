@@ -4,6 +4,10 @@ server:
 api:
   prefix: /api/v1
 
+cors:
+  allowed-origins: https://your-production-domain.com
+  allowed-methods: GET,POST,PATCH,PUT,DELETE
+
 spring:
   application:
     name: mp-security

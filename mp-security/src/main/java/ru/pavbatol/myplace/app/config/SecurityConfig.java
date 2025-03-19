@@ -30,15 +30,21 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    @Qualifier("JWtFilter")
+    private final Filter jWtFilter;
+
     @Value("${api.prefix}")
     private String apiPrefix;
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
+
+    @Value("${cors.allowed-methods}")
+    private String allowedMethods;
 
     private String[] publicPaths;
     private String[] adminPaths;
     private String[] userPaths;
-
-    @Qualifier("JWtFilter")
-    private final Filter jWtFilter;
 
     @PostConstruct
     protected void init() {
@@ -97,9 +103,9 @@ public class SecurityConfig {
     }
 
     private CorsConfiguration getCorsConfiguration() {
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("*"));
-        corsConfig.setAllowedHeaders(List.of(
+        List<String> strings = List.of(allowedOrigins.split(","));
+        List<String> methods = List.of(allowedMethods.split(","));
+        List<String> headers = List.of(
                 "Access-Control-Allow-Headers",
                 "Access-Control-Allow-Origin",
                 "Access-Control-Request-Method",
@@ -107,8 +113,13 @@ public class SecurityConfig {
                 "Cache-Control",
                 "Content-Type",
                 "Origin",
-                "Auth"));
-        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
+                "Auth");
+
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOrigins(strings);
+        corsConfig.setAllowedHeaders(headers);
+        corsConfig.setAllowedMethods(methods);
+
         return corsConfig;
     }
 }

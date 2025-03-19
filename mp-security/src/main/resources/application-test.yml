@@ -4,6 +4,10 @@ server:
 api:
   prefix: /api/v1
 
+cors:
+  allowed-origins: "*"
+  allowed-methods: GET,POST,PATCH,PUT,DELETE
+
 spring:
   application:
     name: mp-security
@@ -11,6 +15,9 @@ spring:
     console:
       enabled: true
       path: /h2-console
+      settings:
+        web-allow-others: true
+#        trace: true
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:test
