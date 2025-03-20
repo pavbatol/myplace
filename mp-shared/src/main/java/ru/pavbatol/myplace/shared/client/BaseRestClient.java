@@ -105,7 +105,12 @@ public class BaseRestClient {
         HttpEntity<T> httpEntity = new HttpEntity<>(body, preparedHeaders);
 
         try {
-            return rest.exchange(path, method, httpEntity, Object.class, parameters);
+            ResponseEntity<String> responseEntity = rest.exchange(path, method, httpEntity, String.class, parameters);
+
+            return ResponseEntity.status(responseEntity.getStatusCode())
+                    .headers(responseEntity.getHeaders())
+                    .body(responseEntity.getBody());
+
         } catch (HttpStatusCodeException e) {
             log.error("HTTP request failed with status code: {}", e.getStatusCode());
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
