@@ -106,14 +106,14 @@ public class SecurityConfig {
         List<String> strings = List.of(allowedOrigins.split(","));
         List<String> methods = List.of(allowedMethods.split(","));
         List<String> headers = List.of(
-                "Access-Control-Allow-Headers",
-                "Access-Control-Allow-Origin",
-                "Access-Control-Request-Method",
-                "Access-Control-Request-Headers",
-                "Cache-Control",
                 "Content-Type",
+                "Authorization",
                 "Origin",
-                "Auth");
+                "Accept",
+                "Cache-Control",
+                "X-User-Uuid",
+                "X-User-Id"
+        );
 
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowedOrigins(strings);
