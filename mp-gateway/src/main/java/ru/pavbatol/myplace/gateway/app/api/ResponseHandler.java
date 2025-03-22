@@ -21,12 +21,8 @@ public class ResponseHandler {
         if (response.getStatusCode().is2xxSuccessful()) {
             return Optional.ofNullable(response.getBody())
                     .map(body -> {
-                        String preparedBody = convertBodyToString(body);
+                        String preparedBody = serializeBodyToString(body);
                         logBodyInfo(successType, body, preparedBody);
-
-                        if (successType.equals(String.class)) {
-                            return ApiResponse.success((T) preparedBody, response.getStatusCode());
-                        }
 
                         try {
                             T successResponse = objectMapper.readValue(preparedBody, successType);
@@ -40,7 +36,7 @@ public class ResponseHandler {
         } else {
             return Optional.ofNullable(response.getBody())
                     .map(body -> {
-                        String preparedBody = convertBodyToString(body);
+                        String preparedBody = serializeBodyToString(body);
                         logBodyInfo(successType, body, preparedBody);
                         try {
                             ApiError apiError = objectMapper.readValue(preparedBody, ApiError.class);
@@ -62,15 +58,20 @@ public class ResponseHandler {
     }
 
     private <T> void logBodyInfo(Class<T> successType, Object body, String preparedBody) {
-        log.debug("Raw body}: {}: ", body);
+        log.debug("Raw body: {}: ", body);
         log.debug("Prepared body to convert into {}: {}: ", successType, preparedBody);
     }
 
-    private String convertBodyToString(Object body) {
-        if (body instanceof byte[]) {
-            return new String((byte[]) body, StandardCharsets.UTF_8);
-        } else if (body instanceof String) {
-            return (String) body;
+    private String serializeBodyToString(Object body) {
+        if (body == null) {
+            return "\"\"";
+        }
+
+        if (body instanceof String) {
+            return ensureValidJsonString((String) body);
+        } else if (body instanceof byte[]) {
+            String byteString = new String((byte[]) body, StandardCharsets.UTF_8);
+            return ensureValidJsonString(byteString);
         } else {
             try {
                 return objectMapper.writeValueAsString(body);
@@ -78,5 +79,23 @@ public class ResponseHandler {
                 throw new RuntimeException("Failed to serialize body: " + body, e);
             }
         }
+    }
+
+    private String ensureValidJsonString(String input) {
+        if (input == null || input.isBlank()) {
+            return "\"\"";
+        }
+
+        if (isJsonLike(input)) {
+            return input;
+        }
+
+        return "\"" + input + "\"";
+    }
+
+    private boolean isJsonLike(String input) {
+        String trimmed = input.trim();
+        return (trimmed.startsWith("{") && trimmed.endsWith("}")) || // JSON-object
+                (trimmed.startsWith("\"") && trimmed.endsWith("\"")); // JSON-string
     }
 }

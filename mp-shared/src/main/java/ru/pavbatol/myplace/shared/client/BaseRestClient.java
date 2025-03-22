@@ -76,14 +76,14 @@ public class BaseRestClient {
         return executeRequest(path, HttpMethod.DELETE, userUuid, userId, initialHttpHeaders, null, parameters);
     }
 
-    //-- Execute Custom Request
-    protected <T> ResponseEntity<Object> rawExecuteRequest(@NonNull String path,
-                                                           @NonNull HttpMethod method,
-                                                           @Nullable UUID userUuid,
-                                                           @Nullable Long userId,
-                                                           @Nullable HttpHeaders initialHttpHeaders,
-                                                           @Nullable T body,
-                                                           @Nullable Map<String, Object> parameters) {
+    //-- Custom set execute
+    protected <T> ResponseEntity<Object> sendRequest(@NonNull String path,
+                                                     @NonNull HttpMethod method,
+                                                     @Nullable UUID userUuid,
+                                                     @Nullable Long userId,
+                                                     @Nullable HttpHeaders initialHttpHeaders,
+                                                     @Nullable T body,
+                                                     @Nullable Map<String, Object> parameters) {
         return executeRequest(path, method, userUuid, userId, initialHttpHeaders, body, parameters);
     }
 

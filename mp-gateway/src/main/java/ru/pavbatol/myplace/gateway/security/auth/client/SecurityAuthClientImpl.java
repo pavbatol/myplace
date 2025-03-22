@@ -20,7 +20,7 @@ import java.util.UUID;
 @Service
 public class SecurityAuthClientImpl extends BaseRestClient implements SecurityAuthClient {
     private static final String ADMIN_AUTH_CONTEXT = "/admin/auth";
-    private static final String PRIVATE_AUTH_CONTEXT = "/user/auth";
+    private static final String PRIVATE_AUTH_CONTEXT = "/users/auth";
     private static final String PUBLIC_AUTH_CONTEXT = "/auth";
     private final ResponseHandler responseHandler;
 
