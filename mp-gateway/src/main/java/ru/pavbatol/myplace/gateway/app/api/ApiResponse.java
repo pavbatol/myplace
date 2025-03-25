@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResponse<T> {
+    private HttpStatus status;
     private T data;
     private ApiError error;
-    private HttpStatus status;
 
     public static <T> ApiResponse<T> success(T data, HttpStatus status) {
         ApiResponse<T> response = new ApiResponse<>();
