@@ -10,6 +10,14 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
+/**
+ * A base REST client provides a base implementation for RESTful client operations.
+ * This class encapsulates the logic for executing various types of HTTP requests (GET, POST, PATCH, DELETE)
+ * and handles response conversion and error handling.
+ *
+ * <p>It uses Spring's {@link RestTemplate} for making HTTP requests and provides methods
+ * for adding default headers and processing responses.</p>
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class BaseRestClient {
@@ -85,6 +93,32 @@ public class BaseRestClient {
         return executeRequest(path, method, userUuid, userId, initialHttpHeaders, body, parameters);
     }
 
+    /**
+     * Executes an HTTP request with the given parameters.
+     *
+     * <p>This private method handles the actual request execution, including:
+     * <ul>
+     *   <li>Parameter initialization (if null)</li>
+     *   <li>Header preparation with default values</li>
+     *   <li>Request execution with error handling</li>
+     *   <li>Response conversion</li>
+     * </ul>
+     * </p>
+     *
+     * <p>If the request fails with an HTTP status code, the method catches the exception
+     * and returns a ResponseEntity with the error status and response body.</p>
+     *
+     * @param <T>                the type of the request body
+     * @param path               the endpoint path (must not be null)
+     * @param method             the HTTP method (must not be null)
+     * @param userUuid           the optional user UUID for authentication/identification
+     * @param userId             the optional user ID for authentication/identification
+     * @param initialHttpHeaders optional initial HTTP headers to include in the request
+     * @param body               the optional request body
+     * @param parameters         optional request parameters
+     * @return ResponseEntity containing either the successful response or error response
+     * from the server
+     */
     private <T> ResponseEntity<Object> executeRequest(@NonNull String path,
                                                       @NonNull HttpMethod method,
                                                       @Nullable UUID userUuid,
@@ -104,11 +138,7 @@ public class BaseRestClient {
 
         try {
             ResponseEntity<String> responseEntity = rest.exchange(path, method, httpEntity, String.class, parameters);
-
-            return ResponseEntity.status(responseEntity.getStatusCode())
-                    .headers(responseEntity.getHeaders())
-                    .body(responseEntity.getBody());
-
+            return convertResponse(responseEntity);
         } catch (HttpStatusCodeException e) {
             log.error("HTTP request failed with status code: {}", e.getStatusCode());
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
@@ -127,5 +157,11 @@ public class BaseRestClient {
                 .withUserUuid(userUuid)
                 .withUserId(userId)
                 .build();
+    }
+
+    private ResponseEntity<Object> convertResponse(ResponseEntity<?> response) {
+        return ResponseEntity.status(response.getStatusCode())
+                .headers(response.getHeaders())
+                .body(response.getBody());
     }
 }
