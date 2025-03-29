@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class ResponseHandler {
     private final ObjectMapper objectMapper;
+    private final ResponseBodyParser bodyParser;
 
     /**
      * Processes a response containing a single object.
@@ -98,8 +99,6 @@ public class ResponseHandler {
      * @throws ApiResponseException if JSON parsing fails
      */
     private <T> ApiResponse<T> processSingleType(ResponseEntity<Object> response, Class<T> type) {
-        ResponseBodyParser bodyParser = new ResponseBodyParser(objectMapper);
-
         try {
             T parsedBody = bodyParser.parse(response, type);
             if (parsedBody == null) {
@@ -123,8 +122,6 @@ public class ResponseHandler {
      * @throws ApiResponseException if JSON parsing fails
      */
     private <T> ApiResponse<List<T>> processListType(ResponseEntity<Object> response, Class<T> elementType) {
-        ResponseBodyParser bodyParser = new ResponseBodyParser(objectMapper);
-
         try {
             List<T> parsedBody = bodyParser.parseList(response, elementType);
             return ApiResponse.success(parsedBody, response.getStatusCode());
