@@ -12,7 +12,6 @@ import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Slf4j
@@ -21,33 +20,22 @@ import java.util.function.Supplier;
 public class ResponseHandler {
     private final ObjectMapper objectMapper;
 
-    public <T> ApiResponse<T> processResponse(ResponseEntity<Object> response, Class<T> successType) {
-        return processSingleType(response, successType, (resp) -> processSuccessResponse(resp, successType));
+    public <T> ApiResponse<T> processResponse(ResponseEntity<Object> response, Class<T> type) {
+        log.debug("Target type to convert response body: {}", type.getSimpleName());
+        return processCommonLogic(response, () -> processSingleType(response, type));
     }
 
     public <T> ApiResponse<List<T>> processResponseList(ResponseEntity<Object> response, Class<T> elementType) {
-        return processListType(response, elementType, (resp) -> processSuccessResponseList(resp, elementType));
-    }
-
-    private <T> ApiResponse<T> processSingleType(ResponseEntity<Object> response,
-                                                 Class<T> type,
-                                                 Function<ResponseEntity<Object>, ApiResponse<T>> successHandler) {
-        log.debug("Target type to convert response body: {}", type.getSimpleName());
-        return processCommonLogic(response, () -> successHandler.apply(response));
-
-    }
-
-    private <T> ApiResponse<List<T>> processListType(ResponseEntity<Object> response,
-                                                     Class<T> elementType,
-                                                     Function<ResponseEntity<Object>, ApiResponse<List<T>>> successHandler) {
         log.debug("Target type to convert response body: List<{}>", elementType.getSimpleName());
-        return processCommonLogic(response, () -> successHandler.apply(response));
+        return processCommonLogic(response, () -> processListType(response, elementType));
     }
 
     private <R> R processCommonLogic(ResponseEntity<Object> response, Supplier<R> processor) {
         try {
             log.debug("Attempting to consider response as successful");
-            return processor.get();
+            R result = processor.get();
+            log.debug("Successfully processed response");
+            return result;
         } catch (TargetServiceHandledErrorException e) {
             log.error("Target service reported a handled error via class '{}', raising exception '{}': {}",
                     e.getError().getClass().getSimpleName(), e.getClass().getSimpleName(), e.getMessage());
@@ -55,7 +43,7 @@ public class ResponseHandler {
         }
     }
 
-    private <T> ApiResponse<T> processSuccessResponse(ResponseEntity<Object> response, Class<T> type) {
+    private <T> ApiResponse<T> processSingleType(ResponseEntity<Object> response, Class<T> type) {
         ResponseBodyParser bodyParser = new ResponseBodyParser(objectMapper);
 
         try {
@@ -71,7 +59,7 @@ public class ResponseHandler {
         }
     }
 
-    private <T> ApiResponse<List<T>> processSuccessResponseList(ResponseEntity<Object> response, Class<T> elementType) {
+    private <T> ApiResponse<List<T>> processListType(ResponseEntity<Object> response, Class<T> elementType) {
         ResponseBodyParser bodyParser = new ResponseBodyParser(objectMapper);
 
         try {
