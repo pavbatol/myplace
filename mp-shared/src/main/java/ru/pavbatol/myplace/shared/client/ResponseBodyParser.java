@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MimeType;
 import ru.pavbatol.myplace.shared.dto.api.ErrorResponse;
-import ru.pavbatol.myplace.shared.exception.ApiErrorException;
+import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -49,15 +50,15 @@ public class ResponseBodyParser {
      * @param response HTTP response entity
      * @param type     Target class to parse into
      * @return Parsed object or null if response body is empty
-     * @throws ApiErrorException        if response status is not 2xx
-     * @throws IOException              if parsing fails or response contains invalid content
-     * @throws IllegalArgumentException if conversion is not possible
+     * @throws TargetServiceHandledErrorException if response status is not 2xx
+     * @throws IOException                        if parsing fails or response contains invalid content
+     * @throws IllegalArgumentException           if conversion is not possible
      */
     @Nullable
     public <T> T parse(ResponseEntity<Object> response, Class<T> type) throws IOException {
         if (!response.getStatusCode().is2xxSuccessful()) {
             ErrorResponse error = parseError(response);
-            throw new ApiErrorException(error, response.getStatusCode());
+            throw new TargetServiceHandledErrorException(error, response.getStatusCode());
         }
 
         return parseSuccessBody(response, type);
@@ -70,14 +71,15 @@ public class ResponseBodyParser {
      * @param response    HTTP response entity
      * @param elementType List element class
      * @return List of parsed elements (empty list if response body is null)
-     * @throws ApiErrorException        if response status is not 2xx
-     * @throws IOException              if parsing fails or response contains invalid content
-     * @throws IllegalArgumentException if conversion is not possible
+     * @throws TargetServiceHandledErrorException if response status is not 2xx
+     * @throws IOException                        if parsing fails or response contains invalid content
+     * @throws IllegalArgumentException           if conversion is not possible
      */
+    @NonNull
     public <T> List<T> parseList(ResponseEntity<Object> response, Class<T> elementType) throws IOException {
         if (!response.getStatusCode().is2xxSuccessful()) {
             ErrorResponse error = parseError(response);
-            throw new ApiErrorException(error, response.getStatusCode());
+            throw new TargetServiceHandledErrorException(error, response.getStatusCode());
         }
 
         Object body = response.getBody();
@@ -120,6 +122,7 @@ public class ResponseBodyParser {
         try {
             if (body instanceof byte[]) {
                 if (byte[].class.equals(type)) {
+                    log.debug("Parsed body will be returned as raw bytes");
                     return (T) body;
                 }
 
@@ -127,21 +130,29 @@ public class ResponseBodyParser {
                     Charset charset = Optional.ofNullable(response.getHeaders().getContentType())
                             .map(MimeType::getCharset)
                             .orElse(StandardCharsets.UTF_8);
+                    log.debug("Parsed body will be returned as converted bytes to raw String");
                     return (T) new String((byte[]) body, charset);
                 }
 
+                log.debug("Attempting to read body from '{}' to '{}'", byte[].class.getSimpleName(), type.getSimpleName());
                 return objectMapper.readValue((byte[]) body, type);
             } else if (body instanceof String) {
                 if (String.class.equals(type)) {
+                    log.debug("Parsed body will be returned as raw String");
                     return (T) body;
                 }
 
+                log.debug("Attempting to read body from 'String' to '{}'", type.getSimpleName());
                 return objectMapper.readValue((String) body, type);
             } else {
+                log.debug("Attempting to convert body from 'Object' (e.g.: Map, List) to '{}'", type.getSimpleName());
                 return objectMapper.convertValue(body, type);
             }
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse response body into type '{}': {}", type.getSimpleName(), e.getMessage());
+            throw e;
         } catch (IOException e) {
-            log.error("Failed to parse response to type {}. Body type: {}", type.getSimpleName(), body.getClass().getSimpleName());
+            log.error("Failed to parse response to type '{}'. Body type: '{}'", type.getSimpleName(), body.getClass().getSimpleName());
             throw e;
         }
     }
