@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.app.exception.handler;
+package ru.pavbatol.myplace.shared.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Value;
@@ -9,7 +9,7 @@ import java.util.List;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Value
-public class ErrorResponse {
+public class ApiError {
     LocalDateTime timestamp = LocalDateTime.now();
 
     String mapping;

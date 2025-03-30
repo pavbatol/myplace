@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MimeType;
-import ru.pavbatol.myplace.shared.dto.api.ErrorResponse;
+import ru.pavbatol.myplace.shared.dto.api.ApiError;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class ResponseBodyParser {
     @Nullable
     public <T> T parse(ResponseEntity<Object> response, Class<T> type) throws IOException {
         if (!response.getStatusCode().is2xxSuccessful()) {
-            ErrorResponse error = parseError(response);
+            ApiError error = parseError(response);
             throw new TargetServiceHandledErrorException(error, response.getStatusCode());
         }
 
@@ -78,7 +78,7 @@ public class ResponseBodyParser {
     @NonNull
     public <T> List<T> parseList(ResponseEntity<Object> response, Class<T> elementType) throws IOException {
         if (!response.getStatusCode().is2xxSuccessful()) {
-            ErrorResponse error = parseError(response);
+            ApiError error = parseError(response);
             throw new TargetServiceHandledErrorException(error, response.getStatusCode());
         }
 
@@ -165,7 +165,7 @@ public class ResponseBodyParser {
      * @return Parsed ErrorResponse or default error if body is null/malformed
      * @throws IOException only if critical parsing error occurs
      */
-    private ErrorResponse parseError(ResponseEntity<Object> response) throws IOException {
+    private ApiError parseError(ResponseEntity<Object> response) throws IOException {
         Object body = response.getBody();
         if (body == null) {
             log.warn("Empty error response body with status {}", response.getStatusCode());
@@ -173,7 +173,7 @@ public class ResponseBodyParser {
         }
 
         try {
-            return objectMapper.readValue((byte[]) response.getBody(), ErrorResponse.class);
+            return objectMapper.readValue((byte[]) response.getBody(), ApiError.class);
         } catch (Exception e) {
             log.error("Failed to parse error response", e);
             return createDefaultError("Failed to parse error: " + e.getMessage());
@@ -183,8 +183,8 @@ public class ResponseBodyParser {
     /**
      * Creates default ErrorResponse with basic information
      */
-    private ErrorResponse createDefaultError(String message) {
-        return new ErrorResponse(
+    private ApiError createDefaultError(String message) {
+        return new ApiError(
                 null,
                 null,
                 null,

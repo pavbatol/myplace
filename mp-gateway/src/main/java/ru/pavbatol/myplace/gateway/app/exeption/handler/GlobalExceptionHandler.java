@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import ru.pavbatol.myplace.gateway.app.api.ApiError;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.exeption.ApiResponseException;
-import ru.pavbatol.myplace.shared.dto.api.ErrorResponse;
+import ru.pavbatol.myplace.shared.dto.api.ApiError;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,17 +37,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TargetServiceHandledErrorException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiResponseException(TargetServiceHandledErrorException ex, WebRequest webRequest) {
         HttpStatus httpStatus = ex.getStatus();
-        ErrorResponse errorResponse = ex.getError();
-
-        ApiError apiError = new ApiError(
-                errorResponse.getMapping(),
-                errorResponse.getStatus(),
-                errorResponse.getReason(),
-                errorResponse.getMessage(),
-                errorResponse.getDetails(),
-                errorResponse.getErrors(),
-                errorResponse.getTrace()
-        );
+        ApiError apiError = ex.getError();
 
         ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
 

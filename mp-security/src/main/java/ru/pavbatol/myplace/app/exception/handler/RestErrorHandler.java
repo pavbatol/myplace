@@ -22,6 +22,7 @@ import ru.pavbatol.myplace.app.exception.BadRequestException;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.app.exception.RedisException;
 import ru.pavbatol.myplace.app.exception.RegistrationException;
+import ru.pavbatol.myplace.shared.dto.api.ApiError;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -118,11 +119,11 @@ public class RestErrorHandler {
     private ResponseEntity<Object> makeResponseEntity(String reason, Throwable ex, HttpStatus status, WebRequest request) {
         log.error("{}: {}", reason, ex.getMessage());
         ex.printStackTrace();
-        ErrorResponse errorResponse = makeBody(reason, status, request, ex);
-        return new ResponseEntity<>(errorResponse, status);
+        ApiError apiError = makeBody(reason, status, request, ex);
+        return new ResponseEntity<>(apiError, status);
     }
 
-    private ErrorResponse makeBody(String reason, HttpStatus status, WebRequest request, Throwable ex) {
+    private ApiError makeBody(String reason, HttpStatus status, WebRequest request, Throwable ex) {
         List<String> errors;
         if (ex instanceof BindException) {
             errors = ((BindException) ex)
@@ -140,7 +141,7 @@ public class RestErrorHandler {
         String message = !errors.isEmpty() ? errors.get(0) : "No message";
         String details = !errors.isEmpty() && !Objects.equals(ex.getMessage(), errors.get(0)) ? ex.getMessage() : null;
 
-        return new ErrorResponse(
+        return new ApiError(
                 getRequestURI(request),
                 status.name(),
                 reason,

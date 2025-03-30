@@ -3,14 +3,14 @@ package ru.pavbatol.myplace.shared.exception;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
-import ru.pavbatol.myplace.shared.dto.api.ErrorResponse;
+import ru.pavbatol.myplace.shared.dto.api.ApiError;
 
 @Getter
 public class TargetServiceHandledErrorException extends RuntimeException {
-    private final ErrorResponse error;
+    private final ApiError error;
     private final HttpStatus status;
 
-    public TargetServiceHandledErrorException(@NonNull ErrorResponse error, @NonNull HttpStatus status) {
+    public TargetServiceHandledErrorException(@NonNull ApiError error, @NonNull HttpStatus status) {
         super(error.getMessage());
         this.error = error;
         this.status = status;
@@ -18,7 +18,7 @@ public class TargetServiceHandledErrorException extends RuntimeException {
 
     public TargetServiceHandledErrorException(@NonNull String message, @NonNull HttpStatus status) {
         super(message);
-        this.error = new ErrorResponse(
+        this.error = new ApiError(
                 null,
                 null,
                 null,
