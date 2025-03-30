@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.auth.dto.AuthDtoRefreshRequest;
-import ru.pavbatol.myplace.auth.dto.AuthDtoRequest;
-import ru.pavbatol.myplace.auth.dto.AuthDtoResponse;
 import ru.pavbatol.myplace.auth.service.AuthService;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;

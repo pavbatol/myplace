@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.auth.service;
 
-import ru.pavbatol.myplace.auth.dto.AuthDtoRequest;
-import ru.pavbatol.myplace.auth.dto.AuthDtoResponse;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
+import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
