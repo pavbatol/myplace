@@ -12,10 +12,12 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class ApiError {
     LocalDateTime timestamp = LocalDateTime.now();
 
+    @JsonInclude(NON_NULL)
     String mapping;
 
     String status;
 
+    @JsonInclude(NON_NULL)
     String reason;
 
     String message;

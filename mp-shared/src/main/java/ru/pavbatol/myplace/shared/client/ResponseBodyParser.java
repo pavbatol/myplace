@@ -4,12 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MimeType;
 import ru.pavbatol.myplace.shared.dto.api.ApiError;
+import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
 import java.io.IOException;
@@ -57,8 +60,7 @@ public class ResponseBodyParser {
     @Nullable
     public <T> T parse(ResponseEntity<Object> response, Class<T> type) throws IOException {
         if (!response.getStatusCode().is2xxSuccessful()) {
-            ApiError error = parseError(response);
-            throw new TargetServiceHandledErrorException(error, response.getStatusCode());
+            handleErrorResponse(response);
         }
 
         return parseSuccessBody(response, type);
@@ -78,8 +80,7 @@ public class ResponseBodyParser {
     @NonNull
     public <T> List<T> parseList(ResponseEntity<Object> response, Class<T> elementType) throws IOException {
         if (!response.getStatusCode().is2xxSuccessful()) {
-            ApiError error = parseError(response);
-            throw new TargetServiceHandledErrorException(error, response.getStatusCode());
+            handleErrorResponse(response);
         }
 
         Object body = response.getBody();
@@ -158,35 +159,68 @@ public class ResponseBodyParser {
     }
 
     /**
-     * Parses error response body into ErrorResponse structure.
-     * Returns default error response if parsing fails.
+     * Parses error response body into {@link ApiError} structure.
+     * Returns default error response if not valid body or parsing fails.
+     * <p>
+     * Note: All error responses from the client are received as byte arrays
+     * ({@code byte[]}) before parsing. This is handled by the {@link BaseRestClient}.
+     * </p>
      *
      * @param response HTTP error response
-     * @return Parsed ErrorResponse or default error if body is null/malformed
-     * @throws IOException only if critical parsing error occurs
+     * @return {@link  ErrorParseResult} with parsed received {@link ApiError} or created default that if body is invalid
      */
-    private ApiError parseError(ResponseEntity<Object> response) throws IOException {
-        Object body = response.getBody();
+    private ErrorParseResult parseError(ResponseEntity<Object> response) {
+        final Object body = response.getBody();
+        final HttpStatus status = response.getStatusCode();
+
         if (body == null) {
-            log.warn("Empty error response body with status {}", response.getStatusCode());
-            return createDefaultError("Empty error response body");
+            return invalidError("Null error response body", status);
+        }
+
+        if (!(body instanceof byte[])) {
+            return invalidError("Unexpected error body type: " + body.getClass().getSimpleName(), status);
+        }
+
+        byte[] bodyBytes = (byte[]) body;
+        if (bodyBytes.length == 0) {
+            return invalidError("Empty error response body", status);
         }
 
         try {
-            return objectMapper.readValue((byte[]) response.getBody(), ApiError.class);
-        } catch (Exception e) {
+            ErrorParseResult result = new ErrorParseResult(objectMapper.readValue(bodyBytes, ApiError.class), false);
+            log.debug("Successfully parsed body to {}", ApiError.class.getSimpleName());
+            return result;
+        } catch (IOException e) {
             log.error("Failed to parse error response", e);
-            return createDefaultError("Failed to parse error: " + e.getMessage());
+            return new ErrorParseResult(
+                    createDefaultError("Failed to parse error: " + e.getMessage(), status),
+                    true);
         }
+    }
+
+    /**
+     * Helper for {@link #parseError} to handle invalid response cases.
+     * Logs the issue and returns a default error representation.
+     * <p>
+     * Guarantees:
+     *   <ul>
+     *     <li>Will always log the failure at WARN level</li>
+     *     <li>Will always return a non-null result with errorLocalCreated=true</li>
+     *   </ul>
+     * </p>
+     */
+    private ErrorParseResult invalidError(String reason, HttpStatus status) {
+        log.warn("Invalid error response ({}), status {}", reason, status);
+        return new ErrorParseResult(createDefaultError(reason, status), true);
     }
 
     /**
      * Creates default ErrorResponse with basic information
      */
-    private ApiError createDefaultError(String message) {
+    private ApiError createDefaultError(String message, HttpStatus status) {
         return new ApiError(
                 null,
-                null,
+                status.toString(),
                 null,
                 message,
                 null,
@@ -194,4 +228,35 @@ public class ResponseBodyParser {
                 null
         );
     }
+
+    /**
+     * Transforms target service error responses into exceptions.
+     * <p>
+     * This method always throws an exception when processing error responses:
+     * <ul>
+     *   <li>For well-formed errors - throws {@link TargetServiceHandledErrorException}</li>
+     *   <li>For malformed responses - throws {@link TargetServiceErrorException}</li>
+     * </ul>
+     * <p>
+     *  @throws TargetServiceHandledErrorException when service returned a properly formatted error via {@link ApiError}
+     *  @throws TargetServiceErrorException when service returned a raw (unhandled) error or unprocessable
+     */
+    private void handleErrorResponse(ResponseEntity<Object> response) {
+        ErrorParseResult result = parseError(response);
+        ApiError error = result.getApiError();
+
+        if (result.isErrorLocalCreated()) {
+            throw new TargetServiceErrorException(error, response.getStatusCode()
+            );
+        }
+
+        throw new TargetServiceHandledErrorException(error, response.getStatusCode());
+    }
+
+    @Value
+    private static class ErrorParseResult {
+        ApiError apiError;
+        boolean errorLocalCreated;
+    }
 }
+

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import ru.pavbatol.myplace.gateway.app.exeption.ApiResponseException;
 import ru.pavbatol.myplace.shared.client.ResponseBodyParser;
+import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
 import java.io.IOException;
@@ -85,6 +86,10 @@ public class ResponseHandler {
         } catch (TargetServiceHandledErrorException e) {
             log.error("Target service reported a handled error via class '{}', raising exception '{}': {}",
                     e.getError().getClass().getSimpleName(), e.getClass().getSimpleName(), e.getMessage());
+            throw e;
+        } catch (TargetServiceErrorException e) {
+            log.error("Target service reported a raw (unhandled) error, raising exception '{}': {}",
+                    e.getClass().getSimpleName(), e.getMessage());
             throw e;
         }
     }
