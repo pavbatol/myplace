@@ -120,6 +120,11 @@ public class ResponseBodyParser {
             return null;
         }
 
+        if (Void.class.equals(type)) {
+            log.warn("Void response with non-null body: {}", body);
+            throw new IllegalArgumentException("Cannot convert non-null body to Void");
+        }
+
         try {
             if (body instanceof byte[]) {
                 if (byte[].class.equals(type)) {

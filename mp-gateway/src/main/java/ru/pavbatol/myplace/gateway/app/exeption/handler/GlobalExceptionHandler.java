@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
@@ -20,15 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApiResponseException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiResponseException(ApiResponseException ex, WebRequest webRequest) {
         HttpStatus httpStatus = ex.getStatus();
-
-        ApiError apiError = new ApiError(
-                getRequestURI(webRequest),
-                httpStatus.toString(),
-                (ex.getCause() == null) ? null : ex.getCause().getMessage(),
-                ex.getMessage(),
-                null,
-                null,
-                null);
+        ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
         ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
 
@@ -46,15 +39,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ApiResponse<Void>> handleGenericException(Throwable ex, HttpStatus httpStatus, WebRequest webRequest) {
-        ApiError apiError = new ApiError(
-                getRequestURI(webRequest),
-                httpStatus.toString(),
-                (ex.getCause() == null) ? null : ex.getCause().getMessage(),
-                ex.getMessage(),
-                null,
-                null,
-                null);
+    public ResponseEntity<ApiResponse<Void>> handleGenericException(Throwable ex, WebRequest webRequest) {
+        HttpStatus httpStatus = determineStatus(ex);
+        ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
         ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
 
@@ -68,5 +55,23 @@ public class GlobalExceptionHandler {
         } else {
             return "";
         }
+    }
+
+    private HttpStatus determineStatus(Throwable ex) {
+        return (ex instanceof HttpStatusCodeException)
+                ? ((HttpStatusCodeException) ex).getStatusCode()
+                : HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+
+    private ApiError createApiError(Throwable ex, WebRequest webRequest, HttpStatus httpStatus) {
+        return new ApiError(
+                getRequestURI(webRequest),
+                httpStatus.toString(),
+                (ex.getCause() == null) ? null : ex.getCause().getMessage(),
+                ex.getMessage(),
+                null,
+                null,
+                null);
     }
 }
