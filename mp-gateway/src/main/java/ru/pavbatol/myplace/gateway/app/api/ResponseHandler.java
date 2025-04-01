@@ -46,6 +46,8 @@ public class ResponseHandler {
      * @return ApiResponse containing the parsed object or error details
      * @throws ApiResponseException               if response parsing fails
      * @throws TargetServiceHandledErrorException if the target service returns a handled error
+     * @throws TargetServiceErrorException        if the target service returns a raw (unhandled) error
+     *                                            or if parsing failed and the error was created locally with the raw response received
      */
     public <T> ApiResponse<T> processResponse(ResponseEntity<Object> response, Class<T> type) {
         log.debug("Target type to convert response body: {}", type.getSimpleName());
@@ -61,6 +63,8 @@ public class ResponseHandler {
      * @return ApiResponse containing the parsed list or error details
      * @throws ApiResponseException               if response parsing fails
      * @throws TargetServiceHandledErrorException if the target service returns a handled error
+     * @throws TargetServiceErrorException        if the target service returns a raw (unhandled) error
+     *                                            or if parsing failed and the error was created locally with the raw response received
      */
     public <T> ApiResponse<List<T>> processResponseList(ResponseEntity<Object> response, Class<T> elementType) {
         log.debug("Target type to convert response body: List<{}>", elementType.getSimpleName());
@@ -76,6 +80,8 @@ public class ResponseHandler {
      * @param processor the function that performs type-specific processing
      * @return the processed result
      * @throws TargetServiceHandledErrorException if the target service returns a handled error
+     * @throws TargetServiceErrorException        if the target service returns a raw (unhandled) error
+     *                                            or if parsing failed and the error was created locally with the raw response received
      */
     private <R> R processCommonLogic(ResponseEntity<Object> response, Supplier<R> processor) {
         try {
