@@ -186,23 +186,6 @@ public class ResponseBodyParser {
     /**
      * Parses a String response body into the specified target type.
      *
-     * <p>Two cases handled:
-     * <ul>
-     *     <li>If the target type is {@code String}, returns the raw String</li>
-     *     <li>Attempts JSON deserialization via ObjectMapper.</li>
-     * </ul>
-     * </p>
-     *
-     * @param body the raw response body as a String (must not be {@code null})
-     * @param type the target class to parse into (must not be {@code null})
-     * @param <T>  the target type for deserialization
-     * @return the parsed object, or raw String if {@code type == String.class}
-     * @throws JsonProcessingException if parsing fails (invalid JSON)
-     */
-
-    /**
-     * Parses a String response body into the specified target type.
-     *
      * <p>Handles two cases:
      * <ul>
      *     <li>If the target type is {@code String}, returns the raw String unchanged</li>
@@ -234,7 +217,7 @@ public class ResponseBodyParser {
      * Converts a structured response body (Map, List or other Object) into the specified target type.
      *
      * <p>Uses Jackson's {@link ObjectMapper#convertValue} to perform type conversion.
-     * Typically handles cases where the body is already parsed as:
+     * Typically, handles cases where the body is already parsed as:
      * <ul>
      *     <li>{@link java.util.Map} (for JSON objects)</li>
      *     <li>{@link java.util.List} (for JSON arrays)</li>
@@ -283,7 +266,9 @@ public class ResponseBodyParser {
         }
 
         try {
-            ErrorParseResult result = new ErrorParseResult(objectMapper.readValue(bodyBytes, ApiError.class), false);
+            ErrorParseResult result = new ErrorParseResult(
+                    objectMapper.readValue(bodyBytes, ApiError.class),
+                    false);
             log.debug("Successfully parsed body to {}", ApiError.class.getSimpleName());
             return result;
         } catch (IOException e) {
@@ -349,6 +334,17 @@ public class ResponseBodyParser {
         throw new TargetServiceHandledErrorException(error, response.getStatusCode());
     }
 
+    /**
+     * Immutable container for API error parsing results.
+     * <p>
+     * Used when the error response is successfully parsed or needs to be constructed locally.
+     * <p>Fields:
+     * <ul>
+     *     <li>{@code apiError} — parsed API error or created locally</li>
+     *     <li>{@code errorLocalCreated} — {@code true} if error was created locally (not parsed from response)</li>
+     * </ul>
+     * </p>
+     */
     @Value
     private static class ErrorParseResult {
         ApiError apiError;
