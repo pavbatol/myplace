@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -127,32 +128,11 @@ public class ResponseBodyParser {
 
         try {
             if (body instanceof byte[]) {
-                if (byte[].class.equals(type)) {
-                    log.debug("Parsed body will be returned as raw bytes");
-                    return (T) body;
-                }
-
-                if (String.class.equals(type)) {
-                    Charset charset = Optional.ofNullable(response.getHeaders().getContentType())
-                            .map(MimeType::getCharset)
-                            .orElse(StandardCharsets.UTF_8);
-                    log.debug("Parsed body will be returned as converted bytes to raw String");
-                    return (T) new String((byte[]) body, charset);
-                }
-
-                log.debug("Attempting to read body from '{}' to '{}'", byte[].class.getSimpleName(), type.getSimpleName());
-                return objectMapper.readValue((byte[]) body, type);
+                return parseByteArrayBody((byte[]) body, response.getHeaders().getContentType(), type);
             } else if (body instanceof String) {
-                if (String.class.equals(type)) {
-                    log.debug("Parsed body will be returned as raw String");
-                    return (T) body;
-                }
-
-                log.debug("Attempting to read body from 'String' to '{}'", type.getSimpleName());
-                return objectMapper.readValue((String) body, type);
+                return parseStringBody((String) body, type);
             } else {
-                log.debug("Attempting to convert body from 'Object' (e.g.: Map, List) to '{}'", type.getSimpleName());
-                return objectMapper.convertValue(body, type);
+                return parseObjectBody(body, type);
             }
         } catch (JsonProcessingException e) {
             log.error("Failed to parse response body into type '{}': {}", type.getSimpleName(), e.getMessage());
@@ -161,6 +141,47 @@ public class ResponseBodyParser {
             log.error("Failed to parse response to type '{}'. Body type: '{}'", type.getSimpleName(), body.getClass().getSimpleName());
             throw e;
         }
+    }
+
+    private <T> T parseByteArrayBody(byte[] body, @Nullable MediaType contentType, Class<T> type) throws IOException {
+        if (byte[].class.equals(type)) {
+            log.debug("Parsed body will be returned as raw bytes");
+            return (T) body;
+        }
+
+        if (String.class.equals(type)) {
+            Charset charset = Optional.ofNullable(contentType)
+                    .map(MimeType::getCharset)
+                    .orElse(StandardCharsets.UTF_8);
+            log.debug("Parsed body will be returned as converted bytes to raw String");
+
+            @SuppressWarnings("unchecked")
+            T result = (T) new String(body, charset);
+
+            return result;
+        }
+
+        log.debug("Attempting to read body from '{}' to '{}'", byte[].class.getSimpleName(), type.getSimpleName());
+        return objectMapper.readValue(body, type);
+    }
+
+    private <T> T parseStringBody(String body, Class<T> type) throws JsonProcessingException {
+        if (String.class.equals(type)) {
+            log.debug("Parsed body will be returned as raw String");
+
+            @SuppressWarnings("unchecked")
+            T result = (T) body;
+
+            return result;
+        }
+
+        log.debug("Attempting to read body from 'String' to '{}'", type.getSimpleName());
+        return objectMapper.readValue(body, type);
+    }
+
+    private <T> T parseObjectBody(Object body, Class<T> type) {
+        log.debug("Attempting to convert body from 'Object' (e.g.: Map, List) to '{}'", type.getSimpleName());
+        return objectMapper.convertValue(body, type);
     }
 
     /**
