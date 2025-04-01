@@ -143,6 +143,24 @@ public class ResponseBodyParser {
         }
     }
 
+    /**
+     * Parses a byte array response body into the specified target type.
+     *
+     * <p>Handles three cases:
+     * <ul>
+     *   <li>If the target type is {@code byte[]}, returns the raw bytes.</li>
+     *   <li>If the target type is {@code String}, converts bytes to a string using the charset from {@code contentType} (default: UTF-8).</li>
+     *   <li>Otherwise, attempts JSON deserialization via {@link ObjectMapper}.</li>
+     * </ul>
+     *
+     * @param body        the raw response body as a byte array (must not be {@code null})
+     * @param contentType the {@link MediaType} of the response (may be {@code null} for default charset)
+     * @param type        the target class to parse into (must not be {@code null})
+     * @param <T>         the target type for deserialization
+     * @return the parsed object, or raw bytes if {@code type == byte[].class}
+     * @throws IOException              if parsing fails (e.g., invalid JSON or charset conversion error)
+     * @throws IllegalArgumentException if {@code type} is {@code byte[]} but {@code body} is malformed
+     */
     private <T> T parseByteArrayBody(byte[] body, @Nullable MediaType contentType, Class<T> type) throws IOException {
         if (byte[].class.equals(type)) {
             log.debug("Parsed body will be returned as raw bytes");
@@ -165,6 +183,39 @@ public class ResponseBodyParser {
         return objectMapper.readValue(body, type);
     }
 
+    /**
+     * Parses a String response body into the specified target type.
+     *
+     * <p>Two cases handled:
+     * <ul>
+     *     <li>If the target type is {@code String}, returns the raw String</li>
+     *     <li>Attempts JSON deserialization via ObjectMapper.</li>
+     * </ul>
+     * </p>
+     *
+     * @param body the raw response body as a String (must not be {@code null})
+     * @param type the target class to parse into (must not be {@code null})
+     * @param <T>  the target type for deserialization
+     * @return the parsed object, or raw String if {@code type == String.class}
+     * @throws JsonProcessingException if parsing fails (invalid JSON)
+     */
+
+    /**
+     * Parses a String response body into the specified target type.
+     *
+     * <p>Handles two cases:
+     * <ul>
+     *     <li>If the target type is {@code String}, returns the raw String unchanged</li>
+     *     <li>Otherwise, attempts JSON deserialization using {@link ObjectMapper}</li>
+     * </ul>
+     *
+     * @param body the raw response body as a String (must not be {@code null})
+     * @param type the target class to parse into (must not be {@code null})
+     * @param <T>  the target type for deserialization
+     * @return the parsed object of type {@code T}, or the original String if {@code type == String.class}
+     * @throws JsonProcessingException  if JSON parsing fails (malformed content)
+     * @throws IllegalArgumentException if {@code type} is incompatible with the input
+     */
     private <T> T parseStringBody(String body, Class<T> type) throws JsonProcessingException {
         if (String.class.equals(type)) {
             log.debug("Parsed body will be returned as raw String");
@@ -179,6 +230,25 @@ public class ResponseBodyParser {
         return objectMapper.readValue(body, type);
     }
 
+    /**
+     * Converts a structured response body (Map, List or other Object) into the specified target type.
+     *
+     * <p>Uses Jackson's {@link ObjectMapper#convertValue} to perform type conversion.
+     * Typically handles cases where the body is already parsed as:
+     * <ul>
+     *     <li>{@link java.util.Map} (for JSON objects)</li>
+     *     <li>{@link java.util.List} (for JSON arrays)</li>
+     *     <li>Other pre-deserialized POJOs</li>
+     * </ul>
+     *
+     * @param body the structured response body (Map, List or other Object) (must not be {@code null})
+     * @param type the target class to convert into (must not be {@code null})
+     * @param <T>  the target type for conversion
+     * @return the converted object of type {@code T}
+     * @throws IllegalArgumentException if conversion fails (incompatible types, etc.)
+     * @throws IllegalStateException    if ObjectMapper configuration prevents conversion
+     * @see ObjectMapper#convertValue(Object, Class)
+     */
     private <T> T parseObjectBody(Object body, Class<T> type) {
         log.debug("Attempting to convert body from 'Object' (e.g.: Map, List) to '{}'", type.getSimpleName());
         return objectMapper.convertValue(body, type);
