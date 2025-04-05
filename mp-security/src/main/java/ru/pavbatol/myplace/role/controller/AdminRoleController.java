@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/roles")
+@RequestMapping("${api.prefix}/admin/roles")
 @Tag(name = "Admin: Role", description = "API for working with roles")
 public class AdminRoleController {
 

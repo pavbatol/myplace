@@ -25,6 +25,11 @@ public class BaseRestClient {
 
     //-- GET
     protected <T> ResponseEntity<Object> get(@NonNull String path,
+                                             @Nullable HttpHeaders initialHttpHeaders) {
+        return executeRequest(path, HttpMethod.GET, null, null, initialHttpHeaders, null, null);
+    }
+
+    protected <T> ResponseEntity<Object> get(@NonNull String path,
                                              @Nullable UUID userUuid,
                                              @Nullable Long userId,
                                              @Nullable HttpHeaders initialHttpHeaders,

@@ -27,6 +27,12 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
+        <dependency><!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.7.10</version>
+        </dependency>
+
     </dependencies>
 
     <build>
