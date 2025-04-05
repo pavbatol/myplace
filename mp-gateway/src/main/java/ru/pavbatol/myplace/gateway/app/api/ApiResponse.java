@@ -1,10 +1,6 @@
 package ru.pavbatol.myplace.gateway.app.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.experimental.Accessors;
+import lombok.*;
 import org.springframework.http.HttpStatus;
 import ru.pavbatol.myplace.shared.dto.api.ApiError;
 
@@ -14,7 +10,7 @@ import ru.pavbatol.myplace.shared.dto.api.ApiError;
  *
  * <p><strong>Structure:</strong>
  * <ul>
- *   <li>{@code status} – HTTP status code (e.g., 200 OK, 404 Not Found)</li>
+ *   <li>{@code status} – HTTP status code (must not be null)</li>
  *   <li>{@code data} – Payload of type {@code T}</li>
  *   <li>{@code error} – Details of an error (nullable, populated on failures or if needed)</li>
  * </ul>
@@ -38,14 +34,12 @@ import ru.pavbatol.myplace.shared.dto.api.ApiError;
  * @see HttpStatus
  * @see ApiError
  */
-@Data
-@Accessors(chain = true)
-@AllArgsConstructor
-@NoArgsConstructor
+@Value
 public class ApiResponse<T> {
-    private HttpStatus status;
-    private T data;
-    private ApiError error;
+    @NonNull
+    HttpStatus status;
+    T data;
+    ApiError error;
 
     /**
      * Creates a success response with payload and HTTP status.
@@ -55,10 +49,7 @@ public class ApiResponse<T> {
      * @return {@link ApiResponse} with populated data
      */
     public static <T> ApiResponse<T> success(@NonNull T data, @NonNull HttpStatus status) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setData(data);
-        response.setStatus(status);
-        return response;
+        return new ApiResponse<>(status, data, null);
     }
 
     /**
@@ -69,10 +60,7 @@ public class ApiResponse<T> {
      * @return {@link ApiResponse} with populated error
      */
     public static <T> ApiResponse<T> error(@NonNull ApiError error, @NonNull HttpStatus status) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setError(error);
-        response.setStatus(status);
-        return response;
+        return new ApiResponse<>(status, null, error);
     }
 
     /**
@@ -83,8 +71,6 @@ public class ApiResponse<T> {
      * @return {@link ApiResponse} with only status set
      */
     public static <T> ApiResponse<T> status(@NonNull HttpStatus status) {
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setStatus(status);
-        return response;
+        return new ApiResponse<>(status, null, null);
     }
 }
