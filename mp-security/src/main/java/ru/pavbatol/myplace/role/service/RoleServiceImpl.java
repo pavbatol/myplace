@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
-import ru.pavbatol.myplace.role.dto.RoleDto;
 import ru.pavbatol.myplace.role.mapper.RoleMapper;
 import ru.pavbatol.myplace.role.model.Role;
 import ru.pavbatol.myplace.role.repository.RoleRepository;
+import ru.pavbatol.myplace.shared.dto.security.role.RoleDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

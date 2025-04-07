@@ -1,6 +1,7 @@
 package ru.pavbatol.myplace.role.service;
 
-import ru.pavbatol.myplace.role.dto.RoleDto;
+
+import ru.pavbatol.myplace.shared.dto.security.role.RoleDto;
 
 import java.util.List;
 

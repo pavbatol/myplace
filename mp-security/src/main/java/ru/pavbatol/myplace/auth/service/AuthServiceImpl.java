@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
     public static final String KEY_SEPARATOR = " "; //Since it is impossible to register a user with login containing a space
     private static final String USER_AGENT_HEADER = "User-Agent";
     private static final String DEFAULT_USER_AGENT = "no-user-agent";
-    private static final String DEFAULT_AP = "no-ap";
+    private static final String DEFAULT_IP = "no-ip";
     private final UserJpaRepository userJpaRepository;
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
     private final AccessTokenRedisRepository accessTokenRedisRepository;
@@ -227,7 +227,7 @@ public class AuthServiceImpl implements AuthService {
         String composedKey = composeKey(servletRequest, login);
 
         String ip = servletRequest.getRemoteAddr() != null && !servletRequest.getRemoteAddr().isEmpty()
-                ? servletRequest.getRemoteAddr() : DEFAULT_AP;
+                ? servletRequest.getRemoteAddr() : DEFAULT_IP;
 
         UserAgent parsedUserAgent = UserAgent.parseUserAgentString(servletRequest.getHeader(USER_AGENT_HEADER));
         OperatingSystem operatingSystem = parsedUserAgent.getOperatingSystem();
@@ -273,7 +273,7 @@ public class AuthServiceImpl implements AuthService {
                 new NotFoundException(String.format("%s not found by %s ", User.class.getSimpleName(), uuid)));
     }
 
-    private String getMD5Hash(String input) {
+    private String getMD5Hash(@NonNull String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(input.getBytes(StandardCharsets.UTF_8));
