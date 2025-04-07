@@ -5,7 +5,7 @@ import lombok.Value;
 import javax.validation.constraints.*;
 
 @Value
-public class UserDtoRegistry {
+public class UserDtoRegistry_old {
     @NotBlank
     @Email
     String email;

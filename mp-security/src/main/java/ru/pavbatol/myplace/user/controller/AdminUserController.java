@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.user.dto.UserDtoResponse;
-import ru.pavbatol.myplace.user.dto.UserDtoUpdateRoles;
+import ru.pavbatol.myplace.shared.dto.security.user.UserDtoResponse;
+import ru.pavbatol.myplace.shared.dto.security.user.UserDtoUpdateRoles;
 import ru.pavbatol.myplace.user.service.UserService;
 
 import javax.validation.Valid;

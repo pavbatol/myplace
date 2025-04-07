@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.user.dto;
+package ru.pavbatol.myplace.shared.dto.security.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

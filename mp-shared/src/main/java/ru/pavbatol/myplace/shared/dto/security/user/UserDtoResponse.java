@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.user.dto;
+package ru.pavbatol.myplace.shared.dto.security.user;
 
 import lombok.Value;
 import ru.pavbatol.myplace.shared.dto.security.role.RoleDto;

@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.user.dto.UserDtoUpdatePassword;
+import ru.pavbatol.myplace.shared.dto.security.user.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.user.service.UserService;
 
 import javax.validation.Valid;

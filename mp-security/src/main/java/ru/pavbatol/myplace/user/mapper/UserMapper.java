@@ -3,8 +3,8 @@ package ru.pavbatol.myplace.user.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
-import ru.pavbatol.myplace.user.dto.UserDtoResponse;
+import ru.pavbatol.myplace.shared.dto.security.user.UserDtoRegistry;
+import ru.pavbatol.myplace.shared.dto.security.user.UserDtoResponse;
 import ru.pavbatol.myplace.user.model.User;
 import ru.pavbatol.myplace.user.model.UserUnverified;
 

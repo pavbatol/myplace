@@ -1,6 +1,6 @@
 package ru.pavbatol.myplace.user.service;
 
-import ru.pavbatol.myplace.user.dto.*;
+import ru.pavbatol.myplace.shared.dto.security.user.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

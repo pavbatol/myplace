@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.user.dto.UserDtoConfirm;
-import ru.pavbatol.myplace.user.dto.UserDtoRegistry;
+import ru.pavbatol.myplace.shared.dto.security.user.UserDtoConfirm;
+import ru.pavbatol.myplace.shared.dto.security.user.UserDtoRegistry;
 import ru.pavbatol.myplace.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
