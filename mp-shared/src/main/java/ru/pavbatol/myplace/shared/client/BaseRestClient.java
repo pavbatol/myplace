@@ -30,6 +30,12 @@ public class BaseRestClient {
     }
 
     protected <T> ResponseEntity<Object> get(@NonNull String path,
+                                             @Nullable HttpHeaders initialHttpHeaders,
+                                             @Nullable Map<String, Object> parameters) {
+        return executeRequest(path, HttpMethod.GET, null, null, initialHttpHeaders, null, parameters);
+    }
+
+    protected <T> ResponseEntity<Object> get(@NonNull String path,
                                              @Nullable UUID userUuid,
                                              @Nullable Long userId,
                                              @Nullable HttpHeaders initialHttpHeaders,
@@ -39,7 +45,6 @@ public class BaseRestClient {
     }
 
     //-- POST
-
     protected ResponseEntity<Object> post(@NonNull String path,
                                           @Nullable HttpHeaders initialHttpHeaders) {
         return post(path, null, null, initialHttpHeaders, null, null);
@@ -61,6 +66,12 @@ public class BaseRestClient {
     }
 
     //-- PATCH
+    protected <T> ResponseEntity<Object> patch(@NonNull String path,
+                                               @Nullable HttpHeaders initialHttpHeaders,
+                                               @Nullable T body) {
+        return executeRequest(path, HttpMethod.PATCH, null, null, initialHttpHeaders, body, null);
+    }
+
     protected <T> ResponseEntity<Object> patch(@NonNull String path,
                                                @Nullable UUID userUuid,
                                                @Nullable Long userId,
