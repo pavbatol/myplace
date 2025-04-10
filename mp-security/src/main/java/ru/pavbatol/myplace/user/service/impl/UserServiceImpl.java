@@ -160,13 +160,17 @@ public class UserServiceImpl implements UserService {
             emailService.sendSimpleMessage(dto.getEmail(), "Confirmation code", text);
         } catch (SendingMailException e) {
             if (hasTestMailSenderBypassing) {
-                log.error("{} {}", e.getMessage(), e.getReason());
+                log.error("Exception was raised but suppressed due to the active 'test-mail-sender-bypassing' profile: {} {}", e.getMessage(), e.getReason());
             } else {
                 throw new SendingMailException(e.getMessage(), e.getReason());
             }
         }
 
-        log.debug("Data for confirmation: email: {}, code: {}", dto.getEmail(), code);
+        if (environment.matchesProfiles("production", "prod")) {
+            log.debug("Data for confirmation: email: {}, code: [PROTECTED]", dto.getEmail());
+        } else {
+            log.debug("Data for confirmation (visible only in non-prod): email: {}, code: {}", dto.getEmail(), code);
+        }
 
         return hasTestConfirmationCodeReading ? code : "Confirmation code has been sent to your email address.\nConfirm your email.";
     }

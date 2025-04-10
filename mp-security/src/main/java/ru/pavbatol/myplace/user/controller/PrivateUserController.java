@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("${api.prefix}/users")
 @RequiredArgsConstructor
 @Tag(name = "Private: User", description = "API for working with User")
 public class PrivateUserController {

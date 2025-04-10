@@ -19,7 +19,7 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/users")
+@RequestMapping("${api.prefix}/admin/users")
 @Tag(name = "Admin: User", description = "API for working with users")
 public class AdminUserController {
 
