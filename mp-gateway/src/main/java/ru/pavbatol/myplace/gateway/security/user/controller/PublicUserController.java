@@ -4,11 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.security.user.service.SecurityUserService;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoConfirm;
@@ -27,17 +25,20 @@ public class PublicUserController {
 
     @PostMapping("/registry")
     @Operation(summary = "register", description = "registering a new user")
-    public ResponseEntity<ApiResponse<String>> register(HttpServletRequest servletRequest, @Valid @RequestBody UserDtoRegistry dtoRegister) {
+    public ResponseEntity<ApiResponse<String>> register(HttpServletRequest servletRequest,
+                                                        @Valid @RequestBody UserDtoRegistry dtoRegister,
+                                                        @RequestHeader HttpHeaders headers) {
         log.debug("POST register() with email:{}, login: {}, password: hidden for security", dtoRegister.getEmail(), dtoRegister.getLogin());
-        ApiResponse<String> apiResponse = service.register(servletRequest, dtoRegister);
+        ApiResponse<String> apiResponse = service.register(servletRequest, dtoRegister, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
     @PostMapping("/confirmation")
     @Operation(summary = "confirmRegistration", description = "confirming registration")
-    public ResponseEntity<ApiResponse<String>> confirmRegistration(@Valid @RequestBody UserDtoConfirm dto) {
+    public ResponseEntity<ApiResponse<String>> confirmRegistration(@Valid @RequestBody UserDtoConfirm dto,
+                                                                   @RequestHeader HttpHeaders headers) {
         log.debug("POST confirmRegistration() with dto: {}", dto);
-        ApiResponse<String> apiResponse = service.confirmRegistration(dto);
+        ApiResponse<String> apiResponse = service.confirmRegistration(dto, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 }

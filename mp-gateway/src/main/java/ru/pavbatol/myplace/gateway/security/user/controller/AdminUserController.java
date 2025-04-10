@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
@@ -30,27 +31,30 @@ public class AdminUserController {
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "updateRoles", description = "setting new role list")
     public ResponseEntity<ApiResponse<UserDtoResponse>> updateRoles(@PathVariable("userUuid") UUID userUuid,
-                                                                    @RequestBody @Valid UserDtoUpdateRoles dto) {
+                                                                    @RequestBody @Valid UserDtoUpdateRoles dto,
+                                                                    @RequestHeader HttpHeaders headers) {
         log.debug("PUT updateRoles() with userUuid: {}, dto: {}", userUuid, dto);
-        ApiResponse<UserDtoResponse> apiResponse = service.updateRoles(userUuid, dto);
+        ApiResponse<UserDtoResponse> apiResponse = service.updateRoles(userUuid, dto, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
     @DeleteMapping("/{userUuid}")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "delete", description = "deleting a user (marks as deleted)")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable("userUuid") UUID userUuid) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable("userUuid") UUID userUuid,
+                                                    @RequestHeader HttpHeaders headers) {
         log.debug("DELETE delete() with userUuid {}", userUuid);
-        ApiResponse<Void> apiResponse = service.delete(userUuid);
+        ApiResponse<Void> apiResponse = service.delete(userUuid, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
     @GetMapping("/{userUuid}")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "findByUuid", description = "getting a user by Id")
-    public ResponseEntity<ApiResponse<UserDtoResponse>> findByUuid(@PathVariable("userUuid") UUID userUuid) {
+    public ResponseEntity<ApiResponse<UserDtoResponse>> findByUuid(@PathVariable("userUuid") UUID userUuid,
+                                                                   @RequestHeader HttpHeaders headers) {
         log.debug("GET findByUuid() with userUuid {}", userUuid);
-        ApiResponse<UserDtoResponse> apiResponse = service.findByUuid(userUuid);
+        ApiResponse<UserDtoResponse> apiResponse = service.findByUuid(userUuid, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
@@ -58,9 +62,10 @@ public class AdminUserController {
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "findAll", description = "getting users page by page")
     public ResponseEntity<ApiResponse<List<UserDtoResponse>>> findAll(@RequestParam(value = "from", defaultValue = "0") Integer from,
-                                                                      @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                                                      @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                                      @RequestHeader HttpHeaders headers) {
         log.debug("GET findAll()");
-        ApiResponse<List<UserDtoResponse>> apiResponse = service.findAll(from, size);
+        ApiResponse<List<UserDtoResponse>> apiResponse = service.findAll(from, size, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 }

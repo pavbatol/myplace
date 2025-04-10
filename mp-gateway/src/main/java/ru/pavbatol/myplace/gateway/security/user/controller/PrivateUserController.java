@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,10 @@ public class PrivateUserController {
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "changePassword", description = "setting new password")
     public ResponseEntity<ApiResponse<Void>> changePassword(@PathVariable(value = "userUuid") UUID userUuid,
-                                                            @Valid @RequestBody UserDtoUpdatePassword dto) {
+                                                            @Valid @RequestBody UserDtoUpdatePassword dto,
+                                                            @RequestHeader HttpHeaders headers) {
         log.debug("POST changePassword() with userUuid: {}, dto: hidden for security", userUuid);
-        ApiResponse<Void> apiResponse = service.changePassword(userUuid, dto);
+        ApiResponse<Void> apiResponse = service.changePassword(userUuid, dto, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
@@ -38,9 +40,10 @@ public class PrivateUserController {
     @GetMapping("/{userUuid}/id")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "getIdByUuid", description = "obtaining User id by UUID")
-    public ResponseEntity<ApiResponse<Long>> getIdByUuid(@PathVariable(value = "userUuid") UUID userUuid) {
+    public ResponseEntity<ApiResponse<Long>> getIdByUuid(@PathVariable(value = "userUuid") UUID userUuid,
+                                                         @RequestHeader HttpHeaders headers) {
         log.debug("POST getIdByUuid() with userUuid: {}", userUuid);
-        ApiResponse<Long> apiResponse = service.getIdByUuid(userUuid);
+        ApiResponse<Long> apiResponse = service.getIdByUuid(userUuid, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 }
