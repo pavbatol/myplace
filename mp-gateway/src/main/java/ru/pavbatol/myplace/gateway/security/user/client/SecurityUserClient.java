@@ -4,7 +4,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import ru.pavbatol.myplace.shared.dto.security.user.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
 public interface SecurityUserClient {
@@ -20,7 +19,7 @@ public interface SecurityUserClient {
 
     ResponseEntity<Object> getIdByUuid(UUID userUuid, HttpHeaders headers);
 
-    ResponseEntity<Object> register(HttpServletRequest servletRequest, UserDtoRegistry dtoRegister, HttpHeaders headers);
+    ResponseEntity<Object> register(UserDtoRegistry dto, HttpHeaders headers);
 
     ResponseEntity<Object> confirmRegistration(UserDtoConfirm dto, HttpHeaders headers);
 }

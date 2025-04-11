@@ -9,7 +9,6 @@ import ru.pavbatol.myplace.gateway.app.api.ResponseHandler;
 import ru.pavbatol.myplace.gateway.security.user.client.SecurityUserClient;
 import ru.pavbatol.myplace.shared.dto.security.user.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,21 +44,25 @@ public class SecurityUserServiceImpl implements SecurityUserService {
 
     @Override
     public ApiResponse<Void> changePassword(UUID userUuid, UserDtoUpdatePassword dto, HttpHeaders headers) {
-        return null;
+        ResponseEntity<Object> response = client.changePassword(userUuid, dto, headers);
+        return responseHandler.processResponse(response, Void.class);
     }
 
     @Override
     public ApiResponse<Long> getIdByUuid(UUID userUuid, HttpHeaders headers) {
-        return null;
+        ResponseEntity<Object> response = client.getIdByUuid(userUuid, headers);
+        return responseHandler.processResponse(response, Long.class);
     }
 
     @Override
-    public ApiResponse<String> register(HttpServletRequest servletRequest, UserDtoRegistry dtoRegister, HttpHeaders headers) {
-        return null;
+    public ApiResponse<String> register(UserDtoRegistry dtoRegister, HttpHeaders headers) {
+        ResponseEntity<Object> response = client.register(dtoRegister, headers);
+        return responseHandler.processResponse(response, String.class);
     }
 
     @Override
     public ApiResponse<String> confirmRegistration(UserDtoConfirm dto, HttpHeaders headers) {
-        return null;
+        ResponseEntity<Object> response = client.confirmRegistration(dto, headers);
+        return responseHandler.processResponse(response, String.class);
     }
 }

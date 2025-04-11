@@ -12,7 +12,6 @@ import ru.pavbatol.myplace.gateway.security.user.service.SecurityUserService;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoConfirm;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoRegistry;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Slf4j
@@ -25,11 +24,10 @@ public class PublicUserController {
 
     @PostMapping("/registry")
     @Operation(summary = "register", description = "registering a new user")
-    public ResponseEntity<ApiResponse<String>> register(HttpServletRequest servletRequest,
-                                                        @Valid @RequestBody UserDtoRegistry dtoRegister,
+    public ResponseEntity<ApiResponse<String>> register(@Valid @RequestBody UserDtoRegistry dtoRegister,
                                                         @RequestHeader HttpHeaders headers) {
         log.debug("POST register() with email:{}, login: {}, password: hidden for security", dtoRegister.getEmail(), dtoRegister.getLogin());
-        ApiResponse<String> apiResponse = service.register(servletRequest, dtoRegister, headers);
+        ApiResponse<String> apiResponse = service.register(dtoRegister, headers);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 

@@ -13,13 +13,14 @@ import ru.pavbatol.myplace.shared.dto.security.user.UserDtoRegistry;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoUpdateRoles;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.UUID;
 
 @Component
 public class SecurityUserClientImpl extends BaseRestClient implements SecurityUserClient {
     private static final String ADMIN_USER_CONTEXT = "/admin/users";
+    private static final String PRIVATE_USER_CONTEXT = "/users";
+    private static final String PUBLIC_AUTH_CONTEXT = "/auth";
 
     public SecurityUserClientImpl(@Value("${app.mp.security.url}") String serverUrl,
                                   RestTemplateBuilder builder) {
@@ -69,21 +70,33 @@ public class SecurityUserClientImpl extends BaseRestClient implements SecurityUs
 
     @Override
     public ResponseEntity<Object> changePassword(UUID userUuid, UserDtoUpdatePassword dto, HttpHeaders headers) {
-        return null;
+        String resourcePath = String.format("/%s/password", userUuid);
+        String fullResourcePath = PRIVATE_USER_CONTEXT + resourcePath;
+
+        return patch(fullResourcePath, headers, dto);
     }
 
     @Override
     public ResponseEntity<Object> getIdByUuid(UUID userUuid, HttpHeaders headers) {
-        return null;
+        String resourcePath = String.format("/%s/id", userUuid);
+        String fullResourcePath = PRIVATE_USER_CONTEXT + resourcePath;
+
+        return get(fullResourcePath, headers);
     }
 
     @Override
-    public ResponseEntity<Object> register(HttpServletRequest servletRequest, UserDtoRegistry dtoRegister, HttpHeaders headers) {
-        return null;
+    public ResponseEntity<Object> register(UserDtoRegistry dto, HttpHeaders headers) {
+        String resourcePath = "/registry";
+        String fullResourcePath = PUBLIC_AUTH_CONTEXT + resourcePath;
+
+        return post(fullResourcePath, headers, dto);
     }
 
     @Override
     public ResponseEntity<Object> confirmRegistration(UserDtoConfirm dto, HttpHeaders headers) {
-        return null;
+        String resourcePath = "/confirmation";
+        String fullResourcePath = PUBLIC_AUTH_CONTEXT + resourcePath;
+
+        return post(fullResourcePath, headers, dto);
     }
 }
