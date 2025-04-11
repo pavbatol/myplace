@@ -14,6 +14,14 @@ import ru.pavbatol.myplace.shared.dto.security.user.UserDtoRegistry;
 
 import javax.validation.Valid;
 
+/**
+ * Public API for user authentication and registration.
+ * Provides endpoints for user registration and email confirmation.
+ * <p>
+ * All endpoints are publicly accessible (no authentication required).
+ *
+ * @see SecurityUserService
+ */
 @Slf4j
 @RestController
 @RequestMapping("${api.prefix}/${app.mp.security.label}/auth")
@@ -23,7 +31,14 @@ public class PublicUserController {
     private final SecurityUserService service;
 
     @PostMapping("/registry")
-    @Operation(summary = "register", description = "registering a new user")
+    @Operation(
+            summary = "Register a new user",
+            description = "Accepts user credentials and initiates the registration process. A confirmation email may be sent.",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Registration initiated successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input data or User already exists")
+            }
+    )
     public ResponseEntity<ApiResponse<String>> register(@Valid @RequestBody UserDtoRegistry dtoRegister,
                                                         @RequestHeader HttpHeaders headers) {
         log.debug("POST register() with email:{}, login: {}, password: hidden for security", dtoRegister.getEmail(), dtoRegister.getLogin());
@@ -32,7 +47,14 @@ public class PublicUserController {
     }
 
     @PostMapping("/confirmation")
-    @Operation(summary = "confirmRegistration", description = "confirming registration")
+    @Operation(
+            summary = "Confirm user registration",
+            description = "Validates a registration code and activates the user account.",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Account activated successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid/expired token")
+            }
+    )
     public ResponseEntity<ApiResponse<String>> confirmRegistration(@Valid @RequestBody UserDtoConfirm dto,
                                                                    @RequestHeader HttpHeaders headers) {
         log.debug("POST confirmRegistration() with dto: {}", dto);

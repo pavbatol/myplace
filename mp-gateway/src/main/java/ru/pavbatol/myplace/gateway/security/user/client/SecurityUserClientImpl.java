@@ -16,6 +16,30 @@ import ru.pavbatol.myplace.shared.dto.security.user.UserDtoUpdateRoles;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * REST client implementation for Security User Service API.
+ * Handles user management operations including roles, authentication, and registration.
+ *
+ * <p>Key features:</p>
+ * <ul>
+ *   <li>User role management (admin context)</li>
+ *   <li>User CRUD operations</li>
+ *   <li>Password changes</li>
+ *   <li>User registration and confirmation</li>
+ * </ul>
+ *
+ * <p>Uses three API contexts:</p>
+ * <ul>
+ *   <li>{@value #ADMIN_USER_CONTEXT} - Administrative operations</li>
+ *   <li>{@value #PRIVATE_USER_CONTEXT} - User-specific private operations</li>
+ *   <li>{@value #PUBLIC_AUTH_CONTEXT} - Public authentication endpoints</li>
+ * </ul>
+ *
+ * <p>Extends {@link BaseRestClient} for core REST functionality.</p>
+ *
+ * @see SecurityUserClient
+ * @see BaseRestClient
+ */
 @Component
 public class SecurityUserClientImpl extends BaseRestClient implements SecurityUserClient {
     private static final String ADMIN_USER_CONTEXT = "/admin/users";

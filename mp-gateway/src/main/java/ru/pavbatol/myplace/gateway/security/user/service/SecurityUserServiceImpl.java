@@ -12,6 +12,28 @@ import ru.pavbatol.myplace.shared.dto.security.user.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service layer implementation for user security operations.
+ * Acts as a mediator between controllers and the security client, adding response processing logic.
+ *
+ * <p>Key responsibilities:</p>
+ * <ul>
+ *   <li>Delegates operations to {@link SecurityUserClient} implementation</li>
+ *   <li>Standardizes API responses using {@link ResponseHandler}</li>
+ *   <li>Handles data transformation between DTOs and API responses</li>
+ * </ul>
+ *
+ * <p>Follows the facade pattern to simplify client interactions and provide:</p>
+ * <ul>
+ *   <li>Uniform error handling</li>
+ *   <li>Response standardization</li>
+ *   <li>Type-safe DTO conversions</li>
+ * </ul>
+ *
+ * @see SecurityUserService
+ * @see SecurityUserClient
+ * @see ResponseHandler
+ */
 @Service
 @RequiredArgsConstructor
 public class SecurityUserServiceImpl implements SecurityUserService {
