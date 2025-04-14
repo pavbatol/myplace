@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.security.user.service.SecurityUserService;
@@ -16,6 +15,26 @@ import ru.pavbatol.myplace.shared.dto.security.user.UserDtoUpdatePassword;
 import javax.validation.Valid;
 import java.util.UUID;
 
+/**
+ * REST controller for authenticated user operations.
+ * Provides endpoints for password management and user identifier lookup.
+ *
+ * <p>All endpoints require a valid JWT token in the request headers.
+ *
+ * <p>The base path is constructed from application properties:
+ * ${api.prefix}/${app.mp.security.label}/users
+ *
+ * <p>Supported operations include:
+ * <ul>
+ *   <li>Changing a user's password (with proper validation)</li>
+ *   <li>Retrieving a user's internal ID by their UUID</li>
+ * </ul>
+ *
+ * <p>Security note: Password-related operations log requests without exposing sensitive data.
+ *
+ * @see SecurityUserService The underlying service handling business logic
+ * @see UserDtoUpdatePassword The DTO used for password change operations
+ */
 @Slf4j
 @RestController
 @RequestMapping("${api.prefix}/${app.mp.security.label}/users")
@@ -24,7 +43,6 @@ import java.util.UUID;
 public class PrivateUserController {
     private final SecurityUserService service;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PatchMapping("/{userUuid}/password")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "changePassword", description = "setting new password")
@@ -36,7 +54,6 @@ public class PrivateUserController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{userUuid}/id")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "getIdByUuid", description = "obtaining User id by UUID")

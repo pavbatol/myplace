@@ -17,6 +17,25 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST controller for administrative user management operations.
+ * Provides endpoints for managing user roles, soft-deleting users, and retrieving user information.
+ *
+ * <p>All endpoints require a valid JWT token in the request headers for authorization.
+ * The base path is constructed from application properties: ${api.prefix}/${app.mp.security.label}/admin/users
+ *
+ * <p>This controller includes operations for:
+ * <ul>
+ *   <li>Updating user roles</li>
+ *   <li>Soft-deleting users (marking as deleted)</li>
+ *   <li>Retrieving individual users by UUID</li>
+ *   <li>Fetching paginated lists of users</li>
+ * </ul>
+ *
+ * @see SecurityUserService The underlying service that handles business logic
+ * @see UserDtoResponse The DTO returned for user data
+ * @see UserDtoUpdateRoles The DTO used for role update operations
+ */
 @Slf4j
 @CrossOrigin
 @RestController
