@@ -11,6 +11,24 @@ import ru.pavbatol.myplace.shared.dto.security.role.RoleDto;
 
 import java.util.List;
 
+/**
+ * Service implementation for role management operations.
+ * Provides business logic for retrieving role information from the security system.
+ *
+ * <p><b>Key functionality:</b>
+ * <ul>
+ *   <li>Retrieve role details by ID</li>
+ *   <li>List all available roles in the system</li>
+ * </ul>
+ *
+ * <p><b>Security context:</b> All operations typically require administrative privileges.</p>
+ *
+ * <p>Delegates to {@link SecurityRoleClient} for communication with the role service API
+ * and uses {@link ResponseHandler} for standardized response formatting.</p>
+ *
+ * @see SecurityRoleService
+ * @see SecurityRoleClient
+ */
 @Service
 @RequiredArgsConstructor
 public class SecurityRoleServiceImpl implements SecurityRoleService {

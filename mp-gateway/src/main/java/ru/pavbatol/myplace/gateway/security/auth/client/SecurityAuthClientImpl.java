@@ -13,6 +13,38 @@ import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
 
 import java.util.UUID;
 
+/**
+ * REST client implementation for Security Authentication Service API.
+ * Provides operations for token management and user authentication.
+ *
+ * <p>Main functionality includes:</p>
+ *
+ * <ul>
+ *   <li><b>Admin operations:</b> Token management (list/remove tokens)</li>
+ *   <li><b>Private operations:</b> Obtain new refresh token, logout from all sessions</li>
+ *   <li><b>Public operations:</b> Login, logout, obtain new access token</li>
+ * </ul>
+ *
+ * <p>Handles the following token operations:</p>
+ * <ul>
+ *   <li>Login (obtain new tokens)</li>
+ *   <li>Logout (invalidate current token)</li>
+ *   <li>Remove specific tokens (admin)</li>
+ *   <li>Remove all tokens (admin)</li>
+ *   <li>Token refresh</li>
+ * </ul>
+ *
+ * <p>Uses three API contexts:</p>
+ * <ul>
+ *   <li>{@value #ADMIN_AUTH_CONTEXT} - Administrative operations</li>
+ *   <li>{@value #PRIVATE_AUTH_CONTEXT} - User-specific private operations</li>
+ *   <li>{@value #PUBLIC_AUTH_CONTEXT} - Public authentication endpoints</li>
+ * </ul>
+ *
+ * <p>Extends {@link BaseRestClient} for core REST functionality.</p>
+ *
+ * @see SecurityAuthClient
+ */
 @Slf4j
 @Service
 public class SecurityAuthClientImpl extends BaseRestClient implements SecurityAuthClient {

@@ -16,6 +16,22 @@ import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+/**
+ * Public authentication controller handling core security operations.
+ * Provides unauthenticated endpoints for user login and token management.
+ *
+ * <p><b>Key operations:</b>
+ * <ul>
+ *   <li>User login with credentials</li>
+ *   <li>Access token refresh</li>
+ *   <li>Session logout</li>
+ * </ul>
+ *
+ * <p><b>Security:</b> All endpoints are publicly accessible and do not require prior authentication.
+ * The controller implements security measures for credential validation and token generation.</p>
+ *
+ * <p><b>Base Path:</b> {@code ${api.prefix}/${app.mp.security.label}/auth}</p>
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor

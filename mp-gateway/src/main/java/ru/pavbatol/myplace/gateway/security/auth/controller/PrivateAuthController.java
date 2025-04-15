@@ -16,6 +16,19 @@ import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+/**
+ * REST controller for user-specific authentication operations.
+ * Provides endpoints for token refresh and session management.
+ *
+ * <p>This controller handles private user authentication flows that require valid JWT credentials.
+ * All operations are performed in the context of the currently authenticated user.</p>
+ *
+ * <p><b>Base Path:</b> {@code ${api.prefix}/${app.mp.security.label}/users/auth}</p>
+ *
+ * <p><b>Security:</b> All endpoints require valid user authentication except where noted.</p>
+ *
+ * @see SecurityAuthService
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -36,6 +49,7 @@ public class PrivateAuthController {
     }
 
     @PostMapping("/logout/all")
+    @SecurityRequirement(name = "JWT")
     @Operation(summary = "logoutAllSessions", description = "log out on all devices")
     public ResponseEntity<ApiResponse<String>> logoutAllSessions(HttpServletRequest servletRequest) {
         log.debug("POST logoutAllSessions()");

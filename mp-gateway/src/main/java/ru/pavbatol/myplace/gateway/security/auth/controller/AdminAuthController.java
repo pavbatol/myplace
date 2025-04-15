@@ -14,6 +14,15 @@ import ru.pavbatol.myplace.gateway.security.auth.service.SecurityAuthService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
 
+/**
+ * Administrative controller for managing authentication tokens and sessions.
+ * Provides endpoints for revoking user tokens (access/refresh) and clearing authentication storage.
+ *
+ * <p><b>Security:</b> All endpoints require JWT authentication with admin privileges.</p>
+ * <p><b>Path:</b> {@code ${api.prefix}/${app.mp.security.label}/admin/auth}</p>
+ *
+ * @see SecurityAuthService
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
