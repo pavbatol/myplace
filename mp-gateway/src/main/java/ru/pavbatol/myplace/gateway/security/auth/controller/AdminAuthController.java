@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.util.HttpUtils;
-import ru.pavbatol.myplace.gateway.security.auth.client.SecurityAuthClient;
+import ru.pavbatol.myplace.gateway.security.auth.service.SecurityAuthService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.UUID;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Tag(name = "Admin: Auth", description = "API for working with authorization")
 public class AdminAuthController {
 
-    private final SecurityAuthClient client;
+    private final SecurityAuthService service;
 
     @DeleteMapping("users/{userUuid}/refresh-tokens")
     @SecurityRequirement(name = "JWT")
@@ -29,7 +29,8 @@ public class AdminAuthController {
     public ResponseEntity<ApiResponse<Void>> removeRefreshTokensByUserUuid(HttpServletRequest servletRequest,
                                                                            @PathVariable(value = "userUuid") UUID userUuid) {
         log.debug("DELETE removeRefreshTokensByUserUuid() with userUuid: {}", userUuid);
-        return client.removeRefreshTokensByUserUuid(userUuid, HttpUtils.extractHeaders(servletRequest));
+        ApiResponse<Void> apiResponse = service.removeRefreshTokensByUserUuid(userUuid, HttpUtils.extractHeaders(servletRequest));
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
     @DeleteMapping("users/{userUuid}/access-tokens")
@@ -38,7 +39,8 @@ public class AdminAuthController {
     public ResponseEntity<ApiResponse<Void>> removeAccessTokensByUserUuid(HttpServletRequest servletRequest,
                                                                           @PathVariable(value = "userUuid") UUID userUuid) {
         log.debug("DELETE removeAccessTokensByUserUuid() with userUuid: {}", userUuid);
-        return client.removeAccessTokensByUserUuid(userUuid, HttpUtils.extractHeaders(servletRequest));
+        ApiResponse<Void> apiResponse = service.removeAccessTokensByUserUuid(userUuid, HttpUtils.extractHeaders(servletRequest));
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
     @DeleteMapping("/tokens")
@@ -47,6 +49,7 @@ public class AdminAuthController {
             description = "deleting all tokens and unverified logins and emails, existing users are not deleted")
     public ResponseEntity<ApiResponse<Void>> clearAuthStorage(HttpServletRequest servletRequest) {
         log.debug("DELETE clearAuthStorage()");
-        return client.clearAuthStorage(HttpUtils.extractHeaders(servletRequest));
+        ApiResponse<Void> apiResponse = service.clearAuthStorage(HttpUtils.extractHeaders(servletRequest));
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 }

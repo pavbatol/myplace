@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.util.HttpUtils;
-import ru.pavbatol.myplace.gateway.security.auth.client.SecurityAuthClient;
+import ru.pavbatol.myplace.gateway.security.auth.service.SecurityAuthService;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 
@@ -23,7 +23,7 @@ import javax.validation.Valid;
 @Tag(name = "Private: Auth", description = "API for working with authorization")
 public class PrivateAuthController {
 
-    private final SecurityAuthClient client;
+    private final SecurityAuthService service;
 
     @PostMapping("/refresh-tokens")
     @SecurityRequirement(name = "JWT")
@@ -31,13 +31,15 @@ public class PrivateAuthController {
     public ResponseEntity<ApiResponse<AuthDtoResponse>> getNewRefreshToken(HttpServletRequest servletRequest,
                                                                            @Valid @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {
         log.debug("POST getNewRefreshToken() with refreshToken: hidden for security");
-        return client.getNewRefreshToken(dtoRefreshRequest, HttpUtils.extractHeaders(servletRequest));
+        ApiResponse<AuthDtoResponse> apiResponse = service.getNewRefreshToken(dtoRefreshRequest, HttpUtils.extractHeaders(servletRequest));
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
     @PostMapping("/logout/all")
     @Operation(summary = "logoutAllSessions", description = "log out on all devices")
     public ResponseEntity<ApiResponse<String>> logoutAllSessions(HttpServletRequest servletRequest) {
         log.debug("POST logoutAllSessions()");
-        return client.logoutAllSessions(HttpUtils.extractHeaders(servletRequest));
+        ApiResponse<String> apiResponse = service.logoutAllSessions(HttpUtils.extractHeaders(servletRequest));
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 }

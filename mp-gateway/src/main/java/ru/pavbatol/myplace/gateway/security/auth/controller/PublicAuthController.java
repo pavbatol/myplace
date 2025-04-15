@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.util.HttpUtils;
-import ru.pavbatol.myplace.gateway.security.auth.client.SecurityAuthClient;
+import ru.pavbatol.myplace.gateway.security.auth.service.SecurityAuthService;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
@@ -23,13 +23,14 @@ import javax.validation.Valid;
 @Tag(name = "Public: Auth", description = "API for working with authorization")
 public class PublicAuthController {
 
-    private final SecurityAuthClient client;
+    private final SecurityAuthService service;
 
     @PostMapping("/logout")
     @Operation(summary = "logout", description = "log out on the current")
     public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest servletRequest) {
         log.debug("POST logout()");
-        return client.logout(HttpUtils.extractHeaders(servletRequest));
+        ApiResponse<String> apiResponse = service.logout(HttpUtils.extractHeaders(servletRequest));
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
     @PostMapping("/login")
@@ -37,7 +38,8 @@ public class PublicAuthController {
     public ResponseEntity<ApiResponse<AuthDtoResponse>> login(HttpServletRequest servletRequest,
                                                               @Valid @RequestBody AuthDtoRequest dtoAuthRequest) {
         log.debug("POST login() with login: {}, password: hidden for security", dtoAuthRequest.getLogin());
-        return client.login(dtoAuthRequest, HttpUtils.extractHeaders(servletRequest));
+        ApiResponse<AuthDtoResponse> apiResponse = service.login(dtoAuthRequest, HttpUtils.extractHeaders(servletRequest));
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
     @PostMapping("/tokens")
@@ -45,6 +47,7 @@ public class PublicAuthController {
     public ResponseEntity<ApiResponse<AuthDtoResponse>> getNewAccessToken(HttpServletRequest servletRequest,
                                                                           @Valid @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {
         log.debug("POST getNewAccessToken() with refreshToken: hidden for security");
-        return client.getNewAccessToken(dtoRefreshRequest, HttpUtils.extractHeaders(servletRequest));
+        ApiResponse<AuthDtoResponse> apiResponse = service.getNewAccessToken(dtoRefreshRequest, HttpUtils.extractHeaders(servletRequest));
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 }
