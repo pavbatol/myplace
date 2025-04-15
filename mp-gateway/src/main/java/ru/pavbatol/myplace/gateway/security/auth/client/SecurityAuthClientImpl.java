@@ -7,7 +7,6 @@ import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.pavbatol.myplace.gateway.app.api.ResponseHandler;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
@@ -22,8 +21,7 @@ public class SecurityAuthClientImpl extends BaseRestClient implements SecurityAu
     private static final String PUBLIC_AUTH_CONTEXT = "/auth";
 
     public SecurityAuthClientImpl(@Value("${app.mp.security.url}") String serverUrl,
-                                  RestTemplateBuilder builder,
-                                  ResponseHandler responseHandler) {
+                                  RestTemplateBuilder builder) {
         super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 .build());
