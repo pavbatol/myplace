@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "c47a3778-5c13-4859-a852-bb99d1fc6a86",
-		"name": "MyPlace-mp-security",
+		"_postman_id": "1a866208-ac85-4a2f-bdef-8693d770984f",
+		"name": "MyPlace-mp-gateway-security",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "23050345"
 	},
@@ -20,13 +20,16 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"pm.test(\"User register: Checking the length of the code string\", function() {",
-									"    var responseString = pm.response.text();",
+									"    var jsonData = pm.response.json();",
+									"    var responseString = jsonData.data;",
+									"    ",
 									"    pm.expect(responseString.length).to.be.at.least(5);",
 									"    pm.collectionVariables.set(\"registrationСonfirmCode\", responseString);",
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -149,13 +152,16 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"pm.test(\"User2 register: Checking the length of the code string\", function() {",
-									"    var responseString = pm.response.text();",
+									"        var jsonData = pm.response.json();",
+									"    var responseString = jsonData.data;",
+									"",
 									"    pm.expect(responseString.length).to.be.at.least(5);",
 									"    pm.collectionVariables.set(\"registrationСonfirmCode2\", responseString);",
 									"});",
 									""
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -453,13 +459,13 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test User login\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.type).to.eql('Bearer');",
 											"    pm.expect(jsonData.accessToken).to.be.not.null;",
 											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
 											"",
-											"    pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
-											"    pm.collectionVariables.set(\"refreshToken\", pm.response.json().refreshToken);",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken);",
 											"",
 											"    // Get the user's UUID from the token and save it to a variable",
 											"    // Removing quotes if they are present",
@@ -478,7 +484,8 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -520,13 +527,13 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test User login\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.type).to.eql('Bearer');",
 											"    pm.expect(jsonData.accessToken).to.be.not.null;",
 											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
 											"",
-											"    pm.collectionVariables.set(\"accessTokenOtherAgent\", pm.response.json().accessToken);",
-											"    pm.collectionVariables.set(\"refreshTokenOtherAgent\", pm.response.json().refreshToken);",
+											"    pm.collectionVariables.set(\"accessTokenOtherAgent\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshTokenOtherAgent\", jsonData.refreshToken);",
 											"",
 											"    const jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
 											"    const parts = jwt.split('.');",
@@ -541,7 +548,8 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -589,13 +597,13 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test User2 login\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.type).to.eql('Bearer');",
 											"    pm.expect(jsonData.accessToken).to.be.not.null;",
 											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
 											"",
-											"    pm.collectionVariables.set(\"accessToken2\", pm.response.json().accessToken);",
-											"    pm.collectionVariables.set(\"refreshToken2\", pm.response.json().refreshToken);",
+											"    pm.collectionVariables.set(\"accessToken2\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshToken2\", jsonData.refreshToken);",
 											"",
 											"    const jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
 											"    const parts = jwt.split('.');",
@@ -610,7 +618,8 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -814,13 +823,13 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test User login again\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.type).to.eql('Bearer');",
 											"    pm.expect(jsonData.accessToken).to.be.not.null;",
 											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
 											"",
-											"    pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
-											"    pm.collectionVariables.set(\"refreshToken\", pm.response.json().refreshToken);",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken);",
 											"",
 											"    var jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
 											"    var parts = jwt.split('.');",
@@ -835,7 +844,8 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1041,13 +1051,13 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test User login again2\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.type).to.eql('Bearer');",
 											"    pm.expect(jsonData.accessToken).to.be.not.null;",
 											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
 											"",
-											"    pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
-											"    pm.collectionVariables.set(\"refreshToken\", pm.response.json().refreshToken);",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken);",
 											"",
 											"    var jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
 											"    var parts = jwt.split('.');",
@@ -1062,7 +1072,8 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1156,13 +1167,14 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test User login again2\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.accessToken).to.be.not.null;",
-											"    pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1204,13 +1216,14 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test User login again2\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
-											"    pm.collectionVariables.set(\"refreshToken\", pm.response.json().refreshToken);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken);",
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1263,13 +1276,14 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test User login again2\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.accessToken).to.be.not.null;",
-											"    pm.collectionVariables.set(\"accessToken\", pm.response.json().accessToken);",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1552,12 +1566,13 @@
 											"    pm.response.to.be.withBody;",
 											"});",
 											"pm.test(\"Check if response body contains Number\", function () {",
-											"    var responseBody = pm.response.text();",
-											"    var isNumber = /^\\d+$/.test(responseBody);",
+											"    var data = pm.response.json().data;",
+											"    var isNumber = /^\\d+$/.test(data);",
 											"    pm.expect(isNumber).to.be.true;",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1606,13 +1621,13 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test accessToken, refreshToken are not null\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.type).to.eql('Bearer');",
 											"    pm.expect(jsonData.accessToken).to.be.not.null;",
 											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
 											"",
-											"    pm.collectionVariables.set(\"adminAccessToken\", pm.response.json().accessToken);",
-											"    pm.collectionVariables.set(\"adminRefreshToken\", pm.response.json().refreshToken);",
+											"    pm.collectionVariables.set(\"adminAccessToken\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"adminRefreshToken\", jsonData.refreshToken);",
 											"",
 											"    const jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
 											"    const parts = jwt.split('.');",
@@ -1627,7 +1642,8 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1669,7 +1685,7 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test check fields of Role\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"",
 											"    pm.expect(jsonData.id, 'Muat have id').to.be.not.null;",
 											"    pm.expect(jsonData.roleName,'Muat have roleName').to.be.not.null;",
@@ -1678,7 +1694,8 @@
 											"    pm.expect(jsonData.roleName).to.equal('USER');",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1722,14 +1739,15 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test check size of Roles\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"",
 											"    pm.expect(jsonData, 'Muat be array').to.be.an('array');    ",
 											"    pm.expect(jsonData.length).to.be.at.least(2);",
 											"    pm.expect(jsonData.map(role => role.roleName)).to.include.members([\"ADMIN\", \"USER\"]);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1772,7 +1790,7 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test check fields of User\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"",
 											"    pm.expect(jsonData.uuid, 'Muat have uuid').to.be.not.null;",
 											"    pm.expect(jsonData.login,'Muat have login').to.be.not.null;",
@@ -1786,7 +1804,8 @@
 											"    pm.expect(jsonData.roles[0].roleName).to.be.equal(\"USER\");",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1872,11 +1891,12 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test check user list length\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.length).to.be.oneOf([2, 3, 6]);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1920,7 +1940,7 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test check roles contains ADMIN and USER\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"",
 											"    pm.expect(jsonData.uuid, 'Muat have uuid').to.be.not.null;",
 											"    pm.expect(jsonData.roles,'Muat have roles').to.be.not.null;    ",
@@ -1932,7 +1952,8 @@
 											"    pm.expect(jsonData.roles.map(role => role.roleName)).to.include.members([\"ADMIN\", \"USER\"]);",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -2030,7 +2051,7 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test check fields of User\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"",
 											"    pm.expect(jsonData.uuid, 'Muat have uuid').to.be.not.null;",
 											"    pm.expect(jsonData.deleted,'Muat have deleted').to.be.not.null;",
@@ -2039,7 +2060,8 @@
 											"    pm.expect(jsonData.deleted).to.equal(true)",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -2126,13 +2148,14 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test refreshToken is not null\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
-											"    pm.collectionVariables.set(\"refreshToken2\", pm.response.json().refreshToken);",
+											"    pm.collectionVariables.set(\"refreshToken2\", jsonData.refreshToken);",
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -2231,12 +2254,13 @@
 											"    pm.response.to.be.json;",
 											"});",
 											"pm.test(\"Test refreshToken is null\", function () {",
-											"    var jsonData = pm.response.json();",
+											"    var jsonData = pm.response.json().data;",
 											"    pm.expect(jsonData.refreshToken).to.be.null;",
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -2288,12 +2312,13 @@
 											"    pm.response.to.be.withBody;",
 											"});",
 											"pm.test(\"Check if response body contains Number\", function () {",
-											"    var responseBody = pm.response.text();",
-											"    var isNumber = /^\\d+$/.test(responseBody);",
+											"    var data = pm.response.json().data;",
+											"    var isNumber = /^\\d+$/.test(data);",
 											"    pm.expect(isNumber).to.be.true;",
 											"});"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -2424,12 +2449,15 @@
 											"    pm.response.to.have.status(200);",
 											"});",
 											"pm.test(\"User register: Checking the length of the code string\", function() {",
-											"    var responseString = pm.response.text();",
+											"    var jsonData = pm.response.json().data;",
+											"    var responseString = jsonData;",
+											"",
 											"    pm.expect(responseString.length).to.be.at.least(5);",
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -2599,13 +2627,11 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2617,7 +2643,7 @@
 										}
 									]
 								},
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -2655,13 +2681,11 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2673,7 +2697,7 @@
 										}
 									]
 								},
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -2711,13 +2735,11 @@
 											"});",
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2729,7 +2751,7 @@
 										}
 									]
 								},
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -2783,7 +2805,7 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://localhost:8078/api/v1",
+			"value": "http://localhost:8080/api/v1/security",
 			"type": "string"
 		},
 		{
