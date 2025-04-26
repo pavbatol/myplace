@@ -3,11 +3,14 @@ spring:
     group:
       develop:
         - dev
+        - app
         - swagger
       production:
         - prod
+        - app
         - swagger
       test:
         - test
+        - app
         - swagger
       default: production
