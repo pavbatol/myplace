@@ -12,7 +12,6 @@ import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -33,7 +32,7 @@ public class PublicAuthController {
 
     @PostMapping("/login")
     @Operation(summary = "login", description = "checking login and password and provide access and refresh tokens")
-    public ResponseEntity<AuthDtoResponse> login(HttpServletRequest request, @Valid @RequestBody AuthDtoRequest dtoAuthRequest) {
+    public ResponseEntity<AuthDtoResponse> login(HttpServletRequest request, @RequestBody AuthDtoRequest dtoAuthRequest) {
         log.debug("POST login() with login: {}, password: hidden for security", dtoAuthRequest.getLogin());
         AuthDtoResponse dtoAuthResponse = authService.login(request, dtoAuthRequest);
         return ResponseEntity.ok(dtoAuthResponse);
@@ -42,7 +41,7 @@ public class PublicAuthController {
     @PostMapping("/tokens")
     @Operation(summary = "getNewAccessToken", description = "getting a new access token to replace the old one")
     public ResponseEntity<AuthDtoResponse> getNewAccessToken(HttpServletRequest request,
-                                                             @Valid @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {
+                                                             @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {
         log.debug("POST getNewAccessToken() with refreshToken: hidden for security");
         AuthDtoResponse body = authService.getNewAccessToken(request, dtoRefreshRequest.getRefreshToken());
         return ResponseEntity.ok(body);

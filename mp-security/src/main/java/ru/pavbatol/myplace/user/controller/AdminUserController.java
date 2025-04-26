@@ -11,7 +11,6 @@ import ru.pavbatol.myplace.shared.dto.security.user.UserDtoResponse;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoUpdateRoles;
 import ru.pavbatol.myplace.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +28,7 @@ public class AdminUserController {
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "updateRoles", description = "setting new role list")
     public ResponseEntity<UserDtoResponse> updateRoles(@PathVariable("userUuid") UUID userUuid,
-                                                       @RequestBody @Valid UserDtoUpdateRoles dto) {
+                                                       @RequestBody UserDtoUpdateRoles dto) {
         log.debug("PUT updateRoles() with userUuid: {}, dto: {}", userUuid, dto);
         UserDtoResponse body = userService.updateRoles(userUuid, dto);
         return ResponseEntity.ok(body);

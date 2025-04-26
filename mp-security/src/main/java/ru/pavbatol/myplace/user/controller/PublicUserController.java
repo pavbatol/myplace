@@ -11,7 +11,6 @@ import ru.pavbatol.myplace.shared.dto.security.user.UserDtoRegistry;
 import ru.pavbatol.myplace.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -23,7 +22,7 @@ public class PublicUserController {
 
     @PostMapping("/registry")
     @Operation(summary = "register", description = "registering a new user")
-    public ResponseEntity<String> register(HttpServletRequest servletRequest, @Valid @RequestBody UserDtoRegistry dtoRegister) {
+    public ResponseEntity<String> register(HttpServletRequest servletRequest, @RequestBody UserDtoRegistry dtoRegister) {
         log.debug("POST register() with email:{}, login: {}, password: hidden for security", dtoRegister.getEmail(), dtoRegister.getLogin());
         String body = userService.register(servletRequest, dtoRegister);
         return ResponseEntity.ok(body);
@@ -31,7 +30,7 @@ public class PublicUserController {
 
     @PostMapping("/confirmation")
     @Operation(summary = "confirmRegistration", description = "confirming registration")
-    public ResponseEntity<String> confirmRegistration(@Valid @RequestBody UserDtoConfirm dto) {
+    public ResponseEntity<String> confirmRegistration(@RequestBody UserDtoConfirm dto) {
         log.debug("POST confirmRegistration() with dto: {}", dto);
         userService.confirmRegistration(dto);
         String body = "Registration is confirmed";

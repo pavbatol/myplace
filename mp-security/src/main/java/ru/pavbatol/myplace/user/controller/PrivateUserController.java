@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoUpdatePassword;
 import ru.pavbatol.myplace.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
 @Slf4j
@@ -27,7 +26,7 @@ public class PrivateUserController {
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "changePassword", description = "setting new password")
     public ResponseEntity<Void> changePassword(@PathVariable(value = "userUuid") UUID userUuid,
-                                               @Valid @RequestBody UserDtoUpdatePassword dto) {
+                                               @RequestBody UserDtoUpdatePassword dto) {
         log.debug("POST changePassword() with userUuid: {}, dto: hidden for security", userUuid);
         userService.changePassword(userUuid, dto);
         return ResponseEntity.ok().build();

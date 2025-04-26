@@ -12,7 +12,6 @@ import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoResponse;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -27,7 +26,7 @@ public class PrivateAuthController {
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "getNewRefreshToken", description = "getting a new refresh token to replace the old one")
     public ResponseEntity<AuthDtoResponse> getNewRefreshToken(HttpServletRequest request,
-                                                              @Valid @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {
+                                                              @RequestBody AuthDtoRefreshRequest dtoRefreshRequest) {
         log.debug("POST getNewRefreshToken() with refreshToken: hidden for security");
         AuthDtoResponse body = authService.getNewRefreshToken(request, dtoRefreshRequest.getRefreshToken());
         return ResponseEntity.ok(body);

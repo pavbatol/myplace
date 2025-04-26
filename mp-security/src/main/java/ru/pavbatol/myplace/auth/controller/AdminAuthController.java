@@ -81,7 +81,7 @@ public class AdminAuthController {
     }
 
     private static KeyPair generateKeyPair() {
-        KeyPairGenerator keyPairGenerator = null;
+        KeyPairGenerator keyPairGenerator;
         try {
             keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         } catch (NoSuchAlgorithmException e) {
