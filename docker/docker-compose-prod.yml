@@ -1,4 +1,15 @@
+version: '3.8'
+
 services:
+
+  gateway-service:
+    profiles: [ "gateway", "full" ]
+    extends:
+      file: gateway/docker-compose-gateway-prod.yml
+      service: gateway-service
+    container_name: mp-gateway-${CONTAINER_MARK:-std}
+    networks:
+      - myplace
 
   stats-service:
     profiles: [ "stats", "full" ]
