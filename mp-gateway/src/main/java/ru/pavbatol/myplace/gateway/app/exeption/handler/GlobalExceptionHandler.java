@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ApiResponse<Void>> handleGenericException(Throwable ex, WebRequest webRequest) {
+    public ResponseEntity<ApiResponse<Void>> handleUncaughtException(Throwable ex, WebRequest webRequest) {
         HttpStatus httpStatus = determineStatus(ex);
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
