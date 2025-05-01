@@ -6,7 +6,9 @@ on:
       - stats
       - security
       - profile
+      - gateway
       - develop
+      - main
 
 jobs:
   test:
@@ -202,9 +204,12 @@ jobs:
             profile)
               newman run postman/MyPlace-mp-profile.postman_collection.json --reporters cli,junit --reporter-junit-export postman-profile-report.xml
               ;;
+            gateway)
+              newman run postman/MyPlace-mp-gateway-security.postman_collection.json --reporters cli,junit --reporter-junit-export postman-gateway-security-report.xml
+              ;;
             develop|main)
               newman run postman/MyPlace-mp-stats.postman_collection.json --reporters cli,junit --reporter-junit-export postman-stats-report.xml
-              newman run postman/MyPlace-mp-security.postman_collection.json --reporters cli,junit --reporter-junit-export postman-security-report.xml
+              newman run postman/MyPlace-mp-gateway-security.postman_collection.json --reporters cli,junit --reporter-junit-export postman-gateway-security-report.xml
               newman run postman/MyPlace-mp-profile.postman_collection.json --reporters cli,junit --reporter-junit-export postman-profile-report.xml
               ;;
             *)
@@ -221,3 +226,5 @@ jobs:
             postman-stats-report.xml
             postman-security-report.xml
             postman-profile-report.xml
+            postman-gateway-security-report.xml
+            
