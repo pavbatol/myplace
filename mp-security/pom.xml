@@ -146,6 +146,12 @@
             <version>${spotbugs-annotations.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>ru.pavbatol.myplace</groupId>
+            <artifactId>mp-shared</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

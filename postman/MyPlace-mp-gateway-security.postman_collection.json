@@ -1,0 +1,2911 @@
+{
+	"info": {
+		"_postman_id": "1a866208-ac85-4a2f-bdef-8693d770984f",
+		"name": "MyPlace-mp-gateway-security",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23050345"
+	},
+	"item": [
+		{
+			"name": "1.Registration",
+			"item": [
+				{
+					"name": "User register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"User register: Checking the length of the code string\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    var responseString = jsonData.data;",
+									"    ",
+									"    pm.expect(responseString.length).to.be.at.least(5);",
+									"    pm.collectionVariables.set(\"registrationСonfirmCode\", responseString);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{userEmail}}@user.com\",\n  \"login\": \"{{userLogin}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/registry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User register with same login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400, 500\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400,500]);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"other_email@user.com\",\n  \"login\": \"{{userLogin}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/registry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User register with same email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400, 500\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400,500]);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{userEmail}}@user.com\",\n  \"login\": \"other_login\",\n  \"password\": \"{{userPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/registry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User2 register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"User2 register: Checking the length of the code string\", function() {",
+									"        var jsonData = pm.response.json();",
+									"    var responseString = jsonData.data;",
+									"",
+									"    pm.expect(responseString.length).to.be.at.least(5);",
+									"    pm.collectionVariables.set(\"registrationСonfirmCode2\", responseString);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{userEmail2}}@user.com\",\n  \"login\": \"{{userLogin2}}\",\n  \"password\": \"{{userPassword2}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/registry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"registry"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2.Confirmation",
+			"item": [
+				{
+					"name": "User confirm by not valid code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400, Invalid confirmation code\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{userEmail}}@user.com\",\n  \"code\": \"NotValidCode\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/confirmation",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"confirmation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User confirm by other email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404, Email not found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user_other_email@user.com\",\n  \"code\": \"NotValidCode\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/confirmation",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"confirmation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User confirm by valid code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{userEmail}}@user.com\",\n  \"code\": \"{{registrationСonfirmCode}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/confirmation",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"confirmation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User register with same login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400,500]);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"other_email@user.com\",\n  \"login\": \"{{userLogin}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/registry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User register with same email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([400,500]);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{userEmail}}@user.com\",\n  \"login\": \"other_login\",\n  \"password\": \"{{userPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/registry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User2 confirm by valid code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{userEmail2}}@user.com\",\n  \"code\": \"{{registrationСonfirmCode2}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/confirmation",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"confirmation"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3.Log in and continue",
+			"item": [
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "User login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test User login\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.type).to.eql('Bearer');",
+											"    pm.expect(jsonData.accessToken).to.be.not.null;",
+											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
+											"",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken);",
+											"",
+											"    // Get the user's UUID from the token and save it to a variable",
+											"    // Removing quotes if they are present",
+											"    const jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
+											"    // --",
+											"    const parts = jwt.split('.');",
+											"    const encodedPayload = parts[1];",
+											"    // Base64 Decoding",
+											"    const decodedPayload = atob(encodedPayload);",
+											"    // --",
+											"    const jsonPayload = JSON.parse(decodedPayload);",
+											"    pm.collectionVariables.set('userUuid', jsonPayload.uuid);",
+											"    // --",
+											"    console.log('Decoded JWT:', decodedPayload);",
+											"    console.log('UUIDT:', jsonPayload.uuid);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"{{userLogin}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User Other-Agent login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test User login\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.type).to.eql('Bearer');",
+											"    pm.expect(jsonData.accessToken).to.be.not.null;",
+											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
+											"",
+											"    pm.collectionVariables.set(\"accessTokenOtherAgent\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshTokenOtherAgent\", jsonData.refreshToken);",
+											"",
+											"    const jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
+											"    const parts = jwt.split('.');",
+											"    const encodedPayload = parts[1];",
+											"    const decodedPayload = atob(encodedPayload);",
+											"    const jsonPayload = JSON.parse(decodedPayload);",
+											"",
+											"    pm.collectionVariables.set('userUuid', jsonPayload.uuid);",
+											"",
+											"    console.log('Decoded JWT:', decodedPayload);",
+											"    console.log('UUIDT:', jsonPayload.uuid);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "User-Agent",
+										"value": "Other Agent",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"{{userLogin}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User2 login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test User2 login\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.type).to.eql('Bearer');",
+											"    pm.expect(jsonData.accessToken).to.be.not.null;",
+											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
+											"",
+											"    pm.collectionVariables.set(\"accessToken2\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshToken2\", jsonData.refreshToken);",
+											"",
+											"    const jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
+											"    const parts = jwt.split('.');",
+											"    const encodedPayload = parts[1];",
+											"    const decodedPayload = atob(encodedPayload);",
+											"    const jsonPayload = JSON.parse(decodedPayload);",
+											"",
+											"    pm.collectionVariables.set('userUuid2', jsonPayload.uuid);",
+											"",
+											"    console.log('Decoded JWT:', decodedPayload);",
+											"    console.log('UUIDT:', jsonPayload.uuid);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"{{userLogin2}}\",\n  \"password\": \"{{userPassword2}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User logout",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/logout",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User changePassword not authorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"new_password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid}}/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid}}",
+										"password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User Other-Agent changePassword authorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessTokenOtherAgent}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "User-Agent",
+										"value": "Other Agent",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"new_password_saving_by_other-agent\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid}}/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid}}",
+										"password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User login again",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test User login again\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.type).to.eql('Bearer');",
+											"    pm.expect(jsonData.accessToken).to.be.not.null;",
+											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
+											"",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken);",
+											"",
+											"    var jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
+											"    var parts = jwt.split('.');",
+											"    var encodedPayload = parts[1];",
+											"    var decodedPayload = atob(encodedPayload);",
+											"    var jsonPayload = JSON.parse(decodedPayload);",
+											"",
+											"    pm.collectionVariables.set('userUuid', jsonPayload.uuid);",
+											"",
+											"    console.log('Decoded JWT:', decodedPayload);",
+											"    console.log('UUIDT:', jsonPayload.uuid);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"{{userLogin}}\",\n  \"password\": \"new_password_saving_by_other-agent\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User logout All Sessions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/auth/logout/all",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"auth",
+										"logout",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User changePassword not authorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"new_password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid}}/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid}}",
+										"password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User Other-Agent changePassword not authorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessTokenOtherAgent}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "User-Agent",
+										"value": "Other Agent",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"new_password_saving_by_other-agent\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid}}/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid}}",
+										"password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User login again2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test User login again2\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.type).to.eql('Bearer');",
+											"    pm.expect(jsonData.accessToken).to.be.not.null;",
+											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
+											"",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken);",
+											"",
+											"    var jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
+											"    var parts = jwt.split('.');",
+											"    var encodedPayload = parts[1];",
+											"    var decodedPayload = atob(encodedPayload);",
+											"    var jsonPayload = JSON.parse(decodedPayload);",
+											"",
+											"    pm.collectionVariables.set('userUuid', jsonPayload.uuid);",
+											"",
+											"    console.log('Decoded JWT:', decodedPayload);",
+											"    console.log('UUIDT:', jsonPayload.uuid);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"{{userLogin}}\",\n  \"password\": \"new_password_saving_by_other-agent\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User changePassword authorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"{{userPassword}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid}}/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid}}",
+										"password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User getNewAccessToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test User login again2\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.accessToken).to.be.not.null;",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User getNewRefreshToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test User login again2\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
+											"    pm.collectionVariables.set(\"refreshToken\", jsonData.refreshToken);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/auth/refresh-tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"auth",
+										"refresh-tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User getNewAccessToken after new refresh token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test User login again2\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.accessToken).to.be.not.null;",
+											"    pm.collectionVariables.set(\"accessToken\", jsonData.accessToken);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User changePassword after new access token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"{{userPassword}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid}}/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid}}",
+										"password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User changePassword with not existing UUID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"new_password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/0dcad660-90e3-441e-a8a0-8ad84928ea21/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"0dcad660-90e3-441e-a8a0-8ad84928ea21",
+										"password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User changePassword with not own UUID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"new_password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid2}}/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid2}}",
+										"password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User getIdByUuid with not oexisting UUID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/0dcad660-90e3-441e-a8a0-8ad84928ea21/id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"0dcad660-90e3-441e-a8a0-8ad84928ea21",
+										"id"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User getIdByUuid with not own UUID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid2}}/id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid2}}",
+										"id"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User getIdByUuid successful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"});",
+											"pm.test(\"Check if response body contains Number\", function () {",
+											"    var data = pm.response.json().data;",
+											"    var isNumber = /^\\d+$/.test(data);",
+											"    pm.expect(isNumber).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid}}/id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid}}",
+										"id"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Admin login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test accessToken, refreshToken are not null\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.type).to.eql('Bearer');",
+											"    pm.expect(jsonData.accessToken).to.be.not.null;",
+											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
+											"",
+											"    pm.collectionVariables.set(\"adminAccessToken\", jsonData.accessToken);",
+											"    pm.collectionVariables.set(\"adminRefreshToken\", jsonData.refreshToken);",
+											"",
+											"    const jwt = jsonData.accessToken.replace(/^\"(.*)\"$/, '$1'); ",
+											"    const parts = jwt.split('.');",
+											"    const encodedPayload = parts[1];",
+											"    const decodedPayload = atob(encodedPayload);",
+											"    const jsonPayload = JSON.parse(decodedPayload);",
+											"",
+											"    pm.collectionVariables.set('adminUuid', jsonPayload.uuid);",
+											"",
+											"    console.log('Decoded JWT:', decodedPayload);",
+											"    console.log('UUIDT:', jsonPayload.uuid);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"{{adminLogin}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin Role findById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test check fields of Role\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"",
+											"    pm.expect(jsonData.id, 'Muat have id').to.be.not.null;",
+											"    pm.expect(jsonData.roleName,'Muat have roleName').to.be.not.null;",
+											"",
+											"    pm.expect(jsonData.id).to.equal(2);",
+											"    pm.expect(jsonData.roleName).to.equal('USER');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/roles/2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"roles",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin Role findAll",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test check size of Roles\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"",
+											"    pm.expect(jsonData, 'Muat be array').to.be.an('array');    ",
+											"    pm.expect(jsonData.length).to.be.at.least(2);",
+											"    pm.expect(jsonData.map(role => role.roleName)).to.include.members([\"ADMIN\", \"USER\"]);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/roles",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin User findByUuid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test check fields of User\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"",
+											"    pm.expect(jsonData.uuid, 'Muat have uuid').to.be.not.null;",
+											"    pm.expect(jsonData.login,'Muat have login').to.be.not.null;",
+											"    pm.expect(jsonData.deleted,'Muat have deleted').to.be.not.null;",
+											"    pm.expect(jsonData.roles,'Muat have roles').to.be.not.null;    ",
+											"",
+											"    pm.expect(jsonData.uuid, 'uuid do not match').to.eql(pm.collectionVariables.get(\"userUuid\"));",
+											"",
+											"    pm.expect(jsonData.roles, 'Muat be array').to.be.an('array');",
+											"    pm.expect(jsonData.roles.length).to.be.equal(1);",
+											"    pm.expect(jsonData.roles[0].roleName).to.be.equal(\"USER\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/users/{{userUuid}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"users",
+										"{{userUuid}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin User findByUuid with not exixting UUID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/users/fb79db94-3ed3-4393-a293-904ecbbccdb9",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"users",
+										"fb79db94-3ed3-4393-a293-904ecbbccdb9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin User findAll",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test check user list length\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.length).to.be.oneOf([2, 3, 6]);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/users/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"users",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin User updateRoles",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test check roles contains ADMIN and USER\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"",
+											"    pm.expect(jsonData.uuid, 'Muat have uuid').to.be.not.null;",
+											"    pm.expect(jsonData.roles,'Muat have roles').to.be.not.null;    ",
+											"",
+											"    pm.expect(jsonData.uuid, 'uuid do not match').to.eql(pm.collectionVariables.get(\"userUuid\"));",
+											"",
+											"    pm.expect(jsonData.roles, 'Muat be array').to.be.an('array');",
+											"    pm.expect(jsonData.roles.length).to.be.equal(2);",
+											"    pm.expect(jsonData.roles.map(role => role.roleName)).to.include.members([\"ADMIN\", \"USER\"]);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"roleIds\": [\n\t\t1, 2\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/users/{{userUuid}}/roles",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"users",
+										"{{userUuid}}",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin User delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {",
+											"    pm.response.to.have.status(204);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/users/{{userUuid}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"users",
+										"{{userUuid}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin User findByUuid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test check fields of User\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"",
+											"    pm.expect(jsonData.uuid, 'Muat have uuid').to.be.not.null;",
+											"    pm.expect(jsonData.deleted,'Muat have deleted').to.be.not.null;",
+											"",
+											"    pm.expect(jsonData.uuid, 'uuid do not match').to.eql(pm.collectionVariables.get(\"userUuid\"));",
+											"    pm.expect(jsonData.deleted).to.equal(true)",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/users/{{userUuid}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"users",
+										"{{userUuid}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User getIdByUuid when deleted",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid}}/id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid}}",
+										"id"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User2 getNewRefreshToken successful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test refreshToken is not null\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.refreshToken).to.be.not.null;",
+											"    pm.collectionVariables.set(\"refreshToken2\", jsonData.refreshToken);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"{{refreshToken2}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/auth/refresh-tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"auth",
+										"refresh-tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin User2 removeRefreshTokensByUserUuid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {",
+											"    pm.response.to.have.status(204);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/auth/users/{{userUuid2}}/refresh-tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"auth",
+										"users",
+										"{{userUuid2}}",
+										"refresh-tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User2 getNewRefreshToken failed",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 and data in json format\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"pm.test(\"Test refreshToken is null\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData.refreshToken).to.be.null;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"{{refreshToken2}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/auth/refresh-tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"auth",
+										"refresh-tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User2 getIdByUuid successful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"});",
+											"pm.test(\"Check if response body contains Number\", function () {",
+											"    var data = pm.response.json().data;",
+											"    var isNumber = /^\\d+$/.test(data);",
+											"    pm.expect(isNumber).to.be.true;",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid2}}/id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid2}}",
+										"id"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin User2 removeAccessTokensByUserUuid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {",
+											"    pm.response.to.have.status(204);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/auth/users/{{userUuid2}}/access-tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"auth",
+										"users",
+										"{{userUuid2}}",
+										"access-tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User2 getIdByUuid failed",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userUuid2}}/id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userUuid2}}",
+										"id"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User3 register siccessful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"User register: Checking the length of the code string\", function() {",
+											"    var jsonData = pm.response.json().data;",
+											"    var responseString = jsonData;",
+											"",
+											"    pm.expect(responseString.length).to.be.at.least(5);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"user_email_3@user.com\",\n  \"login\": \"user_login_3\",\n  \"password\": \"user_password_3\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/registry",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"registry"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User3 register failed on dublicate",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400, 500\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([400,500]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"user_email_3@user.com\",\n  \"login\": \"user_login_3\",\n  \"password\": \"user_password_3\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/registry",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"registry"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin clearAuthStorage",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 204\", function () {",
+											"    pm.response.to.have.status(204);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/auth/tokens",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"auth",
+										"tokens"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User3 register siccessful",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"User register: Checking the length of the code string\", function() {",
+											"    var responseString = pm.response.text();",
+											"    pm.expect(responseString.length).to.be.at.least(5);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"user_email_3@user.com\",\n  \"login\": \"user_login_3\",\n  \"password\": \"user_password_3\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/registry",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"registry"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User logout All Sessions failed",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/auth/logout/all",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"auth",
+										"logout",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User2 logout All Sessions failed",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{accessToken2}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/auth/logout/all",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"auth",
+										"logout",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Admin logout All Sessions failed",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{adminAccessToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/auth/logout/all",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"auth",
+										"logout",
+										"all"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1/security",
+			"type": "string"
+		},
+		{
+			"key": "registrationСonfirmCode",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userEmail",
+			"value": "email_test",
+			"type": "string"
+		},
+		{
+			"key": "userLogin",
+			"value": "user_test",
+			"type": "string"
+		},
+		{
+			"key": "userPassword",
+			"value": "password_test",
+			"type": "string"
+		},
+		{
+			"key": "userUuid",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "registrationСonfirmCode2",
+			"value": ""
+		},
+		{
+			"key": "userEmail2",
+			"value": "email_test2",
+			"type": "string"
+		},
+		{
+			"key": "userLogin2",
+			"value": "user_test2",
+			"type": "string"
+		},
+		{
+			"key": "userPassword2",
+			"value": "password_test2",
+			"type": "string"
+		},
+		{
+			"key": "userUuid2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "accessToken2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "accessTokenOtherAgent",
+			"value": ""
+		},
+		{
+			"key": "refreshTokenOtherAgent",
+			"value": ""
+		},
+		{
+			"key": "adminLogin",
+			"value": "admin1",
+			"type": "string"
+		},
+		{
+			"key": "adminPassword",
+			"value": "admin1",
+			"type": "string"
+		},
+		{
+			"key": "adminAccessToken",
+			"value": ""
+		},
+		{
+			"key": "adminRefreshToken",
+			"value": ""
+		},
+		{
+			"key": "adminUuid",
+			"value": ""
+		}
+	]
+}

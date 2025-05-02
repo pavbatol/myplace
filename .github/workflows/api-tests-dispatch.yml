@@ -20,7 +20,7 @@ name: MyPlace Unit And Postman Tests Dispatch
 #      }'
 #
 #  - Advanced Request
-##
+#
 #      curl -X POST \
 #      -H "Accept: application/vnd.github+json" \
 #      -H "Authorization: Bearer <your_secret_code>" \
@@ -73,10 +73,11 @@ on:
         description: |
           Choose targets for Postman tests (comma-separated, e.g., stats-tests,security-tests).
           Available targets:
-           - stats-tests:    Run statistics-related tests.
-           - security-tests: Run security-related tests.
-           - profile-tests:  Run profile-related tests.
-           - all-tests:      Run all tests.
+           - stats-tests:             Run statistics-related tests.
+           - security-tests:          Run security-related tests.
+           - profile-tests:           Run profile-related tests.
+           - gateway-security-tests:  Run gateway-security-related tests.
+           - all-tests:               Run all tests.
           Default: all-tests.
         required: true
         default: "all-tests"
@@ -313,7 +314,38 @@ jobs:
       - name: Run Postman Tests
         run: |
           echo "Running tests with inputs:"
-          echo "${{ toJson(github.event.inputs) }}"
+          echo "${{ toJson(github.event.inputs) }}" 
+          
+          function restart_containers() {
+            local readonly ENV="${{ github.event.inputs.environment }}"
+                     
+            echo "##[group]Performing database reset via container restart"
+              
+            (
+              cd ./docker || { echo "::error::Docker directory not found"; return 1; }
+              
+              echo "Stopping containers..."
+              if ! CONTAINER_MARK="$ENV" docker-compose --profile full down --volumes --remove-orphans; then
+                echo "::warning::Some containers could not be stopped"
+              fi
+              
+              sleep 10
+              
+              echo "Starting containers..."
+              if ! CONTAINER_MARK="$ENV" docker-compose --profile full up -d; then
+                echo "::error::Failed to start containers"
+                return 1
+              fi
+              
+              echo "Waiting for services..."
+              sleep 70
+              echo "Restarting completed"
+            )
+          
+            local readonly result=$?
+            echo "##[endgroup]"
+            return $result
+          }    
           
           IFS=',' read -r -a targets <<< "${{ github.event.inputs.deployment-targets }}"
           
@@ -334,6 +366,10 @@ jobs:
             newman run postman/MyPlace-mp-profile.postman_collection.json --reporters cli,junit --reporter-junit-export postman-profile-report.xml > newman.log 2>&1
             newman run postman/MyPlace-mp-security.postman_collection.json --reporters cli,junit --reporter-junit-export postman-security-report.xml > newman.log 2>&1
             newman run postman/MyPlace-mp-stats.postman_collection.json --reporters cli,junit --reporter-junit-export postman-stats-report.xml > newman.log 2>&1
+          
+            restart_containers || exit 1           
+            
+            newman run postman/MyPlace-mp-gateway-security.postman_collection.json --reporters cli,junit --reporter-junit-export postman-gateway-security-report.xml > newman.log 2>&1          
             exit 0
           fi
           
@@ -348,6 +384,9 @@ jobs:
             elif [ "$target" == "profile-tests" ]; then
               echo "Running profile-tests"
               newman run postman/MyPlace-mp-profile.postman_collection.json --reporters cli,junit --reporter-junit-export postman-profile-report.xml --disable-unicode --verbose > newman.log 2>&1
+            elif [ "$target" == "gateway-security-tests" ]; then
+              echo "Running gateway-security-tests"
+              newman run postman/MyPlace-mp-gateway-security.postman_collection.json --reporters cli,junit --reporter-junit-export postman-gateway-security-report.xml --disable-unicode --verbose > newman.log 2>&1
             else
               echo "Unknown target: $target"
             fi
@@ -366,4 +405,5 @@ jobs:
             postman-stats-report.xml
             postman-security-report.xml
             postman-profile-report.xml
+            postman-gateway-security-report.xml
             newman.log

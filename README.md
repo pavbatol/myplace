@@ -78,6 +78,21 @@ You can organize your own platform.
 
     </div>
 
+- **Gateway (mp-gateway)**  
+The `gateway` service acts as the central entry point for routing requests to other microservices. 
+Currently, it only integrates with the `security` service; integration with other microservices will be implemented in upcoming Pull Requests.
+
+    _Key Features:_
+    - Standardized Responses: Wraps all responses in `ApiResponse<T>` via `ResponseHandler` for consistent error/success formats (e.g., `ResponseEntity<ApiResponse<UserDto>>`).
+    - Validation Shift: Input DTO validation is now centralized in the gateway, reducing redundancy in target services.
+
+    _Testing:_
+    - Includes `Postman` test collection covering all gateway endpoints.
+    - Security service tests updated to reflect:
+        * New versioned paths (`/api/v1/`)
+        * Migrated `GET`→`POST` methods where applicable
+        * Gateway-level validation changes
+
 ---
 
 ### Intended technologies:
@@ -107,6 +122,7 @@ To visualize the specification, paste it into any Swagger editor. For example th
 | mp-test     | [localhost:9090/docs/swagger-ui.html](localhost:9090/docs/swagger-ui.html) | [localhost:9090/docs](localhost:9090/docs) | [mp-stats-v-1-0-0.json](docs/specification/mp-stats-service-spec-v-1-0-0.json)       |
 | mp-security | [localhost:8078/docs/swagger-ui.html](localhost:8078/docs/swagger-ui.html) | [localhost:8078/docs](localhost:8078/docs) | [mp-security-v-1-0-0.json](docs/specification/mp-security-service-spec-v-1-0-0.json) |
 | mp-profile  | [localhost:8076/docs/swagger-ui.html](localhost:8076/docs/swagger-ui.html) | [localhost:8076/docs](localhost:8076/docs) | [mp-profile-v-1-0-0.json](docs/specification/mp-profile-service-spec-v-1-0-0.json)   |
+| mp-gateway  | [localhost:8080/docs/swagger-ui.html](localhost:8080/docs/swagger-ui.html) | [localhost:8080/docs](localhost:8080/docs) | [mp-gateway-v-1-0-0.json](docs/specification/mp-gateway-service-spec-v-1-0-0.json)   |
 
 # Running the Project
 

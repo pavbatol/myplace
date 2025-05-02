@@ -1,6 +1,16 @@
-server:
-  port: 8080
-
 spring:
-  banner:
-    location: banner/banner.txt
+  profiles:
+    group:
+      develop:
+        - dev
+        - app
+        - swagger
+      production:
+        - prod
+        - app
+        - swagger
+      test:
+        - test
+        - app
+        - swagger
+      default: production

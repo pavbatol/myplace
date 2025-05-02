@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+
+  gateway-service:
+    build: ../../mp-gateway
+    image: mp-gateway
+    container_name: mp-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+      - APP_MP_SECURITY_URL=http://security-service:8078/api/v1

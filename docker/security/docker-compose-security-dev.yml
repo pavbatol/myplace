@@ -20,6 +20,8 @@ services:
       #- SPRING_PROFILES_ACTIVE=develop${SECURITY_ADDITIONAL_SPRING_PROFILES:-""} Use .env or export the variable to the host to receive value of the SECURITY_ADDITIONAL_SPRING_PROFILES
       # *******************************************
       #- SPRING_PROFILES_ACTIVE=develop
+      - CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080
+      - CORS_ALLOWED_METHODS=GET,POST,PATCH,PUT,DELETE
       - APP_PROFILE_SERVER_URL=http://profile-service:8076/api/v1
       - REDIS_HOST=security-redis-db
       - REDIS_PORT=6379
