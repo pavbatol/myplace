@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.app.Util;
+package ru.pavbatol.myplace.app.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

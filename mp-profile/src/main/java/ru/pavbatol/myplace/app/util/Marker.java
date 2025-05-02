@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.app.Util;
+package ru.pavbatol.myplace.app.util;
 
 public interface Marker {
     interface OnCreate {

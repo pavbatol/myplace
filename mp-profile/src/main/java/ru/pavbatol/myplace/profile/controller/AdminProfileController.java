@@ -8,7 +8,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.app.Util.EnumUtils;
+import ru.pavbatol.myplace.app.util.EnumUtils;
 import ru.pavbatol.myplace.profile.dto.ProfileDto;
 import ru.pavbatol.myplace.profile.dto.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
