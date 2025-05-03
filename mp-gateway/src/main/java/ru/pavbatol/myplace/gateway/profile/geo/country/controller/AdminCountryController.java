@@ -20,7 +20,7 @@ import javax.validation.constraints.PositiveOrZero;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("${api.prefix}/admin/geo/countries")
+@RequestMapping("${api.prefix}/${app.mp.profile.label}/admin/geo/countries")
 @RequiredArgsConstructor
 @Tag(name = "Admin: Country", description = "API for working with Country")
 public class AdminCountryController {

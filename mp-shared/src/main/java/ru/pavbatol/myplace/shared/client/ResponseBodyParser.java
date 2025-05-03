@@ -1,11 +1,14 @@
 package ru.pavbatol.myplace.shared.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -103,6 +106,45 @@ public class ResponseBodyParser {
             throw new IOException("Failed to parse list of " + elementType.getSimpleName(), e);
         } catch (IllegalArgumentException e) {
             throw new IOException("Cannot convert body to List<" + elementType.getSimpleName() + ">", e);
+        }
+    }
+
+    /**
+     * Parses response body into Slice of specified element type
+     *
+     * @param <T>         Slice element type
+     * @param response    HTTP response entity
+     * @param elementType Slice element class
+     * @return Slice of parsed elements (empty Slice if response body is null)
+     * @throws TargetServiceHandledErrorException if response status is not 2xx
+     * @throws IOException                        if parsing fails or response contains invalid content
+     * @throws IllegalArgumentException           if conversion is not possible
+     */
+    @NonNull
+    public <T> Slice<T> parseSlice(ResponseEntity<Object> response, Class<T> elementType) throws IOException {
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            handleErrorResponse(response);
+        }
+
+        Object body = response.getBody();
+        if (body == null) {
+            return Page.empty();
+        }
+
+        JavaType sliceType = objectMapper.getTypeFactory().constructParametricType(Slice.class, elementType);
+
+        try {
+            if (body instanceof byte[]) {
+                return objectMapper.readValue((byte[]) body, sliceType);
+            } else if (body instanceof String) {
+                return objectMapper.readValue((String) body, sliceType);
+            } else {
+                return objectMapper.convertValue(body, sliceType);
+            }
+        } catch (JsonProcessingException e) {
+            throw new IOException("Failed to parse Slice of " + elementType.getSimpleName(), e);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Cannot convert body to Slice<" + elementType.getSimpleName() + ">", e);
         }
     }
 

@@ -16,11 +16,10 @@ import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 import javax.validation.constraints.PositiveOrZero;
 
-
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("${api.prefix}/user/geo/countries")
+@RequestMapping("${api.prefix}/${app.mp.profile.label}/user/geo/countries")
 @RequiredArgsConstructor
 @Tag(name = "Private: Country", description = "API for working with Country")
 public class PrivateCountryController {
