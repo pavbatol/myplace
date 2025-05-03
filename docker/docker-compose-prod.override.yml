@@ -16,6 +16,8 @@ services:
       - APP_MAIL_PORT=587
       - APP_MAIL_USERNAME=
       - APP_MAIL_PASSWORD=
+      - CORS_ALLOWED_ORIGINS=*
+      - CORS_ALLOWED_METHODS=GET,POST,PATCH,PUT,DELETE
 
   profile-service:
     ports:

@@ -78,6 +78,21 @@
     
     </div>
 
+- **Gateway (mp-gateway)**  
+Сервис `gateway` является центральной точкой входа для маршрутизации запросов к другим микросервисам.
+На текущий момент реализована интеграция только с сервисом `security`. Подключение остальных микросервисов будет выполнено в следующих Pull Requests.
+
+  _Ключевые особенности:_
+    - Стандартизированные ответы: Все ответы оборачиваются в `ApiResponse<T>` через ResponseHandler для единого формата успешных/ошибочных ответов (например, `ResponseEntity<ApiResponse<UserDto>>`).
+    - Централизованная валидация: Валидация входных DTO теперь выполняется на уровне `gateway`, что устраняет дублирование в целевых сервисах.
+
+  _Тестирование:_
+    - Приложена коллекция тестов `Postman`, покрывающая все эндпоинты `gateway`.
+    - Тесты сервиса `security` обновлены с учётом:
+        * Новых версионированных путей  (`/api/v1/`)
+        * Переноса некоторых методов с `GET` на `POST` где это необходимо
+        * Изменений валидации на уровне gateway
+
 ---
 
 ### Планируемый стек:
@@ -107,6 +122,7 @@
 | mp-test     | [localhost:9090/docs/swagger-ui.html](localhost:9090/docs/swagger-ui.html) | [localhost:9090/docs](localhost:9090/docs) | [mp-stats-v-1-0-0.json](docs/specification/mp-stats-service-spec-v-1-0-0.json)       |
 | mp-security | [localhost:8078/docs/swagger-ui.html](localhost:8078/docs/swagger-ui.html) | [localhost:8078/docs](localhost:8078/docs) | [mp-security-v-1-0-0.json](docs/specification/mp-security-service-spec-v-1-0-0.json) |
 | mp-profile  | [localhost:8076/docs/swagger-ui.html](localhost:8076/docs/swagger-ui.html) | [localhost:8076/docs](localhost:8076/docs) | [mp-profile-v-1-0-0.json](docs/specification/mp-profile-service-spec-v-1-0-0.json)   |
+| mp-gateway  | [localhost:8080/docs/swagger-ui.html](localhost:8080/docs/swagger-ui.html) | [localhost:8080/docs](localhost:8080/docs) | [mp-gateway-v-1-0-0.json](docs/specification/mp-gateway-service-spec-v-1-0-0.json)   |
 
 ### Запуск
 
