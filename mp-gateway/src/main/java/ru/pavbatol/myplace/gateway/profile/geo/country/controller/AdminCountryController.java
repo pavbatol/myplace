@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
+import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
 import ru.pavbatol.myplace.gateway.profile.geo.country.service.CountryService;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 import ru.pavbatol.myplace.shared.util.Marker;
@@ -25,8 +26,10 @@ import javax.validation.constraints.PositiveOrZero;
 @Tag(name = "Admin: Country", description = "API for working with Country")
 public class AdminCountryController {
 
+    public static final String ADMIN = "ADMIN";
     private final CountryService service;
 
+    @RequiredRoles(roles = {ADMIN})
     @PostMapping
     @Validated({Marker.OnCreate.class})
     @SecurityRequirement(name = "JWT")
@@ -38,6 +41,7 @@ public class AdminCountryController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    @RequiredRoles(roles = {ADMIN})
     @PatchMapping("/{countryId}")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "update", description = "updating Country")
@@ -49,6 +53,7 @@ public class AdminCountryController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    @RequiredRoles(roles = {ADMIN})
     @DeleteMapping("/{countryId}")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "delete", description = "deleting Country")

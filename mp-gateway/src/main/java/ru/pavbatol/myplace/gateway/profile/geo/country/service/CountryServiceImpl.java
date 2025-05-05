@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.api.ResponseHandler;
+import ru.pavbatol.myplace.gateway.profile.geo.country.client.CountryClient;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 @Service

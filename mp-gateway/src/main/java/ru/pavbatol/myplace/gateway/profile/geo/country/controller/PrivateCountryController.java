@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
+import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
 import ru.pavbatol.myplace.gateway.profile.geo.country.service.CountryService;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
@@ -24,8 +25,11 @@ import javax.validation.constraints.PositiveOrZero;
 @Tag(name = "Private: Country", description = "API for working with Country")
 public class PrivateCountryController {
 
+    public static final String USER = "USER";
+    public static final String ADMIN = "ADMIN";
     private final CountryService service;
 
+    @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping("/{countryId}")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "getById", description = "get Country")
@@ -36,6 +40,7 @@ public class PrivateCountryController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "getAll", description = "get Countries")
