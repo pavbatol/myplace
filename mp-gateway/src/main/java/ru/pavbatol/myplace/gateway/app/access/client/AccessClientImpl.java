@@ -1,6 +1,5 @@
 package ru.pavbatol.myplace.gateway.app.access.client;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -12,17 +11,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.List;
+import java.util.function.Function;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AccessClientImpl implements AccessClient {
-    @Value("${app.mp.security.url}")
-    private String securityServiceUrl;
 
     private final RestTemplate restTemplate;
+
+    public AccessClientImpl(@Value("${app.mp.security.url}") String securityServiceUrl,
+                            Function<String, RestTemplate> restTemplateFactory) {
+        this.restTemplate = restTemplateFactory.apply(securityServiceUrl);
+    }
 
     @Override
     public void checkAccess(List<String> roles, String authToken) {
@@ -40,7 +41,7 @@ public class AccessClientImpl implements AccessClient {
 
         try {
             ResponseEntity<Void> response = restTemplate.exchange(
-                    URI.create(securityServiceUrl + "/check-access"),
+                    "/check-access",
                     HttpMethod.POST,
                     new HttpEntity<>(roles, headers),
                     Void.class
