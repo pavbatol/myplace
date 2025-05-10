@@ -17,14 +17,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class JwtProvider {
+    private static final String ROLES_CLAIM = "roles";
+    private static final String UUID_CLAIM = "uuid";
     private final SecretKey jwtAccessKey;
     private final SecretKey jwtRefreshKey;
     private final long jwtAccessLifeSeconds;
@@ -44,8 +44,8 @@ public class JwtProvider {
         this.jwtAccessLifeSeconds = jwtAccessLifeSeconds;
         this.jwtRefreshLifeSeconds = jwtRefreshLifeSeconds;
 
-        log.info("Constructor: jwtAccessLifeSeconds: " + this.jwtAccessLifeSeconds);
-        log.info("Constructor: jwtRefreshLifeSeconds: " + this.jwtRefreshLifeSeconds);
+        log.info("Constructor: jwtAccessLifeSeconds: {}", this.jwtAccessLifeSeconds);
+        log.info("Constructor: jwtRefreshLifeSeconds: {}", this.jwtRefreshLifeSeconds);
     }
 
     public String createAccessToken(User user) {
@@ -61,8 +61,8 @@ public class JwtProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .setSubject(user.getLogin())
-                .claim("roles", roles)
-                .claim("uuid", user.getUuid())
+                .claim(ROLES_CLAIM, roles)
+                .claim(UUID_CLAIM, user.getUuid())
                 .signWith(jwtAccessKey, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -82,6 +82,10 @@ public class JwtProvider {
 
     public Optional<String> resolveToken(@NonNull HttpServletRequest request) {
         final String bearerToken = request.getHeader("Authorization");
+        return resolveToken(bearerToken);
+    }
+
+    public Optional<String> resolveToken(String bearerToken) {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return Optional.of(bearerToken.substring(7));
         }
@@ -136,5 +140,25 @@ public class JwtProvider {
             log.error("There is an error with the signature of you token ");
         }
         return false;
+    }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = getAccessClaims(token);
+
+        log.debug("Extracting roles from token. Claims: {}", claims);
+        Object rolesClaim = claims.get(ROLES_CLAIM);
+
+        if (rolesClaim instanceof List) {
+            return ((List<?>) rolesClaim).stream()
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+        }
+
+        if (rolesClaim instanceof String) {
+            return Arrays.asList(((String) rolesClaim).split(",\\s*"));
+        }
+
+        return Collections.emptyList();
     }
 }

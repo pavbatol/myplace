@@ -1,0 +1,34 @@
+package ru.pavbatol.myplace.security.permission.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.pavbatol.myplace.security.permission.service.PermissionService;
+
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+
+@Validated
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("${api.prefix}/permission")
+@Tag(name = "Permission: Private", description = "API for access control validation")
+public class PermissionController {
+    private final PermissionService service;
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/check-access")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "checkAccess", description = "Check if user has required roles")
+    public ResponseEntity<Void> checkAccess(@RequestBody @NotEmpty List<String> requiredRoles,
+                                            @RequestHeader("Authorization") String bearerToken) {
+
+        service.validateAccess(requiredRoles, bearerToken);
+        return ResponseEntity.ok().build();
+    }
+}

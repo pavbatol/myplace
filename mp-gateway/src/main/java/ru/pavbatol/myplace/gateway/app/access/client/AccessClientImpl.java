@@ -14,7 +14,7 @@ import java.util.function.Function;
 @Slf4j
 @Component
 public class AccessClientImpl implements AccessClient {
-    public static final String CHECK_ACCESS_PATH = "/check-access";
+    public static final String CHECK_ACCESS_PATH = "/permission/check-access";
     private final RestTemplate restTemplate;
 
     public AccessClientImpl(@Value("${app.mp.security.url}") String securityServiceUrl,
