@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.gateway.app.config;
+package ru.pavbatol.myplace.gateway.app.config.client;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -10,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-
 
 @Configuration
 public class RestTemplateConfig {

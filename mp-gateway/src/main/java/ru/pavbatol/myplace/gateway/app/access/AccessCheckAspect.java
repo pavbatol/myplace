@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.pavbatol.myplace.gateway.app.access.client.AccessClient;
@@ -31,6 +32,10 @@ public class AccessCheckAspect {
             throw new IllegalStateException("Authorization header is missing");
         }
 
-        client.checkAccess(List.of(requiredRoles.roles()), authToken);
+        try {
+            client.checkAccess(List.of(requiredRoles.roles()), authToken);
+        } catch (HttpStatusCodeException e) {
+            throw new SecurityException("Access denied", e);
+        }
     }
 }

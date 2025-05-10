@@ -22,11 +22,11 @@ import javax.validation.constraints.PositiveOrZero;
 @RestController
 @RequestMapping("${api.prefix}/${app.mp.profile.label}/user/geo/countries")
 @RequiredArgsConstructor
-@Tag(name = "Private: Country", description = "API for working with Country")
+@Tag(name = "[Profile/Geo]Country: Private", description = "API for working with Country")
 public class PrivateCountryController {
 
-    public static final String USER = "USER";
-    public static final String ADMIN = "ADMIN";
+    private static final String USER = "USER";
+    private static final String ADMIN = "ADMIN";
     private final CountryService service;
 
     @RequiredRoles(roles = {USER, ADMIN})

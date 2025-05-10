@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -17,7 +14,7 @@ import java.util.function.Function;
 @Slf4j
 @Component
 public class AccessClientImpl implements AccessClient {
-
+    public static final String CHECK_ACCESS_PATH = "/check-access";
     private final RestTemplate restTemplate;
 
     public AccessClientImpl(@Value("${app.mp.security.url}") String securityServiceUrl,
@@ -39,19 +36,11 @@ public class AccessClientImpl implements AccessClient {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", authToken);
 
-        try {
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    "/check-access",
-                    HttpMethod.POST,
-                    new HttpEntity<>(roles, headers),
-                    Void.class
-            );
-
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                throw new AccessDeniedException("Access denied. Status: " + response.getStatusCode());
-            }
-        } catch (HttpClientErrorException e) {
-            throw new SecurityException("Security service error: " + e.getMessage(), e);
-        }
+        restTemplate.exchange(
+                CHECK_ACCESS_PATH,
+                HttpMethod.POST,
+                new HttpEntity<>(roles, headers),
+                Void.class
+        );
     }
 }

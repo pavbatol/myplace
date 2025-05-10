@@ -33,7 +33,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/${app.mp.security.label}/admin/roles")
-@Tag(name = "Admin: Role", description = "API for working with roles")
+@Tag(name = "[Security]Role: Admin", description = "API for working with roles")
 public class AdminRoleController {
 
     private final SecurityRoleService service;

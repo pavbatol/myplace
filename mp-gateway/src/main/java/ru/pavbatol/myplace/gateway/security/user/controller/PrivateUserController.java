@@ -39,7 +39,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("${api.prefix}/${app.mp.security.label}/users")
 @RequiredArgsConstructor
-@Tag(name = "Private: User", description = "API for working with User")
+@Tag(name = "[Security]User: Private", description = "API for working with User")
 public class PrivateUserController {
     private final SecurityUserService service;
 
