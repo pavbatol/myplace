@@ -1,6 +1,7 @@
 package ru.pavbatol.myplace.gateway.app.access;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
@@ -29,11 +30,12 @@ import java.util.List;
  * @see RequiredRoles
  * @see AccessClient
  */
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
 public class AccessCheckAspect {
-    public static final String AUTHORIZATION = "Authorization";
+    private static final String AUTHORIZATION = "Authorization";
     private final AccessClient client;
 
     /**
@@ -57,19 +59,25 @@ public class AccessCheckAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes)
                 RequestContextHolder.getRequestAttributes();
 
+        log.debug("Access control triggered by {} annotation", RequiredRoles.class.getSimpleName());
+
         if (attributes == null) {
             throw new IllegalStateException("Request context not found");
         }
 
         String authToken = attributes.getRequest().getHeader(AUTHORIZATION);
         if (authToken == null) {
-            throw new IllegalStateException("Authorization header is missing");
+            throw new IllegalStateException(AUTHORIZATION + " header is missing");
         }
 
         try {
             client.checkAccess(List.of(requiredRoles.roles()), authToken);
         } catch (HttpStatusCodeException e) {
-            throw new SecurityException("Access denied", e);
+            String accessDenied = "Access denied";
+            log.error(accessDenied);
+            throw new SecurityException(accessDenied, e);
         }
+
+        log.error("Access granted");
     }
 }

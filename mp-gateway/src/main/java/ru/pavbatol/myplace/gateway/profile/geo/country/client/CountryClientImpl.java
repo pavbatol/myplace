@@ -10,6 +10,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -55,11 +56,17 @@ public class CountryClientImpl extends BaseRestClient implements CountryClient {
 
     @Override
     public ResponseEntity<Object> getAll(String nameStartWith, int page, int size, HttpHeaders headers) {
-        Map<String, Object> params = Map.of(
-                "nameStartWith", nameStartWith,
-                "page", page,
-                "size", size
-        );
-        return get(PRIVATE_CONTEXT, headers, params);
+        String paramsPath ="?" +
+                        "nameStartWith={nameStartWith}" +
+                        "&page={page}" +
+                        "&size={size}";
+        String fullResourcePath = PRIVATE_CONTEXT + paramsPath;
+
+        Map<String, Object> params = new HashMap<>(4);
+        params.put("nameStartWith", nameStartWith);
+        params.put("page", page);
+        params.put("size", size);
+
+        return get(fullResourcePath, headers, params);
     }
 }
