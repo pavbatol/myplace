@@ -62,7 +62,7 @@ public class CountryServiceImpl implements CountryService {
         if (nameStartWith != null && !nameStartWith.isBlank()) {
             found = repository.findByNameStartingWithIgnoreCase(nameStartWith, pageable);
         } else {
-            found = repository.findAll(pageable);
+            found = repository.findAllAsSlice(pageable);
         }
         log.debug("Found Slice of {}: {}, numberOfElements: {}", ENTITY_SIMPLE_NAME, found, found.getNumberOfElements());
 
