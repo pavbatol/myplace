@@ -12,5 +12,5 @@ public interface CountryService {
 
     CountryDto getById(Long countryId);
 
-    Slice<CountryDto> getAll(String nameStartWith, int page, int size);
+    Slice<CountryDto> getAll(String nameStartWith, String lastSeenName, int size);
 }
