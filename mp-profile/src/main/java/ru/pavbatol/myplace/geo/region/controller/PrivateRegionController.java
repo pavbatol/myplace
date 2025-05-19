@@ -31,10 +31,12 @@ public class PrivateRegionController {
     @GetMapping
     @Operation(summary = "getAll", description = "get Regions")
     public ResponseEntity<Slice<RegionDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
-                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                   @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
+                                                   @RequestParam(value = "lastSeenCountryName", required = false) String lastSeenCountryName,
                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
-        log.debug("GET getAll() with nameStartWith: {}, page: {}, size: {}", nameStartWith, page, size);
-        Slice<RegionDto> body = service.getAll(nameStartWith, page, size);
+        log.debug("GET getAll() with nameStartWith: {}, lastSeenName: {}, lastSeenCountryName: {}, size: {}",
+                nameStartWith, lastSeenName, lastSeenCountryName, size);
+        Slice<RegionDto> body = service.getAll(nameStartWith, lastSeenName, lastSeenCountryName, size);
 
         return ResponseEntity.ok(body);
     }

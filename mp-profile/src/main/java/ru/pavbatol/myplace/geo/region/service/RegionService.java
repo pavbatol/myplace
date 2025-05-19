@@ -12,5 +12,5 @@ public interface RegionService {
 
     RegionDto getById(Long regionId);
 
-    Slice<RegionDto> getAll(String nameStartWith, int page, int size);
+    Slice<RegionDto> getAll(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size);
 }
