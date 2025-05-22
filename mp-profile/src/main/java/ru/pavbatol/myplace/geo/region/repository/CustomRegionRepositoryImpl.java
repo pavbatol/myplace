@@ -35,8 +35,8 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
         EntityGraph<Region> regionEntityGraph = em.createEntityGraph(Region.class);
         regionEntityGraph.addAttributeNodes("country");
 
-        Predicate prefixPredicate = buildNamePrefixPredicate(cb, region, nameStartWith);
-        Predicate paginationPredicate = buildPaginationPredicate(cb, region, country, lastSeenName, lastSeenCountryName);
+        Predicate prefixPredicate = buildRootNamePrefixPredicate(cb, region, nameStartWith);
+        Predicate paginationPredicate = buildPaginationPredicate(cb, region, country, lastSeenName);
 
         query.where(cb.and(prefixPredicate, paginationPredicate));
         query.orderBy(cb.asc(region.get("name")), cb.asc(country.get("name")));
@@ -48,7 +48,6 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
                 .getResultList();
 
         boolean hasNext = content.size() > size;
-
         Sort sort = Sort.by(Sort.Order.asc("name"), Sort.Order.asc("country.name"));
 
         return new SliceImpl<>(
@@ -77,8 +76,8 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
     }
 
 
-    private Predicate buildNamePrefixPredicate(CriteriaBuilder cb, Root<? extends NameableGeo> root, String nameStartWith) {
-        if (nameStartWith == null) {
+    private Predicate buildRootNamePrefixPredicate(CriteriaBuilder cb, Root<? extends NameableGeo> root, String rootNameStartWith) {
+        if (rootNameStartWith == null) {
             return cb.conjunction();
         }
 
@@ -86,9 +85,11 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
         return cb.like(cb.lower(root.get("name")), cb.lower(cb.concat(namePrefixParam, cb.literal("%"))), ESCAPE_CHAR);
     }
 
-    private Predicate buildPaginationPredicate(CriteriaBuilder cb, Root<? extends NameableGeo> root, Join<? extends NameableGeo, ? extends NameableGeo> join,
-                                               String lastSeenName, String lastSeenCountryName) {
-        if (lastSeenName == null) {
+    private Predicate buildPaginationPredicate(CriteriaBuilder cb,
+                                               Root<? extends NameableGeo> root,
+                                               Join<? extends NameableGeo, ? extends NameableGeo> join,
+                                               String rootLastSeenName) {
+        if (rootLastSeenName == null) {
             return cb.conjunction();
         }
 
@@ -107,8 +108,6 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
         }
         if (rootLastSeenName != null) {
             query.setParameter("rootLastSeenName", rootLastSeenName);
-        }
-        if (joinLastSeenName != null) {
             query.setParameter("joinLastSeenName", joinLastSeenName);
         }
         return query;

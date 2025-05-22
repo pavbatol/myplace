@@ -6,6 +6,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.app.pagination.SliceDto;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
 import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
 import ru.pavbatol.myplace.geo.region.dto.RegionDto;
@@ -58,7 +59,7 @@ public class RegionServiceImpl implements RegionService {
     }
 
     @Override
-    public Slice<RegionDto> getAll(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size) {
+    public SliceDto<RegionDto> getAll(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size) {
         log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenCountryName: {}, size: {}",
                 ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, lastSeenCountryName, size);
 
@@ -66,6 +67,6 @@ public class RegionServiceImpl implements RegionService {
 
         log.debug("Found {} {}(s), hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
-        return slice.map(mapper::toRegionDto);
+        return SliceDto.from(slice, mapper::toRegionDto);
     }
 }
