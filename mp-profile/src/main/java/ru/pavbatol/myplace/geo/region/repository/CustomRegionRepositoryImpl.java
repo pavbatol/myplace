@@ -20,6 +20,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomRegionRepositoryImpl implements CustomRegionRepository {
+    private static final String ATTR_NAME = "name";
+    private static final String ATTR_COUNTRY = "country";
+    private static final String ATTR_COUNTRY_NAME = "country.name";
+    private static final String PARAM_ROOT_NAME_START_WITH = "rootNameStartWith";
+    private static final String PARAM_ROOT_LAST_SEEN_NAME = "rootLastSeenName";
+    private static final String PARAM_JOIN_LAST_SEEN_NAME = "joinLastSeenName";
+
     private static final char ESCAPE_CHAR = '!';
     private final EntityManager em;
 
@@ -30,16 +37,16 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Region> query = cb.createQuery(Region.class);
         Root<Region> region = query.from(Region.class);
-        Join<Region, Country> country = region.join("country", JoinType.LEFT);
+        Join<Region, Country> country = region.join(ATTR_COUNTRY, JoinType.LEFT);
 
         EntityGraph<Region> regionEntityGraph = em.createEntityGraph(Region.class);
-        regionEntityGraph.addAttributeNodes("country");
+        regionEntityGraph.addAttributeNodes(ATTR_COUNTRY);
 
         Predicate prefixPredicate = buildRootNamePrefixPredicate(cb, region, nameStartWith);
         Predicate paginationPredicate = buildPaginationPredicate(cb, region, country, lastSeenName);
 
         query.where(cb.and(prefixPredicate, paginationPredicate));
-        query.orderBy(cb.asc(region.get("name")), cb.asc(country.get("name")));
+        query.orderBy(cb.asc(region.get(ATTR_NAME)), cb.asc(country.get(ATTR_NAME)));
 
         TypedQuery<Region> emQuery = em.createQuery(query);
         List<Region> content = setParams(emQuery, nameStartWith, lastSeenName, lastSeenCountryName)
@@ -48,7 +55,7 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
                 .getResultList();
 
         boolean hasNext = content.size() > size;
-        Sort sort = Sort.by(Sort.Order.asc("name"), Sort.Order.asc("country.name"));
+        Sort sort = Sort.by(Sort.Order.asc(ATTR_NAME), Sort.Order.asc(ATTR_COUNTRY_NAME));
 
         return new SliceImpl<>(
                 hasNext ? content.subList(0, size) : content,
@@ -81,8 +88,8 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
             return cb.conjunction();
         }
 
-        ParameterExpression<String> namePrefixParam = cb.parameter(String.class, "rootNameStartWith");
-        return cb.like(cb.lower(root.get("name")), cb.lower(cb.concat(namePrefixParam, cb.literal("%"))), ESCAPE_CHAR);
+        ParameterExpression<String> namePrefixParam = cb.parameter(String.class, PARAM_ROOT_NAME_START_WITH);
+        return cb.like(cb.lower(root.get(ATTR_NAME)), cb.lower(cb.concat(namePrefixParam, cb.literal("%"))), ESCAPE_CHAR);
     }
 
     private Predicate buildPaginationPredicate(CriteriaBuilder cb,
@@ -93,22 +100,22 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
             return cb.conjunction();
         }
 
-        ParameterExpression<String> rootLastSeenNameParam = cb.parameter(String.class, "rootLastSeenName");
-        ParameterExpression<String> joinLastSeenNameParam = cb.parameter(String.class, "joinLastSeenName");
+        ParameterExpression<String> rootLastSeenNameParam = cb.parameter(String.class, PARAM_ROOT_LAST_SEEN_NAME);
+        ParameterExpression<String> joinLastSeenNameParam = cb.parameter(String.class, PARAM_JOIN_LAST_SEEN_NAME);
 
-        Predicate nameGt = cb.greaterThan(root.get("name"), rootLastSeenNameParam);
-        Predicate nameEq = cb.equal(root.get("name"), rootLastSeenNameParam);
-        Predicate countryNameGt = cb.greaterThan(join.get("name"), joinLastSeenNameParam);
+        Predicate nameGt = cb.greaterThan(root.get(ATTR_NAME), rootLastSeenNameParam);
+        Predicate nameEq = cb.equal(root.get(ATTR_NAME), rootLastSeenNameParam);
+        Predicate countryNameGt = cb.greaterThan(join.get(ATTR_NAME), joinLastSeenNameParam);
         return cb.or(nameGt, cb.and(nameEq, countryNameGt));
     }
 
     private <T> TypedQuery<T> setParams(TypedQuery<T> query, String rootNameStartWith, String rootLastSeenName, String joinLastSeenName) {
         if (rootNameStartWith != null) {
-            query.setParameter("rootNameStartWith", escapeLikePattern(rootNameStartWith));
+            query.setParameter(PARAM_ROOT_NAME_START_WITH, escapeLikePattern(rootNameStartWith));
         }
         if (rootLastSeenName != null) {
-            query.setParameter("rootLastSeenName", rootLastSeenName);
-            query.setParameter("joinLastSeenName", joinLastSeenName);
+            query.setParameter(PARAM_ROOT_LAST_SEEN_NAME, rootLastSeenName);
+            query.setParameter(PARAM_JOIN_LAST_SEEN_NAME, joinLastSeenName);
         }
         return query;
     }
