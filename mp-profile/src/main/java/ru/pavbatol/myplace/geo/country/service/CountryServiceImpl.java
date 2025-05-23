@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import ru.pavbatol.myplace.app.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
 import ru.pavbatol.myplace.geo.country.model.Country;
 import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 @Slf4j
 @Service
@@ -52,13 +54,13 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public Slice<CountryDto> getAll(String nameStartWith, String lastSeenName, int size) {
+    public SimpleSlice<CountryDto> getAll(String nameStartWith, String lastSeenName, int size) {
         log.debug("Finding {}(s) with nameStartWith: {}, lastSeenName: {}, size: {}",
                 ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, size);
 
         Slice<Country> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, size);
         log.debug("Found {} {}(s), hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
-        return slice.map(mapper::toCountryDto);
+        return Sliced.from(slice, mapper::toCountryDto);
     }
 }

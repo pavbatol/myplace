@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.country.service;
 
-import org.springframework.data.domain.Slice;
 import ru.pavbatol.myplace.geo.country.dto.CountryDto;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 public interface CountryService {
     CountryDto create(CountryDto dto);
@@ -12,5 +12,5 @@ public interface CountryService {
 
     CountryDto getById(Long countryId);
 
-    Slice<CountryDto> getAll(String nameStartWith, String lastSeenName, int size);
+    SimpleSlice<CountryDto> getAll(String nameStartWith, String lastSeenName, int size);
 }

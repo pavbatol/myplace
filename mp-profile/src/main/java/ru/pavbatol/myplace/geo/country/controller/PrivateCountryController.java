@@ -4,12 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.service.CountryService;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -35,11 +35,11 @@ public class PrivateCountryController {
 
     @GetMapping
     @Operation(summary = "getAll", description = "get Countries")
-    public ResponseEntity<Slice<CountryDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
-                                                    @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
-                                                    @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+    public ResponseEntity<SimpleSlice<CountryDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
+                                                          @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
+                                                          @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
         log.debug("GET getAll() with nameStartWith: {}, lastSeenName: {}, size: {}", nameStartWith, lastSeenName, size);
-        Slice<CountryDto> body = service.getAll(nameStartWith, lastSeenName, size);
+        SimpleSlice<CountryDto> body = service.getAll(nameStartWith, lastSeenName, size);
 
         return ResponseEntity.ok(body);
     }
