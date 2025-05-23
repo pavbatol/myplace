@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.app.pagination.SliceDto;
 import ru.pavbatol.myplace.geo.region.dto.RegionDto;
 import ru.pavbatol.myplace.geo.region.service.RegionService;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -35,13 +35,13 @@ public class PrivateRegionController {
 
     @GetMapping
     @Operation(summary = "getAll", description = "get Regions")
-    public ResponseEntity<SliceDto<RegionDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
-                                                      @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
-                                                      @RequestParam(value = "lastSeenCountryName", required = false) String lastSeenCountryName,
-                                                      @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+    public ResponseEntity<SimpleSlice<RegionDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
+                                                         @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
+                                                         @RequestParam(value = "lastSeenCountryName", required = false) String lastSeenCountryName,
+                                                         @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
         log.debug("GET getAll() with nameStartWith: {}, lastSeenName: {}, lastSeenCountryName: {}, size: {}",
                 nameStartWith, lastSeenName, lastSeenCountryName, size);
-        SliceDto<RegionDto> body = service.getAll(nameStartWith, lastSeenName, lastSeenCountryName, size);
+        SimpleSlice<RegionDto> body = service.getAll(nameStartWith, lastSeenName, lastSeenCountryName, size);
 
         return ResponseEntity.ok(body);
     }
