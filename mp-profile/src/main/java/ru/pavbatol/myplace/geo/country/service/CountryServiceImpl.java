@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
 import ru.pavbatol.myplace.geo.country.model.Country;

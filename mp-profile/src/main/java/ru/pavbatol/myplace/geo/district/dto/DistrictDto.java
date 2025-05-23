@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.district.dto;
 
 import lombok.Value;
-import ru.pavbatol.myplace.app.Util.Marker;
+import ru.pavbatol.myplace.app.util.Marker;
 import ru.pavbatol.myplace.geo.IdentifiableGeo;
 import ru.pavbatol.myplace.geo.region.dto.RegionDto;
 

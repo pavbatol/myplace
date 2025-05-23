@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.profile.mapper;
 
 import org.mapstruct.*;
-import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.model.House;
