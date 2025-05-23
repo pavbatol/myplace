@@ -7,6 +7,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
+import ru.pavbatol.myplace.app.util.SqlUtils;
 import ru.pavbatol.myplace.geo.NameableGeo;
 import ru.pavbatol.myplace.geo.country.model.Country;
 import ru.pavbatol.myplace.geo.region.model.Region;
@@ -111,34 +112,12 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
 
     private <T> TypedQuery<T> setParams(TypedQuery<T> query, String rootNameStartWith, String rootLastSeenName, String joinLastSeenName) {
         if (rootNameStartWith != null) {
-            query.setParameter(PARAM_ROOT_NAME_START_WITH, escapeLikePattern(rootNameStartWith));
+            query.setParameter(PARAM_ROOT_NAME_START_WITH, SqlUtils.escapeSqlLikeWildcards(rootNameStartWith));
         }
         if (rootLastSeenName != null) {
             query.setParameter(PARAM_ROOT_LAST_SEEN_NAME, rootLastSeenName);
             query.setParameter(PARAM_JOIN_LAST_SEEN_NAME, joinLastSeenName);
         }
         return query;
-    }
-
-    /**
-     * Escapes special LIKE pattern characters (!, %, _) by prefixing them with the escape character.
-     *
-     * @param input the string to escape (null returns null)
-     * @return escaped string, or original if no special chars found
-     * @see #ESCAPE_CHAR
-     */
-    private String escapeLikePattern(String input) {
-        if (input == null || !input.matches(".*[!%_].*")) {
-            return input;
-        }
-
-        StringBuilder sb = new StringBuilder(input.length() * 2);
-        for (char c : input.toCharArray()) {
-            if (c == ESCAPE_CHAR || c == '%' || c == '_') {
-                sb.append(ESCAPE_CHAR);
-            }
-            sb.append(c);
-        }
-        return sb.toString();
     }
 }

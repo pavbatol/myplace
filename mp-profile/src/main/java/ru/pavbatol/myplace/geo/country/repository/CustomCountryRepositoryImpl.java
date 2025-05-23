@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pavbatol.myplace.app.util.SqlUtils;
 import ru.pavbatol.myplace.geo.country.model.Country;
 
 import javax.persistence.EntityManager;
@@ -91,7 +92,7 @@ public class CustomCountryRepositoryImpl implements CustomCountryRepository {
 
         TypedQuery<Country> query = em.createQuery(sql, Country.class)
                 .setParameter("escapeChar", String.valueOf(ESCAPE_CHAR))
-                .setParameter("nameStartWith", escapeLikePattern(nameStartWith))
+                .setParameter("nameStartWith", SqlUtils.escapeSqlLikeWildcards(nameStartWith))
                 .setParameter("lastSeenName", lastSeenName)
                 .setMaxResults(size + 1);
 
@@ -103,27 +104,5 @@ public class CustomCountryRepositoryImpl implements CustomCountryRepository {
         }
 
         return new SliceImpl<>(content, PageRequest.of(0, size, DEFAULT_SORT), hasNext);
-    }
-
-    /**
-     * Escapes special LIKE pattern characters (!, %, _) by prefixing them with the escape character.
-     *
-     * @param input the string to escape (null returns null)
-     * @return escaped string, or original if no special chars found
-     * @see #ESCAPE_CHAR
-     */
-    private String escapeLikePattern(String input) {
-        if (input == null || !input.matches(".*[!%_].*")) {
-            return input;
-        }
-
-        StringBuilder sb = new StringBuilder(input.length() * 2);
-        for (char c : input.toCharArray()) {
-            if (c == ESCAPE_CHAR || c == '%' || c == '_') {
-                sb.append(ESCAPE_CHAR);
-            }
-            sb.append(c);
-        }
-        return sb.toString();
     }
 }
