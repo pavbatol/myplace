@@ -16,47 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomCountryRepositoryImpl implements CustomCountryRepository {
     private static final char ESCAPE_CHAR = '!';
-    private static final Sort DEFAULT_SORT = Sort.by("name").ascending();
 
     @PersistenceContext
     private final EntityManager em;
-
-    /**
-     * Finds next page of countries alphabetically after {@code lastSeenName}.
-     * Results are ordered by name ASC and limited to {@code size} items.
-     *
-     * @param lastSeenName country name to start after (exclusive, null for first page)
-     * @param size         page size (must be > 0)
-     * @return Slice with countries and pagination info
-     * @throws IllegalArgumentException if size <= 0
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public Slice<Country> findNextPage(String lastSeenName, int size) {
-        if (size <= 0) {
-            throw new IllegalArgumentException("Size must be positive");
-        }
-
-        log.debug("Finding next page with lastSeenName: {}, size: {}", lastSeenName, size);
-
-        String sql = "SELECT c FROM Country c " +
-                "WHERE :lastSeenName IS NULL OR c.name > :lastSeenName " +
-                "ORDER BY c.name ASC ";
-
-        TypedQuery<Country> query = em.createQuery(sql, Country.class);
-        query.setParameter("lastSeenName", lastSeenName);
-        query.setFirstResult(0);
-        query.setMaxResults(size + 1);
-
-        List<Country> content = query.getResultList();
-
-        boolean hasNext = content.size() > size;
-        if (hasNext) {
-            content = content.subList(0, size);
-        }
-
-        return new SliceImpl<>(content, PageRequest.of(0, size, DEFAULT_SORT), hasNext);
-    }
 
     /**
      * Finds countries by name prefix using keyset pagination.
@@ -77,13 +39,12 @@ public class CustomCountryRepositoryImpl implements CustomCountryRepository {
      */
     @Override
     @Transactional(readOnly = true)
-    public Slice<Country> findNextPageByNamePrefixIgnoreCase(String nameStartWith, String lastSeenName, int size) {
+    public Slice<Country> findPageByNamePrefixIgnoreCase(String nameStartWith, String lastSeenName, int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("Size must be positive");
         }
 
         log.debug("Finding next page with nameStartWith: {}, lastSeenName: {}, size: {}", nameStartWith, lastSeenName, size);
-
 
         String sql = "SELECT c FROM Country c " +
                 "WHERE (:nameStartWith IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT(:nameStartWith, '%' )) ESCAPE :escapeChar) " +
@@ -92,7 +53,7 @@ public class CustomCountryRepositoryImpl implements CustomCountryRepository {
 
         TypedQuery<Country> query = em.createQuery(sql, Country.class)
                 .setParameter("escapeChar", String.valueOf(ESCAPE_CHAR))
-                .setParameter("nameStartWith", SqlUtils.escapeSqlLikeWildcards(nameStartWith))
+                .setParameter("nameStartWith", SqlUtils.escapeSqlLikeWildcards(nameStartWith, ESCAPE_CHAR))
                 .setParameter("lastSeenName", lastSeenName)
                 .setMaxResults(size + 1);
 
@@ -103,6 +64,6 @@ public class CustomCountryRepositoryImpl implements CustomCountryRepository {
             content = content.subList(0, size);
         }
 
-        return new SliceImpl<>(content, PageRequest.of(0, size, DEFAULT_SORT), hasNext);
+        return new SliceImpl<>(content, PageRequest.of(0, size, Sort.by("name").ascending()), hasNext);
     }
 }

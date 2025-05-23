@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.pavbatol.myplace.app.util.SqlUtils;
 import ru.pavbatol.myplace.geo.NameableGeo;
@@ -27,11 +28,11 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
     private static final String PARAM_ROOT_NAME_START_WITH = "rootNameStartWith";
     private static final String PARAM_ROOT_LAST_SEEN_NAME = "rootLastSeenName";
     private static final String PARAM_JOIN_LAST_SEEN_NAME = "joinLastSeenName";
-
     private static final char ESCAPE_CHAR = '!';
     private final EntityManager em;
 
     @Override
+    @Transactional(readOnly = true)
     public Slice<Region> findPageByNamePrefixIgnoreCase(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size) {
         validateParameters(lastSeenName, lastSeenCountryName, size);
 
@@ -112,7 +113,7 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
 
     private <T> TypedQuery<T> setParams(TypedQuery<T> query, String rootNameStartWith, String rootLastSeenName, String joinLastSeenName) {
         if (rootNameStartWith != null) {
-            query.setParameter(PARAM_ROOT_NAME_START_WITH, SqlUtils.escapeSqlLikeWildcards(rootNameStartWith));
+            query.setParameter(PARAM_ROOT_NAME_START_WITH, SqlUtils.escapeSqlLikeWildcards(rootNameStartWith, ESCAPE_CHAR));
         }
         if (rootLastSeenName != null) {
             query.setParameter(PARAM_ROOT_LAST_SEEN_NAME, rootLastSeenName);

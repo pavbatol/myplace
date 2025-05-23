@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
@@ -57,10 +56,7 @@ public class CountryServiceImpl implements CountryService {
         log.debug("Finding {}(s) with nameStartWith: {}, lastSeenName: {}, size: {}",
                 ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, size);
 
-        Slice<Country> slice = StringUtils.hasText(nameStartWith)
-                ? repository.findNextPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, size)
-                : repository.findNextPage(lastSeenName, size);
-
+        Slice<Country> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, size);
         log.debug("Found {} {}(s), hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
         return slice.map(mapper::toCountryDto);
