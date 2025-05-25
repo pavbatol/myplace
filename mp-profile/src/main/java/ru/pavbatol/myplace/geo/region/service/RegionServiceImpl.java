@@ -65,7 +65,7 @@ public class RegionServiceImpl implements RegionService {
                 ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, lastSeenCountryName, size);
 
         Slice<Region> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, lastSeenCountryName, size);
-        log.debug("Found {} {}(s), hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
+        log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
         return Sliced.from(slice, mapper::toRegionDto);
     }

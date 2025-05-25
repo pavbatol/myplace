@@ -74,10 +74,8 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
         boolean isValidNextPage = (StringUtils.hasText(rootLastSeenName) && StringUtils.hasText(joinLastSeenName));
 
         if (!isFirstPage && !isValidNextPage) {
-            String errorMsg = String.format("Both parameters must be either null (first page) or non-null and not blank (next page). " +
-                    "Received: rootLastSeenName=%s, joinLastSeenName=%s", rootLastSeenName, joinLastSeenName);
-            log.error(errorMsg);
-            throw new IllegalArgumentException(errorMsg);
+            throw new IllegalArgumentException(String.format("Both parameters must be either null (first page) or non-null and not blank (next page). " +
+                    "Received: rootLastSeenName=%s, joinLastSeenName=%s", rootLastSeenName, joinLastSeenName));
         }
 
         log.debug("Fetching {}: rootLastSeenName={}, joinLastSeenName={}, size={}",
