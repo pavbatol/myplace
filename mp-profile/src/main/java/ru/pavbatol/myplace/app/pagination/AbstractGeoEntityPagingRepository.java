@@ -5,11 +5,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import ru.pavbatol.myplace.app.util.SqlUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -18,13 +20,17 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
     private static final String ATTR_ID = "id";
     private static final char ESCAPE_CHAR = '!';
     private final Class<T> entityType;
-    private final String relationFieldName;
+    private final String relationsFetchPath;
     private final EntityManager em;
 
-    public AbstractGeoEntityPagingRepository(Class<T> entityType, String relationFieldName, EntityManager em) {
+    public AbstractGeoEntityPagingRepository(Class<T> entityType, @Nullable String relationsFetchPath, EntityManager em) {
         this.entityType = entityType;
-        this.relationFieldName = relationFieldName;
+        this.relationsFetchPath = relationsFetchPath;
         this.em = em;
+    }
+
+    public AbstractGeoEntityPagingRepository(Class<T> entityType, EntityManager em) {
+        this(entityType, null, em);
     }
 
     @Override
@@ -37,7 +43,8 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<T> query = cb.createQuery(entityType);
         Root<T> root = query.from(entityType);
-        root.fetch(relationFieldName, JoinType.LEFT);
+
+        fetchNested(root, relationsFetchPath);
 
         Predicate nameLikePredicate;
         if (!StringUtils.hasText(nameStartWith)) {
@@ -88,5 +95,24 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
 
     private boolean isFirstPage(String lastSeenName, Long lastSeenId) {
         return lastSeenName == null && lastSeenId == null;
+    }
+
+    private void fetchNested(From<?, ?> from, String path) {
+        if (path == null) {
+            return;
+        }
+
+        log.debug("Loading entity relations using path: {}", path);
+
+        String[] parts = path.split("\\.");
+
+        if (parts.length > 0) {
+            log.debug("Detected relation path components: {}", Arrays.toString(parts));
+
+            Fetch<?, ?> currentFetch = from.fetch(parts[0], JoinType.LEFT);
+            for (int i = 1; i < parts.length; i++) {
+                currentFetch = currentFetch.fetch(parts[i], JoinType.LEFT);
+            }
+        }
     }
 }
