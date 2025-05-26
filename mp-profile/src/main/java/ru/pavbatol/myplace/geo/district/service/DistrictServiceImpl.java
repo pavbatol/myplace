@@ -61,7 +61,8 @@ public class DistrictServiceImpl implements DistrictService {
 
     @Override
     public SimpleSlice<DistrictDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
-        log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}", ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, lastSeenId, size);
+        log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",
+                ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, lastSeenId, size);
 
         Slice<District> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, lastSeenId, size);
         log.debug("Found {} {}(e)s, hasNext: {}", slice.getSize(), ENTITY_SIMPLE_NAME, slice.hasNext());
