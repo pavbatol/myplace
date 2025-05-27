@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import ru.pavbatol.myplace.app.util.SqlUtils;
@@ -16,21 +17,22 @@ import java.util.List;
 
 @Slf4j
 public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityPagingRepository<T> {
-    private static final String ATTR_NAME = "name";
     private static final String ATTR_ID = "id";
     private static final char ESCAPE_CHAR = '!';
-    private final Class<T> entityType;
+
+    private final String sortAttributeName;
     private final String relationsFetchPath;
+    private final Class<T> entityType;
     private final EntityManager em;
 
-    public AbstractGeoEntityPagingRepository(Class<T> entityType, @Nullable String relationsFetchPath, EntityManager em) {
-        this.entityType = entityType;
+    public AbstractGeoEntityPagingRepository(@NonNull String sortAttributeName,
+                                             @Nullable String relationsFetchPath,
+                                             Class<T> entityType,
+                                             EntityManager em) {
+        this.sortAttributeName = sortAttributeName;
         this.relationsFetchPath = relationsFetchPath;
+        this.entityType = entityType;
         this.em = em;
-    }
-
-    public AbstractGeoEntityPagingRepository(Class<T> entityType, EntityManager em) {
-        this(entityType, null, em);
     }
 
     @Override
@@ -51,21 +53,21 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
             nameLikePredicate = cb.conjunction();
         } else {
             nameLikePredicate = cb.like(
-                    cb.lower(root.get(ATTR_NAME)),
+                    cb.lower(root.get(sortAttributeName)),
                     cb.concat(SqlUtils.escapeSqlLikeWildcards(nameStartWith, ESCAPE_CHAR), cb.literal("%")),
                     ESCAPE_CHAR
             );
         }
 
         Predicate paginationPredicate = firstPage ? cb.conjunction() : cb.or(
-                cb.greaterThan(root.get(ATTR_NAME), lastSeenName),
+                cb.greaterThan(root.get(sortAttributeName), lastSeenName),
                 cb.and(
-                        cb.equal(root.get(ATTR_NAME), lastSeenName),
+                        cb.equal(root.get(sortAttributeName), lastSeenName),
                         cb.greaterThan(root.get(ATTR_ID), lastSeenId)
                 ));
 
         query.where(cb.and(nameLikePredicate, paginationPredicate));
-        query.orderBy(cb.asc(root.get(ATTR_NAME)), cb.asc(root.get(ATTR_ID)));
+        query.orderBy(cb.asc(root.get(sortAttributeName)), cb.asc(root.get(ATTR_ID)));
 
         List<T> content = em.createQuery(query)
                 .setMaxResults(size + 1)
@@ -75,7 +77,7 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
 
         return new SliceImpl<>(
                 hasNext ? content.subList(0, size) : content,
-                PageRequest.of(0, size, Sort.by(ATTR_NAME, ATTR_ID).ascending()),
+                PageRequest.of(0, size, Sort.by(sortAttributeName, ATTR_ID).ascending()),
                 hasNext);
     }
 

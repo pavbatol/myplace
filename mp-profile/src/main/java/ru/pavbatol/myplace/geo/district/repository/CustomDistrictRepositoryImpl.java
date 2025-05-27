@@ -10,6 +10,6 @@ public class CustomDistrictRepositoryImpl extends AbstractGeoEntityPagingReposit
 
     @Autowired
     public CustomDistrictRepositoryImpl(EntityManager em) {
-        super(District.class, "region.country", em);
+        super("name", "region.country", District.class, em);
     }
 }
