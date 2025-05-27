@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.geo.house.service.HouseService;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 @Slf4j
 @RestController
@@ -30,11 +31,13 @@ public class PrivateHoseController {
 
     @GetMapping
     @Operation(summary = "getAll", description = "get Houses")
-    public ResponseEntity<Slice<HouseDto>> getAll(@RequestParam(value = "numberStartWith", required = false) String numberStartWith,
-                                                  @RequestParam(value = "page", defaultValue = "0") int page,
-                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
-        log.debug("GET getAll() with numberStartWith: {}, page: {}, size: {}", numberStartWith, page, size);
-        Slice<HouseDto> body = service.getAll(numberStartWith, page, size);
+    public ResponseEntity<SimpleSlice<HouseDto>> getAll(@RequestParam(value = "numberStartWith", required = false) String numberStartWith,
+                                                        @RequestParam(value = "lastSeenNumber", required = false) String lastSeenNumber,
+                                                        @RequestParam(value = "lastSeenId", required = false) Long lastSeenId,
+                                                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        log.debug("GET getAll() with numberStartWith: {}, lastSeenNumber: {}, lastSeenId: {}, size: {}",
+                numberStartWith, lastSeenNumber, lastSeenId, size);
+        SimpleSlice<HouseDto> body = service.getAll(numberStartWith, lastSeenNumber, lastSeenId, size);
 
         return ResponseEntity.ok(body);
     }
