@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.pavbatol.myplace.app.util.SqlUtils;
-import ru.pavbatol.myplace.geo.NameableGeo;
+import ru.pavbatol.myplace.geo.common.NameableGeo;
 import ru.pavbatol.myplace.geo.country.model.Country;
 import ru.pavbatol.myplace.geo.region.model.Region;
 
