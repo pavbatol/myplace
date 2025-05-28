@@ -17,30 +17,40 @@ import java.util.List;
 
 @Slf4j
 public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityPagingRepository<T> {
+    public static final String DEFAULT_CURSOR_ATTRIBUTE = "name";
     private static final String ATTR_ID = "id";
     private static final char ESCAPE_CHAR = '!';
 
-    private final String sortAttributeName;
+    private final String cursorField;
     private final String relationsFetchPath;
     private final Class<T> entityType;
     private final EntityManager em;
 
-    public AbstractGeoEntityPagingRepository(@NonNull String sortAttributeName,
+    public AbstractGeoEntityPagingRepository(@NonNull String cursorField,
                                              @Nullable String relationsFetchPath,
                                              Class<T> entityType,
                                              EntityManager em) {
-        this.sortAttributeName = sortAttributeName;
+        this.cursorField = cursorField;
+        this.relationsFetchPath = relationsFetchPath;
+        this.entityType = entityType;
+        this.em = em;
+    }
+
+    public AbstractGeoEntityPagingRepository(@Nullable String relationsFetchPath,
+                                             Class<T> entityType,
+                                             EntityManager em) {
+        this.cursorField = DEFAULT_CURSOR_ATTRIBUTE;
         this.relationsFetchPath = relationsFetchPath;
         this.entityType = entityType;
         this.em = em;
     }
 
     @Override
-    public Slice<T> findPageByNamePrefixIgnoreCase(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
-        validatePaginationParams(lastSeenName, lastSeenId, size);
-        boolean firstPage = isFirstPage(lastSeenName, lastSeenId);
-        log.debug("Fetching {} for {}: prefix={}, lastSeen={}, lastSeenId={}, size={}",
-                firstPage ? "first page" : "next page", entityType.getSimpleName(), nameStartWith, lastSeenName, lastSeenId, size);
+    public Slice<T> findPageByNamePrefixIgnoreCase(String cursorFieldStartWith, String lastSeenCursorField, Long lastSeenId, int size) {
+        validatePaginationParams(lastSeenCursorField, lastSeenId, size);
+        boolean firstPage = isFirstPage(lastSeenCursorField, lastSeenId);
+        log.debug("Fetching {} for {}: cursorFieldStartWith={}, lastSeenCursorField={}, lastSeenId={}, size={}",
+                firstPage ? "first page" : "next page", entityType.getSimpleName(), cursorFieldStartWith, lastSeenCursorField, lastSeenId, size);
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<T> query = cb.createQuery(entityType);
@@ -49,25 +59,25 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
         fetchNested(root, relationsFetchPath);
 
         Predicate nameLikePredicate;
-        if (!StringUtils.hasText(nameStartWith)) {
+        if (!StringUtils.hasText(cursorFieldStartWith)) {
             nameLikePredicate = cb.conjunction();
         } else {
             nameLikePredicate = cb.like(
-                    cb.lower(root.get(sortAttributeName)),
-                    cb.concat(SqlUtils.escapeSqlLikeWildcards(nameStartWith, ESCAPE_CHAR), cb.literal("%")),
+                    cb.lower(root.get(cursorField)),
+                    cb.concat(SqlUtils.escapeSqlLikeWildcards(cursorFieldStartWith, ESCAPE_CHAR), cb.literal("%")),
                     ESCAPE_CHAR
             );
         }
 
         Predicate paginationPredicate = firstPage ? cb.conjunction() : cb.or(
-                cb.greaterThan(root.get(sortAttributeName), lastSeenName),
+                cb.greaterThan(root.get(cursorField), lastSeenCursorField),
                 cb.and(
-                        cb.equal(root.get(sortAttributeName), lastSeenName),
+                        cb.equal(root.get(cursorField), lastSeenCursorField),
                         cb.greaterThan(root.get(ATTR_ID), lastSeenId)
                 ));
 
         query.where(cb.and(nameLikePredicate, paginationPredicate));
-        query.orderBy(cb.asc(root.get(sortAttributeName)), cb.asc(root.get(ATTR_ID)));
+        query.orderBy(cb.asc(root.get(cursorField)), cb.asc(root.get(ATTR_ID)));
 
         List<T> content = em.createQuery(query)
                 .setMaxResults(size + 1)
@@ -77,26 +87,26 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
 
         return new SliceImpl<>(
                 hasNext ? content.subList(0, size) : content,
-                PageRequest.of(0, size, Sort.by(sortAttributeName, ATTR_ID).ascending()),
+                PageRequest.of(0, size, Sort.by(cursorField, ATTR_ID).ascending()),
                 hasNext);
     }
 
-    private void validatePaginationParams(String lastSeenName, Long lastSeenId, int size) {
+    private void validatePaginationParams(String lastSeenCursorField, Long lastSeenId, int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("Size must be positive");
         }
-        if (isFirstPage(lastSeenName, lastSeenId)) {
+        if (isFirstPage(lastSeenCursorField, lastSeenId)) {
             return;
         }
-        if (!StringUtils.hasText(lastSeenName) || lastSeenId == null) {
+        if (!StringUtils.hasText(lastSeenCursorField) || lastSeenId == null) {
             throw new IllegalArgumentException(String.format(
-                    "For non-first page both lastSeenName and lastSeenId must be provided but received lastSeenName=%s and lastSeenId=%s",
-                    lastSeenName, lastSeenId));
+                    "For non-first page both lastSeenCursorField and lastSeenId must be provided but received lastSeenCursorField=%s and lastSeenId=%s",
+                    lastSeenCursorField, lastSeenId));
         }
     }
 
-    private boolean isFirstPage(String lastSeenName, Long lastSeenId) {
-        return lastSeenName == null && lastSeenId == null;
+    private boolean isFirstPage(String lastSeenCursorField, Long lastSeenId) {
+        return lastSeenCursorField == null && lastSeenId == null;
     }
 
     private void fetchNested(From<?, ?> from, String path) {
