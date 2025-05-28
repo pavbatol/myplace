@@ -15,6 +15,16 @@ import javax.persistence.criteria.*;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Abstract repository implementation for paging through geo entities.
+ * Provides common functionality for KeySet Pagination and relation fetching.
+ *
+ * <p>The repository supports optional eager loading of nested entity relations specified via
+ * a dot-separated path (e.g., "city.district.region"). When no relation path is provided,
+ * only the root entity properties will be loaded.</p>
+ *
+ * @param <T> the type of geo entity this repository manages
+ */
 @Slf4j
 public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityPagingRepository<T> {
     public static final String DEFAULT_CURSOR_ATTRIBUTE = "name";
@@ -45,6 +55,22 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
         this.em = em;
     }
 
+    /**
+     * Finds a page of entities filtered by field values beginning with the given prefix (case-insensitive),
+     * using KeySet Pagination.
+     *
+     * <p>The method filters entities where the designated cursor field starts with
+     * the provided prefix string, ignoring case differences.
+     *
+     * <p>
+     * The pagination is implemented using a combination of cursor field value and entity ID.
+     *
+     * @param cursorFieldStartWith the prefix to match against entity specified field
+     * @param lastSeenCursorField  the cursor (first key) value of the last seen entity
+     * @param lastSeenId           the ID of the last seen entity (second key)
+     * @param size                 the maximum number of entities to return in the page
+     * @return a {@link Slice} containing the requested page of entities
+     */
     @Override
     public Slice<T> findPageByNamePrefixIgnoreCase(String cursorFieldStartWith, String lastSeenCursorField, Long lastSeenId, int size) {
         validatePaginationParams(lastSeenCursorField, lastSeenId, size);
@@ -109,6 +135,17 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
         return lastSeenCursorField == null && lastSeenId == null;
     }
 
+    /**
+     * Eagerly fetches nested entity relations specified by the dot-separated path.
+     * If the path is null or empty, this method does nothing.
+     *
+     * <p>This implementation uses JPA's fetch joins to load all specified relations
+     * in a single query to avoid N+1 query problems.</p>
+     *
+     * @param from the root entity From object to start fetching from
+     * @param path dot-separated path of relations to fetch (e.g., "city.district.region").
+     *             May be null, in which case no fetching occurs.
+     */
     private void fetchNested(From<?, ?> from, String path) {
         if (path == null) {
             return;
