@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.district.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.pavbatol.myplace.app.pagination.AbstractGeoEntityPagingRepository;
+import ru.pavbatol.myplace.geo.common.pagination.AbstractGeoEntityPagingRepository;
 import ru.pavbatol.myplace.geo.district.model.District;
 
 import javax.persistence.EntityManager;

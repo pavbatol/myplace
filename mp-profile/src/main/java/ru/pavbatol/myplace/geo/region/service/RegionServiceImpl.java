@@ -6,7 +6,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.app.pagination.Sliced;
+import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
 import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
 import ru.pavbatol.myplace.geo.region.dto.RegionDto;

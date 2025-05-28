@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.app.pagination;
+package ru.pavbatol.myplace.geo.common.pagination;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
