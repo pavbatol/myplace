@@ -65,7 +65,7 @@ public class HouseServiceImpl implements HouseService {
                 ENTITY_SIMPLE_NAME, numberStartWith, lastSeenNumber, lastSeenId, size);
 
         Slice<House> slice = repository.findPageByNamePrefixIgnoreCase(numberStartWith, lastSeenNumber, lastSeenId, size);
-        log.debug("Found {} {}(e)s, hasNext: {}", slice.getSize(), ENTITY_SIMPLE_NAME, slice.hasNext());
+        log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
         return Sliced.from(slice, mapper::toHouseDto);
     }

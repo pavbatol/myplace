@@ -65,7 +65,7 @@ public class DistrictServiceImpl implements DistrictService {
                 ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, lastSeenId, size);
 
         Slice<District> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, lastSeenId, size);
-        log.debug("Found {} {}(e)s, hasNext: {}", slice.getSize(), ENTITY_SIMPLE_NAME, slice.hasNext());
+        log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
         return Sliced.from(slice, mapper::toDistrictDto);
     }

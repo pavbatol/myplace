@@ -90,7 +90,7 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
         } else {
             nameLikePredicate = cb.like(
                     cb.lower(root.get(cursorField)),
-                    cb.concat(SqlUtils.escapeSqlLikeWildcards(cursorFieldStartWith, ESCAPE_CHAR), cb.literal("%")),
+                    cb.concat(SqlUtils.escapeSqlLikeWildcards(cursorFieldStartWith.toLowerCase(), ESCAPE_CHAR), cb.literal("%")),
                     ESCAPE_CHAR
             );
         }
