@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.app.Util.Marker;
+import ru.pavbatol.myplace.app.util.Marker;
 import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 import ru.pavbatol.myplace.geo.district.service.DistrictService;
 

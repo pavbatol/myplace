@@ -3,7 +3,7 @@ package ru.pavbatol.myplace.geo.country.model;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import ru.pavbatol.myplace.geo.IdableNameableGeo;
+import ru.pavbatol.myplace.geo.common.IdableNameableGeo;
 
 import javax.persistence.*;
 

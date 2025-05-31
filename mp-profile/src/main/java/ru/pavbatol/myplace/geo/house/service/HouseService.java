@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.house.service;
 
-import org.springframework.data.domain.Slice;
 import ru.pavbatol.myplace.geo.house.dto.HouseDto;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 public interface HouseService {
     HouseDto create(HouseDto dto);
@@ -12,5 +12,5 @@ public interface HouseService {
 
     HouseDto getById(Long houseId);
 
-    Slice<HouseDto> getAll(String numberStartWith, int page, int size);
+    SimpleSlice<HouseDto> getAll(String numberStartWith, String lastSeenNumber, Long lastSeenId, int size);
 }

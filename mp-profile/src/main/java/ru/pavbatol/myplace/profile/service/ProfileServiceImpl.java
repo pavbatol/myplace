@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;

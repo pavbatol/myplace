@@ -4,11 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 import ru.pavbatol.myplace.geo.district.service.DistrictService;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Slf4j
 @RestController
@@ -30,11 +33,13 @@ public class PrivateDistrictController {
 
     @GetMapping
     @Operation(summary = "getAll", description = "get Districts")
-    public ResponseEntity<Slice<DistrictDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
-                                                     @RequestParam(value = "page", defaultValue = "0") int page,
-                                                     @RequestParam(value = "size", defaultValue = "10") int size) {
-        log.debug("GET getAll() with nameStartWith: {}, page: {}, size: {}", nameStartWith, page, size);
-        Slice<DistrictDto> body = service.getAll(nameStartWith, page, size);
+    public ResponseEntity<SimpleSlice<DistrictDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
+                                                           @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
+                                                           @RequestParam(value = "lastSeenId", required = false) Long lastSeenId,
+                                                           @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+        log.debug("GET getAll() with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",
+                nameStartWith, lastSeenName, lastSeenId, size);
+        SimpleSlice<DistrictDto> body = service.getAll(nameStartWith, lastSeenName, lastSeenId, size);
 
         return ResponseEntity.ok(body);
     }

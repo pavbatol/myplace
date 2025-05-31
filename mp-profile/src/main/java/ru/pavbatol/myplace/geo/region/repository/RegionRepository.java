@@ -1,14 +1,12 @@
 package ru.pavbatol.myplace.geo.region.repository;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ru.pavbatol.myplace.geo.region.model.Region;
 
 import java.util.List;
 
-public interface RegionRepository extends JpaRepository<Region, Long> {
-    Slice<Region> findByNameStartingWithIgnoreCase(String nameStartWith, Pageable pageable);
-
+@Repository
+public interface RegionRepository extends JpaRepository<Region, Long>, CustomRegionRepository {
     List<Region> findByNameInIgnoreCaseAndCountryIdIn(Iterable<String> regionNamesLowercase, Iterable<Long> countryIds);
 }

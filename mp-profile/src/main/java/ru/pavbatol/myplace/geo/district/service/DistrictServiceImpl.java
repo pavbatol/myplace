@@ -2,19 +2,18 @@ package ru.pavbatol.myplace.geo.district.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.geo.common.pagination.Sliced;
+import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 import ru.pavbatol.myplace.geo.district.mapper.DistrictMapper;
 import ru.pavbatol.myplace.geo.district.model.District;
 import ru.pavbatol.myplace.geo.district.repository.DistrictRepository;
 import ru.pavbatol.myplace.geo.region.mapper.RegionMapper;
 import ru.pavbatol.myplace.geo.region.repository.RegionRepository;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 @Slf4j
 @Service
@@ -61,17 +60,13 @@ public class DistrictServiceImpl implements DistrictService {
     }
 
     @Override
-    public Slice<DistrictDto> getAll(String nameStartWith, int page, int size) {
-        log.debug("Finding {}(e)s with nameStartWith: {}, page: {}, size: {}", ENTITY_SIMPLE_NAME, nameStartWith, page, size);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
-        Slice<District> found;
-        if (nameStartWith != null && !nameStartWith.isBlank()) {
-            found = repository.findByNameStartingWithIgnoreCase(nameStartWith, pageable);
-        } else {
-            found = repository.findAll(pageable);
-        }
-        log.debug("Found Slice of {}: {}, numberOfElements: {}", ENTITY_SIMPLE_NAME, found, found.getNumberOfElements());
+    public SimpleSlice<DistrictDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
+        log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",
+                ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, lastSeenId, size);
 
-        return found.map(mapper::toDistrictDto);
+        Slice<District> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, lastSeenId, size);
+        log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
+
+        return Sliced.from(slice, mapper::toDistrictDto);
     }
 }

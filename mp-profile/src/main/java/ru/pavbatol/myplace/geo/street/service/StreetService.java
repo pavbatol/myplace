@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.street.service;
 
-import org.springframework.data.domain.Slice;
 import ru.pavbatol.myplace.geo.street.dto.StreetDto;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 public interface StreetService {
     StreetDto create(StreetDto dto);
@@ -12,5 +12,5 @@ public interface StreetService {
 
     StreetDto getById(Long streetId);
 
-    Slice<StreetDto> getAll(String nameStartWith, int page, int size);
+    SimpleSlice<StreetDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size);
 }

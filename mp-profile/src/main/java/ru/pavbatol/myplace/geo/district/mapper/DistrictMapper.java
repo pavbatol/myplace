@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.district.mapper;
 
 import org.mapstruct.*;
-import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 import ru.pavbatol.myplace.geo.district.model.District;
 import ru.pavbatol.myplace.geo.region.dto.RegionDto;

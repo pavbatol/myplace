@@ -2,19 +2,18 @@ package ru.pavbatol.myplace.geo.street.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.geo.common.pagination.Sliced;
+import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
 import ru.pavbatol.myplace.geo.city.repository.CityRepository;
 import ru.pavbatol.myplace.geo.street.dto.StreetDto;
 import ru.pavbatol.myplace.geo.street.mapper.StreetMapper;
 import ru.pavbatol.myplace.geo.street.model.Street;
 import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 @Slf4j
 @Service
@@ -61,17 +60,13 @@ public class StreetServiceImpl implements StreetService {
     }
 
     @Override
-    public Slice<StreetDto> getAll(String nameStartWith, int page, int size) {
-        log.debug("Finding {}(e)s with nameStartWith: {}, page: {}, size: {}", ENTITY_SIMPLE_NAME, nameStartWith, page, size);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name"));
-        Slice<Street> found;
-        if (nameStartWith != null && !nameStartWith.isBlank()) {
-            found = repository.findByNameStartingWithIgnoreCase(nameStartWith, pageable);
-        } else {
-            found = repository.findAll(pageable);
-        }
-        log.debug("Found Slice of {}: {}, numberOfElements: {}", ENTITY_SIMPLE_NAME, found, found.getNumberOfElements());
+    public SimpleSlice<StreetDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
+        log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",
+                ENTITY_SIMPLE_NAME, nameStartWith, lastSeenName, lastSeenId, size);
 
-        return found.map(mapper::toStreetDto);
+        Slice<Street> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, lastSeenId, size);
+        log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
+
+        return Sliced.from(slice, mapper::toStreetDto);
     }
 }
