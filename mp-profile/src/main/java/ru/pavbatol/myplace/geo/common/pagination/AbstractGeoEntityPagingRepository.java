@@ -7,10 +7,12 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.pavbatol.myplace.app.util.SqlUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.util.Arrays;
 import java.util.List;
@@ -34,25 +36,21 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
     private final String cursorField;
     private final String relationsFetchPath;
     private final Class<T> entityType;
-    private final EntityManager em;
+
+    @PersistenceContext
+    private EntityManager em;
 
     public AbstractGeoEntityPagingRepository(@NonNull String cursorField,
                                              @Nullable String relationsFetchPath,
-                                             Class<T> entityType,
-                                             EntityManager em) {
+                                             Class<T> entityType) {
         this.cursorField = cursorField;
         this.relationsFetchPath = relationsFetchPath;
         this.entityType = entityType;
-        this.em = em;
     }
 
     public AbstractGeoEntityPagingRepository(@Nullable String relationsFetchPath,
-                                             Class<T> entityType,
-                                             EntityManager em) {
-        this.cursorField = DEFAULT_CURSOR_ATTRIBUTE;
-        this.relationsFetchPath = relationsFetchPath;
-        this.entityType = entityType;
-        this.em = em;
+                                             Class<T> entityType) {
+        this(DEFAULT_CURSOR_ATTRIBUTE, relationsFetchPath, entityType);
     }
 
     /**
@@ -72,6 +70,7 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
      * @return a {@link Slice} containing the requested page of entities
      */
     @Override
+    @Transactional
     public Slice<T> findPageByNamePrefixIgnoreCase(String cursorFieldStartWith, String lastSeenCursorField, Long lastSeenId, int size) {
         validatePaginationParams(lastSeenCursorField, lastSeenId, size);
         boolean firstPage = isFirstPage(lastSeenCursorField, lastSeenId);
