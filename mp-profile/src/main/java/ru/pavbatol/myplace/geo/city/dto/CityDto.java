@@ -1,8 +1,8 @@
 package ru.pavbatol.myplace.geo.city.dto;
 
 import lombok.Value;
-import ru.pavbatol.myplace.app.Util.Marker;
-import ru.pavbatol.myplace.geo.IdentifiableGeo;
+import ru.pavbatol.myplace.app.util.Marker;
+import ru.pavbatol.myplace.geo.common.IdentifiableGeo;
 import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 
 import javax.validation.constraints.NotNull;

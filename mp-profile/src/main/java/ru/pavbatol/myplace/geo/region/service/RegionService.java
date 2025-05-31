@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.region.service;
 
-import org.springframework.data.domain.Slice;
 import ru.pavbatol.myplace.geo.region.dto.RegionDto;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 public interface RegionService {
     RegionDto create(RegionDto dto);
@@ -12,5 +12,5 @@ public interface RegionService {
 
     RegionDto getById(Long regionId);
 
-    Slice<RegionDto> getAll(String nameStartWith, int page, int size);
+    SimpleSlice<RegionDto> getAll(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size);
 }

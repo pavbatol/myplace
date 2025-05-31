@@ -2,19 +2,18 @@ package ru.pavbatol.myplace.geo.house.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pavbatol.myplace.app.Util.Checker;
+import ru.pavbatol.myplace.geo.common.pagination.Sliced;
+import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.model.House;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
 import ru.pavbatol.myplace.geo.street.mapper.StreetMapper;
 import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
 @Slf4j
 @Service
@@ -61,17 +60,13 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
-    public Slice<HouseDto> getAll(String numberStartWith, int page, int size) {
-        log.debug("Finding {}(e)s with numberStartWith: {}, page: {}, size: {}", ENTITY_SIMPLE_NAME, numberStartWith, page, size);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "number"));
-        Slice<House> found;
-        if (numberStartWith != null && !numberStartWith.isBlank()) {
-            found = repository.findByNumberStartingWithIgnoreCase(numberStartWith, pageable);
-        } else {
-            found = repository.findAll(pageable);
-        }
-        log.debug("Found Slice of {}: {}, numberOfElements: {}", ENTITY_SIMPLE_NAME, found, found.getNumberOfElements());
+    public SimpleSlice<HouseDto> getAll(String numberStartWith, String lastSeenNumber, Long lastSeenId, int size) {
+        log.debug("Finding {}(e)s with numberStartWith: {}, lastSeenNumber: {}, lastSeenId: {}, size: {}",
+                ENTITY_SIMPLE_NAME, numberStartWith, lastSeenNumber, lastSeenId, size);
 
-        return found.map(mapper::toHouseDto);
+        Slice<House> slice = repository.findPageByNamePrefixIgnoreCase(numberStartWith, lastSeenNumber, lastSeenId, size);
+        log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
+
+        return Sliced.from(slice, mapper::toHouseDto);
     }
 }

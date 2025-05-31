@@ -7,7 +7,7 @@ import ru.pavbatol.myplace.geo.street.model.Street;
 
 import java.util.List;
 
-public interface StreetRepository extends JpaRepository<Street, Long> {
+public interface StreetRepository extends JpaRepository<Street, Long>, CustomStreetRepository {
     Slice<Street> findByNameStartingWithIgnoreCase(String nameStartWith, Pageable pageable);
 
     List<Street> findByNameInIgnoreCaseAndCityIdIn(Iterable<String> streetNamesLowercase, Iterable<Long> cityIds);
