@@ -2,7 +2,7 @@ package ru.pavbatol.myplace.geo.management.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import ru.pavbatol.myplace.geo.NameableGeo;
+import ru.pavbatol.myplace.geo.common.NameableGeo;
 import ru.pavbatol.myplace.geo.city.model.City;
 import ru.pavbatol.myplace.geo.country.model.Country;
 import ru.pavbatol.myplace.geo.district.model.District;

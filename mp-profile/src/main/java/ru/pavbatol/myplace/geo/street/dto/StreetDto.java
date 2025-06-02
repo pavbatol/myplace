@@ -2,7 +2,7 @@ package ru.pavbatol.myplace.geo.street.dto;
 
 import lombok.Value;
 import ru.pavbatol.myplace.app.util.Marker;
-import ru.pavbatol.myplace.geo.IdentifiableGeo;
+import ru.pavbatol.myplace.geo.common.IdentifiableGeo;
 import ru.pavbatol.myplace.geo.city.dto.CityDto;
 
 import javax.validation.constraints.NotNull;

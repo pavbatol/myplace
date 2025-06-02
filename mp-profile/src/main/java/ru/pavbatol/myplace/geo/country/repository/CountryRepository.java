@@ -1,18 +1,26 @@
 package ru.pavbatol.myplace.geo.country.repository;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import ru.pavbatol.myplace.geo.country.model.Country;
 
 import java.util.List;
 
-public interface CountryRepository extends JpaRepository<Country, Long> {
-    Slice<Country> findByNameStartingWithIgnoreCase(String nameStartWith, Pageable pageable);
+/**
+ * JPA repository for {@link Country} entities.
+ * Provides methods for country data access including paginated queries and case-insensitive searches.
+ *
+ * @see Country
+ */
+@Repository
+public interface CountryRepository extends JpaRepository<Country, Long>, CustomCountryRepository {
 
-    @Query("SELECT c FROM Country c")
-    Slice<Country> findAllAsSlice(Pageable pageable);
-
-    List<Country> findByNameInIgnoreCase(List<String> collect);
+    /**
+     * Finds countries whose names match any of the provided values (case-insensitive).
+     *
+     * @param names list of country names to search for (case doesn't matter)
+     * @return list of matching countries, empty list if no matches found
+     * @throws IllegalArgumentException if the input list is null
+     */
+    List<Country> findByNameInIgnoreCase(List<String> names);
 }
