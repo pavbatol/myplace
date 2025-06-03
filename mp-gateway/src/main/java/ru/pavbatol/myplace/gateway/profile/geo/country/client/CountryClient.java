@@ -13,5 +13,5 @@ public interface CountryClient {
 
     ResponseEntity<Object> getById(Long countryId, HttpHeaders headers);
 
-    ResponseEntity<Object> getAll(String nameStartWith, int page, int size, HttpHeaders headers);
+    ResponseEntity<Object> getAll(String nameStartWith, String lastSeenName, int size, HttpHeaders headers);
 }

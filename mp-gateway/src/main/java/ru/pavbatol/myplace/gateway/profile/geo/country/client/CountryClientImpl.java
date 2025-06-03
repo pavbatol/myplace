@@ -55,16 +55,16 @@ public class CountryClientImpl extends BaseRestClient implements CountryClient {
     }
 
     @Override
-    public ResponseEntity<Object> getAll(String nameStartWith, int page, int size, HttpHeaders headers) {
-        String paramsPath ="?" +
-                        "nameStartWith={nameStartWith}" +
-                        "&page={page}" +
-                        "&size={size}";
+    public ResponseEntity<Object> getAll(String nameStartWith, String lastSeenName, int size, HttpHeaders headers) {
+        String paramsPath = "?" +
+                "nameStartWith={nameStartWith}" +
+                "&lastSeenName={lastSeenName}" +
+                "&size={size}";
         String fullResourcePath = PRIVATE_CONTEXT + paramsPath;
 
         Map<String, Object> params = new HashMap<>(4);
         params.put("nameStartWith", nameStartWith);
-        params.put("page", page);
+        params.put("lastSeenName", lastSeenName);
         params.put("size", size);
 
         return get(fullResourcePath, headers, params);

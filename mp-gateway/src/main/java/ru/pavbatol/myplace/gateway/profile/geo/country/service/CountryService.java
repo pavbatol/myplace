@@ -1,8 +1,8 @@
 package ru.pavbatol.myplace.gateway.profile.geo.country.service;
 
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpHeaders;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 public interface CountryService {
@@ -14,5 +14,5 @@ public interface CountryService {
 
     ApiResponse<CountryDto> getById(Long countryId, HttpHeaders headers);
 
-    ApiResponse<Slice<CountryDto>> getAll(String nameStartWith, int page, int size, HttpHeaders headers);
+    ApiResponse<SimpleSlice<CountryDto>> getAll(String nameStartWith, String lastSeenName, int size, HttpHeaders headers);
 }

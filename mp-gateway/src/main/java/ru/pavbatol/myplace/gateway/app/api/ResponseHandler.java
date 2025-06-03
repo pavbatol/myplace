@@ -3,12 +3,12 @@ package ru.pavbatol.myplace.gateway.app.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import ru.pavbatol.myplace.gateway.app.exeption.ApiResponseException;
 import ru.pavbatol.myplace.shared.client.ResponseBodyParser;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
@@ -73,20 +73,20 @@ public class ResponseHandler {
     }
 
     /**
-     * Processes a response containing a Slice.
+     * Processes a response containing a {@link SimpleSlice} .
      *
-     * @param <T>         the type of elements in the expected Slice
+     * @param <T>         the type of elements in the expected SimpleSlice
      * @param response    the HTTP response to process
-     * @param elementType the class object representing the Slice element type
-     * @return ApiResponse containing the parsed Slice or error details
+     * @param elementType the class object representing the SimpleSlice element type
+     * @return ApiResponse containing the parsed SimpleSlice or error details
      * @throws ApiResponseException               if response parsing fails
      * @throws TargetServiceHandledErrorException if the target service returns a handled error
      * @throws TargetServiceErrorException        if the target service returns a raw (unhandled) error
      *                                            or if parsing failed and the error was created locally with the raw response received
      */
-    public <T> ApiResponse<Slice<T>> processResponseSlice(ResponseEntity<Object> response, Class<T> elementType) {
+    public <T> ApiResponse<SimpleSlice<T>> processResponseSimpleSlice(ResponseEntity<Object> response, Class<T> elementType) {
         log.debug("Target type to convert response body: Slice<{}>", elementType.getSimpleName());
-        return processCommonLogic(response, () -> processSliceType(response, elementType));
+        return processCommonLogic(response, () -> processSimpleSliceType(response, elementType));
     }
 
     /**
@@ -161,9 +161,9 @@ public class ResponseHandler {
         }
     }
 
-    private <T> ApiResponse<Slice<T>> processSliceType(ResponseEntity<Object> response, Class<T> elementType) {
+    private <T> ApiResponse<SimpleSlice<T>> processSimpleSliceType(ResponseEntity<Object> response, Class<T> elementType) {
         try {
-            Slice<T> parsedBody = bodyParser.parseSlice(response, elementType);
+            SimpleSlice<T> parsedBody = bodyParser.parseSimpleSlice(response, elementType);
             return ApiResponse.success(parsedBody, response.getStatusCode());
         } catch (IOException e) {
             log.error("Failed to deserialize response body into type 'Slice' with elements type of '{}': {}",

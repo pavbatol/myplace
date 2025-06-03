@@ -70,7 +70,7 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
      * @return a {@link Slice} containing the requested page of entities
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Slice<T> findPageByNamePrefixIgnoreCase(String cursorFieldStartWith, String lastSeenCursorField, Long lastSeenId, int size) {
         validatePaginationParams(lastSeenCursorField, lastSeenId, size);
         boolean firstPage = isFirstPage(lastSeenCursorField, lastSeenId);

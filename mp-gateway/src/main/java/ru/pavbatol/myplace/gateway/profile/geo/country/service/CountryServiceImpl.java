@@ -1,13 +1,13 @@
 package ru.pavbatol.myplace.gateway.profile.geo.country.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.api.ResponseHandler;
 import ru.pavbatol.myplace.gateway.profile.geo.country.client.CountryClient;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 @Service
@@ -41,8 +41,8 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public ApiResponse<Slice<CountryDto>> getAll(String nameStartWith, int page, int size, HttpHeaders headers) {
-        ResponseEntity<Object> response = client.getAll(nameStartWith, page, size, headers);
-        return responseHandler.processResponseSlice(response, CountryDto.class);
+    public ApiResponse<SimpleSlice<CountryDto>> getAll(String nameStartWith, String lastSeenName, int size, HttpHeaders headers) {
+        ResponseEntity<Object> response = client.getAll(nameStartWith, lastSeenName, size, headers);
+        return responseHandler.processResponseSimpleSlice(response, CountryDto.class);
     }
 }
