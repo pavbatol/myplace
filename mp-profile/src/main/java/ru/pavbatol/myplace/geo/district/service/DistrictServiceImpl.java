@@ -35,6 +35,7 @@ public class DistrictServiceImpl implements DistrictService {
         return mapper.toDistrictDto(saved);
     }
 
+    @Transactional
     @Override
     public DistrictDto update(Long districtId, DistrictDto dto) {
         District original = Checker.getNonNullObject(repository, districtId);
@@ -45,12 +46,14 @@ public class DistrictServiceImpl implements DistrictService {
         return mapper.toDistrictDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long districtId) {
         repository.deleteById(districtId);
         log.debug("Deleted {}: with districtId: #{}", ENTITY_SIMPLE_NAME, districtId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public DistrictDto getById(Long districtId) {
         District found = Checker.getNonNullObject(repository, districtId);
@@ -59,6 +62,7 @@ public class DistrictServiceImpl implements DistrictService {
         return mapper.toDistrictDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<DistrictDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
         log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",

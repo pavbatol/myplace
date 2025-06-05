@@ -35,6 +35,7 @@ public class HouseServiceImpl implements HouseService {
         return mapper.toHouseDto(saved);
     }
 
+    @Transactional
     @Override
     public HouseDto update(Long houseId, HouseDto dto) {
         House original = Checker.getNonNullObject(repository, houseId);
@@ -45,12 +46,14 @@ public class HouseServiceImpl implements HouseService {
         return mapper.toHouseDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long houseId) {
         repository.deleteById(houseId);
         log.debug("Deleted {}: with houseId: #{}", ENTITY_SIMPLE_NAME, houseId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public HouseDto getById(Long houseId) {
         House found = Checker.getNonNullObject(repository, houseId);
@@ -59,6 +62,7 @@ public class HouseServiceImpl implements HouseService {
         return mapper.toHouseDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<HouseDto> getAll(String numberStartWith, String lastSeenNumber, Long lastSeenId, int size) {
         log.debug("Finding {}(e)s with numberStartWith: {}, lastSeenNumber: {}, lastSeenId: {}, size: {}",

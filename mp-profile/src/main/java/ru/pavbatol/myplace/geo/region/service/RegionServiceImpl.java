@@ -35,6 +35,7 @@ public class RegionServiceImpl implements RegionService {
         return mapper.toRegionDto(saved);
     }
 
+    @Transactional
     @Override
     public RegionDto update(Long regionId, RegionDto dto) {
         Region original = Checker.getNonNullObject(repository, regionId);
@@ -45,12 +46,14 @@ public class RegionServiceImpl implements RegionService {
         return mapper.toRegionDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long regionId) {
         repository.deleteById(regionId);
         log.debug("Deleted {}: with regionId: #{}", ENTITY_SIMPLE_NAME, regionId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public RegionDto getById(Long regionId) {
         Region found = Checker.getNonNullObject(repository, regionId);
@@ -59,6 +62,7 @@ public class RegionServiceImpl implements RegionService {
         return mapper.toRegionDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<RegionDto> getAll(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size) {
         log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenCountryName: {}, size: {}",

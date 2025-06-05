@@ -35,6 +35,7 @@ public class StreetServiceImpl implements StreetService {
         return mapper.toStreetDto(saved);
     }
 
+    @Transactional
     @Override
     public StreetDto update(Long streetId, StreetDto dto) {
         Street original = Checker.getNonNullObject(repository, streetId);
@@ -45,12 +46,14 @@ public class StreetServiceImpl implements StreetService {
         return mapper.toStreetDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long streetId) {
         repository.deleteById(streetId);
         log.debug("Deleted {}: with streetId: #{}", ENTITY_SIMPLE_NAME, streetId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public StreetDto getById(Long streetId) {
         Street found = Checker.getNonNullObject(repository, streetId);
@@ -59,6 +62,7 @@ public class StreetServiceImpl implements StreetService {
         return mapper.toStreetDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<StreetDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
         log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",

@@ -35,6 +35,7 @@ public class CityServiceImpl implements CityService {
         return mapper.toCityDto(saved);
     }
 
+    @Transactional
     @Override
     public CityDto update(Long cityId, CityDto dto) {
         City original = Checker.getNonNullObject(repository, cityId);
@@ -45,12 +46,14 @@ public class CityServiceImpl implements CityService {
         return mapper.toCityDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long cityId) {
         repository.deleteById(cityId);
         log.debug("Deleted {}: with cityId: #{}", ENTITY_SIMPLE_NAME, cityId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public CityDto getById(Long cityId) {
         City found = Checker.getNonNullObject(repository, cityId);
@@ -59,6 +62,7 @@ public class CityServiceImpl implements CityService {
         return mapper.toCityDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<CityDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
         log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",

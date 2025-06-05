@@ -3,7 +3,6 @@ package ru.pavbatol.myplace.geo.country.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
-import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.util.SqlUtils;
 import ru.pavbatol.myplace.geo.country.model.Country;
 
@@ -38,7 +37,6 @@ public class CustomCountryRepositoryImpl implements CustomCountryRepository {
      * @implSpec Uses SQL-level escaping via {@link #ESCAPE_CHAR}
      */
     @Override
-    @Transactional(readOnly = true)
     public Slice<Country> findPageByNamePrefixIgnoreCase(String nameStartWith, String lastSeenName, int size) {
         if (size <= 0) {
             throw new IllegalArgumentException("Size must be positive");
