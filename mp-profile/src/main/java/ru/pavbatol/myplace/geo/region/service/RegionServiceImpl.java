@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
+import ru.pavbatol.myplace.geo.country.model.Country;
 import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
 import ru.pavbatol.myplace.geo.region.dto.RegionDto;
 import ru.pavbatol.myplace.geo.region.mapper.RegionMapper;
@@ -39,6 +40,17 @@ public class RegionServiceImpl implements RegionService {
     @Override
     public RegionDto update(Long regionId, RegionDto dto) {
         Region original = Checker.getNonNullObject(repository, regionId);
+
+        if (dto.getCountry() != null) {
+            if (dto.getCountry().getId() == null) {
+                throw new IllegalArgumentException("Country.id in RegionDto cannot be null when Country provided on updating a Region");
+            }
+            if (!original.getCountry().getId().equals(dto.getCountry().getId())) {
+                Country country = Checker.getNonNullObject(countryRepository, dto.getCountry().getId());
+                original.setCountry(country);
+            }
+        }
+
         Region updated = mapper.updateEntity(original, dto);
         updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
