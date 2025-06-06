@@ -7,11 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.profile.geo.region.RegionDto;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class RegionClientImpl extends BaseRestClient implements RegionClient {
@@ -56,19 +54,20 @@ public class RegionClientImpl extends BaseRestClient implements RegionClient {
 
     @Override
     public ResponseEntity<Object> getAll(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size, HttpHeaders headers) {
-        String paramsPath = "?" +
-                "nameStartWith={nameStartWith}" +
-                "&lastSeenName={lastSeenName}" +
-                "&lastSeenCountryName={lastSeenCountryName}" +
-                "&size={size}";
-        String fullResourcePath = PRIVATE_CONTEXT + paramsPath;
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(PRIVATE_CONTEXT)
+                .queryParam("size", size);
 
-        Map<String, Object> params = new HashMap<>(8);
-        params.put("nameStartWith", nameStartWith);
-        params.put("lastSeenName", lastSeenName);
-        params.put("lastSeenCountryName", lastSeenCountryName);
-        params.put("size", size);
+        if (nameStartWith != null) {
+            builder.queryParam("nameStartWith", nameStartWith);
+        }
+        if (lastSeenName != null) {
+            builder.queryParam("lastSeenName", lastSeenName);
+        }
+        if (lastSeenCountryName != null) {
+            builder.queryParam("lastSeenCountryName", lastSeenCountryName);
+        }
 
-        return get(fullResourcePath, headers, params);
+        String fullResourcePath = builder.build(false).toUriString();
+        return get(fullResourcePath, headers);
     }
 }

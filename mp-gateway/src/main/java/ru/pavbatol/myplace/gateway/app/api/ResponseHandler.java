@@ -85,7 +85,7 @@ public class ResponseHandler {
      *                                            or if parsing failed and the error was created locally with the raw response received
      */
     public <T> ApiResponse<SimpleSlice<T>> processResponseSimpleSlice(ResponseEntity<Object> response, Class<T> elementType) {
-        log.debug("Target type to convert response body: Slice<{}>", elementType.getSimpleName());
+        log.debug("Target type to convert response body: {}<{}>", SimpleSlice.class.getSimpleName(), elementType.getSimpleName());
         return processCommonLogic(response, () -> processSimpleSliceType(response, elementType));
     }
 
