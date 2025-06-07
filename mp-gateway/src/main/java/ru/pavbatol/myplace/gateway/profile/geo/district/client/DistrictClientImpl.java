@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.gateway.profile.geo.region.client;
+package ru.pavbatol.myplace.gateway.profile.geo.district.client;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -9,51 +9,51 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
-import ru.pavbatol.myplace.shared.dto.profile.geo.region.RegionDto;
+import ru.pavbatol.myplace.shared.dto.profile.geo.district.DistrictDto;
 
 @Component
-public class RegionClientImpl extends BaseRestClient implements RegionClient {
-    private static final String ADMIN_CONTEXT = "/admin/geo/regions";
-    private static final String PRIVATE_CONTEXT = "/user/geo/regions";
+public class DistrictClientImpl extends BaseRestClient implements DistrictClient {
+    private static final String ADMIN_CONTEXT = "/admin/geo/districts";
+    private static final String PRIVATE_CONTEXT = "/user/geo/districts";
 
-    public RegionClientImpl(@Value("${app.mp.profile.url}") String serverUrl,
-                            RestTemplateBuilder builder) {
+    public DistrictClientImpl(@Value("${app.mp.profile.url}") String serverUrl,
+                              RestTemplateBuilder builder) {
         super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 .build());
     }
 
     @Override
-    public ResponseEntity<Object> create(RegionDto dto, HttpHeaders headers) {
+    public ResponseEntity<Object> create(DistrictDto dto, HttpHeaders headers) {
         return post(ADMIN_CONTEXT, headers, dto);
     }
 
     @Override
-    public ResponseEntity<Object> update(Long regionId, RegionDto dto, HttpHeaders headers) {
-        String resourcePath = String.format("/%s", regionId);
+    public ResponseEntity<Object> update(Long districtId, DistrictDto dto, HttpHeaders headers) {
+        String resourcePath = String.format("/%s", districtId);
         String fullResourcePath = ADMIN_CONTEXT + resourcePath;
 
         return patch(fullResourcePath, headers, dto);
     }
 
     @Override
-    public ResponseEntity<Object> delete(Long regionId, HttpHeaders headers) {
-        String resourcePath = String.format("/%s", regionId);
+    public ResponseEntity<Object> delete(Long districtId, HttpHeaders headers) {
+        String resourcePath = String.format("/%s", districtId);
         String fullResourcePath = ADMIN_CONTEXT + resourcePath;
 
         return delete(fullResourcePath, headers);
     }
 
     @Override
-    public ResponseEntity<Object> getById(Long regionId, HttpHeaders headers) {
-        String resourcePath = String.format("/%s", regionId);
+    public ResponseEntity<Object> getById(Long districtId, HttpHeaders headers) {
+        String resourcePath = String.format("/%s", districtId);
         String fullResourcePath = PRIVATE_CONTEXT + resourcePath;
 
         return get(fullResourcePath, headers);
     }
 
     @Override
-    public ResponseEntity<Object> getAll(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size, HttpHeaders headers) {
+    public ResponseEntity<Object> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size, HttpHeaders headers) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(PRIVATE_CONTEXT)
                 .queryParam("size", size);
 
@@ -63,8 +63,8 @@ public class RegionClientImpl extends BaseRestClient implements RegionClient {
         if (lastSeenName != null) {
             builder.queryParam("lastSeenName", lastSeenName);
         }
-        if (lastSeenCountryName != null) {
-            builder.queryParam("lastSeenCountryName", lastSeenCountryName);
+        if (lastSeenId != null) {
+            builder.queryParam("lastSeenId", lastSeenId);
         }
 
         String fullResourcePath = builder.build(false).toUriString();
