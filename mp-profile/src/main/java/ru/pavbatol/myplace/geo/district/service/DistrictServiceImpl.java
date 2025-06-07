@@ -12,6 +12,7 @@ import ru.pavbatol.myplace.geo.district.mapper.DistrictMapper;
 import ru.pavbatol.myplace.geo.district.model.District;
 import ru.pavbatol.myplace.geo.district.repository.DistrictRepository;
 import ru.pavbatol.myplace.geo.region.mapper.RegionMapper;
+import ru.pavbatol.myplace.geo.region.model.Region;
 import ru.pavbatol.myplace.geo.region.repository.RegionRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
@@ -39,6 +40,17 @@ public class DistrictServiceImpl implements DistrictService {
     @Override
     public DistrictDto update(Long districtId, DistrictDto dto) {
         District original = Checker.getNonNullObject(repository, districtId);
+
+        if (dto.getRegion() != null) {
+            if (dto.getRegion().getId() == null) {
+                throw new IllegalArgumentException("Region.id in DistrictDto cannot be null when Region provided on updating a District");
+            }
+            if (!original.getRegion().getId().equals(dto.getRegion().getId())) {
+                Region region = Checker.getNonNullObject(regionRepository, dto.getRegion().getId());
+                original.setRegion(region);
+            }
+        }
+
         District updated = mapper.updateEntity(original, dto);
         updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
