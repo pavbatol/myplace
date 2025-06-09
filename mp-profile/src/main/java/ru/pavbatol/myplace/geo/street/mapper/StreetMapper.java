@@ -32,6 +32,7 @@ public interface StreetMapper {
     }
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "city", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Street updateEntity(@MappingTarget Street entity, StreetDto dto);
 }

@@ -32,6 +32,7 @@ public interface RegionMapper {
     }
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "country", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Region updateEntity(@MappingTarget Region entity, RegionDto dto);
 }

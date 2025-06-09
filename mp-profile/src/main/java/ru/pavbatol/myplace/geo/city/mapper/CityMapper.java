@@ -32,6 +32,7 @@ public interface CityMapper {
     }
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "district", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     City updateEntity(@MappingTarget City entity, CityDto dto);
 }

@@ -32,6 +32,7 @@ public interface DistrictMapper {
     }
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "region", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     District updateEntity(@MappingTarget District entity, DistrictDto dto);
 }

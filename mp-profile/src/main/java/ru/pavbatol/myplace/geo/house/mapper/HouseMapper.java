@@ -32,6 +32,7 @@ public interface HouseMapper {
     }
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "street", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     House updateEntity(@MappingTarget House entity, HouseDto dto);
 }
