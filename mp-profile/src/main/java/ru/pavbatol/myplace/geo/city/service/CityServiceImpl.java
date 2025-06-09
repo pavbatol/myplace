@@ -12,6 +12,7 @@ import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
 import ru.pavbatol.myplace.geo.city.model.City;
 import ru.pavbatol.myplace.geo.city.repository.CityRepository;
 import ru.pavbatol.myplace.geo.district.mapper.DistrictMapper;
+import ru.pavbatol.myplace.geo.district.model.District;
 import ru.pavbatol.myplace.geo.district.repository.DistrictRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
@@ -39,6 +40,17 @@ public class CityServiceImpl implements CityService {
     @Override
     public CityDto update(Long cityId, CityDto dto) {
         City original = Checker.getNonNullObject(repository, cityId);
+
+        if (dto.getDistrict() != null) {
+            if (dto.getDistrict().getId() == null) {
+                throw new IllegalArgumentException("District.id in CityDto cannot be null when District provided on updating a City");
+            }
+            if (!original.getDistrict().getId().equals(dto.getDistrict().getId())) {
+                District district = Checker.getNonNullObject(districtRepository, dto.getDistrict().getId());
+                original.setDistrict(district);
+            }
+        }
+
         City updated = mapper.updateEntity(original, dto);
         updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
