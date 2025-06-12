@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pavbatol.myplace.geo.city.model.City;
 import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
@@ -39,6 +40,17 @@ public class StreetServiceImpl implements StreetService {
     @Override
     public StreetDto update(Long streetId, StreetDto dto) {
         Street original = Checker.getNonNullObject(repository, streetId);
+
+        if (dto.getCity() != null) {
+            if (dto.getCity().getId() == null) {
+                throw new IllegalArgumentException("City.id in StreetDto cannot be null when City provided on updating a Street");
+            }
+            if (!original.getCity().getId().equals(dto.getCity().getId())) {
+                City city = Checker.getNonNullObject(cityRepository, dto.getCity().getId());
+                original.setCity(city);
+            }
+        }
+
         Street updated = mapper.updateEntity(original, dto);
         updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
