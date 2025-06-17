@@ -12,6 +12,7 @@ import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.model.House;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
 import ru.pavbatol.myplace.geo.street.mapper.StreetMapper;
+import ru.pavbatol.myplace.geo.street.model.Street;
 import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 
@@ -39,6 +40,17 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public HouseDto update(Long houseId, HouseDto dto) {
         House original = Checker.getNonNullObject(repository, houseId);
+
+        if (dto.getStreet() != null) {
+            if (dto.getStreet().getId() == null) {
+                throw new IllegalArgumentException("Street.id in HouseDto cannot be null when Street provided on updating a House");
+            }
+            if (!original.getStreet().getId().equals(dto.getStreet().getId())) {
+                Street street = Checker.getNonNullObject(streetRepository, dto.getStreet().getId());
+                original.setStreet(street);
+            }
+        }
+
         House updated = mapper.updateEntity(original, dto);
         updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
