@@ -1,12 +1,11 @@
 package ru.pavbatol.myplace.gateway.profile.geo.house.client;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
@@ -17,10 +16,8 @@ public class HouseClientImpl extends BaseRestClient implements HouseClient {
     private static final String PRIVATE_CONTEXT = "/user/geo/houses";
 
     public HouseClientImpl(@Value("${app.mp.profile.url}") String serverUrl,
-                           RestTemplateBuilder builder) {
-        super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                .build());
+                           @Autowired RestTemplate restTemplate) {
+        super(restTemplate, serverUrl);
     }
 
     @Override

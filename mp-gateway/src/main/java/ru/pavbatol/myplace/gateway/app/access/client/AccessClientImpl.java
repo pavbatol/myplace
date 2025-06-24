@@ -1,6 +1,7 @@
 package ru.pavbatol.myplace.gateway.app.access.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Client implementation for performing access control checks forwarding requests to target services.
@@ -26,17 +26,19 @@ import java.util.function.Function;
 @Component
 public class AccessClientImpl implements AccessClient {
     public static final String CHECK_ACCESS_PATH = "/permission/check-access";
+    private final String securityServiceUrl;
     private final RestTemplate restTemplate;
 
     /**
      * Constructs a new AccessClient with the specified security service URL and RestTemplate factory.
      *
      * @param securityServiceUrl the base URL of the security service
-     * @param restTemplateFactory factory function to create a RestTemplate
+     * @param restTemplate       RestTemplate client
      */
     public AccessClientImpl(@Value("${app.mp.security.url}") String securityServiceUrl,
-                            Function<String, RestTemplate> restTemplateFactory) {
-        this.restTemplate = restTemplateFactory.apply(securityServiceUrl);
+                            @Autowired RestTemplate restTemplate) {
+        this.securityServiceUrl = securityServiceUrl;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -50,10 +52,9 @@ public class AccessClientImpl implements AccessClient {
      *   <li>Propagates any errors from the security service</li>
      * </ol>
      *
-     * @param roles the list of required roles to check against (must not be null or empty)
+     * @param roles     the list of required roles to check against (must not be null or empty)
      * @param authToken the authorization token in "Bearer [token]" format (must not be null or blank)
      * @throws IllegalArgumentException if roles list is empty/null or auth token is missing
-     *
      * @see AccessClient#checkAccess(List, String)
      */
     @Override
@@ -71,7 +72,7 @@ public class AccessClientImpl implements AccessClient {
         headers.set("Authorization", authToken);
 
         restTemplate.exchange(
-                CHECK_ACCESS_PATH,
+                securityServiceUrl + CHECK_ACCESS_PATH,
                 HttpMethod.POST,
                 new HttpEntity<>(roles, headers),
                 Void.class
