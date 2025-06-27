@@ -31,6 +31,7 @@ public class DataImportClientImpl implements DataImportClient {
     @Qualifier("longOperationTemplate")
     private final RestTemplate restTemplate;
 
+    @Override
     public ResponseEntity<StreamingResponseBody> importDataFromCsv(MultipartFile file,
                                                                    boolean responseExportWithId,
                                                                    HttpHeaders headers) {
@@ -46,7 +47,7 @@ public class DataImportClientImpl implements DataImportClient {
                 .toUriString();
 
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"geo-data-load-report.csv\"")
                 .body(outputStream -> {
                     try {
