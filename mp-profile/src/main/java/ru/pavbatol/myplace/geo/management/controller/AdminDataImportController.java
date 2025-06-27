@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +28,7 @@ public class AdminDataImportController {
     @Value("${spring.application.name}")
     private String serviceName;
 
-    @PostMapping("/csv")
+    @PostMapping(value = "/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "import data", description = "importing geo data from CSV file")
     public ResponseEntity<StreamingResponseBody> uploadCsv(
             @Parameter(description = "CSV file to upload", required = true) @RequestPart("file") MultipartFile file,
@@ -59,7 +60,7 @@ public class AdminDataImportController {
         }
 
         String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.endsWith(".csv")) {
+        if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".csv")) {
             throw new IllegalArgumentException("Invalid file format. A file with the .csv extension was expected.");
         }
 
