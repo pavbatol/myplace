@@ -12,6 +12,10 @@ import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * REST client implementation for Country operations.
+ * Handles communication with the Country microservice endpoints.
+ */
 @Component
 public class CountryClientImpl extends BaseRestClient implements CountryClient {
     private static final String ADMIN_CONTEXT = "/admin/geo/countries";
@@ -22,11 +26,24 @@ public class CountryClientImpl extends BaseRestClient implements CountryClient {
         super(restTemplate, serverUrl);
     }
 
+    /**
+     * Creates a new Country via REST API.
+     * @param dto Country data to create
+     * @param headers HTTP headers for the request
+     * @return ResponseEntity with the API response
+     */
     @Override
     public ResponseEntity<Object> create(CountryDto dto, HttpHeaders headers) {
         return post(ADMIN_CONTEXT, headers, dto);
     }
 
+    /**
+     * Updates an existing Country via REST API.
+     * @param countryId ID of the Country to update
+     * @param dto Updated Country data
+     * @param headers HTTP headers for the request
+     * @return ResponseEntity with the API response
+     */
     @Override
     public ResponseEntity<Object> update(Long countryId, CountryDto dto, HttpHeaders headers) {
         String resourcePath = String.format("/%s", countryId);
@@ -35,6 +52,12 @@ public class CountryClientImpl extends BaseRestClient implements CountryClient {
         return patch(fullResourcePath, headers, dto);
     }
 
+    /**
+     * Deletes a Country via REST API.
+     * @param countryId ID of the Country to delete
+     * @param headers HTTP headers for the request
+     * @return ResponseEntity with the API response
+     */
     @Override
     public ResponseEntity<Object> delete(Long countryId, HttpHeaders headers) {
         String resourcePath = String.format("/%s", countryId);
@@ -43,6 +66,12 @@ public class CountryClientImpl extends BaseRestClient implements CountryClient {
         return delete(fullResourcePath, headers);
     }
 
+    /**
+     * Retrieves a Country by ID via REST API.
+     * @param countryId ID of the Country to retrieve
+     * @param headers HTTP headers for the request
+     * @return ResponseEntity with the API response
+     */
     @Override
     public ResponseEntity<Object> getById(Long countryId, HttpHeaders headers) {
         String resourcePath = String.format("/%s", countryId);
@@ -51,6 +80,14 @@ public class CountryClientImpl extends BaseRestClient implements CountryClient {
         return get(fullResourcePath, headers);
     }
 
+    /**
+     * Retrieves paginated list of Countries via REST API.
+     * @param nameStartWith Filter by name prefix (optional)
+     * @param lastSeenName Pagination cursor (optional)
+     * @param size Number of items per page
+     * @param headers HTTP headers for the request
+     * @return ResponseEntity with the API response
+     */
     @Override
     public ResponseEntity<Object> getAll(String nameStartWith, String lastSeenName, int size, HttpHeaders headers) {
         String paramsPath = "?" +

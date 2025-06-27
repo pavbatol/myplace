@@ -18,6 +18,10 @@ import ru.pavbatol.myplace.shared.util.Marker;
 import javax.validation.Valid;
 import javax.validation.constraints.PositiveOrZero;
 
+/**
+ * REST controller for administrative Country operations.
+ * Provides CRUD endpoints for managing Country entities (Admin access only).
+ */
 @Slf4j
 @Validated
 @RestController
@@ -29,6 +33,12 @@ public class AdminCountryController {
     private static final String ADMIN = "ADMIN";
     private final CountryService service;
 
+    /**
+     * Creates a new Country.
+     * @param dto Country data transfer object
+     * @param headers HTTP request headers
+     * @return ResponseEntity with created Country
+     */
     @RequiredRoles(roles = {ADMIN})
     @PostMapping
     @Validated({Marker.OnCreate.class})
@@ -41,6 +51,13 @@ public class AdminCountryController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Updates an existing Country.
+     * @param countryId ID of the Country to update
+     * @param dto Updated Country data
+     * @param headers HTTP request headers
+     * @return ResponseEntity with updated Country
+     */
     @RequiredRoles(roles = {ADMIN})
     @PatchMapping("/{countryId}")
     @SecurityRequirement(name = "JWT")
@@ -53,6 +70,12 @@ public class AdminCountryController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Deletes a Country.
+     * @param countryId ID of the Country to delete
+     * @param headers HTTP request headers
+     * @return ResponseEntity with operation status
+     */
     @RequiredRoles(roles = {ADMIN})
     @DeleteMapping("/{countryId}")
     @SecurityRequirement(name = "JWT")

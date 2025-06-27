@@ -19,6 +19,10 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.PositiveOrZero;
 
+/**
+ * REST controller for private Country operations (accessible to authenticated users).
+ * Provides read-only endpoints for accessing Country data.
+ */
 @Slf4j
 @Validated
 @RestController
@@ -31,6 +35,12 @@ public class PrivateCountryController {
     private static final String ADMIN = "ADMIN";
     private final CountryService service;
 
+    /**
+     * Retrieves a single Country by ID.
+     * @param countryId ID of the Country to retrieve
+     * @param headers HTTP request headers
+     * @return ResponseEntity containing the requested Country
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping("/{countryId}")
     @SecurityRequirement(name = "JWT")
@@ -42,6 +52,14 @@ public class PrivateCountryController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Retrieves a paginated list of Countries with optional filtering.
+     * @param nameStartWith Filter countries by name prefix (optional)
+     * @param lastSeenName Pagination cursor (last seen country name)
+     * @param size Number of items per page (1-100, default: 10)
+     * @param headers HTTP request headers
+     * @return ResponseEntity containing paginated Country results
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping
     @SecurityRequirement(name = "JWT")
