@@ -3,7 +3,6 @@ package ru.pavbatol.myplace.gateway.profile.geo.management.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +20,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * REST controller for administrative geo data import operations.
+ * Provides endpoints for uploading and processing CSV files containing geo data.
+ */
 @Slf4j
 @RestController
 @RequestMapping("${api.prefix}/${app.mp.profile.label}/admin/geo/upload")
@@ -36,6 +39,15 @@ public class AdminDataImportController {
     @Value("${spring.application.name:unknownAppName}")
     private String serviceName;
 
+    /**
+     * Uploads and processes a CSV file containing geo data.
+     *
+     * @param file CSV file to import (required)
+     * @param responseExportWithId whether to include generated IDs in response (default: false)
+     * @param headers HTTP request headers
+     * @return StreamingResponseBody with import results
+     * @throws IllegalArgumentException if file validation fails (empty, wrong format, size limit, etc.)
+     */
     @RequiredRoles(roles = {ADMIN})
     @PostMapping(value = "/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "import data", description = "importing geo data from CSV file")
@@ -49,6 +61,12 @@ public class AdminDataImportController {
         return dataImportService.importDataFromCsv(file, responseExportWithId, headers);
     }
 
+    /**
+     * Validates the uploaded file meets requirements.
+     *
+     * @param file MultipartFile to validate
+     * @throws IllegalArgumentException if file is invalid (empty, wrong type, too large, or malformed)
+     */
     private void validateFile(MultipartFile file) {
         long maxFileSizeMb = 5;
 

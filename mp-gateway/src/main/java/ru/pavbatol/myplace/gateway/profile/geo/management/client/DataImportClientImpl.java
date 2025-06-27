@@ -19,6 +19,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.*;
 import java.net.URI;
 
+/**
+ * Client implementation for importing geo data from CSV files.
+ * Provides functionality to upload CSV data to the server and receive a processing report.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -31,6 +35,15 @@ public class DataImportClientImpl implements DataImportClient {
     @Qualifier("longOperationTemplate")
     private final RestTemplate restTemplate;
 
+    /**
+     * Imports geo data from a CSV file.
+     *
+     * @param file The CSV file containing geo data to import
+     * @param responseExportWithId Whether the response should include generated IDs
+     * @param headers HTTP headers for the request
+     * @return ResponseEntity with StreamingResponseBody containing the processing report
+     * @throws IllegalArgumentException if the provided file is empty
+     */
     @Override
     public ResponseEntity<StreamingResponseBody> importDataFromCsv(MultipartFile file,
                                                                    boolean responseExportWithId,
@@ -91,6 +104,9 @@ public class DataImportClientImpl implements DataImportClient {
                 });
     }
 
+    /**
+     * Internal resource class for handling multipart file input streams.
+     */
     private static class MultipartInputStreamFileResource extends InputStreamResource {
         private final String filename;
 
