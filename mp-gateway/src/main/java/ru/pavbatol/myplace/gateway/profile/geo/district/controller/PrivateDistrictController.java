@@ -16,6 +16,10 @@ import ru.pavbatol.myplace.shared.dto.profile.geo.district.DistrictDto;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+/**
+ * REST controller for private District operations (User/Admin access).
+ * Provides read-only endpoints for accessing District data.
+ */
 @Slf4j
 @RestController
 @RequestMapping("$${api.prefix}/${app.mp.profile.label}/user/geo/districts")
@@ -27,6 +31,12 @@ public class PrivateDistrictController {
     private static final String ADMIN = "ADMIN";
     private final DistrictService service;
 
+    /**
+     * Retrieves a District by ID (User/Admin access).
+     * @param districtId ID of the District to retrieve
+     * @param headers HTTP request headers
+     * @return ResponseEntity containing the requested District
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping("/{districtId}")
     @Operation(summary = "getById", description = "get District")
@@ -37,6 +47,15 @@ public class PrivateDistrictController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Retrieves paginated list of Districts with filtering (User/Admin access).
+     * @param nameStartWith Filter by name prefix (optional)
+     * @param lastSeenName Pagination cursor for name (optional)
+     * @param lastSeenId Pagination cursor for ID (optional)
+     * @param size Number of items per page (1-100, default: 10)
+     * @param headers HTTP request headers
+     * @return ResponseEntity containing paginated District results
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping
     @Operation(summary = "getAll", description = "get Districts")

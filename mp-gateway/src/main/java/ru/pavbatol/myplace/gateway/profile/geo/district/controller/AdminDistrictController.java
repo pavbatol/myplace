@@ -16,6 +16,10 @@ import ru.pavbatol.myplace.shared.util.Marker;
 
 import javax.validation.Valid;
 
+/**
+ * REST controller for administrative District operations.
+ * Provides CRUD endpoints for managing District entities (Admin access only).
+ */
 @Slf4j
 @Validated
 @RestController
@@ -27,6 +31,12 @@ public class AdminDistrictController {
     private static final String ADMIN = "ADMIN";
     private final DistrictService service;
 
+    /**
+     * Creates a new District (Admin only).
+     * @param dto District data transfer object
+     * @param headers HTTP request headers
+     * @return ResponseEntity with created District
+     */
     @RequiredRoles(roles = {ADMIN})
     @PostMapping
     @Validated({Marker.OnCreate.class})
@@ -38,6 +48,13 @@ public class AdminDistrictController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Updates an existing District (Admin only).
+     * @param districtId ID of the District to update
+     * @param dto Updated District data
+     * @param headers HTTP request headers
+     * @return ResponseEntity with updated District
+     */
     @RequiredRoles(roles = {ADMIN})
     @PatchMapping("/{districtId}")
     @Operation(summary = "update", description = "updating District")
@@ -49,6 +66,12 @@ public class AdminDistrictController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Deletes a District (Admin only).
+     * @param districtId ID of the District to delete
+     * @param headers HTTP request headers
+     * @return ResponseEntity with operation status
+     */
     @RequiredRoles(roles = {ADMIN})
     @DeleteMapping("/{districtId}")
     @Operation(summary = "delete", description = "deleting District")
