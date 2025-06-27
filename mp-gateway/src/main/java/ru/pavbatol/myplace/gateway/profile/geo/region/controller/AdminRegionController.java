@@ -16,6 +16,10 @@ import ru.pavbatol.myplace.shared.util.Marker;
 
 import javax.validation.Valid;
 
+/**
+ * REST controller for administrative Region operations.
+ * Provides CRUD endpoints for managing Region entities (Admin access only).
+ */
 @Slf4j
 @Validated
 @RestController
@@ -27,6 +31,12 @@ public class AdminRegionController {
     private static final String ADMIN = "ADMIN";
     private final RegionService service;
 
+    /**
+     * Creates a new Region (Admin only).
+     * @param dto Region data transfer object
+     * @param headers HTTP request headers
+     * @return ResponseEntity with created Region
+     */
     @RequiredRoles(roles = {ADMIN})
     @PostMapping
     @Validated({Marker.OnCreate.class})
@@ -38,6 +48,13 @@ public class AdminRegionController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Updates an existing Region (Admin only).
+     * @param regionId ID of the Region to update
+     * @param dto Updated Region data
+     * @param headers HTTP request headers
+     * @return ResponseEntity with updated Region
+     */
     @RequiredRoles(roles = {ADMIN})
     @PatchMapping("/{regionId}")
     @Operation(summary = "update", description = "updating Region")
@@ -49,6 +66,12 @@ public class AdminRegionController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Deletes a Region (Admin only).
+     * @param regionId ID of the Region to delete
+     * @param headers HTTP request headers
+     * @return ResponseEntity with operation status
+     */
     @RequiredRoles(roles = {ADMIN})
     @DeleteMapping("/{regionId}")
     @Operation(summary = "delete", description = "deleting Region")

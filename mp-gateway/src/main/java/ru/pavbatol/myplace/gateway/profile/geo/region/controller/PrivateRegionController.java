@@ -17,6 +17,10 @@ import ru.pavbatol.myplace.shared.dto.profile.geo.region.RegionDto;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+/**
+ * REST controller for private Region operations (accessible to authenticated users).
+ * Provides read-only endpoints for accessing Region data.
+ */
 @Slf4j
 @Validated
 @RestController
@@ -29,6 +33,12 @@ public class PrivateRegionController {
     private static final String ADMIN = "ADMIN";
     private final RegionService service;
 
+    /**
+     * Retrieves a single Region by ID (User/Admin access).
+     * @param regionId ID of the Region to retrieve
+     * @param headers HTTP request headers
+     * @return ResponseEntity containing the requested Region
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping("/{regionId}")
     @Operation(summary = "getById", description = "get Region")
@@ -39,6 +49,15 @@ public class PrivateRegionController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Retrieves paginated list of Regions with filtering options (User/Admin access).
+     * @param nameStartWith Filter by region name prefix (optional)
+     * @param lastSeenName Pagination cursor for region name (optional)
+     * @param lastSeenCountryName Pagination cursor for country name (optional)
+     * @param size Number of items per page (1-100, default: 10)
+     * @param headers HTTP request headers
+     * @return ResponseEntity containing paginated Region results
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping
     @Operation(summary = "getAll", description = "get Regions")
