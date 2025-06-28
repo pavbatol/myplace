@@ -28,7 +28,7 @@ public class HouseClientImpl extends BaseRestClient implements HouseClient {
      * Sends create House request to service.
      *
      * @param dto     House data to create
-     * @param headers HTTP headers with authentication
+     * @param headers HTTP headers for the request
      * @return Raw service response
      */
     @Override
@@ -41,7 +41,7 @@ public class HouseClientImpl extends BaseRestClient implements HouseClient {
      *
      * @param houseId ID of House to update
      * @param dto     Updated House data
-     * @param headers HTTP headers with authentication
+     * @param headers HTTP headers for the request
      * @return Raw service response
      */
     @Override
@@ -56,7 +56,7 @@ public class HouseClientImpl extends BaseRestClient implements HouseClient {
      * Sends delete House request to service.
      *
      * @param houseId ID of House to delete
-     * @param headers HTTP headers with authentication
+     * @param headers HTTP headers for the request
      * @return Raw service response
      */
     @Override
@@ -71,7 +71,7 @@ public class HouseClientImpl extends BaseRestClient implements HouseClient {
      * Retrieves House by ID from service.
      *
      * @param houseId ID of House to retrieve
-     * @param headers HTTP headers with authentication
+     * @param headers HTTP headers for the request
      * @return Raw service response
      */
     @Override
@@ -89,7 +89,7 @@ public class HouseClientImpl extends BaseRestClient implements HouseClient {
      * @param lastSeenNumber  Pagination cursor by house number (optional)
      * @param lastSeenId      Pagination cursor by ID (optional)
      * @param size            Number of items per page
-     * @param headers         HTTP headers with authentication
+     * @param headers         HTTP headers for the request
      * @return Raw service response
      */
     @Override

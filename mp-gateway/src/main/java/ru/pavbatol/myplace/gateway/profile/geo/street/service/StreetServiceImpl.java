@@ -24,7 +24,7 @@ public class StreetServiceImpl implements StreetService {
      * Creates a new Street.
      *
      * @param dto     Street data to create
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with created Street
      */
     @Override
@@ -38,7 +38,7 @@ public class StreetServiceImpl implements StreetService {
      *
      * @param streetId ID of Street to update
      * @param dto      Updated Street data
-     * @param headers  HTTP headers for authentication
+     * @param headers  HTTP headers for the request
      * @return API response with updated Street
      */
     @Override
@@ -51,7 +51,7 @@ public class StreetServiceImpl implements StreetService {
      * Deletes a Street.
      *
      * @param streetId ID of Street to delete
-     * @param headers  HTTP headers for authentication
+     * @param headers  HTTP headers for the request
      * @return API response with operation status
      */
     @Override
@@ -64,7 +64,7 @@ public class StreetServiceImpl implements StreetService {
      * Retrieves a Street by ID.
      *
      * @param streetId ID of Street to retrieve
-     * @param headers  HTTP headers for authentication
+     * @param headers  HTTP headers for the request
      * @return API response with Street data
      */
     @Override
@@ -80,7 +80,7 @@ public class StreetServiceImpl implements StreetService {
      * @param lastSeenName  Pagination cursor by name (optional)
      * @param lastSeenId    Pagination cursor by ID (optional)
      * @param size          Number of items per page
-     * @param headers       HTTP headers for authentication
+     * @param headers       HTTP headers for the request
      * @return API response with paginated Street results
      */
     @Override

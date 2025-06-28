@@ -28,7 +28,7 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
      * Sends create City request to service.
      *
      * @param dto     City data to create
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return Raw service response
      */
     @Override
@@ -41,7 +41,7 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
      *
      * @param cityId  ID of City to update
      * @param dto     Updated City data
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return Raw service response
      */
     @Override
@@ -56,7 +56,7 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
      * Sends delete City request to service.
      *
      * @param cityId  ID of City to delete
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return Raw service response
      */
     @Override
@@ -71,7 +71,7 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
      * Retrieves City by ID from service.
      *
      * @param cityId  ID of City to retrieve
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return Raw service response
      */
     @Override
@@ -89,7 +89,7 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
      * @param lastSeenName  Pagination cursor by name (optional)
      * @param lastSeenId    Pagination cursor by ID (optional)
      * @param size          Number of items per page
-     * @param headers       HTTP headers for authentication
+     * @param headers       HTTP headers for the request
      * @return Raw service response
      */
     @Override

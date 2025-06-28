@@ -24,7 +24,7 @@ public class CityServiceImpl implements CityService {
      * Creates a new City.
      *
      * @param dto     City data to create
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with created City
      */
     @Override
@@ -38,7 +38,7 @@ public class CityServiceImpl implements CityService {
      *
      * @param cityId  ID of City to update
      * @param dto     Updated City data
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with updated City
      */
     @Override
@@ -51,7 +51,7 @@ public class CityServiceImpl implements CityService {
      * Deletes a City.
      *
      * @param cityId  ID of City to delete
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with operation status
      */
     @Override
@@ -64,7 +64,7 @@ public class CityServiceImpl implements CityService {
      * Retrieves a City by ID.
      *
      * @param cityId  ID of City to retrieve
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with City data
      */
     @Override
@@ -80,7 +80,7 @@ public class CityServiceImpl implements CityService {
      * @param lastSeenName  Pagination cursor by name (optional)
      * @param lastSeenId    Pagination cursor by ID (optional)
      * @param size          Number of items per page
-     * @param headers       HTTP headers for authentication
+     * @param headers       HTTP headers for the request
      * @return API response with paginated City results
      */
     @Override

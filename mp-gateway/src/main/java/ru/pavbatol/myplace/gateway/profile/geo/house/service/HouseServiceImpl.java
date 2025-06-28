@@ -24,7 +24,7 @@ public class HouseServiceImpl implements HouseService {
      * Creates a new House record.
      *
      * @param dto     House data to create
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with created House
      */
     @Override
@@ -38,7 +38,7 @@ public class HouseServiceImpl implements HouseService {
      *
      * @param houseId ID of House to update
      * @param dto     Updated House data
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with updated House
      */
     @Override
@@ -51,7 +51,7 @@ public class HouseServiceImpl implements HouseService {
      * Deletes a House record.
      *
      * @param houseId ID of House to delete
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with operation status
      */
     @Override
@@ -64,7 +64,7 @@ public class HouseServiceImpl implements HouseService {
      * Retrieves a House by ID.
      *
      * @param houseId ID of House to retrieve
-     * @param headers HTTP headers for authentication
+     * @param headers HTTP headers for the request
      * @return API response with House data
      */
     @Override
@@ -80,7 +80,7 @@ public class HouseServiceImpl implements HouseService {
      * @param lastSeenNumber  Pagination cursor by house number (optional)
      * @param lastSeenId      Pagination cursor by ID (optional)
      * @param size            Number of items per page
-     * @param headers         HTTP headers for authentication
+     * @param headers         HTTP headers for the request
      * @return API response with paginated House results
      */
     @Override
