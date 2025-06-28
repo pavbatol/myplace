@@ -13,6 +13,10 @@ import ru.pavbatol.myplace.gateway.profile.geo.city.service.CityService;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.city.CityDto;
 
+/**
+ * REST controller for City read operations (User/Admin access).
+ * Provides endpoints for retrieving City information.
+ */
 @Slf4j
 @RestController
 @RequestMapping("$${api.prefix}/${app.mp.profile.label}/user/geo/cities")
@@ -24,6 +28,13 @@ public class PrivateCityController {
     private static final String ADMIN = "ADMIN";
     private final CityService service;
 
+    /**
+     * Retrieves a City by ID (User/Admin access).
+     *
+     * @param cityId  ID of the City to retrieve
+     * @param headers HTTP headers with authorization
+     * @return API response with City data
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping("/{cityId}")
     @Operation(summary = "getById", description = "get City")
@@ -34,6 +45,16 @@ public class PrivateCityController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Retrieves paginated list of Cities with optional filtering (User/Admin access).
+     *
+     * @param nameStartWith Filter cities by name prefix (optional)
+     * @param lastSeenName  Pagination cursor by name (optional)
+     * @param lastSeenId    Pagination cursor by ID (optional)
+     * @param size          Number of items per page (default: 10)
+     * @param headers       HTTP headers with authorization
+     * @return API response with paginated City results
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping
     @Operation(summary = "getAll", description = "get Cities")

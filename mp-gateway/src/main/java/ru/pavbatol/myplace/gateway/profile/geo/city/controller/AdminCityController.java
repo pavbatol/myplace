@@ -16,6 +16,10 @@ import ru.pavbatol.myplace.shared.util.Marker;
 
 import javax.validation.Valid;
 
+/**
+ * REST controller for administrative City operations.
+ * Provides CRUD endpoints for managing City entities (Admin access only).
+ */
 @Slf4j
 @Validated
 @RestController
@@ -27,6 +31,13 @@ public class AdminCityController {
     private static final String ADMIN = "ADMIN";
     private final CityService service;
 
+    /**
+     * Creates a new City (Admin only).
+     *
+     * @param dto     City data including required fields
+     * @param headers HTTP headers with authorization
+     * @return API response with created City data
+     */
     @RequiredRoles(roles = {ADMIN})
     @PostMapping
     @Validated({Marker.OnCreate.class})
@@ -38,6 +49,14 @@ public class AdminCityController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Updates an existing City (Admin only).
+     *
+     * @param cityId  ID of the City to update
+     * @param dto     Updated City data
+     * @param headers HTTP headers with authorization
+     * @return API response with updated City data
+     */
     @RequiredRoles(roles = {ADMIN})
     @PatchMapping("/{cityId}")
     @Operation(summary = "update", description = "updating City")
@@ -49,6 +68,13 @@ public class AdminCityController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Deletes a City (Admin only).
+     *
+     * @param cityId  ID of the City to delete
+     * @param headers HTTP headers with authorization
+     * @return API response with operation status
+     */
     @RequiredRoles(roles = {ADMIN})
     @DeleteMapping("/{cityId}")
     @Operation(summary = "delete", description = "deleting City")

@@ -10,6 +10,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.profile.geo.city.CityDto;
 
+/**
+ * REST client implementation for City operations.
+ * Handles HTTP communication with City service endpoints.
+ */
 @Component
 public class CityClientImpl extends BaseRestClient implements CityClient {
     private static final String ADMIN_CONTEXT = "/admin/geo/cities";
@@ -20,11 +24,26 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
         super(restTemplate, serverUrl);
     }
 
+    /**
+     * Sends create City request to service.
+     *
+     * @param dto     City data to create
+     * @param headers HTTP headers for authentication
+     * @return Raw service response
+     */
     @Override
     public ResponseEntity<Object> create(CityDto dto, HttpHeaders headers) {
         return post(ADMIN_CONTEXT, headers, dto);
     }
 
+    /**
+     * Sends update City request to service.
+     *
+     * @param cityId  ID of City to update
+     * @param dto     Updated City data
+     * @param headers HTTP headers for authentication
+     * @return Raw service response
+     */
     @Override
     public ResponseEntity<Object> update(Long cityId, CityDto dto, HttpHeaders headers) {
         String resourcePath = String.format("/%s", cityId);
@@ -33,6 +52,13 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
         return patch(fullResourcePath, headers, dto);
     }
 
+    /**
+     * Sends delete City request to service.
+     *
+     * @param cityId  ID of City to delete
+     * @param headers HTTP headers for authentication
+     * @return Raw service response
+     */
     @Override
     public ResponseEntity<Object> delete(Long cityId, HttpHeaders headers) {
         String resourcePath = String.format("/%s", cityId);
@@ -41,6 +67,13 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
         return delete(fullResourcePath, headers);
     }
 
+    /**
+     * Retrieves City by ID from service.
+     *
+     * @param cityId  ID of City to retrieve
+     * @param headers HTTP headers for authentication
+     * @return Raw service response
+     */
     @Override
     public ResponseEntity<Object> getById(Long cityId, HttpHeaders headers) {
         String resourcePath = String.format("/%s", cityId);
@@ -49,6 +82,16 @@ public class CityClientImpl extends BaseRestClient implements CityClient {
         return get(fullResourcePath, headers);
     }
 
+    /**
+     * Retrieves filtered/paginated Cities from service.
+     *
+     * @param nameStartWith Filter by name prefix (optional)
+     * @param lastSeenName  Pagination cursor by name (optional)
+     * @param lastSeenId    Pagination cursor by ID (optional)
+     * @param size          Number of items per page
+     * @param headers       HTTP headers for authentication
+     * @return Raw service response
+     */
     @Override
     public ResponseEntity<Object> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size, HttpHeaders headers) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(PRIVATE_CONTEXT)
