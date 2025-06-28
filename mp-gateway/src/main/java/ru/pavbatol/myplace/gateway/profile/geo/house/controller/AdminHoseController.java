@@ -16,6 +16,10 @@ import ru.pavbatol.myplace.shared.util.Marker;
 
 import javax.validation.Valid;
 
+/**
+ * REST controller for administrative House operations.
+ * Provides CRUD endpoints for managing House entities (Admin access only).
+ */
 @Slf4j
 @Validated
 @RestController
@@ -27,6 +31,13 @@ public class AdminHoseController {
     private static final String ADMIN = "ADMIN";
     private final HouseService service;
 
+    /**
+     * Creates a new House (Admin only).
+     *
+     * @param dto     House data transfer object
+     * @param headers HTTP headers with authorization
+     * @return ResponseEntity with created House
+     */
     @RequiredRoles(roles = {ADMIN})
     @PostMapping
     @Validated({Marker.OnCreate.class})
@@ -38,6 +49,14 @@ public class AdminHoseController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Updates an existing House (Admin only).
+     *
+     * @param houseId ID of the House to update
+     * @param dto     Updated House data
+     * @param headers HTTP headers with authorization
+     * @return ResponseEntity with updated House
+     */
     @RequiredRoles(roles = {ADMIN})
     @PatchMapping("/{houseId}")
     @Operation(summary = "update", description = "updating House")
@@ -49,6 +68,13 @@ public class AdminHoseController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Deletes a House (Admin only).
+     *
+     * @param houseId ID of the House to delete
+     * @param headers HTTP headers with authorization
+     * @return ResponseEntity with operation status
+     */
     @RequiredRoles(roles = {ADMIN})
     @DeleteMapping("/{houseId}")
     @Operation(summary = "delete", description = "deleting House")

@@ -13,6 +13,10 @@ import ru.pavbatol.myplace.gateway.profile.geo.house.service.HouseService;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
 
+/**
+ * REST controller for House read operations (User/Admin access).
+ * Provides endpoints for retrieving House information.
+ */
 @Slf4j
 @RestController
 @RequestMapping("$${api.prefix}/${app.mp.profile.label}/user/geo/houses")
@@ -24,6 +28,13 @@ public class PrivateHoseController {
     private static final String ADMIN = "ADMIN";
     private final HouseService service;
 
+    /**
+     * Retrieves a House by ID (User/Admin access).
+     *
+     * @param houseId ID of the House to retrieve
+     * @param headers HTTP headers with authorization
+     * @return ResponseEntity containing the requested House
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping("/{houseId}")
     @Operation(summary = "getById", description = "get House")
@@ -34,6 +45,16 @@ public class PrivateHoseController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Retrieves paginated list of Houses with optional filtering (User/Admin access).
+     *
+     * @param numberStartWith Filter by house number prefix (optional)
+     * @param lastSeenNumber  Pagination cursor by house number (optional)
+     * @param lastSeenId      Pagination cursor by ID (optional)
+     * @param size            Number of items per page (default: 10)
+     * @param headers         HTTP headers with authorization
+     * @return ResponseEntity containing paginated House results
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping
     @Operation(summary = "getAll", description = "get Houses")
