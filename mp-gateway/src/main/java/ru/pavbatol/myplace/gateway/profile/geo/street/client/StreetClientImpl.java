@@ -10,6 +10,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
+/**
+ * REST client implementation for Street operations.
+ * Handles HTTP communication with the Street service endpoints.
+ */
 @Component
 public class StreetClientImpl extends BaseRestClient implements StreetClient {
     private static final String ADMIN_CONTEXT = "/admin/geo/streets";
@@ -20,11 +24,26 @@ public class StreetClientImpl extends BaseRestClient implements StreetClient {
         super(restTemplate, serverUrl);
     }
 
+    /**
+     * Sends create Street request to the service.
+     *
+     * @param dto     Street data to create
+     * @param headers HTTP headers for the request
+     * @return ResponseEntity with raw service response
+     */
     @Override
     public ResponseEntity<Object> create(StreetDto dto, HttpHeaders headers) {
         return post(ADMIN_CONTEXT, headers, dto);
     }
 
+    /**
+     * Sends update Street request to the service.
+     *
+     * @param streetId ID of the Street to update
+     * @param dto      Updated Street data
+     * @param headers  HTTP headers for the request
+     * @return ResponseEntity with raw service response
+     */
     @Override
     public ResponseEntity<Object> update(Long streetId, StreetDto dto, HttpHeaders headers) {
         String resourcePath = String.format("/%s", streetId);
@@ -33,6 +52,13 @@ public class StreetClientImpl extends BaseRestClient implements StreetClient {
         return patch(fullResourcePath, headers, dto);
     }
 
+    /**
+     * Sends delete Street request to the service.
+     *
+     * @param streetId ID of the Street to delete
+     * @param headers  HTTP headers for the request
+     * @return ResponseEntity with raw service response
+     */
     @Override
     public ResponseEntity<Object> delete(Long streetId, HttpHeaders headers) {
         String resourcePath = String.format("/%s", streetId);
@@ -41,6 +67,13 @@ public class StreetClientImpl extends BaseRestClient implements StreetClient {
         return delete(fullResourcePath, headers);
     }
 
+    /**
+     * Retrieves Street by ID from the service.
+     *
+     * @param streetId ID of the Street to retrieve
+     * @param headers  HTTP headers for the request
+     * @return ResponseEntity with raw service response
+     */
     @Override
     public ResponseEntity<Object> getById(Long streetId, HttpHeaders headers) {
         String resourcePath = String.format("/%s", streetId);
@@ -49,6 +82,16 @@ public class StreetClientImpl extends BaseRestClient implements StreetClient {
         return get(fullResourcePath, headers);
     }
 
+    /**
+     * Retrieves paginated Streets from the service.
+     *
+     * @param nameStartWith Filter by name prefix (optional)
+     * @param lastSeenName  Pagination cursor for Street name (optional)
+     * @param lastSeenId    Pagination cursor for Street id (optional)
+     * @param size          Number of items per page
+     * @param headers       HTTP headers for the request
+     * @return ResponseEntity with raw service response
+     */
     @Override
     public ResponseEntity<Object> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size, HttpHeaders headers) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath(PRIVATE_CONTEXT)

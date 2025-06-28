@@ -16,6 +16,10 @@ import ru.pavbatol.myplace.shared.util.Marker;
 
 import javax.validation.Valid;
 
+/**
+ * Administrative REST controller for Street operations.
+ * Provides CRUD endpoints for Street management (Admin access only).
+ */
 @Slf4j
 @Validated
 @RestController
@@ -27,6 +31,13 @@ public class AdminStreetController {
     private static final String ADMIN = "ADMIN";
     private final StreetService service;
 
+    /**
+     * Creates a new Street (Admin only).
+     *
+     * @param dto     Street data transfer object
+     * @param headers HTTP headers with authorization
+     * @return API response with created Street
+     */
     @RequiredRoles(roles = {ADMIN})
     @PostMapping
     @Validated({Marker.OnCreate.class})
@@ -38,6 +49,14 @@ public class AdminStreetController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Updates an existing Street (Admin only).
+     *
+     * @param streetId ID of Street to update
+     * @param dto      Updated Street data
+     * @param headers  HTTP headers with authorization
+     * @return API response with updated Street
+     */
     @RequiredRoles(roles = {ADMIN})
     @PatchMapping("/{streetId}")
     @Operation(summary = "update", description = "updating Street")
@@ -49,6 +68,13 @@ public class AdminStreetController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Deletes a Street (Admin only).
+     *
+     * @param streetId ID of Street to delete
+     * @param headers  HTTP headers with authorization
+     * @return API response with operation status
+     */
     @RequiredRoles(roles = {ADMIN})
     @DeleteMapping("/{streetId}")
     @Operation(summary = "delete", description = "deleting Street")

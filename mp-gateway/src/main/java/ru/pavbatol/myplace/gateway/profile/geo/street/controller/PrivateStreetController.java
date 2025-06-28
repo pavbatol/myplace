@@ -13,6 +13,10 @@ import ru.pavbatol.myplace.gateway.profile.geo.street.service.StreetService;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
+/**
+ * REST controller for Street read operations (User/Admin access).
+ * Provides endpoints for retrieving Street information.
+ */
 @Slf4j
 @RestController
 @RequestMapping("$${api.prefix}/${app.mp.profile.label}/user/geo/streets")
@@ -24,6 +28,13 @@ public class PrivateStreetController {
     private static final String ADMIN = "ADMIN";
     private final StreetService service;
 
+    /**
+     * Retrieves a Street by ID (User/Admin access).
+     *
+     * @param streetId ID of the Street to retrieve
+     * @param headers  HTTP headers with authorization
+     * @return API response with Street data
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping("/{streetId}")
     @Operation(summary = "getById", description = "get Street")
@@ -34,6 +45,16 @@ public class PrivateStreetController {
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 
+    /**
+     * Retrieves paginated list of Streets with optional filtering (User/Admin access).
+     *
+     * @param nameStartWith Filter by name prefix (optional)
+     * @param lastSeenName  Pagination cursor by name (optional)
+     * @param lastSeenId    Pagination cursor by ID (optional)
+     * @param size          Number of items per page (default: 10)
+     * @param headers       HTTP headers with authorization
+     * @return API response with paginated Street results
+     */
     @RequiredRoles(roles = {USER, ADMIN})
     @GetMapping
     @Operation(summary = "getAll", description = "get Streets")
