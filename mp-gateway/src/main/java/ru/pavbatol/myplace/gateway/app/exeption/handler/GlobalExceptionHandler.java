@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -21,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Global exception handler for REST controllers.
@@ -76,6 +79,16 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
 
         return ResponseEntity.status(httpStatus).body(apiResponse);
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    protected ResponseEntity<Object> handleMethodArgumentNotValidEx(MethodArgumentNotValidException ex, WebRequest webRequest) {
+        HttpStatus httpStatus = determineStatus(ex);
+        ApiError apiError = createApiError(ex, webRequest, httpStatus);
+
+        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
+
+        return ResponseEntity.status(BAD_REQUEST).body(apiResponse);
     }
 
     @ExceptionHandler(Throwable.class)
