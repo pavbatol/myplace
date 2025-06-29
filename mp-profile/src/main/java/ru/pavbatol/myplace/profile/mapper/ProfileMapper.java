@@ -2,12 +2,12 @@ package ru.pavbatol.myplace.profile.mapper;
 
 import org.mapstruct.*;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.model.House;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
 import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.model.Profile;
+import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
 
 import java.util.Base64;
 import java.util.UUID;

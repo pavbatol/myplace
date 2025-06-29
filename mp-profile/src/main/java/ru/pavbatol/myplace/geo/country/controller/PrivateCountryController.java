@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.service.CountryService;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

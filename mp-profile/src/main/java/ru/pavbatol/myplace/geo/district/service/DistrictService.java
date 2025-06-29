@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.district.service;
 
-import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.district.DistrictDto;
 
 public interface DistrictService {
     DistrictDto create(DistrictDto dto);

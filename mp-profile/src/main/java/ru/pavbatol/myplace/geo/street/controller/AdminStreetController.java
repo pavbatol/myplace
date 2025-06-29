@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.app.util.Marker;
-import ru.pavbatol.myplace.geo.street.dto.StreetDto;
 import ru.pavbatol.myplace.geo.street.service.StreetService;
+import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
 import javax.validation.Valid;
 

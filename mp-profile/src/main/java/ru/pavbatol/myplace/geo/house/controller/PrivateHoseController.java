@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.geo.house.service.HouseService;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
 
 @Slf4j
 @RestController

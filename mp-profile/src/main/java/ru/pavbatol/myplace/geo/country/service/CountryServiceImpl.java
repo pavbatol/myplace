@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
 import ru.pavbatol.myplace.geo.country.model.Country;
 import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 @Slf4j
 @Service

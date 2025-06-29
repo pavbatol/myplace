@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.geo.city.dto.CityDto;
 import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
 import ru.pavbatol.myplace.geo.city.model.City;
 import ru.pavbatol.myplace.geo.city.repository.CityRepository;
@@ -15,6 +14,7 @@ import ru.pavbatol.myplace.geo.district.mapper.DistrictMapper;
 import ru.pavbatol.myplace.geo.district.model.District;
 import ru.pavbatol.myplace.geo.district.repository.DistrictRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.city.CityDto;
 
 @Slf4j
 @Service

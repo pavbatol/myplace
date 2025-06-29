@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.geo.region.service;
 
-import ru.pavbatol.myplace.geo.region.dto.RegionDto;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.region.RegionDto;
 
 public interface RegionService {
     RegionDto create(RegionDto dto);

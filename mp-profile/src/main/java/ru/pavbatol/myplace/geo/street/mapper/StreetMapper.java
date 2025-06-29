@@ -2,12 +2,12 @@ package ru.pavbatol.myplace.geo.street.mapper;
 
 import org.mapstruct.*;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.geo.city.dto.CityDto;
 import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
 import ru.pavbatol.myplace.geo.city.model.City;
 import ru.pavbatol.myplace.geo.city.repository.CityRepository;
-import ru.pavbatol.myplace.geo.street.dto.StreetDto;
 import ru.pavbatol.myplace.geo.street.model.Street;
+import ru.pavbatol.myplace.shared.dto.profile.geo.city.CityDto;
+import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring", uses = CityMapper.class)
 public interface StreetMapper {
