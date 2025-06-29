@@ -19,7 +19,7 @@ import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
  */
 @Slf4j
 @RestController
-@RequestMapping("$${api.prefix}/${app.mp.profile.label}/user/geo/streets")
+@RequestMapping("${api.prefix}/${app.mp.profile.label}/user/geo/streets")
 @RequiredArgsConstructor
 @Tag(name = "[Profile/Geo]Street: Private", description = "API for working with Street")
 public class PrivateStreetController {

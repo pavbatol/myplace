@@ -19,7 +19,7 @@ import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
  */
 @Slf4j
 @RestController
-@RequestMapping("$${api.prefix}/${app.mp.profile.label}/user/geo/houses")
+@RequestMapping("${api.prefix}/${app.mp.profile.label}/user/geo/houses")
 @RequiredArgsConstructor
 @Tag(name = "[Profile/Geo]House: Private", description = "API for working with House")
 public class PrivateHoseController {

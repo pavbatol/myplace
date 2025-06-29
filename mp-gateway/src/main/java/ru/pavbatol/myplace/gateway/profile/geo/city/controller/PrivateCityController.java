@@ -19,7 +19,7 @@ import ru.pavbatol.myplace.shared.dto.profile.geo.city.CityDto;
  */
 @Slf4j
 @RestController
-@RequestMapping("$${api.prefix}/${app.mp.profile.label}/user/geo/cities")
+@RequestMapping("${api.prefix}/${app.mp.profile.label}/user/geo/cities")
 @RequiredArgsConstructor
 @Tag(name = "[Profile/Geo]City: Private", description = "API for working with City")
 public class PrivateCityController {

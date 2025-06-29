@@ -22,7 +22,7 @@ import javax.validation.constraints.Min;
  */
 @Slf4j
 @RestController
-@RequestMapping("$${api.prefix}/${app.mp.profile.label}/user/geo/districts")
+@RequestMapping("${api.prefix}/${app.mp.profile.label}/user/geo/districts")
 @RequiredArgsConstructor
 @Tag(name = "[Profile/Geo]District: Private", description = "API for working with District")
 public class PrivateDistrictController {
@@ -33,8 +33,9 @@ public class PrivateDistrictController {
 
     /**
      * Retrieves a District by ID (User/Admin access).
+     *
      * @param districtId ID of the District to retrieve
-     * @param headers HTTP request headers
+     * @param headers    HTTP request headers
      * @return ResponseEntity containing the requested District
      */
     @RequiredRoles(roles = {USER, ADMIN})
@@ -49,11 +50,12 @@ public class PrivateDistrictController {
 
     /**
      * Retrieves paginated list of Districts with filtering (User/Admin access).
+     *
      * @param nameStartWith Filter by name prefix (optional)
-     * @param lastSeenName Pagination cursor for name (optional)
-     * @param lastSeenId Pagination cursor for ID (optional)
-     * @param size Number of items per page (1-100, default: 10)
-     * @param headers HTTP request headers
+     * @param lastSeenName  Pagination cursor for name (optional)
+     * @param lastSeenId    Pagination cursor for ID (optional)
+     * @param size          Number of items per page (1-100, default: 10)
+     * @param headers       HTTP request headers
      * @return ResponseEntity containing paginated District results
      */
     @RequiredRoles(roles = {USER, ADMIN})
