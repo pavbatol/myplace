@@ -25,7 +25,9 @@ import java.util.List;
 @Slf4j
 @Component
 public class AccessClientImpl implements AccessClient {
-    public static final String CHECK_ACCESS_PATH = "/permission/check-access";
+    private static final String CHECK_ACCESS_PATH = "/permission/check-access";
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String USER_AGENT = "User-Agent";
     private final String securityServiceUrl;
     private final RestTemplate restTemplate;
 
@@ -54,22 +56,20 @@ public class AccessClientImpl implements AccessClient {
      *
      * @param roles     the list of required roles to check against (must not be null or empty)
      * @param authToken the authorization token in "Bearer [token]" format (must not be null or blank)
+     * @param userAgent the User-Agent value
      * @throws IllegalArgumentException if roles list is empty/null or auth token is missing
-     * @see AccessClient#checkAccess(List, String)
+     * @see AccessClient#checkAccess(List, String, String)
      */
     @Override
-    public void checkAccess(List<String> roles, String authToken) {
-        if (roles == null || roles.isEmpty()) {
-            throw new IllegalArgumentException("Roles list cannot be null or empty");
-        }
-        if (authToken == null || authToken.isBlank()) {
-            throw new IllegalArgumentException("Authorization header is missing");
-        }
-
-        log.debug("Checking access for roles: {}", roles);
+    public void checkAccess(List<String> roles, String authToken, String userAgent) {
+        log.debug("Sending request for check access for roles: {}", roles);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", authToken);
+        headers.set(AUTHORIZATION, authToken);
+
+        if (userAgent != null) {
+            headers.set(USER_AGENT, userAgent);
+        }
 
         restTemplate.exchange(
                 securityServiceUrl + CHECK_ACCESS_PATH,

@@ -36,6 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccessCheckAspect {
     private static final String AUTHORIZATION = "Authorization";
+    private static final String USER_AGENT = "User-Agent";
     private final AccessClient client;
 
     /**
@@ -51,8 +52,7 @@ public class AccessCheckAspect {
      *
      * @param requiredRoles the annotation containing required role definitions
      * @throws IllegalStateException if request context is unavailable or authorization header is missing
-     * @throws SecurityException if the security service denies access (wrapped HttpStatusCodeException)
-     *
+     * @throws SecurityException     if the security service denies access (wrapped HttpStatusCodeException)
      */
     @Before("@annotation(requiredRoles)")
     public void checkAccess(RequiredRoles requiredRoles) {
@@ -65,13 +65,20 @@ public class AccessCheckAspect {
             throw new IllegalStateException("Request context not found");
         }
 
+        List<String> roles = List.of(requiredRoles.roles());
+        if (roles.isEmpty()) {
+            throw new IllegalArgumentException("Roles list cannot be empty");
+        }
+
         String authToken = attributes.getRequest().getHeader(AUTHORIZATION);
-        if (authToken == null) {
+        if (authToken == null || authToken.isBlank()) {
             throw new IllegalStateException(AUTHORIZATION + " header is missing");
         }
 
+        String userAgent = attributes.getRequest().getHeader(USER_AGENT);
+
         try {
-            client.checkAccess(List.of(requiredRoles.roles()), authToken);
+            client.checkAccess(List.of(requiredRoles.roles()), authToken, userAgent);
         } catch (HttpStatusCodeException e) {
             String accessDenied = "Access denied";
             log.error(accessDenied);
