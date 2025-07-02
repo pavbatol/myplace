@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,14 +28,12 @@ public class AdminDataImportController {
     @Value("${spring.application.name}")
     private String serviceName;
 
-    @PostMapping("/csv")
+    @PostMapping(value = "/csv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "import data", description = "importing geo data from CSV file")
     public ResponseEntity<StreamingResponseBody> uploadCsv(
             @Parameter(description = "CSV file to upload", required = true) @RequestPart("file") MultipartFile file,
             @RequestParam(value = "responseExportWithId", defaultValue = "false") boolean responseExportWithId) {
         log.debug("POST uploadCsv with file sized {} byte; responseExportWithId={}", file.getSize(), responseExportWithId);
-
-        validateFile(file);
 
         String formattedDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
         String fileName = String.join("_", serviceName, "geo-data-load-report", formattedDateTime) + ".csv";
@@ -45,27 +44,5 @@ public class AdminDataImportController {
                     httpHeaders.add(HttpHeaders.CONTENT_TYPE, "text/csv");
                 })
                 .body(outputStream -> dataImportService.importDataFromCsv(outputStream, file, responseExportWithId));
-    }
-
-    private void validateFile(MultipartFile file) {
-        long maxFileSizeMb = 5;
-
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("he file is empty!");
-        }
-
-        if (file.getSize() > maxFileSizeMb * 1024 * 1024) {
-            throw new IllegalArgumentException(String.format("The file size exceeds the allowed limit of %d MB.", maxFileSizeMb));
-        }
-
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.endsWith(".csv")) {
-            throw new IllegalArgumentException("Invalid file format. A file with the .csv extension was expected.");
-        }
-
-        String contentType = file.getContentType();
-        if (!"text/csv".equals(contentType) && !"application/vnd.ms-excel".equals(contentType)) {
-            throw new IllegalArgumentException("Invalid file type. A text CSV file was expected.");
-        }
     }
 }

@@ -36,7 +36,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/${app.mp.security.label}/auth")
-@Tag(name = "Public: Auth", description = "API for working with authorization")
+@Tag(name = "[Security]Auth: Public", description = "API for working with authorization")
 public class PublicAuthController {
 
     private final SecurityAuthService service;

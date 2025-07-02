@@ -1,12 +1,11 @@
 package ru.pavbatol.myplace.gateway.security.user.client;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.client.RestTemplate;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoConfirm;
 import ru.pavbatol.myplace.shared.dto.security.user.UserDtoRegistry;
@@ -47,12 +46,8 @@ public class SecurityUserClientImpl extends BaseRestClient implements SecurityUs
     private static final String PUBLIC_AUTH_CONTEXT = "/auth";
 
     public SecurityUserClientImpl(@Value("${app.mp.security.url}") String serverUrl,
-                                  RestTemplateBuilder builder) {
-        super(builder
-                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                .build()
-        );
+                                  @Autowired RestTemplate restTemplate) {
+        super(restTemplate, serverUrl);
     }
 
     @Override

@@ -9,3 +9,6 @@ app:
     stats:
       label: stats
       url: http://localhost:9090/api/v1
+  http:
+    connect-timeout: 3s
+    read-timeout: 7s

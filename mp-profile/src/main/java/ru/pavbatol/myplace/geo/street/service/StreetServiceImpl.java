@@ -5,15 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pavbatol.myplace.geo.city.model.City;
 import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
 import ru.pavbatol.myplace.geo.city.repository.CityRepository;
-import ru.pavbatol.myplace.geo.street.dto.StreetDto;
 import ru.pavbatol.myplace.geo.street.mapper.StreetMapper;
 import ru.pavbatol.myplace.geo.street.model.Street;
 import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
 @Slf4j
 @Service
@@ -35,9 +36,21 @@ public class StreetServiceImpl implements StreetService {
         return mapper.toStreetDto(saved);
     }
 
+    @Transactional
     @Override
     public StreetDto update(Long streetId, StreetDto dto) {
         Street original = Checker.getNonNullObject(repository, streetId);
+
+        if (dto.getCity() != null) {
+            if (dto.getCity().getId() == null) {
+                throw new IllegalArgumentException("City.id in StreetDto cannot be null when City provided on updating a Street");
+            }
+            if (!original.getCity().getId().equals(dto.getCity().getId())) {
+                City city = Checker.getNonNullObject(cityRepository, dto.getCity().getId());
+                original.setCity(city);
+            }
+        }
+
         Street updated = mapper.updateEntity(original, dto);
         updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
@@ -45,12 +58,14 @@ public class StreetServiceImpl implements StreetService {
         return mapper.toStreetDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long streetId) {
         repository.deleteById(streetId);
         log.debug("Deleted {}: with streetId: #{}", ENTITY_SIMPLE_NAME, streetId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public StreetDto getById(Long streetId) {
         Street found = Checker.getNonNullObject(repository, streetId);
@@ -59,6 +74,7 @@ public class StreetServiceImpl implements StreetService {
         return mapper.toStreetDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<StreetDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
         log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",

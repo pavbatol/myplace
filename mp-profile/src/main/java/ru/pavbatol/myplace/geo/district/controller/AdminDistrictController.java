@@ -6,16 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.app.util.Marker;
-import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 import ru.pavbatol.myplace.geo.district.service.DistrictService;
-
-import javax.validation.Valid;
+import ru.pavbatol.myplace.shared.dto.profile.geo.district.DistrictDto;
 
 @Slf4j
-@Validated
 @RestController
 @RequestMapping("${api.prefix}/admin/geo/districts")
 @RequiredArgsConstructor
@@ -25,9 +20,8 @@ public class AdminDistrictController {
     private final DistrictService service;
 
     @PostMapping
-    @Validated({Marker.OnCreate.class})
     @Operation(summary = "create", description = "creating new District")
-    public ResponseEntity<DistrictDto> create(@RequestBody @Valid DistrictDto dto) {
+    public ResponseEntity<DistrictDto> create(@RequestBody DistrictDto dto) {
         log.debug("POST create() with dto: {}", dto);
         DistrictDto body = service.create(dto);
 
@@ -37,7 +31,7 @@ public class AdminDistrictController {
     @PatchMapping("/{districtId}")
     @Operation(summary = "update", description = "updating District")
     public ResponseEntity<DistrictDto> update(@PathVariable(value = "districtId") Long districtId,
-                                              @RequestBody @Valid DistrictDto dto) {
+                                              @RequestBody DistrictDto dto) {
         log.debug("PATCH update() with districtId: {}, dto: {}", districtId, dto);
         DistrictDto body = service.update(districtId, dto);
 

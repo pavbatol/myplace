@@ -6,12 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 import ru.pavbatol.myplace.geo.district.service.DistrictService;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import ru.pavbatol.myplace.shared.dto.profile.geo.district.DistrictDto;
 
 @Slf4j
 @RestController
@@ -36,7 +33,7 @@ public class PrivateDistrictController {
     public ResponseEntity<SimpleSlice<DistrictDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
                                                            @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
                                                            @RequestParam(value = "lastSeenId", required = false) Long lastSeenId,
-                                                           @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+                                                           @RequestParam(value = "size", defaultValue = "10") int size) {
         log.debug("GET getAll() with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",
                 nameStartWith, lastSeenName, lastSeenId, size);
         SimpleSlice<DistrictDto> body = service.getAll(nameStartWith, lastSeenName, lastSeenId, size);

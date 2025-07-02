@@ -1,6 +1,7 @@
 package ru.pavbatol.myplace.shared.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MimeType;
 import ru.pavbatol.myplace.shared.dto.api.ApiError;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.pagination.SliceDto;
 import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
@@ -103,6 +106,47 @@ public class ResponseBodyParser {
             throw new IOException("Failed to parse list of " + elementType.getSimpleName(), e);
         } catch (IllegalArgumentException e) {
             throw new IOException("Cannot convert body to List<" + elementType.getSimpleName() + ">", e);
+        }
+    }
+
+    /**
+     * Parses response body into {@link SimpleSlice}  of specified element type
+     *
+     * @param <T>         SimpleSlice element type
+     * @param response    HTTP response entity
+     * @param elementType SimpleSlice element class
+     * @return SimpleSlice of parsed elements (empty SimpleSlice if response body is null)
+     * @throws TargetServiceHandledErrorException if response status is not 2xx
+     * @throws IOException                        if parsing fails or response contains invalid content
+     * @throws IllegalArgumentException           if conversion is not possible
+     * @see SimpleSlice SimpleSlice (interfase)
+     * @see SliceDto SliceDto (SimpleSlice implemetation)
+     */
+    @NonNull
+    public <T> SimpleSlice<T> parseSimpleSlice(ResponseEntity<Object> response, Class<T> elementType) throws IOException {
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            handleErrorResponse(response);
+        }
+
+        Object body = response.getBody();
+        if (body == null) {
+            return new SliceDto<>(List.of(), 0, 0, false);
+        }
+
+        JavaType javaType = objectMapper.getTypeFactory().constructParametricType(SliceDto.class, elementType);
+
+        try {
+            if (body instanceof byte[]) {
+                return objectMapper.readValue((byte[]) body, javaType);
+            } else if (body instanceof String) {
+                return objectMapper.readValue((String) body, javaType);
+            } else {
+                return objectMapper.convertValue(body, javaType);
+            }
+        } catch (JsonProcessingException e) {
+            throw new IOException("Failed to parse SimpleSlice of " + elementType.getSimpleName(), e);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Cannot convert body to SimpleSlice<" + elementType.getSimpleName() + ">", e);
         }
     }
 

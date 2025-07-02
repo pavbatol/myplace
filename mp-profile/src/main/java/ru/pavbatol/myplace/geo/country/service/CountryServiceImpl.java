@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
 import ru.pavbatol.myplace.geo.country.model.Country;
 import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 @Slf4j
 @Service
@@ -20,6 +21,7 @@ public class CountryServiceImpl implements CountryService {
     private final CountryRepository repository;
     private final CountryMapper mapper;
 
+    @Transactional
     @Override
     public CountryDto create(CountryDto dto) {
         Country entity = mapper.toEntity(dto);
@@ -29,6 +31,7 @@ public class CountryServiceImpl implements CountryService {
         return mapper.toCountryDto(saved);
     }
 
+    @Transactional
     @Override
     public CountryDto update(Long countryId, CountryDto dto) {
         Country original = Checker.getNonNullObject(repository, countryId);
@@ -39,12 +42,14 @@ public class CountryServiceImpl implements CountryService {
         return mapper.toCountryDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long countryId) {
         repository.deleteById(countryId);
         log.debug("Deleted {}: with countryId: #{}", ENTITY_SIMPLE_NAME, countryId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public CountryDto getById(Long countryId) {
         Country found = Checker.getNonNullObject(repository, countryId);
@@ -53,6 +58,7 @@ public class CountryServiceImpl implements CountryService {
         return mapper.toCountryDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<CountryDto> getAll(String nameStartWith, String lastSeenName, int size) {
         log.debug("Finding {}(s) with nameStartWith: {}, lastSeenName: {}, size: {}",

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import ru.pavbatol.myplace.gateway.app.exeption.ApiResponseException;
 import ru.pavbatol.myplace.shared.client.ResponseBodyParser;
+import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
@@ -69,6 +70,23 @@ public class ResponseHandler {
     public <T> ApiResponse<List<T>> processResponseList(ResponseEntity<Object> response, Class<T> elementType) {
         log.debug("Target type to convert response body: List<{}>", elementType.getSimpleName());
         return processCommonLogic(response, () -> processListType(response, elementType));
+    }
+
+    /**
+     * Processes a response containing a {@link SimpleSlice} .
+     *
+     * @param <T>         the type of elements in the expected SimpleSlice
+     * @param response    the HTTP response to process
+     * @param elementType the class object representing the SimpleSlice element type
+     * @return ApiResponse containing the parsed SimpleSlice or error details
+     * @throws ApiResponseException               if response parsing fails
+     * @throws TargetServiceHandledErrorException if the target service returns a handled error
+     * @throws TargetServiceErrorException        if the target service returns a raw (unhandled) error
+     *                                            or if parsing failed and the error was created locally with the raw response received
+     */
+    public <T> ApiResponse<SimpleSlice<T>> processResponseSimpleSlice(ResponseEntity<Object> response, Class<T> elementType) {
+        log.debug("Target type to convert response body: {}<{}>", SimpleSlice.class.getSimpleName(), elementType.getSimpleName());
+        return processCommonLogic(response, () -> processSimpleSliceType(response, elementType));
     }
 
     /**
@@ -138,6 +156,17 @@ public class ResponseHandler {
             return ApiResponse.success(parsedBody, response.getStatusCode());
         } catch (IOException e) {
             log.error("Failed to deserialize response body into type 'List' with elements type of '{}': {}",
+                    elementType.getSimpleName(), e.getMessage());
+            throw new ApiResponseException("Failed to parse API response", HttpStatus.INTERNAL_SERVER_ERROR, e);
+        }
+    }
+
+    private <T> ApiResponse<SimpleSlice<T>> processSimpleSliceType(ResponseEntity<Object> response, Class<T> elementType) {
+        try {
+            SimpleSlice<T> parsedBody = bodyParser.parseSimpleSlice(response, elementType);
+            return ApiResponse.success(parsedBody, response.getStatusCode());
+        } catch (IOException e) {
+            log.error("Failed to deserialize response body into type 'Slice' with elements type of '{}': {}",
                     elementType.getSimpleName(), e.getMessage());
             throw new ApiResponseException("Failed to parse API response", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }

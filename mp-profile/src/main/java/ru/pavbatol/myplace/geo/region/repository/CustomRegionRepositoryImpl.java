@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.pavbatol.myplace.app.util.SqlUtils;
 import ru.pavbatol.myplace.geo.common.NameableGeo;
@@ -32,7 +31,6 @@ public class CustomRegionRepositoryImpl implements CustomRegionRepository {
     private final EntityManager em;
 
     @Override
-    @Transactional(readOnly = true)
     public Slice<Region> findPageByNamePrefixIgnoreCase(String nameStartWith, String lastSeenName, String lastSeenCountryName, int size) {
         validateParameters(lastSeenName, lastSeenCountryName, size);
 

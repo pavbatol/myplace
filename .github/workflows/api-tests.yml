@@ -206,11 +206,12 @@ jobs:
               ;;
             gateway)
               newman run postman/MyPlace-mp-gateway-security.postman_collection.json --reporters cli,junit --reporter-junit-export postman-gateway-security-report.xml
+              newman run postman/MyPlace-mp-gateway-profile.postman_collection.json --reporters cli,junit --reporter-junit-export postman-gateway-profile-report.xml
               ;;
             develop|main)
               newman run postman/MyPlace-mp-stats.postman_collection.json --reporters cli,junit --reporter-junit-export postman-stats-report.xml
               newman run postman/MyPlace-mp-gateway-security.postman_collection.json --reporters cli,junit --reporter-junit-export postman-gateway-security-report.xml
-              newman run postman/MyPlace-mp-profile.postman_collection.json --reporters cli,junit --reporter-junit-export postman-profile-report.xml
+              newman run postman/MyPlace-mp-gateway-profile.postman_collection.json --reporters cli,junit --reporter-junit-export postman-gateway-profile-report.xml
               ;;
             *)
               echo "No specific Postman tests for this branch."
