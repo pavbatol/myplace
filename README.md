@@ -80,7 +80,7 @@ You can organize your own platform.
 
 - **Gateway (mp-gateway)**  
 The `gateway` service acts as the central entry point for routing requests to other microservices. 
-Currently, it only integrates with the `security` service; integration with other microservices will be implemented in upcoming Pull Requests.
+Currently, it only integrates with the `security` and ``profile/geo`` services; integration with other microservices will be implemented in upcoming Pull Requests.
 
     _Key Features:_
     - Standardized Responses: Wraps all responses in `ApiResponse<T>` via `ResponseHandler` for consistent error/success formats (e.g., `ResponseEntity<ApiResponse<UserDto>>`).
