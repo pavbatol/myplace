@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
@@ -21,6 +22,7 @@ import javax.validation.constraints.Min;
  * Provides read-only endpoints for accessing District data.
  */
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("${api.prefix}/${app.mp.profile.label}/user/geo/districts")
 @RequiredArgsConstructor

@@ -10,9 +10,6 @@ import ru.pavbatol.myplace.geo.district.service.DistrictService;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.district.DistrictDto;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-
 @Slf4j
 @RestController
 @RequestMapping("${api.prefix}/user/geo/districts")
@@ -36,7 +33,7 @@ public class PrivateDistrictController {
     public ResponseEntity<SimpleSlice<DistrictDto>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
                                                            @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
                                                            @RequestParam(value = "lastSeenId", required = false) Long lastSeenId,
-                                                           @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size) {
+                                                           @RequestParam(value = "size", defaultValue = "10") int size) {
         log.debug("GET getAll() with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",
                 nameStartWith, lastSeenName, lastSeenId, size);
         SimpleSlice<DistrictDto> body = service.getAll(nameStartWith, lastSeenName, lastSeenId, size);

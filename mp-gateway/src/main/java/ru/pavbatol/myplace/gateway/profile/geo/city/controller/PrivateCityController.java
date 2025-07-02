@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
@@ -13,11 +14,15 @@ import ru.pavbatol.myplace.gateway.profile.geo.city.service.CityService;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.city.CityDto;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 /**
  * REST controller for City read operations (User/Admin access).
  * Provides endpoints for retrieving City information.
  */
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("${api.prefix}/${app.mp.profile.label}/user/geo/cities")
 @RequiredArgsConstructor
@@ -61,7 +66,7 @@ public class PrivateCityController {
     public ResponseEntity<ApiResponse<SimpleSlice<CityDto>>> getAll(@RequestParam(value = "nameStartWith", required = false) String nameStartWith,
                                                                     @RequestParam(value = "lastSeenName", required = false) String lastSeenName,
                                                                     @RequestParam(value = "lastSeenId", required = false) Long lastSeenId,
-                                                                    @RequestParam(value = "size", defaultValue = "10") int size,
+                                                                    @RequestParam(value = "size", defaultValue = "10") @Min(1) @Max(100) int size,
                                                                     @RequestHeader HttpHeaders headers) {
         log.debug("GET getAll() with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",
                 nameStartWith, lastSeenName, lastSeenId, size);

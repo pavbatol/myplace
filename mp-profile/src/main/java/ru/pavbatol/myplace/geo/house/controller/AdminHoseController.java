@@ -6,16 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.app.util.Marker;
 import ru.pavbatol.myplace.geo.house.service.HouseService;
 import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
 
-import javax.validation.Valid;
-
 @Slf4j
-@Validated
 @RestController
 @RequestMapping("${api.prefix}/admin/geo/houses")
 @RequiredArgsConstructor
@@ -25,9 +20,8 @@ public class AdminHoseController {
     private final HouseService service;
 
     @PostMapping
-    @Validated({Marker.OnCreate.class})
     @Operation(summary = "create", description = "creating new House")
-    public ResponseEntity<HouseDto> create(@RequestBody @Valid HouseDto dto) {
+    public ResponseEntity<HouseDto> create(@RequestBody HouseDto dto) {
         log.debug("POST create() with dto: {}", dto);
         HouseDto body = service.create(dto);
 
@@ -37,7 +31,7 @@ public class AdminHoseController {
     @PatchMapping("/{houseId}")
     @Operation(summary = "update", description = "updating House")
     public ResponseEntity<HouseDto> update(@PathVariable(value = "houseId") Long houseId,
-                                           @RequestBody @Valid HouseDto dto) {
+                                           @RequestBody HouseDto dto) {
         log.debug("PATCH update() with houseId: {}, dto: {}", houseId, dto);
         HouseDto body = service.update(houseId, dto);
 
