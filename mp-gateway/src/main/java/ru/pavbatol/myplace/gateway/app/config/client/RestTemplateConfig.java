@@ -18,8 +18,12 @@ public class RestTemplateConfig {
     @Value("${app.http.read-timeout:10s}")
     Duration readTimeout;
 
+    /**
+     * @deprecated This method is deprecated in favor of {@link WebClientConfig#webClient()}.
+     */
     @Bean
     @Primary
+    @Deprecated(since = "1.0.0.0", forRemoval = true)
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
@@ -28,8 +32,12 @@ public class RestTemplateConfig {
                 .build();
     }
 
+    /**
+     * @deprecated Use {@link WebClientConfig#longTimeoutWebClient()} instead.
+     */
     @Bean
     @Qualifier("longOperationTemplate")
+    @Deprecated(since = "1.0.0.0", forRemoval = true)
     public RestTemplate longOperationRestTemplate(RestTemplateBuilder builder) {
         return builder
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
