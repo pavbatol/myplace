@@ -1,12 +1,11 @@
 package ru.pavbatol.myplace.gateway.security.role.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.client.RestTemplate;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 
 /**
@@ -30,10 +29,8 @@ public class SecurityRoleClientImpl extends BaseRestClient implements SecurityRo
     private static final String ADMIN_ROLE_CONTEXT = "/admin/roles";
 
     public SecurityRoleClientImpl(@Value("${app.mp.security.url}") String serverUrl,
-                                  RestTemplateBuilder builder) {
-        super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                .build());
+                                  @Autowired RestTemplate restTemplate) {
+        super(restTemplate, serverUrl);
     }
 
     @Override

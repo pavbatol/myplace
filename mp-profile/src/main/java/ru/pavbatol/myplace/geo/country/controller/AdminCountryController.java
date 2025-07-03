@@ -6,16 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.app.util.Marker;
-import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.service.CountryService;
-
-import javax.validation.Valid;
+import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 @Slf4j
-@Validated
 @RestController
 @RequestMapping("${api.prefix}/admin/geo/countries")
 @RequiredArgsConstructor
@@ -25,9 +20,8 @@ public class AdminCountryController {
     private final CountryService service;
 
     @PostMapping
-    @Validated({Marker.OnCreate.class})
     @Operation(summary = "create", description = "creating new Country")
-    public ResponseEntity<CountryDto> create(@RequestBody @Valid CountryDto dto) {
+    public ResponseEntity<CountryDto> create(@RequestBody CountryDto dto) {
         log.debug("POST create() with dto: {}", dto);
         CountryDto body = service.create(dto);
 
@@ -37,7 +31,7 @@ public class AdminCountryController {
     @PatchMapping("/{countryId}")
     @Operation(summary = "update", description = "updating Country")
     public ResponseEntity<CountryDto> update(@PathVariable(value = "countryId") Long countryId,
-                                             @RequestBody @Valid CountryDto dto) {
+                                             @RequestBody CountryDto dto) {
         log.debug("PATCH update() with countryId: {}, dto: {}", countryId, dto);
         CountryDto body = service.update(countryId, dto);
 

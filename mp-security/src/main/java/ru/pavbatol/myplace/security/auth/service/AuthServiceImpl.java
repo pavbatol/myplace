@@ -246,6 +246,9 @@ public class AuthServiceImpl implements AuthService {
     private String composeKey(@NonNull HttpServletRequest servletRequest, @NonNull String key) {
         String agent = servletRequest.getHeader(USER_AGENT_HEADER) != null
                 ? servletRequest.getHeader(USER_AGENT_HEADER) : DEFAULT_USER_AGENT;
+
+        log.debug("{} used for compose key: {}", USER_AGENT_HEADER, agent);
+
         return String.format("%s%s%s", key, KEY_SEPARATOR, getMD5Hash(agent));
     }
 

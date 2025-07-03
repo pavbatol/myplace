@@ -1,8 +1,8 @@
 package ru.pavbatol.myplace.geo.country.mapper;
 
 import org.mapstruct.*;
-import ru.pavbatol.myplace.geo.country.dto.CountryDto;
 import ru.pavbatol.myplace.geo.country.model.Country;
+import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface CountryMapper {

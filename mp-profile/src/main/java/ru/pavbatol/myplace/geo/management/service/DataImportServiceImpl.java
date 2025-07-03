@@ -94,7 +94,8 @@ public class DataImportServiceImpl implements DataImportService {
                                       boolean exportWithId) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
             writer.write(String.join(", ",
-                    "CountryCode", "Country", "Region", "District", "City", "Street", "House", "Latitude", "Longitude", "\n"));
+                    "CountryCode", "Country", "Region", "District", "City", "Street", "House", "Latitude", "Longitude"));
+            writer.newLine();
 
             List<IdableNameableGeo> allGeos = new ArrayList<>(houses);
             allGeos.addAll(streets);
@@ -182,8 +183,8 @@ public class DataImportServiceImpl implements DataImportService {
                 line.append(CSV_DELIMITER).append(house.getLat()).append(CSV_DELIMITER).append(house.getLon());
             }
 
-            line.append("\n");
             writer.write(line.toString());
+            writer.newLine();
         }
     }
 

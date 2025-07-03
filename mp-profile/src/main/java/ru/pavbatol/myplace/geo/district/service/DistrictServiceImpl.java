@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.geo.district.dto.DistrictDto;
 import ru.pavbatol.myplace.geo.district.mapper.DistrictMapper;
 import ru.pavbatol.myplace.geo.district.model.District;
 import ru.pavbatol.myplace.geo.district.repository.DistrictRepository;
 import ru.pavbatol.myplace.geo.region.mapper.RegionMapper;
+import ru.pavbatol.myplace.geo.region.model.Region;
 import ru.pavbatol.myplace.geo.region.repository.RegionRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.district.DistrictDto;
 
 @Slf4j
 @Service
@@ -35,9 +36,21 @@ public class DistrictServiceImpl implements DistrictService {
         return mapper.toDistrictDto(saved);
     }
 
+    @Transactional
     @Override
     public DistrictDto update(Long districtId, DistrictDto dto) {
         District original = Checker.getNonNullObject(repository, districtId);
+
+        if (dto.getRegion() != null) {
+            if (dto.getRegion().getId() == null) {
+                throw new IllegalArgumentException("Region.id in DistrictDto cannot be null when Region provided on updating a District");
+            }
+            if (!original.getRegion().getId().equals(dto.getRegion().getId())) {
+                Region region = Checker.getNonNullObject(regionRepository, dto.getRegion().getId());
+                original.setRegion(region);
+            }
+        }
+
         District updated = mapper.updateEntity(original, dto);
         updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
@@ -45,12 +58,14 @@ public class DistrictServiceImpl implements DistrictService {
         return mapper.toDistrictDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long districtId) {
         repository.deleteById(districtId);
         log.debug("Deleted {}: with districtId: #{}", ENTITY_SIMPLE_NAME, districtId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public DistrictDto getById(Long districtId) {
         District found = Checker.getNonNullObject(repository, districtId);
@@ -59,6 +74,7 @@ public class DistrictServiceImpl implements DistrictService {
         return mapper.toDistrictDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<DistrictDto> getAll(String nameStartWith, String lastSeenName, Long lastSeenId, int size) {
         log.debug("Finding {}(e)s with nameStartWith: {}, lastSeenName: {}, lastSeenId: {}, size: {}",

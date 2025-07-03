@@ -1,13 +1,14 @@
 package ru.pavbatol.myplace.shared.client;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.*;
 
 /**
@@ -19,9 +20,18 @@ import java.util.*;
  * for adding default headers and processing responses.</p>
  */
 @Slf4j
-@RequiredArgsConstructor
 public class BaseRestClient {
     protected final RestTemplate rest;
+    protected final String baseUrl;
+
+    public BaseRestClient(RestTemplate rest) {
+        this(rest, null);
+    }
+
+    public BaseRestClient(RestTemplate rest, String baseUrl) {
+        this.rest = rest;
+        this.baseUrl = baseUrl;
+    }
 
     //-- GET
     protected <T> ResponseEntity<Object> get(@NonNull String path,
@@ -153,12 +163,20 @@ public class BaseRestClient {
         HttpEntity<T> httpEntity = new HttpEntity<>(body, preparedHeaders);
 
         try {
-            ResponseEntity<String> responseEntity = rest.exchange(path, method, httpEntity, String.class, parameters);
+            ResponseEntity<String> responseEntity = rest.exchange(buildUrL(path), method, httpEntity, String.class, parameters);
             return convertResponse(responseEntity);
         } catch (HttpStatusCodeException e) {
             log.error("HTTP request failed with status code: {}", e.getStatusCode());
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
+    }
+
+    protected String buildUrL(String path) {
+        return baseUrl != null
+                ? UriComponentsBuilder.fromUri(URI.create(baseUrl))
+                .path(path.startsWith("/") ? path : "/" + path)
+                .build(false).toUriString()
+                : path;
     }
 
     private HttpHeaders defaultHeaders(@Nullable UUID userUuid, @Nullable Long userId) {

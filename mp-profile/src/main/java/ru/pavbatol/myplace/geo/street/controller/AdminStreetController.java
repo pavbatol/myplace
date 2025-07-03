@@ -6,16 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.app.util.Marker;
-import ru.pavbatol.myplace.geo.street.dto.StreetDto;
 import ru.pavbatol.myplace.geo.street.service.StreetService;
-
-import javax.validation.Valid;
+import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
 @Slf4j
-@Validated
 @RestController
 @RequestMapping("${api.prefix}/admin/geo/streets")
 @RequiredArgsConstructor
@@ -25,9 +20,8 @@ public class AdminStreetController {
     private final StreetService service;
 
     @PostMapping
-    @Validated({Marker.OnCreate.class})
     @Operation(summary = "create", description = "creating new Street")
-    public ResponseEntity<StreetDto> create(@RequestBody @Valid StreetDto dto) {
+    public ResponseEntity<StreetDto> create(@RequestBody StreetDto dto) {
         log.debug("POST create() with dto: {}", dto);
         StreetDto body = service.create(dto);
 
@@ -37,7 +31,7 @@ public class AdminStreetController {
     @PatchMapping("/{streetId}")
     @Operation(summary = "update", description = "updating Street")
     public ResponseEntity<StreetDto> update(@PathVariable(value = "streetId") Long streetId,
-                                            @RequestBody @Valid StreetDto dto) {
+                                            @RequestBody StreetDto dto) {
         log.debug("PATCH update() with streetId: {}, dto: {}", streetId, dto);
         StreetDto body = service.update(streetId, dto);
 

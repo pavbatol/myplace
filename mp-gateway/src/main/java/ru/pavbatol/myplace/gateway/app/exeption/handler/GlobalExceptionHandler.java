@@ -1,12 +1,12 @@
 package ru.pavbatol.myplace.gateway.app.exeption.handler;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 /**
  * Global exception handler for REST controllers.
@@ -52,9 +54,12 @@ import java.util.stream.Collectors;
  * </ul>
  */
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class GlobalExceptionHandler {
-    private final Environment environment;
+    private final boolean traceEnabled;
+
+    public GlobalExceptionHandler(Environment environment) {
+        this.traceEnabled = !environment.matchesProfiles("production");
+    }
 
     @ExceptionHandler(ApiResponseException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiResponseException(ApiResponseException ex, WebRequest webRequest) {
@@ -76,6 +81,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(httpStatus).body(apiResponse);
     }
 
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    protected ResponseEntity<Object> handleMethodArgumentNotValidEx(MethodArgumentNotValidException ex, WebRequest webRequest) {
+        HttpStatus httpStatus = determineStatus(ex);
+        ApiError apiError = createApiError(ex, webRequest, httpStatus);
+
+        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
+
+        return ResponseEntity.status(BAD_REQUEST).body(apiResponse);
+    }
+
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ApiResponse<Void>> handleUncaughtException(Throwable ex, WebRequest webRequest) {
         HttpStatus httpStatus = determineStatus(ex);
@@ -91,14 +106,18 @@ public class GlobalExceptionHandler {
     }
 
     private ApiError createApiError(String details, Throwable ex, WebRequest webRequest, HttpStatus httpStatus) {
-        String reason = ex.getCause() != null ? ex.getCause().getMessage() : null;
+        String reason = ex.getCause() != null ?
+                String.format("%s: %s", ex.getCause().getClass().getSimpleName(), ex.getCause().getMessage())
+                : null;
+
+        String message = String.format("%s: %s", ex.getClass().getSimpleName(), ex.getMessage());
 
         List<String> errors = (ex instanceof BindException) ? ((BindException) ex).getAllErrors().stream()
                 .map(this::getErrorString)
                 .collect(Collectors.toList())
                 : null;
 
-        List<String> trace = isTraceEnabled() ? Arrays.stream(ex.getStackTrace())
+        List<String> trace = traceEnabled ? Arrays.stream(ex.getStackTrace())
                 .map(StackTraceElement::toString).collect(Collectors.toList())
                 : null;
 
@@ -106,7 +125,7 @@ public class GlobalExceptionHandler {
                 getRequestURI(webRequest),
                 httpStatus.toString(),
                 reason,
-                ex.getMessage(),
+                message,
                 details,
                 errors,
                 trace
@@ -139,12 +158,5 @@ public class GlobalExceptionHandler {
         } else {
             return "";
         }
-    }
-
-    private boolean isTraceEnabled() {
-        if (environment.matchesProfiles("production")) {
-            return false;
-        }
-        return environment.matchesProfiles("develop", "test");
     }
 }

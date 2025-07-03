@@ -1,12 +1,10 @@
 package ru.pavbatol.myplace.gateway.security.auth.client;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import ru.pavbatol.myplace.shared.client.BaseRestClient;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRefreshRequest;
 import ru.pavbatol.myplace.shared.dto.security.auth.AuthDtoRequest;
@@ -45,18 +43,15 @@ import java.util.UUID;
  *
  * @see SecurityAuthClient
  */
-@Slf4j
-@Service
+@Component
 public class SecurityAuthClientImpl extends BaseRestClient implements SecurityAuthClient {
     private static final String ADMIN_AUTH_CONTEXT = "/admin/auth";
     private static final String PRIVATE_AUTH_CONTEXT = "/users/auth";
     private static final String PUBLIC_AUTH_CONTEXT = "/auth";
 
     public SecurityAuthClientImpl(@Value("${app.mp.security.url}") String serverUrl,
-                                  RestTemplateBuilder builder) {
-        super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
-                .build());
+                                  @Autowired RestTemplate restTemplate) {
+        super(restTemplate, serverUrl);
     }
 
     @Override

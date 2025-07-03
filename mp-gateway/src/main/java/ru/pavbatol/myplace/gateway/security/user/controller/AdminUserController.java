@@ -41,7 +41,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/${app.mp.security.label}/admin/users")
-@Tag(name = "Admin: User", description = "API for working with users")
+@Tag(name = "[Security]User: Admin", description = "API for working with users")
 public class AdminUserController {
 
     private final SecurityUserService service;

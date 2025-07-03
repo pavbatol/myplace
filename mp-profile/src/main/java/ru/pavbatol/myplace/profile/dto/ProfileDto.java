@@ -2,9 +2,9 @@ package ru.pavbatol.myplace.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
-import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.profile.model.Gender;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
+import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

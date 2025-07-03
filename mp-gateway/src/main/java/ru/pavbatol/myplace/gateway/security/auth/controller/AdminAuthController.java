@@ -27,7 +27,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/${app.mp.security.label}/admin/auth")
-@Tag(name = "Admin: Auth", description = "API for working with authorization")
+@Tag(name = "[Security]Auth: Admin", description = "API for working with authorization")
 public class AdminAuthController {
 
     private final SecurityAuthService service;

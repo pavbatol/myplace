@@ -3,6 +3,7 @@ package ru.pavbatol.myplace.security.auth.controller;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,6 +57,7 @@ public class AdminAuthController {
     }
 
     @GetMapping("/secrets")
+    @Hidden
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "printRandomSecrets", description = "printing random two secret strings")
     public String printRandomSecrets() {
@@ -66,6 +68,7 @@ public class AdminAuthController {
     }
 
     @GetMapping("/secrets/pair")
+    @Hidden
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "printRandomPairSecrets", description = "printing random two secret strings (publicKey, privateKey)")
     public String printRandomPairSecrets() {

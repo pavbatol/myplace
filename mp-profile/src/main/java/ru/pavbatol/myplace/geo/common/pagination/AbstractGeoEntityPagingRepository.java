@@ -7,7 +7,6 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.pavbatol.myplace.app.util.SqlUtils;
 
@@ -70,7 +69,6 @@ public abstract class AbstractGeoEntityPagingRepository<T> implements GeoEntityP
      * @return a {@link Slice} containing the requested page of entities
      */
     @Override
-    @Transactional
     public Slice<T> findPageByNamePrefixIgnoreCase(String cursorFieldStartWith, String lastSeenCursorField, Long lastSeenId, int size) {
         validatePaginationParams(lastSeenCursorField, lastSeenId, size);
         boolean firstPage = isFirstPage(lastSeenCursorField, lastSeenId);

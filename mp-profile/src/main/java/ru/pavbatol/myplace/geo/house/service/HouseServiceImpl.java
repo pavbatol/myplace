@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.geo.house.dto.HouseDto;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.model.House;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
 import ru.pavbatol.myplace.geo.street.mapper.StreetMapper;
+import ru.pavbatol.myplace.geo.street.model.Street;
 import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
 import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
 
 @Slf4j
 @Service
@@ -35,9 +36,21 @@ public class HouseServiceImpl implements HouseService {
         return mapper.toHouseDto(saved);
     }
 
+    @Transactional
     @Override
     public HouseDto update(Long houseId, HouseDto dto) {
         House original = Checker.getNonNullObject(repository, houseId);
+
+        if (dto.getStreet() != null) {
+            if (dto.getStreet().getId() == null) {
+                throw new IllegalArgumentException("Street.id in HouseDto cannot be null when Street provided on updating a House");
+            }
+            if (!original.getStreet().getId().equals(dto.getStreet().getId())) {
+                Street street = Checker.getNonNullObject(streetRepository, dto.getStreet().getId());
+                original.setStreet(street);
+            }
+        }
+
         House updated = mapper.updateEntity(original, dto);
         updated = repository.save(updated);
         log.debug("Updated {}: {}", ENTITY_SIMPLE_NAME, updated);
@@ -45,12 +58,14 @@ public class HouseServiceImpl implements HouseService {
         return mapper.toHouseDto(updated);
     }
 
+    @Transactional
     @Override
     public void delete(Long houseId) {
         repository.deleteById(houseId);
         log.debug("Deleted {}: with houseId: #{}", ENTITY_SIMPLE_NAME, houseId);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public HouseDto getById(Long houseId) {
         House found = Checker.getNonNullObject(repository, houseId);
@@ -59,6 +74,7 @@ public class HouseServiceImpl implements HouseService {
         return mapper.toHouseDto(found);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public SimpleSlice<HouseDto> getAll(String numberStartWith, String lastSeenNumber, Long lastSeenId, int size) {
         log.debug("Finding {}(e)s with numberStartWith: {}, lastSeenNumber: {}, lastSeenId: {}, size: {}",

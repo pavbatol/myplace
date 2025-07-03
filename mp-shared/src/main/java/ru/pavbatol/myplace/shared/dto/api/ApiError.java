@@ -30,4 +30,8 @@ public class ApiError {
 
     @JsonInclude(NON_NULL)
     List<String> trace;
+
+    public static ApiError message(String message) {
+        return new ApiError(null, null, null, message, null, null, null);
+    }
 }
