@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,6 +33,7 @@ import java.util.List;
  */
 @Slf4j
 @Aspect
+@Order(1)
 @Component
 @RequiredArgsConstructor
 public class AccessCheckAspect {
@@ -56,8 +58,7 @@ public class AccessCheckAspect {
      */
     @Before("@annotation(requiredRoles)")
     public void checkAccess(RequiredRoles requiredRoles) {
-        ServletRequestAttributes attributes = (ServletRequestAttributes)
-                RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         log.debug("Access control triggered by {} annotation", RequiredRoles.class.getSimpleName());
 

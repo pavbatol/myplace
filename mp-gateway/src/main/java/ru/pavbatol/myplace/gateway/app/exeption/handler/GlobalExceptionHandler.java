@@ -14,6 +14,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.exeption.ApiResponseException;
+import ru.pavbatol.myplace.gateway.app.exeption.MissingHeaderException;
 import ru.pavbatol.myplace.shared.dto.api.ApiError;
 import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
@@ -82,13 +83,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    protected ResponseEntity<Object> handleMethodArgumentNotValidEx(MethodArgumentNotValidException ex, WebRequest webRequest) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest webRequest) {
         HttpStatus httpStatus = determineStatus(ex);
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
         ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
 
         return ResponseEntity.status(BAD_REQUEST).body(apiResponse);
+    }
+
+    @ExceptionHandler({MissingHeaderException.class})
+    protected ResponseEntity<Object> handleMethodArgumentNotValidException(MissingHeaderException ex, WebRequest webRequest) {
+        HttpStatus httpStatus = BAD_REQUEST;
+        ApiError apiError = createApiError(ex, webRequest, httpStatus);
+
+        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
+
+        return ResponseEntity.status(httpStatus).body(apiResponse);
     }
 
     @ExceptionHandler(Throwable.class)
