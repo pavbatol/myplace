@@ -69,9 +69,7 @@ public class GlobalExceptionHandler {
         HttpStatus httpStatus = ex.getStatus();
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
-
-        return ResponseEntity.status(httpStatus).body(apiResponse);
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     @ExceptionHandler({TargetServiceHandledErrorException.class, TargetServiceErrorException.class})
@@ -79,29 +77,23 @@ public class GlobalExceptionHandler {
         HttpStatus httpStatus = ex.getStatus();
         ApiError apiError = ex.getError();
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
-
-        return ResponseEntity.status(httpStatus).body(apiResponse);
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    protected ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest webRequest) {
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest webRequest) {
         HttpStatus httpStatus = determineStatus(ex);
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
-
-        return ResponseEntity.status(BAD_REQUEST).body(apiResponse);
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     @ExceptionHandler({MissingHeaderException.class})
-    protected ResponseEntity<Object> handleMethodArgumentNotValidException(MissingHeaderException ex, WebRequest webRequest) {
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MissingHeaderException ex, WebRequest webRequest) {
         HttpStatus httpStatus = BAD_REQUEST;
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
-
-        return ResponseEntity.status(httpStatus).body(apiResponse);
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     @ExceptionHandler(Throwable.class)
@@ -109,9 +101,7 @@ public class GlobalExceptionHandler {
         HttpStatus httpStatus = determineStatus(ex);
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
-
-        return ResponseEntity.status(httpStatus).body(apiResponse);
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     private ApiError createApiError(Throwable ex, WebRequest webRequest, HttpStatus httpStatus) {
@@ -133,8 +123,6 @@ public class GlobalExceptionHandler {
         List<String> trace = traceEnabled ? Arrays.stream(ex.getStackTrace())
                 .map(StackTraceElement::toString).collect(Collectors.toList())
                 : null;
-
-        log.error("\u001B[31mError occurred: {}\u001B[0m", message);
 
         return new ApiError(
                 getRequestURI(webRequest),
@@ -173,5 +161,12 @@ public class GlobalExceptionHandler {
         } else {
             return "";
         }
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> buildErrorResponse(ApiError apiError, HttpStatus httpStatus) {
+        ApiResponse<T> apiResponse = ApiResponse.error(apiError, httpStatus);
+        log.error("\u001B[31mError occurred: {}\u001B[0m", apiError.getMessage());
+
+        return ResponseEntity.status(httpStatus).body(apiResponse);
     }
 }
