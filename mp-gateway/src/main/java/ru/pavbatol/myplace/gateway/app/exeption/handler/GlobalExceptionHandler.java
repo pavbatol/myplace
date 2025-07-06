@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.gateway.app.exeption.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
  *   <li>{@code error.trace} is included only in non-production environments.</li>
  * </ul>
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private final boolean traceEnabled;
@@ -131,6 +133,8 @@ public class GlobalExceptionHandler {
         List<String> trace = traceEnabled ? Arrays.stream(ex.getStackTrace())
                 .map(StackTraceElement::toString).collect(Collectors.toList())
                 : null;
+
+        log.error("\u001B[31mError occurred: {}\u001B[0m", message);
 
         return new ApiError(
                 getRequestURI(webRequest),
