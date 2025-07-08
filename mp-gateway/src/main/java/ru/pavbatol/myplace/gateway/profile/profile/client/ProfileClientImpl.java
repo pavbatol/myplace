@@ -1,71 +1,50 @@
 package ru.pavbatol.myplace.gateway.profile.profile.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-import ru.pavbatol.myplace.shared.dto.api.ApiError;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
-import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
-import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
-import java.net.URI;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ProfileClientImpl implements ProfileClient {
     private final static String ADMIN_CONTEXT = "/admin/profiles";
-    @Value("${app.mp.profile.url}")
-    private String serverUrl;
-    private final WebClient webClient;
-    private final ObjectMapper objectMapper;
+    private static final String X_USER_ID = "X-User-Id";
+    private static final String X_USER_UUID = "X-User-Uuid";
+    private final WebClient mutatedWebClient;
+
+    public ProfileClientImpl(@Value("${app.mp.profile.url}") String serverUrl,
+                             @Autowired Function<String, WebClient> webClientFactory) {
+        this.mutatedWebClient = webClientFactory.apply(serverUrl);
+    }
 
     @Override
     public Mono<ResponseEntity<ProfileDtoUpdateStatusResponse>> adminUpdateStatusByUserId(ProfileStatus profileStatus, HttpHeaders headers) {
-        String url = UriComponentsBuilder.fromUri(URI.create(serverUrl))
-                .path(ADMIN_CONTEXT)
-                .path("/status")
-                .queryParam("status", profileStatus.name())
-                .build(false)
-                .toUriString();
-
-        return webClient.patch()
-                .uri(URI.create(url))
-                .headers(hs -> hs.addAll(headers))
+        return mutatedWebClient.patch()
+                .uri(uriBuilder -> uriBuilder
+                        .path(ADMIN_CONTEXT)
+                        .path("/status")
+                        .queryParam("status", profileStatus.name())
+                        .build())
+                .headers(getHeadersConsumer(headers)
+                )
                 .retrieve()
-                .onStatus(HttpStatus::isError, this::handleTargetServiceError)
-                .toEntity(ProfileDtoUpdateStatusResponse.class)
-                .doOnError(TargetServiceErrorException.class, ex -> {
-                    String handledMark = (ex instanceof TargetServiceHandledErrorException) ? "handled" : "not handled";
-                    log.error("Target Service Error ({}): status={}, message={}", handledMark, ex.getStatus(), ex.getMessage());
-                });
+                .toEntity(ProfileDtoUpdateStatusResponse.class);
     }
 
-    private Mono<? extends Throwable> handleTargetServiceError(ClientResponse response) {
-        return response.bodyToMono(String.class)
-                .defaultIfEmpty("No error details provided")
-                .flatMap(errorBody -> {
-                    try {
-                        return Mono.error(new TargetServiceHandledErrorException(
-                                objectMapper.readValue(errorBody, ApiError.class),
-                                response.statusCode()
-                        ));
-                    } catch (Exception e) {
-                        return Mono.error(new TargetServiceErrorException(
-                                ApiError.message(errorBody, response.statusCode().toString()),
-                                response.statusCode()
-                        ));
-                    }
-                });
+    private static Consumer<HttpHeaders> getHeadersConsumer(HttpHeaders headers) {
+        return hds -> {
+            hds.add(X_USER_ID, headers.getFirst(X_USER_ID));
+            hds.add(X_USER_UUID, headers.getFirst(X_USER_UUID));
+        };
     }
 }

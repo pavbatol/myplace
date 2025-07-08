@@ -126,12 +126,18 @@ public class WebClientConfig {
                 return response.bodyToMono(String.class)
                         .defaultIfEmpty("No error details provided")
                         .flatMap(errorBody -> {
+                            final String logFormated = "Target Service Error ({}): status={}, message={}";
                             try {
+                                ApiError apiError = objectMapper.readValue(errorBody, ApiError.class);
+                                log.error(logFormated, "handled", response.statusCode(), apiError.getMessage());
+
                                 return Mono.error(new TargetServiceHandledErrorException(
-                                        objectMapper.readValue(errorBody, ApiError.class),
+                                        apiError,
                                         response.statusCode()
                                 ));
                             } catch (Exception e) {
+                                log.error(logFormated, "not handled", response.statusCode(), errorBody);
+
                                 return Mono.error(new TargetServiceErrorException(
                                         ApiError.message(errorBody, response.statusCode().toString()),
                                         response.statusCode()
