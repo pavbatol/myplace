@@ -49,6 +49,18 @@ public class WebClientConfig {
         return WebClient.builder();
     }
 
+    /**
+     * Creates a default {@link WebClient} bean with JSON content type,
+     * configured timeouts, and error handling.
+     *
+     * @return preconfigured WebClient instance with:
+     * <ul>
+     *   <li>JSON as default content type</li>
+     *   <li>Combined connect + read timeout</li>
+     *   <li>Connection timeout setting</li>
+     *   <li>Error handling filter</li>
+     * </ul>
+     */
     @Bean
     public WebClient defaultWebClient() {
         return webClientBuilder()
@@ -64,11 +76,23 @@ public class WebClientConfig {
                 .build();
     }
 
+    /**
+     * Creates a bean that produces configured {@link WebClient} instances for given base URLs.
+     *
+     * @return a function that takes a base URL and returns a preconfigured WebClient instance
+     */
     @Bean
     public Function<String, WebClient> webClientFactory() {
         return this::getMutatedWebClient;
     }
 
+    /**
+     * Creates a configured {@link WebClient} instance with the given base URL.
+     * Applies default settings and mutations to the WebClient.
+     *
+     * @param baseUrl the base URL for the WebClient
+     * @return a configured WebClient instance
+     */
     private WebClient getMutatedWebClient(String baseUrl) {
         return cachedClients.computeIfAbsent(
                 baseUrl,
@@ -85,6 +109,17 @@ public class WebClientConfig {
         );
     }
 
+    /**
+     * Creates an exchange filter that handles error responses from target services.
+     * <p>
+     * Converts error responses to appropriate exceptions:
+     * <ul>
+     *   <li>{@link TargetServiceHandledErrorException} - when error body contains valid API error structure</li>
+     *   <li>{@link TargetServiceErrorException} - when error body cannot be parsed</li>
+     * </ul>
+     *
+     * @return configured error handling filter function
+     */
     private ExchangeFilterFunction errorHandlingFilter() {
         return ExchangeFilterFunction.ofResponseProcessor(response -> {
             if (response.statusCode().isError()) {
