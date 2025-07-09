@@ -3,11 +3,14 @@ package ru.pavbatol.myplace.gateway.profile.profile.client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 
@@ -35,10 +38,23 @@ public class ProfileClientImpl implements ProfileClient {
                         .path("/status")
                         .queryParam("status", profileStatus.name())
                         .build())
-                .headers(getHeadersConsumer(headers)
-                )
+                .headers(getHeadersConsumer(headers))
                 .retrieve()
                 .toEntity(ProfileDtoUpdateStatusResponse.class);
+    }
+
+    @Override
+    public Mono<ResponseEntity<PageDto<ProfileDto>>> adminGetAll(int page, int size, HttpHeaders headers) {
+        return mutatedWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(ADMIN_CONTEXT)
+                        .queryParam("page", page)
+                        .queryParam("size", size)
+                        .build())
+                .headers(getHeadersConsumer(headers))
+                .retrieve()
+                .toEntity(new ParameterizedTypeReference<PageDto<ProfileDto>>() {
+                });
     }
 
     private static Consumer<HttpHeaders> getHeadersConsumer(HttpHeaders headers) {

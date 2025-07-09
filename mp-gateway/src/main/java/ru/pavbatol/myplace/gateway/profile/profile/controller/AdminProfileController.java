@@ -14,6 +14,9 @@ import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
 import ru.pavbatol.myplace.gateway.app.annotation.RequiredHeaders;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.profile.profile.service.ProfileService;
+import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
+import ru.pavbatol.myplace.shared.dto.pagination.SliceDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 import ru.pavbatol.myplace.shared.util.EnumUtils;
@@ -45,15 +48,17 @@ public class AdminProfileController {
         return apiResponse.map(ar -> ResponseEntity.status(ar.getStatus()).body(ar));
     }
 
-//    @GetMapping
-//    @Operation(summary = "getAll", description = "get all Profiles")
-//    public ResponseEntity<Slice<ProfileDto>> getAll(@RequestParam(value = "page", defaultValue = "0") int page,
-//                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
-//        log.debug("GET getAll() with page: {}, size: {}", page, size);
-//        Slice<ProfileDto> body = profileService.adminGetAll(page, size);
-//        return ResponseEntity.ok(body);
-//    }
-//
+    @RequiredRoles(roles = {ADMIN})
+    @GetMapping
+    @Operation(summary = "getAll", description = "get all Profiles")
+    public Mono<ResponseEntity<ApiResponse<PageDto<ProfileDto>>>> getAll(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                                         @RequestParam(value = "size", defaultValue = "10") int size,
+                                                                         @RequestHeader HttpHeaders headers) {
+        log.debug("GET getAll() with page: {}, size: {}", page, size);
+        Mono<ApiResponse<PageDto<ProfileDto>>> apiResponse = profileService.adminGetAll(page, size, headers);
+        return apiResponse.map(ar -> ResponseEntity.status(ar.getStatus()).body(ar));
+    }
+
 //    @GetMapping("/{profileId}")
 //    @Operation(summary = "getById", description = "get Profile")
 //    public ResponseEntity<ProfileDto> getById(@RequestHeader(value = X_USER_ID) Long userId,

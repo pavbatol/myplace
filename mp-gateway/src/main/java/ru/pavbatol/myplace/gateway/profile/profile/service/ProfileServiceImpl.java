@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.profile.profile.client.ProfileClient;
+import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 
@@ -19,16 +21,22 @@ public class ProfileServiceImpl implements ProfileService {
     public Mono<ApiResponse<ProfileDtoUpdateStatusResponse>> adminUpdateStatusByUserId(ProfileStatus profileStatus, HttpHeaders headers) {
         Mono<ResponseEntity<ProfileDtoUpdateStatusResponse>> response = client.adminUpdateStatusByUserId(profileStatus, headers);
 
-        return response.
-                map(responseEntity -> {
-                            ProfileDtoUpdateStatusResponse body = responseEntity.getBody();
-                            if (body == null) {
-                                throw new IllegalStateException("Response body is null for status: " + responseEntity.getStatusCode());
-                            }
-                            return ApiResponse.success(
-                                    body,
-                                    responseEntity.getStatusCode());
-                        }
-                );
+        return response.map(ProfileServiceImpl::convertToApiResponse);
+    }
+
+    @Override
+    public Mono<ApiResponse<PageDto<ProfileDto>>> adminGetAll(int page, int size, HttpHeaders headers) {
+        Mono<ResponseEntity<PageDto<ProfileDto>>> response = client.adminGetAll(page, size, headers);
+
+        return response.map(ProfileServiceImpl::convertToApiResponse);
+    }
+
+    private static <T> ApiResponse<T> convertToApiResponse(ResponseEntity<T> responseEntity) {
+        T body = responseEntity.getBody();
+        if (body == null) {
+            throw new IllegalStateException("Response body is null for status: " + responseEntity.getStatusCode());
+        }
+
+        return ApiResponse.success(body, responseEntity.getStatusCode());
     }
 }
