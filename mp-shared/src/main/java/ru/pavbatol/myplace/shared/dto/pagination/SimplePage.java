@@ -5,20 +5,20 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.List;
 
-@JsonPropertyOrder({"content", "page", "size", "totalElements", "totalPage"})
+@JsonPropertyOrder({"content", "number", "size", "totalElements", "totalPages"})
 public interface SimplePage<T> {
     @JsonProperty("content")
     List<T> getContent();
 
-    @JsonProperty("page")
-    int getPage();
+    @JsonProperty("number")
+    Integer getNumber();
 
     @JsonProperty("size")
-    int getSize();
+    Integer getSize();
 
     @JsonProperty("totalElements")
-    long getTotalElements();
+    Long getTotalElements();
 
-    @JsonProperty("totalPage")
-    int getTotalPage();
+    @JsonProperty("totalPages")
+    Integer getTotalPages();
 }
