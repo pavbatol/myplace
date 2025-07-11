@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.pavbatol.myplace.geo.common.pagination.Sliced;
+import ru.pavbatol.myplace.app.pagination.SliceConverter;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.district.mapper.DistrictMapper;
 import ru.pavbatol.myplace.geo.district.model.District;
@@ -83,6 +83,6 @@ public class DistrictServiceImpl implements DistrictService {
         Slice<District> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, lastSeenId, size);
         log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
-        return Sliced.from(slice, mapper::toDistrictDto);
+        return SliceConverter.toSimpleSlice(slice, mapper::toDistrictDto);
     }
 }

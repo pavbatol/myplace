@@ -1,24 +1,9 @@
 package ru.pavbatol.myplace.shared.dto.pagination;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+public interface SimplePage<T> extends SimpleSlice<T> {
+    int getNumber();
 
-import java.util.List;
+    long getTotalElements();
 
-@JsonPropertyOrder({"content", "number", "size", "totalElements", "totalPages"})
-public interface SimplePage<T> {
-    @JsonProperty("content")
-    List<T> getContent();
-
-    @JsonProperty("number")
-    Integer getNumber();
-
-    @JsonProperty("size")
-    Integer getSize();
-
-    @JsonProperty("totalElements")
-    Long getTotalElements();
-
-    @JsonProperty("totalPages")
-    Integer getTotalPages();
+    int getTotalPages();
 }

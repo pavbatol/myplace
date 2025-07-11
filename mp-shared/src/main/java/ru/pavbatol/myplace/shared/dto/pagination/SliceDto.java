@@ -1,21 +1,20 @@
 package ru.pavbatol.myplace.shared.dto.pagination;
 
-import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.Builder;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
 
 @Value
-public class SliceDto<T> implements SimpleSlice<T> {
+@Builder
+@Jacksonized
+public class SliceDto<T> {
     List<T> content;
-    int size;
-    int numberOfElements;
-    @Getter(AccessLevel.NONE)
-    boolean hasNext;
 
-    @Override
-    public boolean hasNext() {
-        return this.hasNext;
-    }
+    Integer size;
+
+    Integer numberOfElements;
+
+    Boolean hasNext;
 }

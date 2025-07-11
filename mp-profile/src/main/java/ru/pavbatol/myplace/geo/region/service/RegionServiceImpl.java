@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pavbatol.myplace.app.pagination.SliceConverter;
 import ru.pavbatol.myplace.app.util.Checker;
-import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.geo.country.mapper.CountryMapper;
 import ru.pavbatol.myplace.geo.country.model.Country;
 import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
@@ -83,6 +83,6 @@ public class RegionServiceImpl implements RegionService {
         Slice<Region> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, lastSeenCountryName, size);
         log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
-        return Sliced.from(slice, mapper::toRegionDto);
+        return SliceConverter.toSimpleSlice(slice, mapper::toRegionDto);
     }
 }

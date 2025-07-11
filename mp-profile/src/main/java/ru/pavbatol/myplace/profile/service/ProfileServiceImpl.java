@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pavbatol.myplace.app.pagination.PageConverter;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
@@ -17,7 +18,6 @@ import ru.pavbatol.myplace.profile.mapper.ProfileMapper;
 import ru.pavbatol.myplace.profile.model.Profile;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.repository.ProfileJpaRepository;
-import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
 import ru.pavbatol.myplace.shared.dto.pagination.SimplePage;
 
 import java.time.LocalDateTime;
@@ -140,7 +140,7 @@ public class ProfileServiceImpl implements ProfileService {
         log.debug("Found Page #{} of {}: {}, numberOfElements: {}, totalElements: {}, totalPages: {}",
                 found.getNumber(), ENTITY_SIMPLE_NAME, found, found.getNumberOfElements(), found.getTotalElements(), found.getTotalPages());
 
-        return PageDto.from(found, profileMapper::toProfileDtoWithoutHose);
+        return PageConverter.toSimplePage(found, profileMapper::toProfileDtoWithoutHose);
     }
 
     private Profile adminGetNonNullProfileByUserId(Long userId) {
