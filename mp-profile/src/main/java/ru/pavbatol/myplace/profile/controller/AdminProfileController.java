@@ -56,7 +56,7 @@ public class AdminProfileController {
         return ResponseEntity.ok(body);
     }
 
-    @GetMapping({"/byuserid", "/byUserId"})
+    @GetMapping("/user")
     @Operation(summary = "getByUserId", description = "get Profile")
     public ResponseEntity<ProfileDto> getByUserId(@RequestHeader(value = X_USER_ID) Long userId,
                                                   @RequestHeader(value = X_USER_UUID) UUID userUuid) {

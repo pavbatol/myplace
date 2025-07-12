@@ -12,4 +12,8 @@ public interface ProfileService {
     Mono<ApiResponse<ProfileDtoUpdateStatusResponse>> adminUpdateStatusByUserId(ProfileStatus profileStatus, HttpHeaders headers);
 
     Mono<ApiResponse<PageDto<ProfileDto>>> adminGetAll(int page, int size, HttpHeaders headers);
+
+    Mono<ApiResponse<ProfileDto>> adminGetById(Long profileId, HttpHeaders headers);
+
+    Mono<ApiResponse<ProfileDto>> adminGetByUserId(HttpHeaders headers);
 }

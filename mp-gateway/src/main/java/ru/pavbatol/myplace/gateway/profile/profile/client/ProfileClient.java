@@ -12,4 +12,8 @@ public interface ProfileClient {
     Mono<ResponseEntity<ProfileDtoUpdateStatusResponse>> adminUpdateStatusByUserId(ProfileStatus profileStatus, HttpHeaders headers);
 
     Mono<ResponseEntity<PageDto<ProfileDto>>> adminGetAll(int page, int size, HttpHeaders headers);
+
+    Mono<ResponseEntity<ProfileDto>> adminGetById(Long profileId, HttpHeaders headers);
+
+    Mono<ResponseEntity<ProfileDto>> adminGetByUserId(HttpHeaders headers);
 }
