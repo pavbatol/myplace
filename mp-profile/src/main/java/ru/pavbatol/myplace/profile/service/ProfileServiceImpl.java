@@ -18,7 +18,7 @@ import ru.pavbatol.myplace.profile.mapper.ProfileMapper;
 import ru.pavbatol.myplace.profile.model.Profile;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.repository.ProfileJpaRepository;
-import ru.pavbatol.myplace.shared.dto.pagination.SimplePage;
+import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

@@ -13,7 +13,7 @@ import ru.pavbatol.myplace.geo.country.repository.CountryRepository;
 import ru.pavbatol.myplace.geo.region.mapper.RegionMapper;
 import ru.pavbatol.myplace.geo.region.model.Region;
 import ru.pavbatol.myplace.geo.region.repository.RegionRepository;
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.region.RegionDto;
 
 @Slf4j

@@ -3,8 +3,8 @@ package ru.pavbatol.myplace.app.pagination;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
-import ru.pavbatol.myplace.shared.dto.pagination.Paged;
-import ru.pavbatol.myplace.shared.dto.pagination.SimplePage;
+import ru.pavbatol.myplace.shared.pagination.Paged;
+import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.util.List;
 import java.util.function.Function;

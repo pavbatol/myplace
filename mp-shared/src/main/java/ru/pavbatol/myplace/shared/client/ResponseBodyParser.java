@@ -14,9 +14,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MimeType;
 import ru.pavbatol.myplace.shared.dto.api.ApiError;
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.pagination.SliceDto;
-import ru.pavbatol.myplace.shared.dto.pagination.Sliced;
+import ru.pavbatol.myplace.shared.pagination.Sliced;
 import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 

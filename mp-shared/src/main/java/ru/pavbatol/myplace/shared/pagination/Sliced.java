@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.shared.dto.pagination;
+package ru.pavbatol.myplace.shared.pagination;
 
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -7,18 +7,12 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class Paged<T> implements SimplePage<T> {
+public class Sliced<T> implements SimpleSlice<T> {
     List<T> content;
 
     int size;
 
     int numberOfElements;
-
-    int number;
-
-    long totalElements;
-
-    int totalPages;
 
     boolean hasNext;
 }

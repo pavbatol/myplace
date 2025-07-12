@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.shared.dto.pagination;
+package ru.pavbatol.myplace.shared.pagination;
 
 import java.util.List;
 

@@ -12,7 +12,7 @@ import ru.pavbatol.myplace.profile.dto.ProfileDto;
 import ru.pavbatol.myplace.profile.dto.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.service.ProfileService;
-import ru.pavbatol.myplace.shared.dto.pagination.SimplePage;
+import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.util.UUID;
 

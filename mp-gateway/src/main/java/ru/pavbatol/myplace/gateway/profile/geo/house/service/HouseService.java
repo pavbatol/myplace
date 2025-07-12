@@ -2,7 +2,7 @@ package ru.pavbatol.myplace.gateway.profile.geo.house.service;
 
 import org.springframework.http.HttpHeaders;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
 
 public interface HouseService {

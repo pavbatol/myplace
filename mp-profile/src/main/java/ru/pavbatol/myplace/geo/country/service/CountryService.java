@@ -1,6 +1,6 @@
 package ru.pavbatol.myplace.geo.country.service;
 
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 public interface CountryService {
