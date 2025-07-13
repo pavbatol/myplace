@@ -9,6 +9,8 @@ import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.profile.profile.client.ProfileClient;
 import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 
@@ -41,6 +43,13 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Mono<ApiResponse<ProfileDto>> adminGetByUserId(HttpHeaders headers) {
         Mono<ResponseEntity<ProfileDto>> response = client.adminGetByUserId(headers);
+
+        return response.map(this::convertToApiResponse);
+    }
+
+    @Override
+    public Mono<ApiResponse<ProfileDtoCreateResponse>> create(ProfileDtoCreateRequest dto, HttpHeaders headers) {
+        Mono<ResponseEntity<ProfileDtoCreateResponse>> response = client.create(dto, headers);
 
         return response.map(this::convertToApiResponse);
     }

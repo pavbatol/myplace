@@ -11,6 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 
@@ -21,6 +23,7 @@ import java.util.function.Function;
 @Component
 public class ProfileClientImpl implements ProfileClient {
     private final static String ADMIN_CONTEXT = "/admin/profiles";
+    private final static String USER_CONTEXT = "/user/profiles";
     private static final String X_USER_ID = "X-User-Id";
     private static final String X_USER_UUID = "X-User-Uuid";
     private final WebClient mutatedWebClient;
@@ -81,10 +84,29 @@ public class ProfileClientImpl implements ProfileClient {
                 .toEntity(ProfileDto.class);
     }
 
+    @Override
+    public Mono<ResponseEntity<ProfileDtoCreateResponse>> create(ProfileDtoCreateRequest dto, HttpHeaders headers) {
+        return mutatedWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(USER_CONTEXT)
+                        .build())
+                .headers(getHeadersConsumer(headers))
+                .bodyValue(dto)
+                .retrieve()
+                .toEntity(ProfileDtoCreateResponse.class);
+    }
+
     private static Consumer<HttpHeaders> getHeadersConsumer(HttpHeaders headers) {
         return hds -> {
-            hds.add(X_USER_ID, headers.getFirst(X_USER_ID));
-            hds.add(X_USER_UUID, headers.getFirst(X_USER_UUID));
+            String userId = headers.getFirst(X_USER_ID);
+            String userUuid = headers.getFirst(X_USER_UUID);
+
+            if (userId != null) {
+                hds.add(X_USER_ID, userId);
+            }
+            if (userUuid != null) {
+                hds.add(X_USER_UUID, userUuid);
+            }
         };
     }
 }
