@@ -18,14 +18,15 @@ import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResp
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 import ru.pavbatol.myplace.shared.util.EnumUtils;
 
+import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_ID;
+import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_UUID;
+
 @Slf4j
 @RestController
 @RequestMapping("${api.prefix}/${app.mp.profile.label}/admin/profiles")
 @RequiredArgsConstructor
 @Tag(name = "[Profile/Profile]: Admin", description = "API for working with Profile")
 public class AdminProfileController {
-    private static final String X_USER_ID = "X-User-Id";
-    private static final String X_USER_UUID = "X-User-Uuid";
     private static final String ADMIN = "ADMIN";
     private final ProfileService profileService;
 

@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -17,7 +16,8 @@ import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
 
 import javax.validation.Valid;
-import java.util.UUID;
+
+import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_UUID;
 
 @Slf4j
 @RestController
@@ -25,13 +25,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "[Profile/Profile]: Private", description = "API for working with Profile")
 public class PrivateProfileController {
-    private static final String X_USER_ID = "X-User-Id";
-    private static final String X_USER_UUID = "X-User-Uuid";
-    //    private static final String ADMIN = "ADMIN";
     private static final String USER = "USER";
     private final ProfileService profileService;
 
-    @RequiredRoles(roles = {USER})
+    @RequiredRoles(roles = {USER}, setUserUuidHeader = true)
     @RequiredHeaders(X_USER_UUID)
     @PostMapping
     @Operation(summary = "create", description = "creating new Profile")

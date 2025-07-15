@@ -19,7 +19,7 @@ public class RestTemplateConfig {
     Duration readTimeout;
 
     /**
-     * @deprecated This method is deprecated in favor of {@link WebClientConfig#webClient()}.
+     * @deprecated This method is deprecated in favor of {@link WebClientConfig#defaultWebClient()} webClient()}.
      */
     @Bean
     @Primary
@@ -33,7 +33,7 @@ public class RestTemplateConfig {
     }
 
     /**
-     * @deprecated Use {@link WebClientConfig#longTimeoutWebClient()} instead.
+     * @deprecated Use {@link WebClientConfig#defaultWebClient()} instead.
      */
     @Bean
     @Qualifier("longOperationTemplate")
@@ -44,5 +44,10 @@ public class RestTemplateConfig {
                 .setConnectTimeout(Duration.ofSeconds(30))
                 .setReadTimeout(Duration.ofMinutes(3))
                 .build();
+    }
+
+    @Bean
+    public RestTemplateBuilder restTemplateBuilder() {
+        return new RestTemplateBuilder();
     }
 }
