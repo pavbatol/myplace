@@ -5,13 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.pavbatol.myplace.gateway.app.access.client.AccessClient;
+import ru.pavbatol.myplace.gateway.app.config.webmvc.filter.CustomHeaderRequestWrapper;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
+import static ru.pavbatol.myplace.shared.constant.HttpHeaders.*;
 
 /**
  * Aspect for intercepting and verifying role-based access before method execution.
@@ -37,8 +42,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class AccessCheckAspect {
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String USER_AGENT = "User-Agent";
     private final AccessClient client;
 
     /**
@@ -58,34 +61,67 @@ public class AccessCheckAspect {
      */
     @Before("@annotation(requiredRoles)")
     public void checkAccess(RequiredRoles requiredRoles) {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
         log.debug("Access control triggered by {} annotation", RequiredRoles.class.getSimpleName());
+
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         if (attributes == null) {
             throw new IllegalStateException("Request context not found");
         }
+        HttpServletRequest request = attributes.getRequest();
 
         List<String> roles = List.of(requiredRoles.roles());
         if (roles.isEmpty()) {
             throw new IllegalArgumentException("Roles list cannot be empty");
         }
 
-        String authToken = attributes.getRequest().getHeader(AUTHORIZATION);
+        String authToken = request.getHeader(AUTHORIZATION);
         if (authToken == null || authToken.isBlank()) {
             throw new IllegalStateException(AUTHORIZATION + " header is missing");
         }
 
-        String userAgent = attributes.getRequest().getHeader(USER_AGENT);
+        String userAgent = request.getHeader(USER_AGENT);
 
         try {
-            client.checkAccess(List.of(requiredRoles.roles()), authToken, userAgent);
+            ResponseEntity<Void> response = client.checkAccess(List.of(requiredRoles.roles()), authToken, userAgent);
+
+            String userId = response.getHeaders().getFirst(X_USER_ID);
+            String userUuid = response.getHeaders().getFirst(X_USER_UUID);
+
+            injectHeaders(userId, userUuid, request);
         } catch (HttpStatusCodeException e) {
-            String accessDenied = "Access denied";
+            String accessDenied = "Access denied for roles: " + Arrays.toString(requiredRoles.roles());
             log.error(accessDenied);
             throw new SecurityException(accessDenied, e);
         }
 
-        log.error("Access granted");
+        log.debug("Access granted");
+    }
+
+    private void injectHeaders(String userId, String userUuid, HttpServletRequest request) {
+        if (userId == null && userUuid == null) {
+            log.debug("No headers to inject");
+            return;
+        }
+
+        if (!(request instanceof CustomHeaderRequestWrapper)) {
+            log.debug("Request is not wrapped, skipping header injection");
+            return;
+        }
+
+        if (userId != null) {
+            ((CustomHeaderRequestWrapper) request).injectHeader(X_USER_ID, userId);
+            log.debug("Injected header {}: {}", X_USER_ID, request.getHeader(X_USER_ID));
+        }
+
+        if (userUuid != null) {
+            ((CustomHeaderRequestWrapper) request).injectHeader(X_USER_UUID, userUuid);
+            log.debug("Injected header {}: {}", X_USER_UUID, request.getHeader(X_USER_UUID));
+        }
+
+        log.debug("Request in aspect: {}", request.getClass().getName());
+        log.debug("Headers: {}={}, {}={}",
+                X_USER_ID, request.getHeader(X_USER_ID),
+                X_USER_UUID, request.getHeader(X_USER_UUID));
     }
 }

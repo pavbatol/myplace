@@ -4,19 +4,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
 import ru.pavbatol.myplace.gateway.app.annotation.RequiredHeaders;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
+import ru.pavbatol.myplace.gateway.app.util.HttpUtils;
 import ru.pavbatol.myplace.gateway.profile.profile.service.ProfileService;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_ID;
 import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_UUID;
 
 @Slf4j
@@ -33,9 +35,11 @@ public class PrivateProfileController {
     @PostMapping
     @Operation(summary = "create", description = "creating new Profile")
     public Mono<ResponseEntity<ApiResponse<ProfileDtoCreateResponse>>> create(@Valid @RequestBody ProfileDtoCreateRequest dto,
-                                                                              @RequestHeader HttpHeaders headers) {
-        log.debug("POST create() with dto: {}", dto);
-        Mono<ApiResponse<ProfileDtoCreateResponse>> apiResponse = profileService.create(dto, headers);
+                                                                              HttpServletRequest request) {
+        log.debug("POST create() with dto: {}, {}: {}, {}: {}", dto,
+                X_USER_ID, request.getHeader(X_USER_ID),
+                X_USER_UUID, request.getHeader(X_USER_UUID));
+        Mono<ApiResponse<ProfileDtoCreateResponse>> apiResponse = profileService.create(dto, HttpUtils.extractHeaders(request));
         return apiResponse.map(ar -> ResponseEntity.status(ar.getStatus()).body(ar));
     }
 

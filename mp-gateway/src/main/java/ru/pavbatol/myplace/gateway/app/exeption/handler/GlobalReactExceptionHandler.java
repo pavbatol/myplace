@@ -66,7 +66,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
  */
 @Slf4j
 @RestControllerAdvice
-@Order(-1)
 public class GlobalReactExceptionHandler implements ErrorWebExceptionHandler {
     private final boolean traceEnabled;
     private final ObjectMapper objectMapper;
