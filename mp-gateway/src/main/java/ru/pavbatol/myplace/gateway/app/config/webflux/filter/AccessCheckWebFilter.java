@@ -18,7 +18,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.servlet.HandlerMapping;
 import reactor.core.publisher.Mono;
-import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
+import ru.pavbatol.myplace.gateway.app.annotation.RequiredRoles;
 import ru.pavbatol.myplace.shared.constant.HttpHeaders;
 import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 

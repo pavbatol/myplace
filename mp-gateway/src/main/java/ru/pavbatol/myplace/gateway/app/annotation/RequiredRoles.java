@@ -1,5 +1,6 @@
-package ru.pavbatol.myplace.gateway.app.access;
+package ru.pavbatol.myplace.gateway.app.annotation;
 
+import ru.pavbatol.myplace.gateway.app.access.AccessCheckAspect;
 import ru.pavbatol.myplace.shared.constant.HttpHeaders;
 
 import java.lang.annotation.ElementType;

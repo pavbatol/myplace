@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
+import ru.pavbatol.myplace.gateway.app.annotation.RequiredRoles;
 import ru.pavbatol.myplace.gateway.profile.geo.management.client.DataImportClient;
 import ru.pavbatol.myplace.gateway.profile.geo.management.service.DataImportService;
 

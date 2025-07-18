@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.pavbatol.myplace.gateway.app.access.client.AccessClient;
+import ru.pavbatol.myplace.gateway.app.annotation.RequiredRoles;
 import ru.pavbatol.myplace.gateway.app.config.webmvc.filter.CustomHeaderRequestWrapper;
 
 import javax.servlet.http.HttpServletRequest;

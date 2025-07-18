@@ -8,7 +8,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.ServletRequestPathUtils;
-import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
+import ru.pavbatol.myplace.gateway.app.annotation.RequiredRoles;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

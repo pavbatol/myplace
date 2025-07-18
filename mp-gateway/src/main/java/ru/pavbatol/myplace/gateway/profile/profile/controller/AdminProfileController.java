@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
+import ru.pavbatol.myplace.gateway.app.annotation.RequiredRoles;
 import ru.pavbatol.myplace.gateway.app.annotation.RequiredHeaders;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.profile.profile.service.ProfileService;
