@@ -64,6 +64,18 @@ public class DeprecatedBeanLogger implements BeanPostProcessor {
         if (clazz.isAnnotationPresent(Deprecated.class)) {
             log.warn("⚠\uFE0F DEPRECATED BEAN: {} (Class: {})", beanName, clazz.getSimpleName());
         }
+
+        for (Class<?> iface : clazz.getInterfaces()) {
+            if (iface.isAnnotationPresent(Deprecated.class)) {
+                log.warn("⚠\uFE0F DEPRECATED BEAN INTERFACE: {} (Interface: {})", beanName, iface.getSimpleName());
+                return;
+            }
+        }
+
+        Class<?> superClass = clazz.getSuperclass();
+        if (superClass != null && superClass.isAnnotationPresent(Deprecated.class)) {
+            log.warn("⚠\uFE0F DEPRECATED BEAN SUPERCLASS: {} (Superclass: {})", beanName, superClass.getSimpleName());
+        }
     }
 
     private void checkBeanMethodsDeprecation(Class<?> clazz, String beanName) {

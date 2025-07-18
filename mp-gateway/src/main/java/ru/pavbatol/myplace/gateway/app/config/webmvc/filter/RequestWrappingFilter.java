@@ -16,6 +16,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * <p>Filter that wraps HTTP requests when handler methods are annotated with {@link RequiredRoles}.
+ * Parses and caches request path if not already present. Wraps the original request
+ * with {@link CustomHeaderRequestWrapper} for methods requiring role-based access control.
+ * <p>
+ * Extends {@link OncePerRequestFilter} to ensure single execution per request.
+ *
+ * @deprecated This filter is part of the servlet stack which is being phased out in favor of WebFlux.
+ * During the transition period to reactive stack, this class remains operational but will be
+ * removed once the migration to WebFlux is complete.
+ */
+@Deprecated(since = "1.0.0.0", forRemoval = true)
 @Slf4j
 public class RequestWrappingFilter extends OncePerRequestFilter {
     @Qualifier("requestMappingHandlerMapping")

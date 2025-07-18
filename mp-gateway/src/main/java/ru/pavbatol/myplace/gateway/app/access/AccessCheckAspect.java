@@ -35,7 +35,11 @@ import static ru.pavbatol.myplace.shared.constant.HttpHeaders.*;
  *
  * @see RequiredRoles
  * @see AccessClient
+ * @deprecated This aspect is part of the servlet stack which is being phased out in favor of WebFlux.
+ * During the transition period to reactive stack, this class remains operational but will be
+ * removed once the migration to WebFlux is complete.
  */
+@Deprecated(since = "1.0.0.0", forRemoval = true)
 @Slf4j
 @Aspect
 @Order(1)
@@ -45,13 +49,15 @@ public class AccessCheckAspect {
     private final AccessClient client;
 
     /**
-     * Performs access control check before method execution.
+     * <p>Security aspect that performs access control checks before method execution and enhances requests with user identity.
      *
-     * <p>This advice method:
+     * <p>Key functionality:
      * <ul>
      *   <li>Retrieves the current HTTP request context</li>
-     *   <li>Extracts the authorization token from headers</li>
-     *   <li>Verifies required roles with the security service</li>
+     *    <li>Extracts the authorization token from headers</li>
+     *    <li>Verifies required roles with the security service</li>
+     *   <li>Injects retrieved user identity into request headers for downstream services</li>
+     *
      *   <li>Throws exceptions for any access violations</li>
      * </ul>
      *
