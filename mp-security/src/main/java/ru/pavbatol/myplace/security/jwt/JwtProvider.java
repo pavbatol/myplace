@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.security.jwt;
 
+import com.sun.istack.NotNull;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -142,10 +143,14 @@ public class JwtProvider {
         return false;
     }
 
-    public List<String> extractRoles(String token) {
-        Claims claims = getAccessClaims(token);
+    public List<String> extractRoles(String accessCToken) {
+        Claims claims = getAccessClaims(accessCToken);
+        return extractRoles(claims);
+    }
 
-        log.debug("Extracting roles from token. Claims: {}", claims);
+    public List<String> extractRoles(@NotNull Claims claims) {
+
+        log.debug("Extracting roles from claims");
         Object rolesClaim = claims.get(ROLES_CLAIM);
 
         if (rolesClaim instanceof List) {
@@ -160,5 +165,10 @@ public class JwtProvider {
         }
 
         return Collections.emptyList();
+    }
+
+    public Optional<String> extractUuid(@NotNull Claims claims) {
+        log.debug("Extracting UUID from claims");
+        return Optional.ofNullable(claims.get(UUID_CLAIM, String.class));
     }
 }
