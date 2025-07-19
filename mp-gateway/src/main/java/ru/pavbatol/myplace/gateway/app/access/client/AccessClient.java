@@ -5,5 +5,5 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface AccessClient {
-    ResponseEntity<Void> checkAccess(List<String> roles, String authToken, String userAgent);
+    ResponseEntity<Void> checkAccess(List<String> roles, String authToken, String userAgent, boolean includeUserId, boolean includeUserUuid);
 }

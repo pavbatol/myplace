@@ -81,10 +81,11 @@ public class AccessCheckWebFilter implements WebFilter {
         }
 
         String userAgent = exchange.getRequest().getHeaders().getFirst(HttpHeaders.USER_AGENT);
+        String params = String.format("?includeUserId=%s&includeUserUuid=%s", rolesAnnotation.setUserUuidHeader(), rolesAnnotation.setUserUuidHeader());
 
         log.debug("Sending request to Security service for checking access");
         return securityClient.post()
-                .uri("/permission/check-access")
+                .uri(CHECK_ACCESS_PATH + params)
                 .header(HttpHeaders.AUTHORIZATION, authToken)
                 .header(HttpHeaders.USER_AGENT, userAgent)
                 .bodyValue(List.of(rolesAnnotation.roles()))

@@ -90,7 +90,12 @@ public class AccessCheckAspect {
         String userAgent = request.getHeader(USER_AGENT);
 
         try {
-            ResponseEntity<Void> response = client.checkAccess(List.of(requiredRoles.roles()), authToken, userAgent);
+            ResponseEntity<Void> response = client.checkAccess(
+                    List.of(requiredRoles.roles()),
+                    authToken, userAgent,
+                    requiredRoles.setUserIdHeader(),
+                    requiredRoles.setUserUuidHeader()
+            );
 
             String userId = response.getHeaders().getFirst(X_USER_ID);
             String userUuid = response.getHeaders().getFirst(X_USER_UUID);
