@@ -89,8 +89,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void delete(Long profileId) {
+    public void delete(Long profileId, Long userId) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
+        checkUserIdOwnership(userId, profile.getUserId());
         profile
                 .setStatus(ProfileStatus.DELETED)
                 .setChangedStatusOn(LocalDateTime.now());

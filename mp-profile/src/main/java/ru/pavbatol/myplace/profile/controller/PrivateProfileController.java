@@ -47,9 +47,10 @@ public class PrivateProfileController {
 
     @DeleteMapping("/{profileId}")
     @Operation(summary = "delete", description = "deleting Profile")
-    public ResponseEntity<Void> delete(@PathVariable(value = "profileId") Long profileId) {
+    public ResponseEntity<Void> delete(@PathVariable(value = "profileId") Long profileId,
+                                       @RequestHeader(value = X_USER_ID) Long userId) {
         log.debug("DELETE delete() with profileId: {}", profileId);
-        profileService.delete(profileId);
+        profileService.delete(profileId, userId);
         return ResponseEntity.noContent().build();
     }
 
