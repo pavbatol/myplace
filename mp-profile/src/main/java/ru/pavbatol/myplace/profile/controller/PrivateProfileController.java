@@ -23,8 +23,21 @@ public class PrivateProfileController {
     private static final String X_USER_UUID = "X-User-Uuid";
     private final ProfileService profileService;
 
+    /**
+     * Creates a new profile with minimal required fields.
+     * <p><b>Important:</b> This is an internal API for communication between Security service
+     * and Profile service. It's automatically called during user registration process.
+     * It should not be called directly from the Gateway service
+     *
+     * @param userUuid UUID of the user for whom the profile is being created
+     * @param dto      Profile creation data transfer object
+     * @return ResponseEntity containing the created profile information
+     * @apiNote This is an internal API endpoint and not meant for public use
+     */
     @PostMapping
-    @Operation(summary = "create", description = "creating new Profile")
+    @Operation(summary = "Internal: Create profile",
+            description = "INTERNAL USE ONLY. Called by Security service during user registration to create minimal profile",
+            hidden = false)
     public ResponseEntity<ProfileDtoCreateResponse> create(@RequestHeader(value = X_USER_UUID) UUID userUuid,
                                                            @Valid @RequestBody ProfileDtoCreateRequest dto) {
         log.debug("POST create() with userUuid: {}, dto: {}", dto, userUuid);

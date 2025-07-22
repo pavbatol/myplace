@@ -30,19 +30,6 @@ public class PrivateProfileController {
     private static final String USER = "USER";
     private final ProfileService profileService;
 
-    @RequiredRoles(roles = {USER}, setUserUuidHeader = true)
-    @RequiredHeaders(X_USER_UUID)
-    @PostMapping
-    @Operation(summary = "create", description = "creating new Profile")
-    public Mono<ResponseEntity<ApiResponse<ProfileDtoCreateResponse>>> create(@Valid @RequestBody ProfileDtoCreateRequest dto,
-                                                                              HttpServletRequest request) {
-        log.debug("POST create() with dto: {}, header {}: {}, header {}: {}", dto,
-                X_USER_ID, request.getHeader(X_USER_ID),
-                X_USER_UUID, request.getHeader(X_USER_UUID));
-        Mono<ApiResponse<ProfileDtoCreateResponse>> apiResponse = profileService.create(dto, HttpUtils.extractHeaders(request));
-        return apiResponse.map(ar -> ResponseEntity.status(ar.getStatus()).body(ar));
-    }
-
 //    @DeleteMapping("/{profileId}")
 //    @Operation(summary = "delete", description = "deleting Profile")
 //    public ResponseEntity<Void> delete(@PathVariable(value = "profileId") Long profileId) {
