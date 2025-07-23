@@ -54,6 +54,11 @@ public class ProfileServiceImpl implements ProfileService {
         return response.map(this::convertToApiResponse);
     }
 
+    @Override
+    public Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers) {
+        return client.delete(profileId, headers);
+    }
+
     private <T> ApiResponse<T> convertToApiResponse(ResponseEntity<T> responseEntity) {
         T body = responseEntity.getBody();
         if (body == null) {

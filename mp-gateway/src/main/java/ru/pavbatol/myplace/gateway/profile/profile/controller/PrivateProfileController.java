@@ -30,14 +30,16 @@ public class PrivateProfileController {
     private static final String USER = "USER";
     private final ProfileService profileService;
 
-//    @DeleteMapping("/{profileId}")
-//    @Operation(summary = "delete", description = "deleting Profile")
-//    public ResponseEntity<Void> delete(@PathVariable(value = "profileId") Long profileId) {
-//        log.debug("DELETE delete() with profileId: {}", profileId);
-//        profileService.delete(profileId);
-//        return ResponseEntity.noContent().build();
-//    }
-//
+    @RequiredRoles(roles = {USER}, setUserIdHeader = true)
+    @RequiredHeaders(X_USER_ID)
+    @DeleteMapping("/{profileId}")
+    @Operation(summary = "delete", description = "deleting Profile")
+    public Mono<ResponseEntity<Void>> delete(@PathVariable(value = "profileId") Long profileId,
+                                             HttpServletRequest request) {
+        log.debug("DELETE delete() with profileId: {}", profileId);
+        return profileService.delete(profileId, HttpUtils.extractHeaders(request));
+    }
+
 //    @PatchMapping("/{profileId}")
 //    @Operation(summary = "update", description = "updating Profile")
 //    public ResponseEntity<ProfileDto> update(@RequestHeader(value = X_USER_ID) Long userId,

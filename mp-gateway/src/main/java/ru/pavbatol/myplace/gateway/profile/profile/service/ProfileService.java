@@ -1,6 +1,7 @@
 package ru.pavbatol.myplace.gateway.profile.profile.service;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
@@ -20,4 +21,6 @@ public interface ProfileService {
     Mono<ApiResponse<ProfileDto>> adminGetByUserId(HttpHeaders headers);
 
     Mono<ApiResponse<ProfileDtoCreateResponse>> create(ProfileDtoCreateRequest dto, HttpHeaders headers);
+
+    Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers);
 }

@@ -41,7 +41,7 @@ public class ProfileClientImpl implements ProfileClient {
                         .path("/status")
                         .queryParam("status", profileStatus.name())
                         .build())
-                .headers(getHeadersConsumer(headers))
+                .headers(getDefaultHeadersConsumer(headers))
                 .retrieve()
                 .toEntity(ProfileDtoUpdateStatusResponse.class);
     }
@@ -54,7 +54,7 @@ public class ProfileClientImpl implements ProfileClient {
                         .queryParam("page", page)
                         .queryParam("size", size)
                         .build())
-                .headers(getHeadersConsumer(headers))
+                .headers(getDefaultHeadersConsumer(headers))
                 .retrieve()
                 .toEntity(new ParameterizedTypeReference<PageDto<ProfileDto>>() {
                 });
@@ -67,7 +67,7 @@ public class ProfileClientImpl implements ProfileClient {
                         .path(ADMIN_CONTEXT)
                         .path("/" + profileId)
                         .build())
-                .headers(getHeadersConsumer(headers))
+                .headers(getDefaultHeadersConsumer(headers))
                 .retrieve()
                 .toEntity(ProfileDto.class);
     }
@@ -79,7 +79,7 @@ public class ProfileClientImpl implements ProfileClient {
                         .path(ADMIN_CONTEXT)
                         .path("/user")
                         .build())
-                .headers(getHeadersConsumer(headers))
+                .headers(getDefaultHeadersConsumer(headers))
                 .retrieve()
                 .toEntity(ProfileDto.class);
     }
@@ -90,13 +90,25 @@ public class ProfileClientImpl implements ProfileClient {
                 .uri(uriBuilder -> uriBuilder
                         .path(USER_CONTEXT)
                         .build())
-                .headers(getHeadersConsumer(headers))
+                .headers(getDefaultHeadersConsumer(headers))
                 .bodyValue(dto)
                 .retrieve()
                 .toEntity(ProfileDtoCreateResponse.class);
     }
 
-    private static Consumer<HttpHeaders> getHeadersConsumer(HttpHeaders headers) {
+    @Override
+    public Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers) {
+        return mutatedWebClient.delete()
+                .uri(uriBuilder -> uriBuilder
+                        .path(USER_CONTEXT)
+                        .path("/" + profileId)
+                        .build())
+                .headers(getDefaultHeadersConsumer(headers))
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    private static Consumer<HttpHeaders> getDefaultHeadersConsumer(HttpHeaders headers) {
         return hds -> {
             String userId = headers.getFirst(X_USER_ID);
             String userUuid = headers.getFirst(X_USER_UUID);

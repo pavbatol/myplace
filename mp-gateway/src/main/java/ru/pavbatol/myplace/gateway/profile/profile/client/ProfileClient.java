@@ -20,4 +20,6 @@ public interface ProfileClient {
     Mono<ResponseEntity<ProfileDto>> adminGetByUserId(HttpHeaders headers);
 
     Mono<ResponseEntity<ProfileDtoCreateResponse>> create(ProfileDtoCreateRequest dto, HttpHeaders headers);
+
+    Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers);
 }
