@@ -10,22 +10,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
+import ru.pavbatol.myplace.shared.dto.profile.profile.*;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_ID;
+import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_UUID;
 
 @Slf4j
 @Component
 public class ProfileClientImpl implements ProfileClient {
     private final static String ADMIN_CONTEXT = "/admin/profiles";
     private final static String USER_CONTEXT = "/user/profiles";
-    private static final String X_USER_ID = "X-User-Id";
-    private static final String X_USER_UUID = "X-User-Uuid";
     private final WebClient mutatedWebClient;
 
     public ProfileClientImpl(@Value("${app.mp.profile.url}") String serverUrl,
@@ -85,18 +83,6 @@ public class ProfileClientImpl implements ProfileClient {
     }
 
     @Override
-    public Mono<ResponseEntity<ProfileDtoCreateResponse>> create(ProfileDtoCreateRequest dto, HttpHeaders headers) {
-        return mutatedWebClient.post()
-                .uri(uriBuilder -> uriBuilder
-                        .path(USER_CONTEXT)
-                        .build())
-                .headers(getDefaultHeadersConsumer(headers))
-                .bodyValue(dto)
-                .retrieve()
-                .toEntity(ProfileDtoCreateResponse.class);
-    }
-
-    @Override
     public Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers) {
         return mutatedWebClient.delete()
                 .uri(uriBuilder -> uriBuilder
@@ -106,6 +92,19 @@ public class ProfileClientImpl implements ProfileClient {
                 .headers(getDefaultHeadersConsumer(headers))
                 .retrieve()
                 .toBodilessEntity();
+    }
+
+    @Override
+    public Mono<ResponseEntity<ProfileDto>> update(Long profileId, ProfileDtoUpdate dto, HttpHeaders headers) {
+        return mutatedWebClient.patch()
+                .uri(uriBuilder -> uriBuilder
+                        .path(USER_CONTEXT)
+                        .path("/" + profileId)
+                        .build())
+                .headers(getDefaultHeadersConsumer(headers))
+                .bodyValue(dto)
+                .retrieve()
+                .toEntity(ProfileDto.class);
     }
 
     private static Consumer<HttpHeaders> getDefaultHeadersConsumer(HttpHeaders headers) {

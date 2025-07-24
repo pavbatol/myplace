@@ -8,10 +8,7 @@ import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.profile.profile.client.ProfileClient;
 import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
+import ru.pavbatol.myplace.shared.dto.profile.profile.*;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 
 @Component
@@ -48,15 +45,15 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Mono<ApiResponse<ProfileDtoCreateResponse>> create(ProfileDtoCreateRequest dto, HttpHeaders headers) {
-        Mono<ResponseEntity<ProfileDtoCreateResponse>> response = client.create(dto, headers);
-
-        return response.map(this::convertToApiResponse);
+    public Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers) {
+        return client.delete(profileId, headers);
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers) {
-        return client.delete(profileId, headers);
+    public Mono<ApiResponse<ProfileDto>> update(Long profileId, ProfileDtoUpdate dto, HttpHeaders headers) {
+        Mono<ResponseEntity<ProfileDto>> response = client.update(profileId, dto, headers);
+
+        return response.map(this::convertToApiResponse);
     }
 
     private <T> ApiResponse<T> convertToApiResponse(ResponseEntity<T> responseEntity) {

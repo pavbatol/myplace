@@ -5,11 +5,10 @@ import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
+import ru.pavbatol.myplace.shared.dto.profile.profile.*;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
+
+import javax.validation.Valid;
 
 public interface ProfileService {
     Mono<ApiResponse<ProfileDtoUpdateStatusResponse>> adminUpdateStatusByUserId(ProfileStatus profileStatus, HttpHeaders headers);
@@ -20,7 +19,7 @@ public interface ProfileService {
 
     Mono<ApiResponse<ProfileDto>> adminGetByUserId(HttpHeaders headers);
 
-    Mono<ApiResponse<ProfileDtoCreateResponse>> create(ProfileDtoCreateRequest dto, HttpHeaders headers);
-
     Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers);
+
+    Mono<ApiResponse<ProfileDto>> update(Long profileId, ProfileDtoUpdate dto, HttpHeaders headers);
 }

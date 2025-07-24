@@ -12,8 +12,10 @@ import ru.pavbatol.myplace.gateway.app.annotation.RequiredHeaders;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.util.HttpUtils;
 import ru.pavbatol.myplace.gateway.profile.profile.service.ProfileService;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -40,17 +42,18 @@ public class PrivateProfileController {
         return profileService.delete(profileId, HttpUtils.extractHeaders(request));
     }
 
-//    @PatchMapping("/{profileId}")
-//    @Operation(summary = "update", description = "updating Profile")
-//    public ResponseEntity<ProfileDto> update(@RequestHeader(value = X_USER_ID) Long userId,
-//                                             @RequestHeader(value = X_USER_UUID) UUID userUuid,
-//                                             @PathVariable(value = "profileId") Long profileId,
-//                                             @RequestBody @Valid ProfileDtoUpdate dto) {
-//        log.debug("PATCH update() with profileId: {}, userId: {}, userUuid: {}, dto: {}", profileId, userId, userUuid, dto);
-//        ProfileDto body = profileService.update(userId, userUuid, profileId, dto);
-//        return ResponseEntity.ok(body);
-//    }
-//
+    @RequiredRoles(roles = {USER}, setUserIdHeader = true, setUserUuidHeader = true)
+    @RequiredHeaders({X_USER_ID, X_USER_UUID})
+    @PatchMapping("/{profileId}")
+    @Operation(summary = "update", description = "updating Profile")
+    public Mono<ResponseEntity<ApiResponse<ProfileDto>>> update(@PathVariable(value = "profileId") Long profileId,
+                                                                @RequestBody @Valid ProfileDtoUpdate dto,
+                                                                HttpServletRequest request) {
+        log.debug("PATCH update() with profileId: {}, dto: {}", profileId, dto);
+        Mono<ApiResponse<ProfileDto>> apiResponse = profileService.update(profileId, dto, HttpUtils.extractHeaders(request));
+        return apiResponse.map(ar -> ResponseEntity.status(ar.getStatus()).body(ar));
+    }
+
 //    @GetMapping("/{profileId}")
 //    @Operation(summary = "getById", description = "get Profile")
 //    public ResponseEntity<ProfileDto> getById(@RequestHeader(value = X_USER_ID) Long userId,

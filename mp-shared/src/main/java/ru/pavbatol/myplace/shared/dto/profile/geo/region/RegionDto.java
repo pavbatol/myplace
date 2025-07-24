@@ -1,6 +1,8 @@
 package ru.pavbatol.myplace.shared.dto.profile.geo.region;
 
+import lombok.Builder;
 import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 import ru.pavbatol.myplace.shared.dto.profile.geo.IdentifiableGeo;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 import ru.pavbatol.myplace.shared.util.Marker;
@@ -10,6 +12,8 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 
 @Value
+@Builder
+@Jacksonized
 public class RegionDto implements IdentifiableGeo {
     @Null(groups = Marker.OnCreate.class)
     Long id;
