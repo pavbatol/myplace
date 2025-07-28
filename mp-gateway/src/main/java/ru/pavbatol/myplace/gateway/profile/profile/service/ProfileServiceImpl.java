@@ -56,6 +56,20 @@ public class ProfileServiceImpl implements ProfileService {
         return response.map(this::convertToApiResponse);
     }
 
+    @Override
+    public Mono<ApiResponse<ProfileDto>> privateGetById(Long profileId, HttpHeaders headers) {
+        Mono<ResponseEntity<ProfileDto>> response = client.privateGetById(profileId, headers);
+
+        return response.map(this::convertToApiResponse);
+    }
+
+    @Override
+    public Mono<ApiResponse<ProfileDto>> privateGetByUserId(HttpHeaders headers) {
+        Mono<ResponseEntity<ProfileDto>> response = client.privateGetByUserId(headers);
+
+        return response.map(this::convertToApiResponse);
+    }
+
     private <T> ApiResponse<T> convertToApiResponse(ResponseEntity<T> responseEntity) {
         T body = responseEntity.getBody();
         if (body == null) {

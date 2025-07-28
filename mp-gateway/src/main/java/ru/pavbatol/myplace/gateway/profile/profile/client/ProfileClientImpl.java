@@ -107,6 +107,29 @@ public class ProfileClientImpl implements ProfileClient {
                 .toEntity(ProfileDto.class);
     }
 
+    @Override
+    public Mono<ResponseEntity<ProfileDto>> privateGetById(Long profileId, HttpHeaders headers) {
+        return mutatedWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(USER_CONTEXT)
+                        .path("/" + profileId)
+                        .build())
+                .headers(getDefaultHeadersConsumer(headers))
+                .retrieve()
+                .toEntity(ProfileDto.class);
+    }
+
+    @Override
+    public Mono<ResponseEntity<ProfileDto>> privateGetByUserId(HttpHeaders headers) {
+        return mutatedWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(USER_CONTEXT)
+                        .build())
+                .headers(getDefaultHeadersConsumer(headers))
+                .retrieve()
+                .toEntity(ProfileDto.class);
+    }
+
     private static Consumer<HttpHeaders> getDefaultHeadersConsumer(HttpHeaders headers) {
         return hds -> {
             String userId = headers.getFirst(X_USER_ID);

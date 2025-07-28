@@ -22,4 +22,8 @@ public interface ProfileService {
     Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers);
 
     Mono<ApiResponse<ProfileDto>> update(Long profileId, ProfileDtoUpdate dto, HttpHeaders headers);
+
+    Mono<ApiResponse<ProfileDto>> privateGetById(Long profileId, HttpHeaders headers);
+
+    Mono<ApiResponse<ProfileDto>> privateGetByUserId(HttpHeaders headers);
 }

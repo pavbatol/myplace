@@ -54,22 +54,24 @@ public class PrivateProfileController {
         return apiResponse.map(ar -> ResponseEntity.status(ar.getStatus()).body(ar));
     }
 
-//    @GetMapping("/{profileId}")
-//    @Operation(summary = "getById", description = "get Profile")
-//    public ResponseEntity<ProfileDto> getById(@RequestHeader(value = X_USER_ID) Long userId,
-//                                              @RequestHeader(value = X_USER_UUID) UUID userUuid,
-//                                              @PathVariable(value = "profileId") Long profileId) {
-//        log.debug("GET getById() with userId: {}, userUuid: {}, profileId: {}", userId, userUuid, profileId);
-//        ProfileDto body = profileService.privateGetById(userId, userUuid, profileId);
-//        return ResponseEntity.ok(body);
-//    }
-//
-//    @GetMapping
-//    @Operation(summary = "getByUserId", description = "get Profile")
-//    public ResponseEntity<ProfileDto> getByUserId(@RequestHeader(value = X_USER_ID) Long userId,
-//                                                  @RequestHeader(value = X_USER_UUID) UUID userUuid) {
-//        log.debug("GET getByUserId() with userId: {}, userUuid: {}", userId, userUuid);
-//        ProfileDto body = profileService.privateGetByUserId(userId, userUuid);
-//        return ResponseEntity.ok(body);
-//    }
+    @RequiredRoles(roles = {USER}, setUserIdHeader = true, setUserUuidHeader = true)
+    @RequiredHeaders({X_USER_ID, X_USER_UUID})
+    @GetMapping("/{profileId}")
+    @Operation(summary = "getById", description = "get Profile")
+    public Mono<ResponseEntity<ApiResponse<ProfileDto>>> getById(@PathVariable(value = "profileId") Long profileId,
+                                                                 HttpServletRequest request) {
+        log.debug("GET getById() with profileId: {}", profileId);
+        Mono<ApiResponse<ProfileDto>> apiResponse = profileService.privateGetById(profileId, HttpUtils.extractHeaders(request));
+        return apiResponse.map(ar -> ResponseEntity.status(ar.getStatus()).body(ar));
+    }
+
+    @RequiredRoles(roles = {USER}, setUserIdHeader = true, setUserUuidHeader = true)
+    @RequiredHeaders({X_USER_ID, X_USER_UUID})
+    @GetMapping
+    @Operation(summary = "getByUserId", description = "get Profile")
+    public Mono<ResponseEntity<ApiResponse<ProfileDto>>> getByUserId(HttpServletRequest request) {
+        log.debug("GET getByUserId() with userId: {}, userUuid: {}", request.getHeader(X_USER_ID) + " (in headers)", "[expected in headers]");
+        Mono<ApiResponse<ProfileDto>> apiResponse = profileService.privateGetByUserId(HttpUtils.extractHeaders(request));
+        return apiResponse.map(ar -> ResponseEntity.status(ar.getStatus()).body(ar));
+    }
 }

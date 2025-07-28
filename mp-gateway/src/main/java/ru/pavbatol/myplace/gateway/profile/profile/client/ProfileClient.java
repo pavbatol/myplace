@@ -19,4 +19,8 @@ public interface ProfileClient {
     Mono<ResponseEntity<Void>> delete(Long profileId, HttpHeaders headers);
 
     Mono<ResponseEntity<ProfileDto>> update(Long profileId, ProfileDtoUpdate dto, HttpHeaders headers);
+
+    Mono<ResponseEntity<ProfileDto>> privateGetById(Long profileId, HttpHeaders headers);
+
+    Mono<ResponseEntity<ProfileDto>> privateGetByUserId(HttpHeaders headers);
 }
