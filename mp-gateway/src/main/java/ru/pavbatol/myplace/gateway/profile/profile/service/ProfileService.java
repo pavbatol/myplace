@@ -8,8 +8,6 @@ import ru.pavbatol.myplace.shared.dto.pagination.PageDto;
 import ru.pavbatol.myplace.shared.dto.profile.profile.*;
 import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 
-import javax.validation.Valid;
-
 public interface ProfileService {
     Mono<ApiResponse<ProfileDtoUpdateStatusResponse>> adminUpdateStatusByUserId(ProfileStatus profileStatus, HttpHeaders headers);
 
@@ -26,4 +24,6 @@ public interface ProfileService {
     Mono<ApiResponse<ProfileDto>> privateGetById(Long profileId, HttpHeaders headers);
 
     Mono<ApiResponse<ProfileDto>> privateGetByUserId(HttpHeaders headers);
+
+    Mono<ApiResponse<Boolean>> checkEmail(String email);
 }

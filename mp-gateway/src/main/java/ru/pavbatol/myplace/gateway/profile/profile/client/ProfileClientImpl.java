@@ -16,14 +16,14 @@ import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_ID;
-import static ru.pavbatol.myplace.shared.constant.HttpHeaders.X_USER_UUID;
+import static ru.pavbatol.myplace.shared.constant.HttpHeaders.*;
 
 @Slf4j
 @Component
 public class ProfileClientImpl implements ProfileClient {
     private final static String ADMIN_CONTEXT = "/admin/profiles";
     private final static String USER_CONTEXT = "/user/profiles";
+    private final static String PUBLIC_CONTEXT = "/profiles";
     private final WebClient mutatedWebClient;
 
     public ProfileClientImpl(@Value("${app.mp.profile.url}") String serverUrl,
@@ -128,6 +128,21 @@ public class ProfileClientImpl implements ProfileClient {
                 .headers(getDefaultHeadersConsumer(headers))
                 .retrieve()
                 .toEntity(ProfileDto.class);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Boolean>> checkEmail(String email) {
+        return mutatedWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(PUBLIC_CONTEXT)
+                        .path("/check-email")
+                        .queryParam("email", email)
+                        .build())
+                .headers(headers -> {
+                    headers.set(Accept, "application/json");
+                })
+                .retrieve()
+                .toEntity(Boolean.class);
     }
 
     private static Consumer<HttpHeaders> getDefaultHeadersConsumer(HttpHeaders headers) {

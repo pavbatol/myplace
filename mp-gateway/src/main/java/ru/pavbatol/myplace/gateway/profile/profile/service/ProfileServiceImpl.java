@@ -70,6 +70,13 @@ public class ProfileServiceImpl implements ProfileService {
         return response.map(this::convertToApiResponse);
     }
 
+    @Override
+    public Mono<ApiResponse<Boolean>> checkEmail(String email) {
+        Mono<ResponseEntity<Boolean>> response = client.checkEmail(email);
+
+        return response.map(this::convertToApiResponse);
+    }
+
     private <T> ApiResponse<T> convertToApiResponse(ResponseEntity<T> responseEntity) {
         T body = responseEntity.getBody();
         if (body == null) {

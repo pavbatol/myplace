@@ -13,8 +13,6 @@ import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.util.HttpUtils;
 import ru.pavbatol.myplace.gateway.profile.profile.service.ProfileService;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
-import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
 import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdate;
 
 import javax.servlet.http.HttpServletRequest;

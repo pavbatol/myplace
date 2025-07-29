@@ -23,4 +23,6 @@ public interface ProfileClient {
     Mono<ResponseEntity<ProfileDto>> privateGetById(Long profileId, HttpHeaders headers);
 
     Mono<ResponseEntity<ProfileDto>> privateGetByUserId(HttpHeaders headers);
+
+    Mono<ResponseEntity<Boolean>> checkEmail(String email);
 }
