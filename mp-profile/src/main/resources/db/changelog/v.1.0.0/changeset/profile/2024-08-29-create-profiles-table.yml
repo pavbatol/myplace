@@ -92,7 +92,7 @@ databaseChangeLog:
             baseColumnNames: "house_id"
             referencedTableName: "houses"
             referencedColumnNames: "house_id"
-            onDelete: "CASCADE"
+            onDelete: "SET NULL"
             constraintName: "fk_profiles_house_id"
 
         - addUniqueConstraint:
