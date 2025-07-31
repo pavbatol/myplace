@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.app.util.EnumUtils;
-import ru.pavbatol.myplace.profile.dto.ProfileDto;
-import ru.pavbatol.myplace.profile.dto.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.service.ProfileService;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.util.UUID;

@@ -1,7 +1,7 @@
 package ru.pavbatol.myplace.profile.service;
 
-import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
+import ru.pavbatol.myplace.shared.dto.profile.profile.*;
 import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.util.UUID;

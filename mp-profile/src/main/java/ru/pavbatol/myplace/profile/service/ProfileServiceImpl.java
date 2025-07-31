@@ -13,11 +13,11 @@ import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
-import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.mapper.ProfileMapper;
 import ru.pavbatol.myplace.profile.model.Profile;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.repository.ProfileJpaRepository;
+import ru.pavbatol.myplace.shared.dto.profile.profile.*;
 import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.time.LocalDateTime;

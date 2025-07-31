@@ -7,8 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.service.ProfileService;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateRequest;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoCreateResponse;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdate;
 
 import java.util.UUID;
 
