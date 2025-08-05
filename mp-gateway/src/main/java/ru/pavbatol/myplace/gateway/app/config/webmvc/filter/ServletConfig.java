@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  */
 @Deprecated(since = "1.0.0.0", forRemoval = true)
 @Configuration
-public class servletConfig {
+public class ServletConfig {
 
     @Bean
     public FilterRegistrationBean<RequestWrappingFilter> requestWrappingFilter(@Qualifier("requestMappingHandlerMapping") RequestMappingHandlerMapping handlerMapping) {

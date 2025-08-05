@@ -21,9 +21,9 @@ import static ru.pavbatol.myplace.shared.constant.HttpHeaders.*;
 @Slf4j
 @Component
 public class ProfileClientImpl implements ProfileClient {
-    private final static String ADMIN_CONTEXT = "/admin/profiles";
-    private final static String USER_CONTEXT = "/user/profiles";
-    private final static String PUBLIC_CONTEXT = "/profiles";
+    private static final String ADMIN_CONTEXT = "/admin/profiles";
+    private static final String USER_CONTEXT = "/user/profiles";
+    private static final String PUBLIC_CONTEXT = "/profiles";
     private final WebClient mutatedWebClient;
 
     public ProfileClientImpl(@Value("${app.mp.profile.url}") String serverUrl,
