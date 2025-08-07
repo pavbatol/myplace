@@ -15,7 +15,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
@@ -63,8 +62,14 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
  *
  * @see GlobalExceptionHandler The Servlet-based counterpart
  */
+
+// TODO: This handler is currently disabled during migration from traditional to reactive stack.
+// Once the migration is complete and all endpoints are using reactive programming:
+// 1. Uncomment @RestControllerAdvice annotation below
+// 2. Remove or deprecate the GlobalExceptionHandler
+// 3. Verify all exception handling works as expected in reactive flow
+//@RestControllerAdvice
 @Slf4j
-@RestControllerAdvice
 public class GlobalReactExceptionHandler implements ErrorWebExceptionHandler {
     private final boolean traceEnabled;
     private final ObjectMapper objectMapper;
