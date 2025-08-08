@@ -18,15 +18,7 @@ public class TargetServiceErrorException extends RuntimeException {
 
     public TargetServiceErrorException(@NonNull String message, @NonNull HttpStatus status) {
         super(message);
-        this.error = new ApiError(
-                null,
-                null,
-                null,
-                message,
-                null,
-                null,
-                null
-        );
+        this.error = ApiError.message(message);
         this.status = status;
     }
 

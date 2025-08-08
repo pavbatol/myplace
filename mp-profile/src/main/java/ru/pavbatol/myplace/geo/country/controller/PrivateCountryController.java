@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.geo.country.service.CountryService;
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 @Slf4j

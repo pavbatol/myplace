@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.api.ResponseHandler;
 import ru.pavbatol.myplace.gateway.profile.geo.street.client.StreetClient;
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
 /**

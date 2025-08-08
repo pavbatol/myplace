@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -58,10 +59,9 @@ public class AccessClientImpl implements AccessClient {
      * @param authToken the authorization token in "Bearer [token]" format (must not be null or blank)
      * @param userAgent the User-Agent value
      * @throws IllegalArgumentException if roles list is empty/null or auth token is missing
-     * @see AccessClient#checkAccess(List, String, String)
      */
     @Override
-    public void checkAccess(List<String> roles, String authToken, String userAgent) {
+    public ResponseEntity<Void> checkAccess(List<String> roles, String authToken, String userAgent, boolean includeUserId, boolean includeUserUuid) {
         log.debug("Sending request for check access for roles: {}", roles);
 
         HttpHeaders headers = new HttpHeaders();
@@ -71,8 +71,10 @@ public class AccessClientImpl implements AccessClient {
             headers.set(USER_AGENT, userAgent);
         }
 
-        restTemplate.exchange(
-                securityServiceUrl + CHECK_ACCESS_PATH,
+        String params = String.format("?includeUserId=%s&includeUserUuid=%s", includeUserId, includeUserUuid);
+
+        return restTemplate.exchange(
+                securityServiceUrl + CHECK_ACCESS_PATH + params,
                 HttpMethod.POST,
                 new HttpEntity<>(roles, headers),
                 Void.class

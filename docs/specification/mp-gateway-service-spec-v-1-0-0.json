@@ -29,6 +29,10 @@
       "description": "API for working with District"
     },
     {
+      "name": "[Profile/Profile]: Private",
+      "description": "API for working with Profile"
+    },
+    {
       "name": "[Profile/Geo]Region: Admin",
       "description": "API for working with Region"
     },
@@ -65,6 +69,10 @@
       "description": "API for working with House"
     },
     {
+      "name": "[Profile/Profile]: Public",
+      "description": "API for working with Profile"
+    },
+    {
       "name": "[Profile/Geo]Region: Private",
       "description": "API for working with Region"
     },
@@ -79,6 +87,10 @@
     {
       "name": "[Security]Auth: Admin",
       "description": "API for working with authorization"
+    },
+    {
+      "name": "[Profile/Profile]: Admin",
+      "description": "API for working with Profile"
     },
     {
       "name": "[Profile/Geo]Management/Import: Admin",
@@ -681,6 +693,136 @@
         ]
       }
     },
+    "/api/v1/profile/user/profiles/{profileId}": {
+      "get": {
+        "tags": [
+          "[Profile/Profile]: Private"
+        ],
+        "summary": "getById",
+        "description": "get Profile",
+        "operationId": "getById",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseProfileDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "[Profile/Profile]: Private"
+        ],
+        "summary": "delete",
+        "description": "deleting Profile",
+        "operationId": "delete_1",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "[Profile/Profile]: Private"
+        ],
+        "summary": "update",
+        "description": "updating Profile",
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileDtoUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseProfileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profile/admin/profiles/status": {
+      "patch": {
+        "tags": [
+          "[Profile/Profile]: Admin"
+        ],
+        "summary": "updateStatusByUserId",
+        "description": "setting Profile status",
+        "operationId": "updateStatusByUserId",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseProfileDtoUpdateStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/profile/admin/geo/streets/{streetId}": {
       "delete": {
         "tags": [
@@ -688,7 +830,7 @@
         ],
         "summary": "delete",
         "description": "deleting Street",
-        "operationId": "delete_1",
+        "operationId": "delete_2",
         "parameters": [
           {
             "name": "streetId",
@@ -719,7 +861,7 @@
         ],
         "summary": "update",
         "description": "updating Street",
-        "operationId": "update",
+        "operationId": "update_1",
         "parameters": [
           {
             "name": "streetId",
@@ -762,7 +904,7 @@
         ],
         "summary": "delete",
         "description": "deleting Region",
-        "operationId": "delete_2",
+        "operationId": "delete_3",
         "parameters": [
           {
             "name": "regionId",
@@ -793,7 +935,7 @@
         ],
         "summary": "update",
         "description": "updating Region",
-        "operationId": "update_1",
+        "operationId": "update_2",
         "parameters": [
           {
             "name": "regionId",
@@ -836,7 +978,7 @@
         ],
         "summary": "delete",
         "description": "deleting House",
-        "operationId": "delete_3",
+        "operationId": "delete_4",
         "parameters": [
           {
             "name": "houseId",
@@ -867,7 +1009,7 @@
         ],
         "summary": "update",
         "description": "updating House",
-        "operationId": "update_2",
+        "operationId": "update_3",
         "parameters": [
           {
             "name": "houseId",
@@ -910,7 +1052,7 @@
         ],
         "summary": "delete",
         "description": "deleting District",
-        "operationId": "delete_4",
+        "operationId": "delete_5",
         "parameters": [
           {
             "name": "districtId",
@@ -941,7 +1083,7 @@
         ],
         "summary": "update",
         "description": "updating District",
-        "operationId": "update_3",
+        "operationId": "update_4",
         "parameters": [
           {
             "name": "districtId",
@@ -984,7 +1126,7 @@
         ],
         "summary": "delete",
         "description": "deleting Country",
-        "operationId": "delete_5",
+        "operationId": "delete_6",
         "parameters": [
           {
             "name": "countryId",
@@ -1021,7 +1163,7 @@
         ],
         "summary": "update",
         "description": "updating Country",
-        "operationId": "update_4",
+        "operationId": "update_5",
         "parameters": [
           {
             "name": "countryId",
@@ -1070,7 +1212,7 @@
         ],
         "summary": "delete",
         "description": "deleting City",
-        "operationId": "delete_6",
+        "operationId": "delete_7",
         "parameters": [
           {
             "name": "cityId",
@@ -1101,7 +1243,7 @@
         ],
         "summary": "update",
         "description": "updating City",
-        "operationId": "update_5",
+        "operationId": "update_6",
         "parameters": [
           {
             "name": "cityId",
@@ -1363,6 +1505,28 @@
         ]
       }
     },
+    "/api/v1/profile/user/profiles": {
+      "get": {
+        "tags": [
+          "[Profile/Profile]: Private"
+        ],
+        "summary": "getByUserId",
+        "description": "get Profile",
+        "operationId": "getByUserId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseProfileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/profile/user/geo/streets": {
       "get": {
         "tags": [
@@ -1431,7 +1595,7 @@
         ],
         "summary": "getById",
         "description": "get Street",
-        "operationId": "getById",
+        "operationId": "getById_1",
         "parameters": [
           {
             "name": "streetId",
@@ -1524,7 +1688,7 @@
         ],
         "summary": "getById",
         "description": "get Region",
-        "operationId": "getById_1",
+        "operationId": "getById_2",
         "parameters": [
           {
             "name": "regionId",
@@ -1618,7 +1782,7 @@
         ],
         "summary": "getById",
         "description": "get House",
-        "operationId": "getById_2",
+        "operationId": "getById_3",
         "parameters": [
           {
             "name": "houseId",
@@ -1712,7 +1876,7 @@
         ],
         "summary": "getById",
         "description": "get District",
-        "operationId": "getById_3",
+        "operationId": "getById_4",
         "parameters": [
           {
             "name": "districtId",
@@ -1802,7 +1966,7 @@
         ],
         "summary": "getById",
         "description": "get Country",
-        "operationId": "getById_4",
+        "operationId": "getById_5",
         "parameters": [
           {
             "name": "countryId",
@@ -1902,7 +2066,7 @@
         ],
         "summary": "getById",
         "description": "get City",
-        "operationId": "getById_5",
+        "operationId": "getById_6",
         "parameters": [
           {
             "name": "cityId",
@@ -1921,6 +2085,137 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseCityDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profile/profiles/check-email": {
+      "get": {
+        "tags": [
+          "[Profile/Profile]: Public"
+        ],
+        "summary": "checkEmail",
+        "description": "checking a profile with this email exists",
+        "operationId": "checkEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBoolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profile/admin/profiles": {
+      "get": {
+        "tags": [
+          "[Profile/Profile]: Admin"
+        ],
+        "summary": "getAll",
+        "description": "get all Profiles",
+        "operationId": "getAll_6",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageDtoProfileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profile/admin/profiles/{profileId}": {
+      "get": {
+        "tags": [
+          "[Profile/Profile]: Admin"
+        ],
+        "summary": "getById",
+        "description": "get Profile",
+        "operationId": "getById_7",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseProfileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profile/admin/profiles/user": {
+      "get": {
+        "tags": [
+          "[Profile/Profile]: Admin"
+        ],
+        "summary": "getByUserId",
+        "description": "get Profile",
+        "operationId": "getByUserId_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseProfileDto"
                 }
               }
             }
@@ -3199,6 +3494,329 @@
           }
         }
       },
+      "ProfileDtoUpdate": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "trustedEmail": {
+            "type": "string"
+          },
+          "mobileNumber": {
+            "maxLength": 12,
+            "minLength": 10,
+            "type": "string"
+          },
+          "trustedMobileNumber": {
+            "maxLength": 12,
+            "minLength": 10,
+            "type": "string"
+          },
+          "firstName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "secondName": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "MALE",
+              "FEMALE"
+            ]
+          },
+          "house": {
+            "$ref": "#/components/schemas/HouseDto"
+          },
+          "apartment": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string"
+          },
+          "houseAndApartmentValid": {
+            "type": "boolean"
+          },
+          "avatar": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseProfileDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "100 CONTINUE",
+              "101 SWITCHING_PROTOCOLS",
+              "102 PROCESSING",
+              "103 CHECKPOINT",
+              "200 OK",
+              "201 CREATED",
+              "202 ACCEPTED",
+              "203 NON_AUTHORITATIVE_INFORMATION",
+              "204 NO_CONTENT",
+              "205 RESET_CONTENT",
+              "206 PARTIAL_CONTENT",
+              "207 MULTI_STATUS",
+              "208 ALREADY_REPORTED",
+              "226 IM_USED",
+              "300 MULTIPLE_CHOICES",
+              "301 MOVED_PERMANENTLY",
+              "302 FOUND",
+              "302 MOVED_TEMPORARILY",
+              "303 SEE_OTHER",
+              "304 NOT_MODIFIED",
+              "305 USE_PROXY",
+              "307 TEMPORARY_REDIRECT",
+              "308 PERMANENT_REDIRECT",
+              "400 BAD_REQUEST",
+              "401 UNAUTHORIZED",
+              "402 PAYMENT_REQUIRED",
+              "403 FORBIDDEN",
+              "404 NOT_FOUND",
+              "405 METHOD_NOT_ALLOWED",
+              "406 NOT_ACCEPTABLE",
+              "407 PROXY_AUTHENTICATION_REQUIRED",
+              "408 REQUEST_TIMEOUT",
+              "409 CONFLICT",
+              "410 GONE",
+              "411 LENGTH_REQUIRED",
+              "412 PRECONDITION_FAILED",
+              "413 PAYLOAD_TOO_LARGE",
+              "413 REQUEST_ENTITY_TOO_LARGE",
+              "414 URI_TOO_LONG",
+              "414 REQUEST_URI_TOO_LONG",
+              "415 UNSUPPORTED_MEDIA_TYPE",
+              "416 REQUESTED_RANGE_NOT_SATISFIABLE",
+              "417 EXPECTATION_FAILED",
+              "418 I_AM_A_TEAPOT",
+              "419 INSUFFICIENT_SPACE_ON_RESOURCE",
+              "420 METHOD_FAILURE",
+              "421 DESTINATION_LOCKED",
+              "422 UNPROCESSABLE_ENTITY",
+              "423 LOCKED",
+              "424 FAILED_DEPENDENCY",
+              "425 TOO_EARLY",
+              "426 UPGRADE_REQUIRED",
+              "428 PRECONDITION_REQUIRED",
+              "429 TOO_MANY_REQUESTS",
+              "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
+              "451 UNAVAILABLE_FOR_LEGAL_REASONS",
+              "500 INTERNAL_SERVER_ERROR",
+              "501 NOT_IMPLEMENTED",
+              "502 BAD_GATEWAY",
+              "503 SERVICE_UNAVAILABLE",
+              "504 GATEWAY_TIMEOUT",
+              "505 HTTP_VERSION_NOT_SUPPORTED",
+              "506 VARIANT_ALSO_NEGOTIATES",
+              "507 INSUFFICIENT_STORAGE",
+              "508 LOOP_DETECTED",
+              "509 BANDWIDTH_LIMIT_EXCEEDED",
+              "510 NOT_EXTENDED",
+              "511 NETWORK_AUTHENTICATION_REQUIRED"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/ProfileDto"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        }
+      },
+      "ProfileDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userUuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string"
+          },
+          "trustedEmail": {
+            "type": "string"
+          },
+          "mobileNumber": {
+            "type": "string"
+          },
+          "trustedMobileNumber": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "secondName": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "MALE",
+              "FEMALE"
+            ]
+          },
+          "house": {
+            "$ref": "#/components/schemas/HouseDto"
+          },
+          "apartment": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "BLOCKED",
+              "DELETED"
+            ]
+          },
+          "changedStatusOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "avatar": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseProfileDtoUpdateStatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "100 CONTINUE",
+              "101 SWITCHING_PROTOCOLS",
+              "102 PROCESSING",
+              "103 CHECKPOINT",
+              "200 OK",
+              "201 CREATED",
+              "202 ACCEPTED",
+              "203 NON_AUTHORITATIVE_INFORMATION",
+              "204 NO_CONTENT",
+              "205 RESET_CONTENT",
+              "206 PARTIAL_CONTENT",
+              "207 MULTI_STATUS",
+              "208 ALREADY_REPORTED",
+              "226 IM_USED",
+              "300 MULTIPLE_CHOICES",
+              "301 MOVED_PERMANENTLY",
+              "302 FOUND",
+              "302 MOVED_TEMPORARILY",
+              "303 SEE_OTHER",
+              "304 NOT_MODIFIED",
+              "305 USE_PROXY",
+              "307 TEMPORARY_REDIRECT",
+              "308 PERMANENT_REDIRECT",
+              "400 BAD_REQUEST",
+              "401 UNAUTHORIZED",
+              "402 PAYMENT_REQUIRED",
+              "403 FORBIDDEN",
+              "404 NOT_FOUND",
+              "405 METHOD_NOT_ALLOWED",
+              "406 NOT_ACCEPTABLE",
+              "407 PROXY_AUTHENTICATION_REQUIRED",
+              "408 REQUEST_TIMEOUT",
+              "409 CONFLICT",
+              "410 GONE",
+              "411 LENGTH_REQUIRED",
+              "412 PRECONDITION_FAILED",
+              "413 PAYLOAD_TOO_LARGE",
+              "413 REQUEST_ENTITY_TOO_LARGE",
+              "414 URI_TOO_LONG",
+              "414 REQUEST_URI_TOO_LONG",
+              "415 UNSUPPORTED_MEDIA_TYPE",
+              "416 REQUESTED_RANGE_NOT_SATISFIABLE",
+              "417 EXPECTATION_FAILED",
+              "418 I_AM_A_TEAPOT",
+              "419 INSUFFICIENT_SPACE_ON_RESOURCE",
+              "420 METHOD_FAILURE",
+              "421 DESTINATION_LOCKED",
+              "422 UNPROCESSABLE_ENTITY",
+              "423 LOCKED",
+              "424 FAILED_DEPENDENCY",
+              "425 TOO_EARLY",
+              "426 UPGRADE_REQUIRED",
+              "428 PRECONDITION_REQUIRED",
+              "429 TOO_MANY_REQUESTS",
+              "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
+              "451 UNAVAILABLE_FOR_LEGAL_REASONS",
+              "500 INTERNAL_SERVER_ERROR",
+              "501 NOT_IMPLEMENTED",
+              "502 BAD_GATEWAY",
+              "503 SERVICE_UNAVAILABLE",
+              "504 GATEWAY_TIMEOUT",
+              "505 HTTP_VERSION_NOT_SUPPORTED",
+              "506 VARIANT_ALSO_NEGOTIATES",
+              "507 INSUFFICIENT_STORAGE",
+              "508 LOOP_DETECTED",
+              "509 BANDWIDTH_LIMIT_EXCEEDED",
+              "510 NOT_EXTENDED",
+              "511 NETWORK_AUTHENTICATION_REQUIRED"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/ProfileDtoUpdateStatusResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        }
+      },
+      "ProfileDtoUpdateStatusResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userUuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "BLOCKED",
+              "DELETED"
+            ]
+          },
+          "changedStatusOn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "ApiResponseLong": {
         "type": "object",
         "properties": {
@@ -3629,15 +4247,15 @@
       "SimpleSliceStreetDto": {
         "type": "object",
         "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
           "content": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/StreetDto"
             }
-          },
-          "size": {
-            "type": "integer",
-            "format": "int32"
           },
           "numberOfElements": {
             "type": "integer",
@@ -3735,15 +4353,15 @@
       "SimpleSliceRegionDto": {
         "type": "object",
         "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
           "content": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RegionDto"
             }
-          },
-          "size": {
-            "type": "integer",
-            "format": "int32"
           },
           "numberOfElements": {
             "type": "integer",
@@ -3841,15 +4459,15 @@
       "SimpleSliceHouseDto": {
         "type": "object",
         "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
           "content": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/HouseDto"
             }
-          },
-          "size": {
-            "type": "integer",
-            "format": "int32"
           },
           "numberOfElements": {
             "type": "integer",
@@ -3947,15 +4565,15 @@
       "SimpleSliceDistrictDto": {
         "type": "object",
         "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
           "content": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DistrictDto"
             }
-          },
-          "size": {
-            "type": "integer",
-            "format": "int32"
           },
           "numberOfElements": {
             "type": "integer",
@@ -4053,15 +4671,15 @@
       "SimpleSliceCountryDto": {
         "type": "object",
         "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
           "content": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CountryDto"
             }
-          },
-          "size": {
-            "type": "integer",
-            "format": "int32"
           },
           "numberOfElements": {
             "type": "integer",
@@ -4159,10 +4777,200 @@
       "SimpleSliceCityDto": {
         "type": "object",
         "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
           "content": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CityDto"
+            }
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasNext": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApiResponseBoolean": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "100 CONTINUE",
+              "101 SWITCHING_PROTOCOLS",
+              "102 PROCESSING",
+              "103 CHECKPOINT",
+              "200 OK",
+              "201 CREATED",
+              "202 ACCEPTED",
+              "203 NON_AUTHORITATIVE_INFORMATION",
+              "204 NO_CONTENT",
+              "205 RESET_CONTENT",
+              "206 PARTIAL_CONTENT",
+              "207 MULTI_STATUS",
+              "208 ALREADY_REPORTED",
+              "226 IM_USED",
+              "300 MULTIPLE_CHOICES",
+              "301 MOVED_PERMANENTLY",
+              "302 FOUND",
+              "302 MOVED_TEMPORARILY",
+              "303 SEE_OTHER",
+              "304 NOT_MODIFIED",
+              "305 USE_PROXY",
+              "307 TEMPORARY_REDIRECT",
+              "308 PERMANENT_REDIRECT",
+              "400 BAD_REQUEST",
+              "401 UNAUTHORIZED",
+              "402 PAYMENT_REQUIRED",
+              "403 FORBIDDEN",
+              "404 NOT_FOUND",
+              "405 METHOD_NOT_ALLOWED",
+              "406 NOT_ACCEPTABLE",
+              "407 PROXY_AUTHENTICATION_REQUIRED",
+              "408 REQUEST_TIMEOUT",
+              "409 CONFLICT",
+              "410 GONE",
+              "411 LENGTH_REQUIRED",
+              "412 PRECONDITION_FAILED",
+              "413 PAYLOAD_TOO_LARGE",
+              "413 REQUEST_ENTITY_TOO_LARGE",
+              "414 URI_TOO_LONG",
+              "414 REQUEST_URI_TOO_LONG",
+              "415 UNSUPPORTED_MEDIA_TYPE",
+              "416 REQUESTED_RANGE_NOT_SATISFIABLE",
+              "417 EXPECTATION_FAILED",
+              "418 I_AM_A_TEAPOT",
+              "419 INSUFFICIENT_SPACE_ON_RESOURCE",
+              "420 METHOD_FAILURE",
+              "421 DESTINATION_LOCKED",
+              "422 UNPROCESSABLE_ENTITY",
+              "423 LOCKED",
+              "424 FAILED_DEPENDENCY",
+              "425 TOO_EARLY",
+              "426 UPGRADE_REQUIRED",
+              "428 PRECONDITION_REQUIRED",
+              "429 TOO_MANY_REQUESTS",
+              "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
+              "451 UNAVAILABLE_FOR_LEGAL_REASONS",
+              "500 INTERNAL_SERVER_ERROR",
+              "501 NOT_IMPLEMENTED",
+              "502 BAD_GATEWAY",
+              "503 SERVICE_UNAVAILABLE",
+              "504 GATEWAY_TIMEOUT",
+              "505 HTTP_VERSION_NOT_SUPPORTED",
+              "506 VARIANT_ALSO_NEGOTIATES",
+              "507 INSUFFICIENT_STORAGE",
+              "508 LOOP_DETECTED",
+              "509 BANDWIDTH_LIMIT_EXCEEDED",
+              "510 NOT_EXTENDED",
+              "511 NETWORK_AUTHENTICATION_REQUIRED"
+            ]
+          },
+          "data": {
+            "type": "boolean"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        }
+      },
+      "ApiResponsePageDtoProfileDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "100 CONTINUE",
+              "101 SWITCHING_PROTOCOLS",
+              "102 PROCESSING",
+              "103 CHECKPOINT",
+              "200 OK",
+              "201 CREATED",
+              "202 ACCEPTED",
+              "203 NON_AUTHORITATIVE_INFORMATION",
+              "204 NO_CONTENT",
+              "205 RESET_CONTENT",
+              "206 PARTIAL_CONTENT",
+              "207 MULTI_STATUS",
+              "208 ALREADY_REPORTED",
+              "226 IM_USED",
+              "300 MULTIPLE_CHOICES",
+              "301 MOVED_PERMANENTLY",
+              "302 FOUND",
+              "302 MOVED_TEMPORARILY",
+              "303 SEE_OTHER",
+              "304 NOT_MODIFIED",
+              "305 USE_PROXY",
+              "307 TEMPORARY_REDIRECT",
+              "308 PERMANENT_REDIRECT",
+              "400 BAD_REQUEST",
+              "401 UNAUTHORIZED",
+              "402 PAYMENT_REQUIRED",
+              "403 FORBIDDEN",
+              "404 NOT_FOUND",
+              "405 METHOD_NOT_ALLOWED",
+              "406 NOT_ACCEPTABLE",
+              "407 PROXY_AUTHENTICATION_REQUIRED",
+              "408 REQUEST_TIMEOUT",
+              "409 CONFLICT",
+              "410 GONE",
+              "411 LENGTH_REQUIRED",
+              "412 PRECONDITION_FAILED",
+              "413 PAYLOAD_TOO_LARGE",
+              "413 REQUEST_ENTITY_TOO_LARGE",
+              "414 URI_TOO_LONG",
+              "414 REQUEST_URI_TOO_LONG",
+              "415 UNSUPPORTED_MEDIA_TYPE",
+              "416 REQUESTED_RANGE_NOT_SATISFIABLE",
+              "417 EXPECTATION_FAILED",
+              "418 I_AM_A_TEAPOT",
+              "419 INSUFFICIENT_SPACE_ON_RESOURCE",
+              "420 METHOD_FAILURE",
+              "421 DESTINATION_LOCKED",
+              "422 UNPROCESSABLE_ENTITY",
+              "423 LOCKED",
+              "424 FAILED_DEPENDENCY",
+              "425 TOO_EARLY",
+              "426 UPGRADE_REQUIRED",
+              "428 PRECONDITION_REQUIRED",
+              "429 TOO_MANY_REQUESTS",
+              "431 REQUEST_HEADER_FIELDS_TOO_LARGE",
+              "451 UNAVAILABLE_FOR_LEGAL_REASONS",
+              "500 INTERNAL_SERVER_ERROR",
+              "501 NOT_IMPLEMENTED",
+              "502 BAD_GATEWAY",
+              "503 SERVICE_UNAVAILABLE",
+              "504 GATEWAY_TIMEOUT",
+              "505 HTTP_VERSION_NOT_SUPPORTED",
+              "506 VARIANT_ALSO_NEGOTIATES",
+              "507 INSUFFICIENT_STORAGE",
+              "508 LOOP_DETECTED",
+              "509 BANDWIDTH_LIMIT_EXCEEDED",
+              "510 NOT_EXTENDED",
+              "511 NETWORK_AUTHENTICATION_REQUIRED"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/PageDtoProfileDto"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        }
+      },
+      "PageDtoProfileDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileDto"
             }
           },
           "size": {
@@ -4175,6 +4983,18 @@
           },
           "hasNext": {
             "type": "boolean"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       }

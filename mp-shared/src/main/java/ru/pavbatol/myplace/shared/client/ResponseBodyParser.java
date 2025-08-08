@@ -14,8 +14,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.MimeType;
 import ru.pavbatol.myplace.shared.dto.api.ApiError;
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.pagination.SliceDto;
+import ru.pavbatol.myplace.shared.pagination.Sliced;
 import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
 
@@ -130,10 +131,14 @@ public class ResponseBodyParser {
 
         Object body = response.getBody();
         if (body == null) {
-            return new SliceDto<>(List.of(), 0, 0, false);
+            return new Sliced<T>()
+                    .setContent(List.of())
+                    .setSize(0)
+                    .setNumberOfElements(0)
+                    .setHasNext(false);
         }
 
-        JavaType javaType = objectMapper.getTypeFactory().constructParametricType(SliceDto.class, elementType);
+        JavaType javaType = objectMapper.getTypeFactory().constructParametricType(Sliced.class, elementType);
 
         try {
             if (body instanceof byte[]) {

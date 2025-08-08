@@ -1,9 +1,9 @@
-package ru.pavbatol.myplace.profile.dto;
+package ru.pavbatol.myplace.shared.dto.profile.profile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
-import ru.pavbatol.myplace.profile.model.Gender;
 import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
+import ru.pavbatol.myplace.shared.enums.profile.profile.Gender;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;

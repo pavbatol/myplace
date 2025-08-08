@@ -79,8 +79,12 @@ You can organize your own platform.
     </div>
 
 - **Gateway (mp-gateway)**  
-The `gateway` service acts as the central entry point for routing requests to other microservices. 
-Currently, it only integrates with the `security` and ``profile/geo`` services; integration with other microservices will be implemented in upcoming Pull Requests.
+The `gateway` service acts as the central entry point for routing requests to other microservices.
+  _Integrated services:_
+    - `security`
+    - `profile/geo`
+    - `profile/profile`  
+   Additional integrations will follow in future Pull Requests.
 
     _Key Features:_
     - Standardized Responses: Wraps all responses in `ApiResponse<T>` via `ResponseHandler` for consistent error/success formats (e.g., `ResponseEntity<ApiResponse<UserDto>>`).
@@ -92,6 +96,8 @@ Currently, it only integrates with the `security` and ``profile/geo`` services; 
         * New versioned paths (`/api/v1/`)
         * Migrated `GET`→`POST` methods where applicable
         * Gateway-level validation changes
+
+  > **!** _The Gateway service is currently being migrated to a reactive stack. Once the migration is complete, the Servlet-based code will be removed_</u>
 
 ---
 

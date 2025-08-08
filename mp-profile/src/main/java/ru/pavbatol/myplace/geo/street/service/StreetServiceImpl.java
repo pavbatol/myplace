@@ -5,15 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pavbatol.myplace.app.pagination.SliceConverter;
 import ru.pavbatol.myplace.geo.city.model.City;
-import ru.pavbatol.myplace.geo.common.pagination.Sliced;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.city.mapper.CityMapper;
 import ru.pavbatol.myplace.geo.city.repository.CityRepository;
 import ru.pavbatol.myplace.geo.street.mapper.StreetMapper;
 import ru.pavbatol.myplace.geo.street.model.Street;
 import ru.pavbatol.myplace.geo.street.repository.StreetRepository;
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
 @Slf4j
@@ -83,6 +83,6 @@ public class StreetServiceImpl implements StreetService {
         Slice<Street> slice = repository.findPageByNamePrefixIgnoreCase(nameStartWith, lastSeenName, lastSeenId, size);
         log.debug("Found {} {}(e)s, hasNext: {}", slice.getNumberOfElements(), ENTITY_SIMPLE_NAME, slice.hasNext());
 
-        return Sliced.from(slice, mapper::toStreetDto);
+        return SliceConverter.toSimpleSlice(slice, mapper::toStreetDto);
     }
 }

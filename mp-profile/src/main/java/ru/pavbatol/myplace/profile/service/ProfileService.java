@@ -1,8 +1,8 @@
 package ru.pavbatol.myplace.profile.service;
 
-import org.springframework.data.domain.Slice;
-import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
+import ru.pavbatol.myplace.shared.dto.profile.profile.*;
+import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.util.UUID;
 
@@ -15,7 +15,7 @@ public interface ProfileService {
 
     ProfileDto update(Long userId, UUID userUuid, Long profileId, ProfileDtoUpdate dto);
 
-    void delete(Long profileId);
+    void delete(Long profileId, Long userId);
 
     ProfileDto privateGetById(Long userId, UUID userUuid, Long profileId);
 
@@ -25,5 +25,5 @@ public interface ProfileService {
 
     ProfileDto adminGetByUserId(Long userId, UUID userUuid);
 
-    Slice<ProfileDto> adminGetAll(int page, int size);
+    SimplePage<ProfileDto> adminGetAll(int page, int size);
 }

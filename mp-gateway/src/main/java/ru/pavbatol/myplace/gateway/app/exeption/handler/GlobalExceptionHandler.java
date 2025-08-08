@@ -1,5 +1,6 @@
 package ru.pavbatol.myplace.gateway.app.exeption.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
 import ru.pavbatol.myplace.gateway.app.exeption.ApiResponseException;
+import ru.pavbatol.myplace.gateway.app.exeption.MissingHeaderException;
 import ru.pavbatol.myplace.shared.dto.api.ApiError;
 import ru.pavbatol.myplace.shared.exception.TargetServiceErrorException;
 import ru.pavbatol.myplace.shared.exception.TargetServiceHandledErrorException;
@@ -53,6 +55,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
  *   <li>{@code error.trace} is included only in non-production environments.</li>
  * </ul>
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private final boolean traceEnabled;
@@ -66,9 +69,7 @@ public class GlobalExceptionHandler {
         HttpStatus httpStatus = ex.getStatus();
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
-
-        return ResponseEntity.status(httpStatus).body(apiResponse);
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     @ExceptionHandler({TargetServiceHandledErrorException.class, TargetServiceErrorException.class})
@@ -76,19 +77,23 @@ public class GlobalExceptionHandler {
         HttpStatus httpStatus = ex.getStatus();
         ApiError apiError = ex.getError();
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
-
-        return ResponseEntity.status(httpStatus).body(apiResponse);
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    protected ResponseEntity<Object> handleMethodArgumentNotValidEx(MethodArgumentNotValidException ex, WebRequest webRequest) {
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest webRequest) {
         HttpStatus httpStatus = determineStatus(ex);
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
+        return buildErrorResponse(apiError, httpStatus);
+    }
 
-        return ResponseEntity.status(BAD_REQUEST).body(apiResponse);
+    @ExceptionHandler({MissingHeaderException.class})
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MissingHeaderException ex, WebRequest webRequest) {
+        HttpStatus httpStatus = BAD_REQUEST;
+        ApiError apiError = createApiError(ex, webRequest, httpStatus);
+
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     @ExceptionHandler(Throwable.class)
@@ -96,9 +101,7 @@ public class GlobalExceptionHandler {
         HttpStatus httpStatus = determineStatus(ex);
         ApiError apiError = createApiError(ex, webRequest, httpStatus);
 
-        ApiResponse<Void> apiResponse = ApiResponse.error(apiError, httpStatus);
-
-        return ResponseEntity.status(httpStatus).body(apiResponse);
+        return buildErrorResponse(apiError, httpStatus);
     }
 
     private ApiError createApiError(Throwable ex, WebRequest webRequest, HttpStatus httpStatus) {
@@ -158,5 +161,12 @@ public class GlobalExceptionHandler {
         } else {
             return "";
         }
+    }
+
+    private <T> ResponseEntity<ApiResponse<T>> buildErrorResponse(ApiError apiError, HttpStatus httpStatus) {
+        ApiResponse<T> apiResponse = ApiResponse.error(apiError, httpStatus);
+        log.error("\u001B[31mError occurred: {}\u001B[0m", apiError.getMessage());
+
+        return ResponseEntity.status(httpStatus).body(apiResponse);
     }
 }

@@ -1,6 +1,6 @@
 package ru.pavbatol.myplace.geo.street.service;
 
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.street.StreetDto;
 
 public interface StreetService {
