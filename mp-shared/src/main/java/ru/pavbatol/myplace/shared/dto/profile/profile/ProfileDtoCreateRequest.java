@@ -1,4 +1,4 @@
-package ru.pavbatol.myplace.profile.dto;
+package ru.pavbatol.myplace.shared.dto.profile.profile;
 
 import lombok.Value;
 

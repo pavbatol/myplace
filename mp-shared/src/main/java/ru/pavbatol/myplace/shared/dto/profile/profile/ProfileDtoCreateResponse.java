@@ -1,12 +1,16 @@
-package ru.pavbatol.myplace.profile.dto;
+package ru.pavbatol.myplace.shared.dto.profile.profile;
 
+import lombok.Builder;
 import lombok.Value;
-import ru.pavbatol.myplace.profile.model.ProfileStatus;
+import lombok.extern.jackson.Jacksonized;
+import ru.pavbatol.myplace.shared.enums.profile.profile.ProfileStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Value
+@Builder
+@Jacksonized
 public class ProfileDtoCreateResponse {
     Long id;
     UUID userUuid;

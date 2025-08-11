@@ -32,6 +32,10 @@ public class ApiError {
     List<String> trace;
 
     public static ApiError message(String message) {
-        return new ApiError(null, null, null, message, null, null, null);
+        return message(message, null);
+    }
+
+    public static ApiError message(String message, String status) {
+        return new ApiError(null, status, null, message, null, null, null);
     }
 }

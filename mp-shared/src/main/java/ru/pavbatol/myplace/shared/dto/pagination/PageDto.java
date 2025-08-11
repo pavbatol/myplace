@@ -1,0 +1,26 @@
+package ru.pavbatol.myplace.shared.dto.pagination;
+
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
+
+import java.util.List;
+
+@Value
+@Builder
+@Jacksonized
+public class PageDto<T> {
+    List<T> content;
+
+    Integer size;
+
+    Integer numberOfElements;
+
+    Boolean hasNext;
+
+    Integer number;
+
+    Long totalElements;
+
+    Integer totalPages;
+}

@@ -5,9 +5,9 @@ import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.model.House;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
-import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.model.Profile;
 import ru.pavbatol.myplace.shared.dto.profile.geo.house.HouseDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.*;
 
 import java.util.Base64;
 import java.util.UUID;

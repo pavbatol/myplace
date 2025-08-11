@@ -2,21 +2,23 @@ package ru.pavbatol.myplace.profile.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pavbatol.myplace.app.pagination.PageConverter;
 import ru.pavbatol.myplace.app.util.Checker;
 import ru.pavbatol.myplace.app.exception.NotFoundException;
 import ru.pavbatol.myplace.geo.house.mapper.HouseMapper;
 import ru.pavbatol.myplace.geo.house.repository.HouseRepository;
-import ru.pavbatol.myplace.profile.dto.*;
 import ru.pavbatol.myplace.profile.mapper.ProfileMapper;
 import ru.pavbatol.myplace.profile.model.Profile;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.repository.ProfileJpaRepository;
+import ru.pavbatol.myplace.shared.dto.profile.profile.*;
+import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -87,8 +89,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void delete(Long profileId) {
+    public void delete(Long profileId, Long userId) {
         Profile profile = Checker.getNonNullObject(profileRepository, profileId);
+        checkUserIdOwnership(userId, profile.getUserId());
         profile
                 .setStatus(ProfileStatus.DELETED)
                 .setChangedStatusOn(LocalDateTime.now());
@@ -131,12 +134,14 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Slice<ProfileDto> adminGetAll(int page, int size) {
+    public SimplePage<ProfileDto> adminGetAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
-        Slice<Profile> found = profileRepository.findAll(pageRequest);
-        log.debug("Found Slice of {}: {}, numberOfElements: {}", ENTITY_SIMPLE_NAME, found, found.getNumberOfElements());
 
-        return found.map(profileMapper::toProfileDtoWithoutHose);
+        Page<Profile> found = profileRepository.findAll(pageRequest);
+        log.debug("Found Page #{} of {}: {}, numberOfElements: {}, totalElements: {}, totalPages: {}",
+                found.getNumber(), ENTITY_SIMPLE_NAME, found, found.getNumberOfElements(), found.getTotalElements(), found.getTotalPages());
+
+        return PageConverter.toSimplePage(found, profileMapper::toProfileDtoWithoutHose);
     }
 
     private Profile adminGetNonNullProfileByUserId(Long userId) {

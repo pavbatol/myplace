@@ -4,15 +4,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.app.util.EnumUtils;
-import ru.pavbatol.myplace.profile.dto.ProfileDto;
-import ru.pavbatol.myplace.profile.dto.ProfileDtoUpdateStatusResponse;
 import ru.pavbatol.myplace.profile.model.ProfileStatus;
 import ru.pavbatol.myplace.profile.service.ProfileService;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDto;
+import ru.pavbatol.myplace.shared.dto.profile.profile.ProfileDtoUpdateStatusResponse;
+import ru.pavbatol.myplace.shared.pagination.SimplePage;
 
 import java.util.UUID;
 
@@ -39,10 +39,10 @@ public class AdminProfileController {
 
     @GetMapping
     @Operation(summary = "getAll", description = "get all Profiles")
-    public ResponseEntity<Slice<ProfileDto>> getAll(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
+    public ResponseEntity<SimplePage<ProfileDto>> getAll(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
         log.debug("GET getAll() with page: {}, size: {}", page, size);
-        Slice<ProfileDto> body = profileService.adminGetAll(page, size);
+        SimplePage<ProfileDto> body = profileService.adminGetAll(page, size);
         return ResponseEntity.ok(body);
     }
 
@@ -56,7 +56,7 @@ public class AdminProfileController {
         return ResponseEntity.ok(body);
     }
 
-    @GetMapping({"/byuserid", "/byUserId"})
+    @GetMapping("/user")
     @Operation(summary = "getByUserId", description = "get Profile")
     public ResponseEntity<ProfileDto> getByUserId(@RequestHeader(value = X_USER_ID) Long userId,
                                                   @RequestHeader(value = X_USER_UUID) UUID userUuid) {

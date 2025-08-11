@@ -10,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pavbatol.myplace.gateway.app.api.ApiResponse;
-import ru.pavbatol.myplace.gateway.app.access.RequiredRoles;
+import ru.pavbatol.myplace.gateway.app.annotation.RequiredRoles;
 import ru.pavbatol.myplace.gateway.profile.geo.country.service.CountryService;
-import ru.pavbatol.myplace.shared.dto.pagination.SimpleSlice;
+import ru.pavbatol.myplace.shared.pagination.SimpleSlice;
 import ru.pavbatol.myplace.shared.dto.profile.geo.country.CountryDto;
 
 import javax.validation.constraints.Max;

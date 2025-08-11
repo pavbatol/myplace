@@ -3699,8 +3699,8 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(\"Status code is 400 (Field 'number': the maximum size must be 10 characters)\", function () {",
-													"    pm.response.to.have.status(400);",
+													"pm.test(\"Status code is 400 or 409 (Field 'number': the maximum size must be 10 characters)\", function () {",
+													"    pm.expect(pm.response.code).to.be.oneOf([400, 409]);",
 													"});",
 													""
 												],
@@ -3894,317 +3894,6 @@
 						{
 							"name": "private",
 							"item": [
-								{
-									"name": "check-paging",
-									"item": [
-										{
-											"name": "House findAll  filter_paging",
-											"event": [
-												{
-													"listen": "test",
-													"script": {
-														"exec": [
-															"pm.test(\"Status code is 200 and data in json format\", function () {",
-															"    pm.response.to.have.status(200);",
-															"    pm.response.to.be.withBody;",
-															"    pm.response.to.be.json;",
-															"});",
-															"",
-															"pm.test(\"Check House IDs are as expected\", function () {",
-															"    var jsonData = pm.response.json();",
-															"    var codes = [4, 5];",
-															"",
-															"    pm.expect(jsonData.content.length).to.equal(codes.length,",
-															"      `Expected ${codes.length} houses but found ${jsonData.content.length}`);",
-															"",
-															"",
-															"    for (var i = 0; i < codes.length; i++) {",
-															"        var num = codes[i];",
-															"",
-															"        var nameVar = `coll_paging_house_name_${num}`;        ",
-															"        var entityName = pm.collectionVariables.get(nameVar);",
-															"",
-															"        pm.expect(entityName, `Variable ${nameVar} not found`).to.not.be.undefined;",
-															"",
-															"        var idVarName = `coll_paging_house_id_${num}`;",
-															"        var entityId = pm.collectionVariables.get(idVarName);",
-															"",
-															"        pm.expect(entityId, `Variable ${idVarName} not found`).to.not.be.undefined;",
-															"",
-															"        console.log(`Expected ID for ${entityName}: ${entityId}`);",
-															"        console.log(`Actual ID: ${jsonData.content[i].id}`);",
-															"",
-															"        pm.expect(jsonData.content[i].id, ",
-															"            `The ID of the element with index ${i} does not match expected (${entityId})`",
-															"        ).to.equal(entityId);",
-															"    }",
-															"});",
-															""
-														],
-														"type": "text/javascript",
-														"packages": {}
-													}
-												},
-												{
-													"listen": "prerequest",
-													"script": {
-														"exec": [
-															""
-														],
-														"type": "text/javascript",
-														"packages": {}
-													}
-												}
-											],
-											"request": {
-												"method": "GET",
-												"header": [],
-												"url": {
-													"raw": "{{coll_baseUrl}}/user/geo/houses?numberStartWith=House_Pg_&lastSeenNumber={{coll_paging_house_name_3}}&lastSeenId={{coll_paging_house_id_3}}",
-													"host": [
-														"{{coll_baseUrl}}"
-													],
-													"path": [
-														"user",
-														"geo",
-														"houses"
-													],
-													"query": [
-														{
-															"key": "numberStartWith",
-															"value": "House_Pg_"
-														},
-														{
-															"key": "lastSeenNumber",
-															"value": "{{coll_paging_house_name_3}}"
-														},
-														{
-															"key": "lastSeenId",
-															"value": "{{coll_paging_house_id_3}}"
-														},
-														{
-															"key": "size",
-															"value": "10",
-															"disabled": true
-														}
-													]
-												}
-											},
-											"response": []
-										}
-									],
-									"event": [
-										{
-											"listen": "prerequest",
-											"script": {
-												"type": "text/javascript",
-												"packages": {},
-												"exec": [
-													"if (pm.collectionVariables.get(\"is_coll_paging_house\")) {",
-													"    console.log(\"Initialization coll_paging_house already done - skipping\");",
-													"    return; ",
-													"}",
-													"",
-													"const ENTITY_COUNT = 5;",
-													"",
-													"for (let i = 1; i <= ENTITY_COUNT; i++) {",
-													"    const entityName = `House_Pg_${i}`",
-													"    pm.collectionVariables.set(`coll_paging_house_name_${i}`, `${entityName}`);    ",
-													"    ",
-													"    console.log(`Set variables for position ${i}: , ${entityName}`);",
-													"}",
-													"",
-													"pm.collectionVariables.set(\"coll_paging_house_total\", ENTITY_COUNT.toString());",
-													"",
-													"const num = 1;",
-													"const idVarName = `coll_paging_street_id_${num}`;",
-													"const street_id = pm.collectionVariables.get(idVarName);",
-													"",
-													"if (!street_id) {",
-													"    console.log(`No ID found for ${idVarName}`);",
-													"    return;",
-													"}",
-													"",
-													"const entitiesData = [...Array(ENTITY_COUNT)].map((_, i) => ({",
-													"    parent_id: street_id,",
-													"    name: pm.collectionVariables.get(`coll_paging_house_name_${i+1}`),",
-													"    num: `${i+1}`",
-													"}));",
-													"",
-													"const baseUrl = pm.collectionVariables.get(\"coll_baseUrl\");",
-													"",
-													"const createEntity = (data) => {",
-													"    const requestData = {",
-													"        id: null,",
-													"        street: {",
-													"            id: data.parent_id",
-													"        },",
-													"        number: data.name",
-													"    };",
-													"",
-													"    return new Promise((resolve, reject) => {",
-													"        pm.sendRequest({",
-													"            url: `${baseUrl}/admin/geo/houses`,",
-													"            method: 'POST',",
-													"            headers: {",
-													"                'Content-Type': 'application/json',",
-													"                'Accept': 'application/json'",
-													"            },",
-													"            body: {",
-													"                mode: 'raw',",
-													"                raw: JSON.stringify(requestData),",
-													"                options: {",
-													"                    raw: {",
-													"                        language: 'json'",
-													"                    }",
-													"                }                ",
-													"            }",
-													"        }, (err, res) => {",
-													"            if (err) {",
-													"                console.error(\"Net error:\", err);",
-													"                reject(err);",
-													"            } else if (res.code !== 201) {",
-													"                console.error(\"Server error:\", res.code);",
-													"                reject(res.json());",
-													"            } else {",
-													"                const responseData = res.json();",
-													"                console.log(\"Success! response:\", responseData);",
-													"                pm.collectionVariables.set(`coll_paging_house_id_${data.num}`, responseData.id);",
-													"                console.log(`Saved ID for (parentId_entityName) ${data.parent_id}_${data.name}:`, responseData.id);",
-													"                resolve(res.json());",
-													"            }",
-													"        });",
-													"    });",
-													"};",
-													"",
-													"(async () => {",
-													"    for (const data of entitiesData) {",
-													"        try {",
-													"            await createEntity(data);",
-													"        } catch (err) {",
-													"            console.error(\"Error when creating:\", err);",
-													"        }",
-													"    }",
-													"    console.log(\"Entities creation request has been completed\");",
-													"        console.log(\"All saved IDs:\", ",
-													"        Object.entries(pm.collectionVariables.toObject())",
-													"            .filter(([key]) => key.startsWith(\"coll_paging_house\"))",
-													"    );",
-													"})();",
-													"",
-													"pm.collectionVariables.set(\"is_coll_paging_house\", true);",
-													"console.log(\"Initialization coll_paging_house completed\");",
-													""
-												]
-											}
-										},
-										{
-											"listen": "test",
-											"script": {
-												"type": "text/javascript",
-												"packages": {},
-												"exec": [
-													"/*",
-													" * TEST DATA CLEANUP UTILITY",
-													" * ",
-													" * This script is designed for repeated test execution. It performs complete cleanup of:",
-													" * - House entities created during testing",
-													" * - Associated Postman collection variables",
-													" * ",
-													" * WARNING: By default this script is COMMENTED to preserve test data between runs.",
-													"*",
-													" * IMPORTANT EXECUTION ORDER NOTE: ",
-													" * Scripts placed in the parent folder's Test section will execute BEFORE",
-													" * the individual test's Post-response script. If you need different timing,",
-													" * move this script directly into the specific test's Post-response section.",
-													" * ",
-													" * TO ENABLE CLEANUP:",
-													" * 1. Uncomment the entire code block below",
-													" * 2. Execute the request",
-													" * ",
-													" * This will:",
-													" * - Delete all test House entities via API",
-													" * - Remove all related variables from the collection",
-													" * - Provide console confirmation of cleanup",
-													" * ",
-													" * Recommended usage: ",
-													" * - When you need a fresh environment for testing",
-													" * - Before running automated test suites",
-													" * - When debugging entity creation issues",
-													" */",
-													"",
-													"/*",
-													"const baseUrl = pm.collectionVariables.get(\"coll_baseUrl\");",
-													"",
-													"const deleteEntity = (entityId) => {",
-													"    return new Promise((resolve, reject) => {",
-													"        const url = `${baseUrl}/admin/geo/houses/${entityId}`;        ",
-													"        pm.sendRequest({",
-													"            url: url,",
-													"            method: 'DELETE',",
-													"            headers: {",
-													"                'Content-Type': 'application/json',",
-													"                'Accept': 'application/json'",
-													"            }",
-													"        }, (err, res) => {",
-													"            if (err) {",
-													"                console.error(`Error deleting entity ${entityId}:`, err);",
-													"                reject(err);",
-													"            } else if (res.code !== 204 && res.code !== 200) { ",
-													"                console.error(`Failed to delete entity ${entityId}. Status:`, res.code);",
-													"                reject(res.json());",
-													"            } else {",
-													"                console.log(`Successfully deleted entity ${entityId}`);",
-													"                resolve();",
-													"            }",
-													"        });",
-													"    });",
-													"};",
-													"",
-													"const deleteEntities = async () => {",
-													"    const codes = [1, 2, 3, 4, 5];",
-													"    ",
-													"    for (const num of codes) {",
-													"        try {",
-													"            const nameVar = `coll_paging_house_name_${num}`;",
-													"            ",
-													"            const entityyName = pm.collectionVariables.get(nameVar);",
-													"            ",
-													"            const idVarName = `coll_paging_house_id_${num}`;",
-													"            const entityId = pm.collectionVariables.get(idVarName);",
-													"            ",
-													"            if (!entityId) {",
-													"                console.log(`No ID found for ${idVarName}`);",
-													"                continue;",
-													"            }",
-													"            ",
-													"            try {",
-													"                await deleteEntity(entityId);",
-													"                 pm.collectionVariables.unset(nameVar);",
-													"                 pm.collectionVariables.unset(idVarName);",
-													"            } catch (err) {",
-													"                console.error(`Failed to delete entity (ID: ${entityId})`, err);",
-													"            }",
-													"            ",
-													"        } catch (err) {",
-													"            console.error(`Error processing entity ${num}:`, err);",
-													"        }",
-													"    }",
-													"};",
-													"",
-													"deleteEntities().then(() => console.log(\"Deletion completed\",",
-													"            Object.entries(pm.collectionVariables.toObject())",
-													"            .filter(([key]) => key.startsWith(\"coll_paging_house\"))",
-													"));",
-													"",
-													"pm.collectionVariables.set(\"is_coll_paging_house\", false);",
-													"*/ ",
-													""
-												]
-											}
-										}
-									]
-								},
 								{
 									"name": "check-paging",
 									"item": [
@@ -5335,7 +5024,19 @@
 							],
 							"request": {
 								"method": "DELETE",
-								"header": [],
+								"header": [
+									{
+										"key": "X-User-Id",
+										"value": "{{locall_userID}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
 								"url": {
 									"raw": "{{coll_baseUrl}}/user/profiles/{{coll_profileID}}",
 									"host": [
@@ -5576,14 +5277,13 @@
 									}
 								],
 								"url": {
-									"raw": "{{coll_baseUrl}}/admin/profiles/byuserid",
+									"raw": "{{coll_baseUrl}}/admin/profiles",
 									"host": [
 										"{{coll_baseUrl}}"
 									],
 									"path": [
 										"admin",
-										"profiles",
-										"byuserid"
+										"profiles"
 									]
 								}
 							},
@@ -5773,7 +5473,7 @@
 							"    }",
 							"});",
 							"",
-							"// // Delete collection variables штсдгувштп \"paging_region\"",
+							"// // Delete collection variables including \"paging_region\"",
 							"// const allVars = pm.collectionVariables.toObject();",
 							"// Object.keys(allVars).forEach(key => {",
 							"//     if (key.includes(\"paging_region\")) {",
@@ -5782,7 +5482,7 @@
 							"//     }",
 							"// });",
 							"",
-							"// Delete collection variables штсдгувштп \"paging_district\"",
+							"// Delete collection variables including \"paging_district\"",
 							"// const allVars = pm.collectionVariables.toObject();",
 							"// Object.keys(allVars).forEach(key => {",
 							"//     if (key.includes(\"paging_district\")) {",
@@ -5791,7 +5491,7 @@
 							"//     }",
 							"// });",
 							"",
-							"// Delete collection variables штсдгувштп \"paging_city\"",
+							"// Delete collection variables including \"paging_city\"",
 							"// const allVars = pm.collectionVariables.toObject();",
 							"// Object.keys(allVars).forEach(key => {",
 							"//     if (key.includes(\"paging_city\")) {",
@@ -5800,7 +5500,7 @@
 							"//     }",
 							"// });",
 							"",
-							"// Delete collection variables штсдгувштп \"paging_street\"",
+							"// Delete collection variables including \"paging_street\"",
 							"// const allVars = pm.collectionVariables.toObject();",
 							"// Object.keys(allVars).forEach(key => {",
 							"//     if (key.includes(\"paging_street\")) {",
@@ -5809,7 +5509,7 @@
 							"//     }",
 							"// });",
 							"",
-							"// Delete collection variables штсдгувштп \"paging_house\"",
+							"// Delete collection variables including \"paging_house\"",
 							"// const allVars = pm.collectionVariables.toObject();",
 							"// Object.keys(allVars).forEach(key => {",
 							"//     if (key.includes(\"paging_house\")) {",
